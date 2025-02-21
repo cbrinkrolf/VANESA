@@ -51,10 +51,8 @@ import gui.visualization.YamlToObjectParser;
 import io.SaveDialog;
 import io.sbml.JSBMLOutput;
 import net.infonode.tabbedpanel.Tab;
-import net.infonode.tabbedpanel.TabDropDownListVisiblePolicy;
 import net.infonode.tabbedpanel.TabbedPanel;
-import net.infonode.tabbedpanel.titledtab.TitledTab;
-import net.infonode.util.Direction;
+import net.infonode.tabbedpanel.TitledTab;
 
 public class MainWindow implements ApplicationListener {
 	private final JFrame frame = new JFrame();
@@ -183,13 +181,7 @@ public class MainWindow implements ApplicationListener {
 		splitPanel.add(optionPanel.getPanel());
 
 		rootWindow = new TabbedPanel();
-		rootWindow.getProperties().setTabAreaOrientation(Direction.DOWN);
-		rootWindow.getProperties().setEnsureSelectedTabVisible(true);
-		rootWindow.getProperties().setHighlightPressedTab(true);
 		rootWindow.addTabListener(new GraphTabListener(this));
-		rootWindow.getProperties().setTabReorderEnabled(true);
-		rootWindow.getProperties().setTabDropDownListVisiblePolicy(TabDropDownListVisiblePolicy.MORE_THAN_ONE_TAB);
-		rootWindow.setBackground(Color.BLACK);
 		splitPanel.add(rootWindow);
 
 		splitPanel.setOneTouchExpandable(false);

@@ -1,14 +1,13 @@
 package gui;
 
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
-import net.infonode.tabbedpanel.titledtab.TitledTab;
+import net.infonode.tabbedpanel.TitledTab;
 
 public class GraphTab {
     private final TitledTab tab;
 
     public GraphTab(String name, GraphZoomScrollPane viewer) {
         tab = new TitledTab(name, null, viewer, new CloseButton());
-        tab.getProperties().setHighlightedRaised(2);
     }
 
     public String getTitle() {

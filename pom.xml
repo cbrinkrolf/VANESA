@@ -121,13 +121,6 @@
             <version>1.0</version>
             <type>jar</type>
         </dependency>
-        <!-- https://github.com/ebourg/infonode -->
-        <dependency>
-            <groupId>net.infonode</groupId>
-            <artifactId>infonode-docking-windows</artifactId>
-            <version>1.6.1</version>
-            <type>jar</type>
-        </dependency>
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
