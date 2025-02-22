@@ -45,14 +45,14 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	private Shape defaultShape = VertexShapes.getEllipse();
 	private boolean hasKEGGNode = false;
 	private boolean hasBrendaNode = false;
-	private HashSet<String> labelSet = new HashSet<>();
-	private ArrayList<Parameter> parameters = new ArrayList<>();
+	private Set<String> labelSet = new HashSet<>();
+	private List<Parameter> parameters = new ArrayList<>();
 	// private Set<BiologicalNodeAbstract> border = new HashSet<>();
 	// private Set<BiologicalNodeAbstract> environment = new HashSet<>();
 	// private Set<BiologicalNodeAbstract> predefinedEnvironment = new HashSet<>();
 	private Set<BiologicalEdgeAbstract> connectingEdges = new HashSet<>();
 	private NodeStateChanged nodeStateChanged = NodeStateChanged.UNCHANGED;
-	private final HashSet<NodeAttribute> nodeAttributes = new HashSet<>();
+	private final Set<NodeAttribute> nodeAttributes = new HashSet<>();
 	private boolean markedAsEnvironment = false;
 	private boolean markedAsCoarseNode = false;
 	private Point2D parentNodeDistance = new Point2D.Double(0, 0);
@@ -60,7 +60,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 	private boolean inGroup = false;
 
-	private ArrayList<Group> groups = new ArrayList<>();
+	private List<Group> groups = new ArrayList<>();
 	// private Set<Group> group = new HashSet<>();
 
 	private Color plotColor = null;
@@ -197,13 +197,13 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		for (BiologicalEdgeAbstract e : node.getConnectingEdges()) {
 			if (e.getFrom() != node) {
 				Pathway neighborParent = e.getFrom().getParentNode() == null ? node.getRootPathway()
-																			 : e.getFrom().getParentNode();
+						: e.getFrom().getParentNode();
 				node.addVertex(e.getFrom(), neighborParent.getGraph().getVertexLocation(e.getFrom()));
 				// node.getPredefinedEnvironment().add(e.getFrom());
 				e.getFrom().removeConnectingEdge(e);
 			} else if (e.getTo() != node) {
 				Pathway neighborParent = e.getTo().getParentNode() == null ? node.getRootPathway()
-																		   : e.getTo().getParentNode();
+						: e.getTo().getParentNode();
 				node.addVertex(e.getTo(), neighborParent.getGraph().getVertexLocation(e.getTo()));
 				// node.getPredefinedEnvironment().add(e.getTo());
 				e.getTo().removeConnectingEdge(e);
@@ -334,7 +334,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	/**
-	 * Checks, if a selection of nodes has a valid border in the given type of graph.
+	 * Checks, if a selection of nodes has a valid border in the given type of
+	 * graph.
 	 *
 	 * @param isPetriNet True if Network is a Petri-Net.
 	 * @param vertices   Set of nodes.
@@ -384,7 +385,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	/**
-	 * Returns a node that can be cloned to create a coarse node of the given set of nodes.
+	 * Returns a node that can be cloned to create a coarse node of the given set of
+	 * nodes.
 	 *
 	 * @param vertices Nodes selected for coarsing operation
 	 * @return A node, that would be contained in the border if vertices were
@@ -771,19 +773,19 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		this.hasBrendaNode = hasBrendaNode;
 	}
 
-	public HashSet<String> getLabelSet() {
+	public Set<String> getLabelSet() {
 		return labelSet;
 	}
 
-	public void setLabelSet(HashSet<String> labelSet) {
+	public void setLabelSet(Set<String> labelSet) {
 		this.labelSet = labelSet;
 	}
 
-	public ArrayList<Parameter> getParameters() {
+	public List<Parameter> getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(ArrayList<Parameter> parameters) {
+	public void setParameters(List<Parameter> parameters) {
 		this.parameters = parameters;
 	}
 
@@ -827,11 +829,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		this.inGroup = inGroup;
 	}
 
-	public ArrayList<Group> getGroups() {
+	public List<Group> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(ArrayList<Group> groups) {
+	public void setGroups(List<Group> groups) {
 		this.groups = groups;
 	}
 
@@ -852,8 +854,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	/**
-	 * Whether this node is constant in terms of tokens for Places or concentrations in a biological network.
-	 * TODO: used for tokenMin and tokenMax but not for token and concentrations. Evaluate status!
+	 * Whether this node is constant in terms of tokens for Places or concentrations
+	 * in a biological network. TODO: used for tokenMin and tokenMax but not for
+	 * token and concentrations. Evaluate status!
 	 */
 	public boolean isConstant() {
 		return constant;
@@ -943,7 +946,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		this.setColor(defaultColor);
 	}
 
-	public HashSet<NodeAttribute> getNodeAttributes() {
+	public Set<NodeAttribute> getNodeAttributes() {
 		return nodeAttributes;
 	}
 
@@ -1193,7 +1196,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		labelSet.add(label);
 	}
 
-	public void addLabel(HashSet<String> labels) {
+	public void addLabel(Set<String> labels) {
 		labelSet.addAll(labels);
 	}
 

@@ -5,6 +5,7 @@ import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 
 import biologicalElements.GraphElementAbstract;
@@ -32,8 +33,8 @@ public abstract class BiologicalEdgeAbstract extends GraphicalElement implements
 	private Shape shape;
 	private boolean hasKEGGNode = false;
 	private boolean hasBrendaNode = false;
-	private HashSet<String> labelSet = new HashSet<>();
-	private ArrayList<Parameter> parameters = new ArrayList<>();
+	private Set<String> labelSet = new HashSet<>();
+	private List<Parameter> parameters = new ArrayList<>();
 	private String function = "1";
 
 	private BiologicalNodeAbstract from;
@@ -142,21 +143,21 @@ public abstract class BiologicalEdgeAbstract extends GraphicalElement implements
 		this.hasBrendaNode = hasBrendaNode;
 	}
 
-	public HashSet<String> getLabelSet() {
+	public Set<String> getLabelSet() {
 		return labelSet;
 	}
 
 	@Override
-	public void setLabelSet(HashSet<String> labelSet) {
+	public void setLabelSet(Set<String> labelSet) {
 		this.labelSet = labelSet;
 	}
 
-	public ArrayList<Parameter> getParameters() {
+	public List<Parameter> getParameters() {
 		return parameters;
 	}
 
 	@Override
-	public void setParameters(ArrayList<Parameter> parameters) {
+	public void setParameters(List<Parameter> parameters) {
 		this.parameters = parameters;
 	}
 
@@ -333,7 +334,7 @@ public abstract class BiologicalEdgeAbstract extends GraphicalElement implements
 		this.labelSet.add(label);
 	}
 
-	public void addLabel(HashSet<String> labels) {
+	public void addLabel(Set<String> labels) {
 		this.labelSet.addAll(labels);
 	}
 

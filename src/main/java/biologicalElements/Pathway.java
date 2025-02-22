@@ -71,16 +71,16 @@ public class Pathway extends GraphicalElement implements Cloneable {
 	private final SortedSet<Integer> ids = new TreeSet<>();
 	private final Set<BiologicalNodeAbstract> closedSubPathways = new HashSet<>();
 
-	private final HashMap<String, ChangedFlags> changedFlags = new HashMap<>();
-	private HashMap<Parameter, GraphElementAbstract> changedParameters = new HashMap<>();
-	private HashMap<Place, Double> changedInitialValues = new HashMap<>();
-	private HashMap<Place, Boundary> changedBoundaries = new HashMap<>();
+	private final Map<String, ChangedFlags> changedFlags = new HashMap<>();
+	private Map<Parameter, GraphElementAbstract> changedParameters = new HashMap<>();
+	private Map<Place, Double> changedInitialValues = new HashMap<>();
+	private Map<Place, Boundary> changedBoundaries = new HashMap<>();
 	private BiologicalNodeAbstract rootNode;
-	private HashMap<BiologicalNodeAbstract, Point2D> vertices = new HashMap<>();
+	private Map<BiologicalNodeAbstract, Point2D> vertices = new HashMap<>();
 
 	// no graph tab is assigned / created. this is used for rule editing window
 	private final boolean headless;
-	private ArrayList<Group> groups = new ArrayList<>();
+	private List<Group> groups = new ArrayList<>();
 	private TransformationInformation transformationInformation = null;
 	private final CompartmentManager compartmentManager = new CompartmentManager();
 
@@ -93,7 +93,8 @@ public class Pathway extends GraphicalElement implements Cloneable {
 			this.title = this.name;
 			graph = new MyGraph(this);
 		}
-	} 
+	}
+
 	// pw is true pathway
 	public Pathway(String name) {
 		this.headless = false;
@@ -355,7 +356,7 @@ public class Pathway extends GraphicalElement implements Cloneable {
 		}
 		return set;
 	}
-	
+
 	public Set<String> getAllEdgeNames() {
 		Set<String> set = new HashSet<>();
 		for (BiologicalEdgeAbstract bea : this.getAllEdges()) {
@@ -712,27 +713,27 @@ public class Pathway extends GraphicalElement implements Cloneable {
 		return closedSubPathways;
 	}
 
-	public HashMap<Parameter, GraphElementAbstract> getChangedParameters() {
+	public Map<Parameter, GraphElementAbstract> getChangedParameters() {
 		return changedParameters;
 	}
 
-	public void setChangedParameters(HashMap<Parameter, GraphElementAbstract> changedParameters) {
+	public void setChangedParameters(Map<Parameter, GraphElementAbstract> changedParameters) {
 		this.changedParameters = changedParameters;
 	}
 
-	public HashMap<Place, Double> getChangedInitialValues() {
+	public Map<Place, Double> getChangedInitialValues() {
 		return changedInitialValues;
 	}
 
-	public void setChangedInitialValues(HashMap<Place, Double> changedInitialValues) {
+	public void setChangedInitialValues(Map<Place, Double> changedInitialValues) {
 		this.changedInitialValues = changedInitialValues;
 	}
 
-	public HashMap<Place, Boundary> getChangedBoundaries() {
+	public Map<Place, Boundary> getChangedBoundaries() {
 		return changedBoundaries;
 	}
 
-	public void setChangedBoundaries(HashMap<Place, Boundary> changedBoundaries) {
+	public void setChangedBoundaries(Map<Place, Boundary> changedBoundaries) {
 		this.changedBoundaries = changedBoundaries;
 	}
 
@@ -744,7 +745,7 @@ public class Pathway extends GraphicalElement implements Cloneable {
 		this.rootNode = rootNode;
 	}
 
-	public HashMap<BiologicalNodeAbstract, Point2D> getVertices() {
+	public Map<BiologicalNodeAbstract, Point2D> getVertices() {
 		return vertices;
 	}
 
@@ -752,11 +753,11 @@ public class Pathway extends GraphicalElement implements Cloneable {
 		return headless;
 	}
 
-	public ArrayList<Group> getGroups() {
+	public List<Group> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(ArrayList<Group> groups) {
+	public void setGroups(List<Group> groups) {
 		this.groups = groups;
 	}
 

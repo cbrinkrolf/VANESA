@@ -616,7 +616,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 		return bea2resultkey;
 	}
 
-	private String replaceAll(String function, ArrayList<Parameter> params, BiologicalNodeAbstract node) {
+	private String replaceAll(String function, List<Parameter> params, BiologicalNodeAbstract node) {
 
 		String mFunction = this.replaceParameters(function, params, node);
 		mFunction = this.replaceNames(mFunction);
@@ -793,7 +793,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 		return mFunction.toString();
 	}
 
-	private String replaceParameters(String function, ArrayList<Parameter> params, BiologicalNodeAbstract node) {
+	private String replaceParameters(String function, List<Parameter> params, BiologicalNodeAbstract node) {
 		StringBuilder mFunction = new StringBuilder(function);
 
 		// replace parameters

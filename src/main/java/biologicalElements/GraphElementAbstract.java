@@ -2,74 +2,74 @@ package biologicalElements;
 
 import java.awt.Color;
 import java.awt.Shape;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import graph.gui.Parameter;
 
 public interface GraphElementAbstract {
-    int getID();
+	int getID();
 
-    // should only be used when loading a file with a network
-    void setID(int id, Pathway pw) throws IDAlreadyExistException;
+	// should only be used when loading a file with a network
+	void setID(int id, Pathway pw) throws IDAlreadyExistException;
 
-    void setID(Pathway pw);
+	void setID(Pathway pw);
 
-    String getNetworklabel();
+	String getNetworklabel();
 
-    boolean hasKEGGNode();
+	boolean hasKEGGNode();
 
-    void setHasKEGGNode(boolean hasKEGGNode);
+	void setHasKEGGNode(boolean hasKEGGNode);
 
-    String getName();
+	String getName();
 
-    void setName(String name);
+	void setName(String name);
 
-    String getLabel();
+	String getLabel();
 
-    void setLabel(String label);
+	void setLabel(String label);
 
-    String getDescription();
+	String getDescription();
 
-    void setDescription(String description);
+	void setDescription(String description);
 
-    String getComments();
+	String getComments();
 
-    void setComments(String comments);
+	void setComments(String comments);
 
-    boolean isEdge();
+	boolean isEdge();
 
-    boolean isVertex();
+	boolean isVertex();
 
-    Color getColor();
+	Color getColor();
 
-    void setColor(Color color);
+	void setColor(Color color);
 
-    String getBiologicalElement();
+	String getBiologicalElement();
 
-    Shape getShape();
+	Shape getShape();
 
-    void setShape(Shape shape);
+	void setShape(Shape shape);
 
-    boolean isVisible();
+	boolean isVisible();
 
-    void setVisible(boolean isVisible);
+	void setVisible(boolean isVisible);
 
-    boolean hasBrendaNode();
+	boolean hasBrendaNode();
 
-    void setHasBrendaNode(boolean hasBrendaNode);
+	void setHasBrendaNode(boolean hasBrendaNode);
 
-    ArrayList<Parameter> getParameters();
+	List<Parameter> getParameters();
 
-    void setParameters(ArrayList<Parameter> parameters);
+	void setParameters(List<Parameter> parameters);
 
-    HashSet<String> getLabelSet();
+	Set<String> getLabelSet();
 
-    void setLabelSet(HashSet<String> labelSet);
+	void setLabelSet(Set<String> labelSet);
 
-    void addLabel(String label);
+	void addLabel(String label);
 
-    void addLabel(HashSet<String> labels);
+	void addLabel(Set<String> labels);
 
-    void resetAppearance();
+	void resetAppearance();
 }
