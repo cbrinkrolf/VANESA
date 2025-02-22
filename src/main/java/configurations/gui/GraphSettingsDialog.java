@@ -427,7 +427,9 @@ public class GraphSettingsDialog {
 
 		SettingsManager.getInstance().setOmitPaintInvisibleNodes(omitInvisibleNodes.isSelected());
 		SettingsManager.getInstance().setDisabledAntiAliasing(disabledAntiAliasing.isSelected());
-		con.getPathway(w.getCurrentPathway()).getGraph().disableAntliasing(disabledAntiAliasing.isSelected());
+		if (con.containsPathway()) {
+			con.getPathway(w.getCurrentPathway()).getGraph().disableAntliasing(disabledAntiAliasing.isSelected());
+		}
 		settings.setDefaultTransformators(useDefaultTransformators.isSelected());
 		settings.setDefaultTransformatorsSatellite(useDefaultTransformatorsSatellite.isSelected());
 
@@ -440,7 +442,9 @@ public class GraphSettingsDialog {
 		settings.setEdgeFont(edgeFontOld);
 		useDefaultTransformators.setSelected(settings.isDefaultTransformators());
 		useDefaultTransformatorsSatellite.setSelected(settings.isDefaultTransformatorsSatellite());
-		con.getPathway(w.getCurrentPathway()).getGraph().disableAntliasing(settings.isDisabledAntiAliasing());
+		if (con.containsPathway()) {
+			con.getPathway(w.getCurrentPathway()).getGraph().disableAntliasing(settings.isDisabledAntiAliasing());
+		}
 		return true;
 	}
 
