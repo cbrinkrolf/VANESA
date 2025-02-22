@@ -25,7 +25,6 @@ package net.infonode.gui;
 import net.infonode.gui.icon.button.ArrowIcon;
 import net.infonode.gui.icon.button.BorderIcon;
 import net.infonode.gui.layout.DirectionLayout;
-import net.infonode.gui.panel.BaseContainer;
 import net.infonode.tabbedpanel.TabbedUIDefaults;
 import net.infonode.util.Direction;
 
@@ -33,14 +32,14 @@ import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class ScrollButtonBox extends BaseContainer {
+public class ScrollButtonBox extends JPanel {
 	private boolean button1Enabled;
 	private boolean button2Enabled;
 
 	private ArrayList<ScrollButtonBoxListener> listeners;
 
 	public ScrollButtonBox() {
-		super(false, new DirectionLayout(Direction.RIGHT));
+		super(new DirectionLayout(Direction.RIGHT));
 
 		addMouseWheelListener(e -> {
 			if (e.getWheelRotation() < 0)
@@ -89,14 +88,12 @@ public class ScrollButtonBox extends BaseContainer {
 	public void addListener(ScrollButtonBoxListener listener) {
 		if (listeners == null)
 			listeners = new ArrayList<>(2);
-
 		listeners.add(listener);
 	}
 
 	private void fireButton1() {
 		if (listeners != null) {
 			Object[] l = listeners.toArray();
-
 			for (int i = 0; i < l.length; i++)
 				((ScrollButtonBoxListener) l[i]).scrollButton1();
 		}
@@ -105,7 +102,6 @@ public class ScrollButtonBox extends BaseContainer {
 	private void fireButton2() {
 		if (listeners != null) {
 			Object[] l = listeners.toArray();
-
 			for (int i = 0; i < l.length; i++)
 				((ScrollButtonBoxListener) l[i]).scrollButton2();
 		}

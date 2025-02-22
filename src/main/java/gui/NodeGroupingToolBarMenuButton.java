@@ -99,7 +99,7 @@ public class NodeGroupingToolBarMenuButton extends ToolBarMenuButton {
 			for (BiologicalNodeAbstract node : pickedState.getPicked()) {
 				node.flat();
 				pathway.updateMyGraph();
-				MainWindow.getInstance().removeTab(false, node.getTab().getTitleTab(), node);
+				MainWindow.getInstance().removeTab(false, node.getTab(), node);
 			}
 			pathway.getGraph().getVisualizationViewer().repaint();
 			pickedState.clear();
@@ -122,7 +122,7 @@ public class NodeGroupingToolBarMenuButton extends ToolBarMenuButton {
 				}
 				String newPathwayName = con.addPathway(node.getLabel(), node);
 				Pathway pw = con.getPathway(newPathwayName);
-				w.addTab(pw.getTab().getTitleTab());
+				w.addTab(pw.getTab());
 				w.setCursor(Cursor.DEFAULT_CURSOR);
 				GraphInstance.getPathway().setIsPetriNet(node.isPetriNet());
 				w.getBar().updateVisibility();

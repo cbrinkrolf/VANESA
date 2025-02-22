@@ -30,7 +30,7 @@ public class ComponentUtil {
 	private ComponentUtil() {
 	}
 
-	public static final int getComponentIndex(Component component) {
+	public static int getComponentIndex(Component component) {
 		if (component != null && component.getParent() != null) {
 			Container c = component.getParent();
 			for (int i = 0; i < c.getComponentCount(); i++) {

@@ -7,8 +7,6 @@ import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -25,6 +23,7 @@ import javax.swing.*;
 
 import io.OpenDialog;
 import io.SuffixAwareFilter;
+import net.miginfocom.swing.MigLayout;
 import org.apache.commons.io.FilenameUtils;
 import org.jdesktop.jxlayer.JXLayer;
 import org.jdesktop.jxlayer.plaf.effect.BufferedImageOpEffect;
@@ -62,7 +61,6 @@ public class MainWindow implements ApplicationListener {
 	private String loadedYaml = null;
 
 	private final LockableUI blurUI = new LockableUI(new BufferedImageOpEffect(new BlurFilter()));
-	private final JSplitPane splitPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
 	private final GraphContainer con = GraphContainer.getInstance();
 	private int addedTabs = 0;
@@ -76,26 +74,10 @@ public class MainWindow implements ApplicationListener {
 
 	private MainWindow() {
 		JFrame.setDefaultLookAndFeelDecorated(true);
-		// try {
-		// SubstanceBusinessBlueSteelLookAndFeel lf = new
-		// SubstanceBusinessBlueSteelLookAndFeel();
-		// lf.setSkin("");
-		// UIManager.setLookAndFeel(new SubstanceBusinessBlueSteelLookAndFeel());
-		// } catch (Exception e) {
-		// }
-		// SwingUtilities.invokeLater(new Runnable()
-		// {
-		// public void run() {
-		// SwingUtilities.updateComponentTreeUI();
-		// }
-		// });
-		// SwingUtilities.updateComponentTreeUI(this);
-
 		String title = "VANESA 2.0 - Visualization and Analysis of Networks in Systems Biology Applications";
 		if (SettingsManager.getInstance().isDeveloperMode()) {
 			title += " (developer mode)";
 		}
-
 		frame.setTitle(title);
 		frame.setVisible(false);
 
@@ -144,54 +126,17 @@ public class MainWindow implements ApplicationListener {
 		bar = new ToolBar();
 		// create menu
 		frame.setJMenuBar(myMenu.returnMenu());
-		// toolbar with the buttons on the right
 		root = (JComponent) frame.getContentPane();
-		// getContentPane().add(new ToolBar(false).getToolBar(),
-		// BorderLayout.EAST);
-		root.add(bar.getToolBar(), BorderLayout.NORTH);
-		// main graph view in the middle
-		// getContentPane().add(getRootWindow(), BorderLayout.CENTER);
-		// root.add(getRootWindow(), BorderLayout.CENTER);
-
-		// option panels on the left
+		root.setLayout(new MigLayout("ins 0", "[][grow]", "[][][grow]"));
+		final JSeparator topSeparator = new JSeparator();
+		topSeparator.setBackground(Color.BLACK);
+		root.add(topSeparator, "height 2:2:2, span 2, growx, wrap");
+		root.add(bar.getToolBar(), "span 2, growx, wrap");
 		optionPanel = new OptionPanel();
-		final ComponentAdapter optionPanelResizeListener = new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				final int lastFullWidth = optionPanel.getLastFullWidth();
-				final int fullWidth = optionPanel.getFullWidth();
-				if (lastFullWidth != -1) {
-					if (lastFullWidth == splitPanel.getDividerLocation()) {
-						splitPanel.setDividerLocation(fullWidth);
-					}
-				}
-				limitSplitDivider();
-			}
-		};
-		optionPanel.getContentPanel().addComponentListener(optionPanelResizeListener);
-		optionPanel.getPanel().addComponentListener(optionPanelResizeListener);
-		optionPanel.getPanel().getVerticalScrollBar().addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentHidden(ComponentEvent e) {
-				if (!optionPanel.getPanel().getVerticalScrollBar().isShowing()) {
-					limitSplitDivider();
-				}
-			}
-		});
-		splitPanel.add(optionPanel.getPanel());
-
+		root.add(optionPanel.getPanel(), "width 417:417:417, growy");
 		rootWindow = new TabbedPanel();
 		rootWindow.addTabListener(new GraphTabListener(this));
-		splitPanel.add(rootWindow);
-
-		splitPanel.setOneTouchExpandable(false);
-		splitPanel.addPropertyChangeListener(evt -> {
-			if (evt.getPropertyName().equals(JSplitPane.LAST_DIVIDER_LOCATION_PROPERTY)
-					|| evt.getPropertyName().equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
-				limitSplitDivider();
-			}
-		});
-		root.add(splitPanel, BorderLayout.CENTER);
+		root.add(rootWindow, "grow");
 		JXLayer<JComponent> layer = new JXLayer<>(root);
 		layer.setUI(blurUI);
 		frame.setContentPane(layer);
@@ -202,13 +147,6 @@ public class MainWindow implements ApplicationListener {
 		} catch (FileNotFoundException e1) {
 			System.out.println("askForYaml Method Error");
 			e1.printStackTrace();
-		}
-	}
-
-	private void limitSplitDivider() {
-		final int dividerMaxLocation = optionPanel.getFullWidth();
-		if (splitPanel.getDividerLocation() > dividerMaxLocation) {
-			splitPanel.setDividerLocation(dividerMaxLocation);
 		}
 	}
 
@@ -414,17 +352,17 @@ public class MainWindow implements ApplicationListener {
 		Set<Pathway> subPathways = new HashSet<>(con.getAllPathways());
 		for (Pathway subPathway : subPathways) {
 			if (subPathway.getRootPathway() == pw) {
-				removeTab(false, subPathway.getTab().getTitleTab(), subPathway);
+				removeTab(false, subPathway.getTab(), subPathway);
 			}
 		}
 		if (isLastTabOfView) {
 			bar.updateVisibility();
 		}
-		limitSplitDivider();
 	}
 
 	public void setSelectedTab(final TitledTab tab) {
 		rootWindow.setSelectedTab(tab);
+		bar.updateVisibility();
 	}
 
 	public Tab getSelectedTab() {
@@ -478,13 +416,6 @@ public class MainWindow implements ApplicationListener {
 
 	public void setCursor(int cursor) {
 		frame.setCursor(new Cursor(cursor));
-	}
-
-	public void setFullScreen() {
-		if (splitPanel.getDividerLocation() > 0)
-			splitPanel.setDividerLocation(0);
-		else
-			splitPanel.setDividerLocation(splitPanel.getLastDividerLocation());
 	}
 
 	public void updateElementTree() {

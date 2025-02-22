@@ -27,7 +27,6 @@ import net.infonode.gui.border.HighlightBorder;
 import net.infonode.gui.draggable.*;
 import net.infonode.gui.icon.button.DropDownIcon;
 import net.infonode.gui.layout.DirectionLayout;
-import net.infonode.gui.panel.BaseContainer;
 import net.infonode.tabbedpanel.border.TabAreaLineBorder;
 import net.infonode.util.Direction;
 
@@ -103,9 +102,6 @@ import java.util.ArrayList;
  * @see TabListener
  */
 public class TabbedPanel extends JPanel {
-	private TabDropDownList dropDownList;
-
-	private JComponent contentPanel;
 
 	private final DraggableComponentBox draggableComponentBox = new DraggableComponentBox();
 	private ArrayList<TabListener> listeners;
@@ -114,24 +110,6 @@ public class TabbedPanel extends JPanel {
 	private boolean settingHighlighted;
 	private boolean mouseEntered = false;
 	private boolean removingSelected = false;
-
-	private class HoverablePanel extends BaseContainer {
-		public HoverablePanel(LayoutManager l) {
-			super(l);
-		}
-
-		protected void processMouseEvent(MouseEvent event) {
-			super.processMouseEvent(event);
-			doProcessMouseEvent(event);
-		}
-
-		protected void processMouseMotionEvent(MouseEvent event) {
-			super.processMouseMotionEvent(event);
-			doProcessMouseMotionEvent(event);
-		}
-	}
-
-	private final ShadowPanel componentsPanel = new ShadowPanel();
 
 	private ScrollButtonBox scrollButtonBox;
 
@@ -151,7 +129,7 @@ public class TabbedPanel extends JPanel {
 		}
 	};
 
-	private final BaseContainer tabAreaContainer = new HoverablePanel(tabAreaLayoutManager) {
+	private final JPanel tabAreaContainer = new JPanel(tabAreaLayoutManager) {
 		public Dimension getPreferredSize() {
 			Dimension d = super.getPreferredSize();
 
@@ -165,7 +143,7 @@ public class TabbedPanel extends JPanel {
 		}
 	};
 
-	private final BaseContainer tabAreaComponentsPanel = new HoverablePanel(new DirectionLayout()) {
+	private final JPanel tabAreaComponentsPanel = new JPanel(new DirectionLayout()) {
 		public Dimension getMaximumSize() {
 			return getPreferredSize();
 		}
@@ -263,36 +241,6 @@ public class TabbedPanel extends JPanel {
 		}
 	};
 
-	private void updateAllDefaultValues() {
-		// General
-		updateAllTabsProperties();
-		draggableComponentBox.setScrollEnabled(true);
-		updateTabDropDownList();
-
-		updatePropertiesForTabAreaLayoutConstraints();
-		componentsPanel.add(tabAreaContainer, BorderLayout.SOUTH);
-		componentsPanel.revalidate();
-
-		draggableComponentBox.setComponentSpacing(-1);
-		draggableComponentBox.setDepthSortOrder(true);
-
-		componentsPanel.setBorder(null);
-
-		// Tab area
-		tabAreaContainer.setBorder(null);
-		tabAreaContainer.setOverridedBackground(TabbedUIDefaults.getContentAreaBackground());
-		tabAreaContainer.setForcedOpaque(false);
-
-		// Tab area components area
-		updatePropertiesForTabAreaLayoutConstraints();
-		tabAreaComponentsPanel.setBorder(new CompoundBorder(new TabAreaLineBorder(TabbedUIDefaults.getDarkShadow()),
-				new HighlightBorder(TabbedUIDefaults.getHighlight())));
-		tabAreaComponentsPanel.setOverridedBackground(TabbedUIDefaults.getContentAreaBackground());
-		tabAreaComponentsPanel.setForcedOpaque(true);
-
-		updatePanelOpaque();
-	}
-
 	private void updatePropertiesForTabAreaLayoutConstraints() {
 		setTabAreaLayoutConstraints(draggableComponentBox, 0, GridBagConstraints.HORIZONTAL, 1, 1);
 		setTabAreaLayoutConstraints(tabAreaComponentsPanel, 1, GridBagConstraints.NONE, 0, 0);
@@ -311,61 +259,41 @@ public class TabbedPanel extends JPanel {
 	 * @see TabbedPanelContentPanel
 	 */
 	public TabbedPanel() {
-		initialize(new TabbedPanelContentPanel(this, new TabContentPanel(this)));
-	}
+		setLayout(new BorderLayout());
+		setOpaque(false);
+		tabAreaComponentsPanel.setOpaque(true);
+		draggableComponentBox.setOuterParentArea(tabAreaContainer);
+		tabAreaContainer.add(tabAreaComponentsPanel);
+		tabAreaContainer.add(draggableComponentBox);
+		final JPanel contentPanel = new TabbedPanelContentPanel(this, new TabContentPanel(this));
+		draggableComponentBox.addListener(draggableComponentBoxListener);
+		final ShadowPanel componentsPanel = new ShadowPanel();
+		componentsPanel.setBorder(null);
+		componentsPanel.add(contentPanel, BorderLayout.CENTER);
+		add(componentsPanel, BorderLayout.CENTER);
+		// General
+		draggableComponentBox.setScrollEnabled(true);
+		JButton dropDownButton = ButtonFactory.createFlatHighlightButton(null, null, 0, null);
+		dropDownButton.setIcon(new DropDownIcon(Color.black, TabbedUIDefaults.getButtonIconSize()));
+		dropDownButton.setDisabledIcon(null);
+		final TabDropDownList dropDownList = new TabDropDownList(this, dropDownButton);
+		tabAreaComponentsPanel.add(dropDownList, scrollButtonBox == null ? 0 : 1);
+		tabAreaComponentsPanel.revalidate();
 
-	/**
-	 * <p>
-	 * Constructs a TabbedPanel with a custom component as content area component or without any content area component
-	 * and with default TabbedPanelProperties. The properties for the content area will not be used.
-	 * </p>
-	 *
-	 * <p>
-	 * If no content area component is used, then the tabbed panel will act as a bar and the tabs will be laid out in a
-	 * line.
-	 * </p>
-	 *
-	 * <p>
-	 * <strong>Note: </strong> A custom content area component is by itself
-	 * responsible for showing a tab's content component when a tab is selected, for eaxmple by listening to events from
-	 * the tabbed panel. The component will be laid out just as the default content area component so that shadows etc.
-	 * can be used.
-	 * </p>
-	 *
-	 * @param contentAreaComponent component to be used as content area component or null for no content area component
-	 */
-	public TabbedPanel(TabContentPanel contentAreaComponent) {
-		this(contentAreaComponent, false);
-	}
+		updatePropertiesForTabAreaLayoutConstraints();
+		componentsPanel.add(tabAreaContainer, BorderLayout.SOUTH);
+		componentsPanel.revalidate();
 
-	/**
-	 * <p>
-	 * Constructs a TabbedPanel with a custom component as content area component or without any content area component
-	 * and with default TabbedPanelProperties. It's possible to choose if the properties for the content area should be
-	 * used or not.
-	 * </p>
-	 *
-	 * <p>
-	 * If no content area component is used, then the tabbed panel will act as a bar and the tabs will be laid out in a
-	 * line.
-	 * </p>
-	 *
-	 * <p>
-	 * <strong>Note: </strong> A custom content area component is by itself
-	 * responsible for showing a tab's content component when a tab is selected, for eaxmple by listening to events from
-	 * the tabbed panel. The component will be laid out just as the default content area component so that shadows etc.
-	 * can be used.
-	 * </p>
-	 *
-	 * @param contentAreaComponent component to be used as content area component or null for no content area component
-	 * @param useProperties        true if the properties for the content area should be used, otherwise false
-	 * @since ITP 1.4.0
-	 */
-	public TabbedPanel(TabContentPanel contentAreaComponent, boolean useProperties) {
-		if (useProperties)
-			initialize(new TabbedPanelContentPanel(this, contentAreaComponent));
-		else
-			initialize(contentAreaComponent);
+		draggableComponentBox.setComponentSpacing(-1);
+		draggableComponentBox.setDepthSortOrder(true);
+		// Tab area
+		tabAreaContainer.setBorder(null);
+		tabAreaContainer.setBackground(TabbedUIDefaults.getContentAreaBackground());
+		// Tab area components area
+		updatePropertiesForTabAreaLayoutConstraints();
+		tabAreaComponentsPanel.setBorder(new CompoundBorder(new TabAreaLineBorder(TabbedUIDefaults.getDarkShadow()),
+				new HighlightBorder(TabbedUIDefaults.getHighlight())));
+		tabAreaComponentsPanel.setBackground(TabbedUIDefaults.getContentAreaBackground());
 	}
 
 	/**
@@ -384,7 +312,6 @@ public class TabbedPanel extends JPanel {
 		if (tab != null && !draggableComponentBox.containsDraggableComponent(tab.getDraggableComponent())) {
 			tab.setTabbedPanel(this);
 			draggableComponentBox.insertDraggableComponent(tab.getDraggableComponent(), -1);
-			updateTabProperties(tab);
 			checkIfOnlyOneTab(true);
 		}
 	}
@@ -549,64 +476,8 @@ public class TabbedPanel extends JPanel {
 		}
 	}
 
-	/**
-	 * Checks if this tabbed panel has a content area
-	 *
-	 * @return true if content area exist, otherwise false
-	 * @since ITP 1.3.0
-	 */
-	public boolean hasContentArea() {
-		return contentPanel != null;
-	}
-
 	DraggableComponentBox getDraggableComponentBox() {
 		return draggableComponentBox;
-	}
-
-	private void initialize(JComponent contentPanel) {
-		setLayout(new BorderLayout());
-
-		setOpaque(false);
-
-		draggableComponentBox.setOuterParentArea(tabAreaContainer);
-		tabAreaContainer.add(tabAreaComponentsPanel);
-		tabAreaContainer.add(draggableComponentBox);
-
-		this.contentPanel = contentPanel;
-		draggableComponentBox.addListener(draggableComponentBoxListener);
-
-		if (contentPanel != null) {
-			componentsPanel.add(contentPanel, BorderLayout.CENTER);
-		}
-
-		add(componentsPanel, BorderLayout.CENTER);
-
-		updateAllDefaultValues();
-	}
-
-	private void updateTabDropDownList() {
-		if (dropDownList != null) {
-			tabAreaComponentsPanel.remove(dropDownList);
-			dropDownList.dispose();
-			dropDownList = null;
-		}
-
-		JButton dropDownButton = ButtonFactory.createFlatHighlightButton(null, null, 0, null);
-		dropDownButton.setIcon(new DropDownIcon(Color.black, TabbedUIDefaults.getButtonIconSize()));
-		dropDownButton.setDisabledIcon(null);
-		dropDownList = new TabDropDownList(this, dropDownButton);
-		tabAreaComponentsPanel.add(dropDownList, scrollButtonBox == null ? 0 : 1);
-		tabAreaComponentsPanel.revalidate();
-	}
-
-	private void updateAllTabsProperties() {
-		Component[] components = draggableComponentBox.getBoxComponents();
-		for (int i = 0; i < components.length; i++)
-			updateTabProperties((Tab) components[i]);
-	}
-
-	private void updateTabProperties(Tab tab) {
-		tab.getDraggableComponent().setReorderEnabled(true);
 	}
 
 	private void setTabAreaLayoutConstraints(JComponent c, int gridx, int fill, double weightx, double weighty) {
@@ -631,7 +502,6 @@ public class TabbedPanel extends JPanel {
 		} else if (inc && getTabCount() == 2) {
 			draggableComponentBox.setScrollEnabled(true);
 			updateScrollButtons();
-			updateTabDropDownList();
 		}
 	}
 
@@ -790,12 +660,7 @@ public class TabbedPanel extends JPanel {
 		processMouseMotionEvent(SwingUtilities.convertMouseEvent((Component) event.getSource(), event, this));
 	}
 
-	private void updatePanelOpaque() {
-		componentsPanel.setForcedOpaque(false);
-		setOpaque(false);
-	}
-
-	private class ShadowPanel extends HoverablePanel {
+	private static class ShadowPanel extends JPanel {
 		ShadowPanel() {
 			super(new BorderLayout());
 			setCursor(null);

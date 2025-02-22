@@ -60,8 +60,8 @@ public class OptionPanel {
 	}
 
 	public OptionPanel() {
-		taskPaneContainer.setLayout(new MigLayout("insets 0, wrap 1"));
-		taskPaneContainer.setBorder(BorderFactory.createEmptyBorder(6, 0, 6, 0));
+		taskPaneContainer.setLayout(new MigLayout("insets 0, wrap, fill"));
+		taskPaneContainer.setBorder(BorderFactory.createEmptyBorder(0, 0, 6, 0));
 
 		databaseSearch = new JXTaskPane("Database Search",
 				ImagePath.getInstance().getImageIcon("database-search-outline.png", 16, 16));
@@ -149,11 +149,12 @@ public class OptionPanel {
 		}
 
 		taskPaneContainer.setScrollableTracksViewportHeight(true);
-		panel = new JPanel(new MigLayout("insets 0"));
-		panel.add(taskPaneContainer, BorderLayout.CENTER);
+		panel = new JPanel(new MigLayout("insets 0, fill"));
+		panel.add(taskPaneContainer, "growx, top");
 		taskPaneContainer.setDoubleBuffered(true);
 
 		scrollPane = new JScrollPane(panel);
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 	}
 

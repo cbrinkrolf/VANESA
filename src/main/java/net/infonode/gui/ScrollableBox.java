@@ -24,7 +24,6 @@
 package net.infonode.gui;
 
 import net.infonode.gui.layout.LayoutUtil;
-import net.infonode.gui.panel.BaseContainer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,7 +33,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 
-public class ScrollableBox extends BaseContainer {
+public class ScrollableBox extends JPanel {
 	private final LayoutManager l = new LayoutManager() {
 		public void addLayoutComponent(String name, Component comp) {
 		}
@@ -80,7 +79,7 @@ public class ScrollableBox extends BaseContainer {
 	private final ArrayList<ScrollableBoxListener> listeners = new ArrayList<>(1);
 
 	public ScrollableBox(final JComponent scrollingContainer) {
-		super(false, new BorderLayout());
+		super(new BorderLayout());
 		setLayout(l);
 		add(scrollingContainer);
 

@@ -25,7 +25,6 @@ package net.infonode.tabbedpanel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -34,9 +33,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.PanelUI;
 
 import net.infonode.gui.InsetsUtil;
-import net.infonode.gui.border.FocusBorder;
 import net.infonode.gui.layout.StackableLayout;
-import net.infonode.gui.panel.BaseContainer;
 import net.infonode.tabbedpanel.border.TabAreaLineBorder;
 import net.infonode.tabbedpanel.border.TabHighlightBorder;
 
@@ -64,41 +61,21 @@ public class TitledTab extends Tab {
 	private static final PanelUI UI = new PanelUI() {
 	};
 
-	private class StatePanel extends BaseContainer {
-		private final BaseContainer panel = new BaseContainer();
-		private final BaseContainer titleComponentPanel = new BaseContainer(false, new BorderLayout());
-		private final JLabel label = new JLabel() {
-			public Dimension getPreferredSize() {
-				Dimension d = super.getPreferredSize();
-				String text = getText();
-				Icon tmpIcon = getIcon();
-				if (text == null || tmpIcon == null) {
-					setText(" ");
-					// TODO MF: setIcon(icon);
-					d = new Dimension(d.width, super.getPreferredSize().height);
-
-					setText(text);
-					setIcon(tmpIcon);
-				}
-				return d;
-			}
-		};
+	private class StatePanel extends JPanel {
+		private final JPanel panel = new JPanel(new BorderLayout());
+		private final JPanel titleComponentPanel = new JPanel(new BorderLayout());
+		private final JLabel label = new JLabel();
 		private JComponent titleComponent;
 
-		public StatePanel(Border focusBorder) {
-			super(false, new BorderLayout());
-
-			label.setBorder(focusBorder);
-			label.setMinimumSize(new Dimension(0, 0));
+		public StatePanel() {
+			super(new BorderLayout());
+			panel.setOpaque(false);
 			label.setIconTextGap(UIManager.getInt("TabbedPane.textIconGap"));
 			label.setHorizontalTextPosition(JLabel.RIGHT);
 			label.setHorizontalAlignment(JLabel.LEFT);
 			label.setVerticalAlignment(JLabel.CENTER);
-
 			panel.add(label, BorderLayout.CENTER);
 			add(panel, BorderLayout.CENTER);
-
-			panel.setForcedOpaque(true);
 		}
 
 		public void setTitleComponent(JComponent titleComponent) {
@@ -201,8 +178,7 @@ public class TitledTab extends Tab {
 		}
 	}
 
-	private final BaseContainer eventPanel = new BaseContainer(false, new BorderLayout()) {
-
+	private final JPanel eventPanel = new JPanel(new BorderLayout()) {
 		public boolean contains(int x, int y) {
 			return getComponentCount() > 0 && getComponent(0).contains(x, y);
 		}
@@ -210,7 +186,6 @@ public class TitledTab extends Tab {
 		public boolean inside(int x, int y) {
 			return getComponentCount() > 0 && getComponent(0).inside(x, y);
 		}
-
 	};
 
 	public boolean contains(int x, int y) {
@@ -270,24 +245,22 @@ public class TitledTab extends Tab {
 		Border innerHighlightBorder = getInnerBorder(highlightedBorder, normalInsets, 2 - normalLowered, maxInsets);
 		Border innerDisabledBorder = getInnerBorder(normalBorder2, normalInsets, -normalLowered, maxInsets);
 
-		FocusBorder focusBorder = new FocusBorder(this);
-		normalStatePanel = new StatePanel(focusBorder);
+		normalStatePanel = new StatePanel();
 		normalStatePanel.setForegroundColor(TabbedUIDefaults.getNormalStateForeground());
 		normalStatePanel.setBackgroundColor(TabbedUIDefaults.getNormalStateBackground());
 		normalStatePanel.setBorders(normalBorder, innerNormalBorder);
-		// TODO MF: normalStatePanel.setInsets(TabbedUIDefaults.getTabInsets());
 
-		highlightedStatePanel = new StatePanel(focusBorder);
+		highlightedStatePanel = new StatePanel();
 		highlightedStatePanel.setForegroundColor(TabbedUIDefaults.getNormalStateForeground());
 		highlightedStatePanel.setBackgroundColor(TabbedUIDefaults.getHighlightedStateBackground());
 		highlightedStatePanel.setBorders(null, innerHighlightBorder);
 
-		disabledStatePanel = new StatePanel(focusBorder);
+		disabledStatePanel = new StatePanel();
 		disabledStatePanel.setForegroundColor(TabbedUIDefaults.getDisabledForeground());
 		disabledStatePanel.setBackgroundColor(TabbedUIDefaults.getDisabledBackground());
 		disabledStatePanel.setBorders(normalBorder, innerDisabledBorder);
 
-		layout = new StackableLayout(this) {
+		layout = new StackableLayout(this, true) {
 			public void layoutContainer(Container parent) {
 				super.layoutContainer(parent);
 				StatePanel visibleStatePanel = (StatePanel) getVisibleComponent();
@@ -631,9 +604,5 @@ public class TitledTab extends Tab {
 
 	public void updateUI() {
 		setUI(UI);
-	}
-
-	public void setOpaque(boolean opaque) {
-		// Ignore
 	}
 }

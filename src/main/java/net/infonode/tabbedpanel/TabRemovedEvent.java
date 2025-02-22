@@ -32,7 +32,7 @@ package net.infonode.tabbedpanel;
  * @see Tab
  */
 public class TabRemovedEvent extends TabEvent {
-	private TabbedPanel tabbedPanel;
+	private final TabbedPanel tabbedPanel;
 
 	/**
 	 * Constructs a TabDragEvent

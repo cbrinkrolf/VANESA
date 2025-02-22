@@ -25,7 +25,6 @@ package net.infonode.tabbedpanel;
 import net.infonode.gui.layout.StackableLayout;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * A TabContentPanel is a container for tabs' content components. It listens to a tabbed panel and manages the tabs'
@@ -37,38 +36,31 @@ import java.awt.*;
  * @see Tab
  */
 public class TabContentPanel extends JPanel {
-	private final StackableLayout layout = new StackableLayout(this);
-
 	/**
 	 * Constructs a TabContentPanel
 	 *
 	 * @param tabbedPanel the TabbedPanel for whom this component is the tabs' content component container
 	 */
 	public TabContentPanel(TabbedPanel tabbedPanel) {
+		final StackableLayout layout = new StackableLayout(this, false);
 		setLayout(layout);
 		setOpaque(false);
-		layout.setAutoShowFirstComponent(false);
-		if (tabbedPanel != null) {
-			tabbedPanel.addTabListener(new TabAdapter() {
-				public void tabSelected(TabStateChangedEvent event) {
-					layout.showComponent(event.getTab() == null ? null : event.getTab().getContentComponent());
-				}
-
-				public void tabRemoved(TabRemovedEvent event) {
-					if (event.getTab().getContentComponent() != null)
-						remove(event.getTab().getContentComponent());
-				}
-
-				public void tabAdded(TabEvent event) {
-					if (event.getTab().getContentComponent() != null)
-						add(event.getTab().getContentComponent());
-				}
-			});
-			for (int i = 0; i < tabbedPanel.getTabCount(); i++) {
-				Component c = tabbedPanel.getTabAt(i).getContentComponent();
-				if (c != null)
-					add(tabbedPanel.getTabAt(i).getContentComponent());
+		tabbedPanel.addTabListener(new TabAdapter() {
+			public void tabSelected(TabStateChangedEvent event) {
+				layout.showComponent(event.getTab() == null ? null : event.getTab().getContentComponent());
 			}
-		}
+
+			public void tabRemoved(TabRemovedEvent event) {
+				if (event.getTab().getContentComponent() != null) {
+					remove(event.getTab().getContentComponent());
+				}
+			}
+
+			public void tabAdded(TabEvent event) {
+				if (event.getTab().getContentComponent() != null) {
+					add(event.getTab().getContentComponent());
+				}
+			}
+		});
 	}
 }

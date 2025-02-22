@@ -28,15 +28,13 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import net.infonode.gui.*;
 import net.infonode.gui.layout.DirectionLayout;
-import net.infonode.gui.panel.BaseContainer;
 import net.infonode.util.Direction;
 
-public class DraggableComponentBox extends BaseContainer {
+public class DraggableComponentBox extends JPanel {
 	private final boolean componentBoxEnabled = true;
 
 	private final JComponent componentBox;
@@ -85,7 +83,7 @@ public class DraggableComponentBox extends BaseContainer {
 	};
 
 	public DraggableComponentBox() {
-		super(false, new BorderLayout());
+		super(new BorderLayout());
 		// Fix minimum size when flipping direction
 		final DirectionLayout layout = new DirectionLayout(Direction.RIGHT) {
 			public Dimension minimumLayoutSize(Container parent) {
@@ -109,7 +107,7 @@ public class DraggableComponentBox extends BaseContainer {
 
 		layout.setLayoutOrderList(layoutOrderList);
 
-		componentBox = new BaseContainer(false, layout) {
+		componentBox = new JPanel(layout) {
 			public boolean isOptimizedDrawingEnabled() {
 				return getComponentSpacing() >= 0;
 			}

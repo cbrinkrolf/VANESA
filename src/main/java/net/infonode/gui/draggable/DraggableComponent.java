@@ -42,7 +42,6 @@ public class DraggableComponent {
 	private final JComponent component;
 	private JComponent[] eventComponents;
 
-	private boolean reorderEnabled = true;
 	private boolean enabled = true;
 
 	private boolean mousePressed;
@@ -156,10 +155,6 @@ public class DraggableComponent {
 		}
 	}
 
-	public void setReorderEnabled(boolean reorderEnabled) {
-		this.reorderEnabled = reorderEnabled;
-	}
-
 	public void setLayoutOrderList(ArrayList<Component> layoutOrderList) {
 		this.layoutOrderList = layoutOrderList;
 	}
@@ -210,11 +205,7 @@ public class DraggableComponent {
 		if (enabled && mousePressed) {
 			Point p = SwingUtilities.convertPoint((JComponent) e.getSource(), e.getPoint(), component);
 			if (dragStarted || !component.contains(p)) {
-				if (reorderEnabled)
-					doDrag(p);
-				else
-					dragStarted = true;
-
+				doDrag(p);
 				fireDraggedEvent(EventUtil.convert(e, component, p));
 			}
 		}
@@ -398,7 +389,7 @@ public class DraggableComponent {
 	}
 
 	private void restoreComponentOrder() {
-		if (reorderEnabled && dragIndex != -1 && dragFromIndex != -1 && dragIndex != dragFromIndex) {
+		if (dragIndex != -1 && dragFromIndex != -1 && dragIndex != dragFromIndex) {
 			Container parent = component.getParent();
 			Component comp = getComponent(parent, dragIndex);
 			removeComponent(parent, comp, -1);

@@ -27,16 +27,13 @@ import net.infonode.gui.ComponentUtil;
 import java.awt.*;
 
 public class StackableLayout implements LayoutManager2 {
-	private Container container;
+	private final Container container;
 	private Component component;
-	private boolean autoShowFirstComponent = true;
+	private final boolean autoShowFirstComponent;
 	private boolean useSelectedComponentSize;
 
-	public StackableLayout(Container container) {
+	public StackableLayout(Container container, boolean autoShowFirstComponent) {
 		this.container = container;
-	}
-
-	public void setAutoShowFirstComponent(boolean autoShowFirstComponent) {
 		this.autoShowFirstComponent = autoShowFirstComponent;
 	}
 
@@ -64,7 +61,6 @@ public class StackableLayout implements LayoutManager2 {
 
 	public void addLayoutComponent(Component comp, Object constraints) {
 		comp.setVisible(autoShowFirstComponent && comp.getParent().getComponentCount() == 1);
-
 		if (comp.isVisible()) {
 			component = comp;
 		}
@@ -75,9 +71,9 @@ public class StackableLayout implements LayoutManager2 {
 	}
 
 	public void removeLayoutComponent(Component comp) {
-		if (comp == component)
+		if (comp == component) {
 			component = null;
-
+		}
 		comp.setVisible(true);
 	}
 
@@ -88,16 +84,14 @@ public class StackableLayout implements LayoutManager2 {
 	}
 
 	public Dimension minimumLayoutSize(Container parent) {
-		return LayoutUtil.add(LayoutUtil.getMaxMinimumSize(parent.getComponents()), parent.getInsets());
+		return new Dimension(0, 0);
 	}
 
 	public void layoutContainer(Container parent) {
-		Component[] c = parent.getComponents();
 		Insets parentInsets = parent.getInsets();
 		Dimension size = LayoutUtil.getInteriorSize(parent);
-
-		for (int i = 0; i < c.length; i++) {
-			c[i].setBounds(parentInsets.left, parentInsets.top, size.width, size.height);
+		for (Component value : parent.getComponents()) {
+			value.setBounds(parentInsets.left, parentInsets.top, size.width, size.height);
 		}
 	}
 
@@ -106,24 +100,21 @@ public class StackableLayout implements LayoutManager2 {
 	}
 
 	public void showComponent(Component c) {
-		final Component oldComponent = component;
-
-		if (oldComponent == c)
+		if (component == c) {
 			return;
-
+		}
+		final Component oldComponent = component;
 		component = c;
-
 		boolean hasFocus = oldComponent != null && LayoutUtil.isDescendingFrom(
 				KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner(), oldComponent);
-
-		if (oldComponent != null)
+		if (oldComponent != null) {
 			oldComponent.setVisible(false);
-
+		}
 		if (component != null) {
 			component.setVisible(true);
-
-			if (hasFocus)
+			if (hasFocus) {
 				ComponentUtil.smartRequestFocus(component);
+			}
 		}
 	}
 

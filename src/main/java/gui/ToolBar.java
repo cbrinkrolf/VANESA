@@ -24,14 +24,24 @@ public class ToolBar {
 	private final JToolBar bar = new JToolBar();
 	private final JButton merge;
 	private final JButton edit;
-	private final JPanel petriNetControls;
-	private final JPanel editControls;
-	private final JPanel viewPortControls;
-	private final JPanel featureControls;
 	private final NodeAdjustmentToolBarMenuButton nodeAdjustmentMenuButton;
 	private final NodeGroupingToolBarMenuButton nodeGroupingMenuButton;
 	private final AnnotationToolBarMenuButton annotationToolBarMenuButton;
 	private final JButton trash;
+	private final JButton center;
+	private final JButton move;
+	private final JButton zoomIn;
+	private final JButton zoomOut;
+	private final JButton pick;
+	private final JButton hierarchy;
+	private final JButton discretePlace;
+	private final JButton continuousPlace;
+	private final JButton discreteTransition;
+	private final JButton continuousTransition;
+	private final JButton stochasticTransition;
+	private final JButton info;
+	private final JButton infoExtended;
+	private final JButton parallelView;
 
 	private Pathway lastPathway;
 	private ItemListener lastPathwayItemListener;
@@ -39,37 +49,33 @@ public class ToolBar {
 	public ToolBar() {
 		bar.setOrientation(SwingConstants.HORIZONTAL);
 		bar.setFloatable(false);
-		bar.setLayout(new MigLayout("insets 0"));
+		bar.setLayout(new MigLayout("ins 0"));
 
 		final JButton newBiologicalNetwork = ToolBarButton.create("newBiologicalNetwork.svg",
 				"Create New Biological Network", this::onNewBiologicalNetwork);
 		final JButton newPetriNet = ToolBarButton.create("newPetriNetwork.svg", "Create New Petri Net",
 				this::onNewPetriNet);
-		final JButton parallelView = ToolBarButton.create("parallelview.png", "Create ParallelView From Graphs",
+		parallelView = ToolBarButton.create("parallelview.png", "Create ParallelView From Graphs",
 				this::onParallelViewClicked);
-		final JButton pick = ToolBarButton.create("newPick.png", "Pick Element", this::onPickClicked);
-		final JButton hierarchy = ToolBarButton.create("hierarchy.svg", "Hierarchy Mode", this::onHierarchyClicked);
-		final JButton discretePlace = ToolBarButton.create("discretePlace.png", "Discrete Place",
-				this::onDiscretePlaceClicked);
-		final JButton continuousPlace = ToolBarButton.create("continuousPlace.png", "Continuous Place",
+		pick = ToolBarButton.create("newPick.png", "Pick Element", this::onPickClicked);
+		hierarchy = ToolBarButton.create("hierarchy.svg", "Hierarchy Mode", this::onHierarchyClicked);
+		discretePlace = ToolBarButton.create("discretePlace.png", "Discrete Place", this::onDiscretePlaceClicked);
+		continuousPlace = ToolBarButton.create("continuousPlace.png", "Continuous Place",
 				this::onContinuousPlaceClicked);
-		final JButton discreteTransition = ToolBarButton.create("discreteTransition.png", "Discrete Transition",
+		discreteTransition = ToolBarButton.create("discreteTransition.png", "Discrete Transition",
 				this::onDiscreteTransitionClicked);
-		final JButton continuousTransition = ToolBarButton.create("continuousTransition.png", "Continuous Transition",
+		continuousTransition = ToolBarButton.create("continuousTransition.png", "Continuous Transition",
 				this::onContinuousTransitionClicked);
-		final JButton stochasticTransition = ToolBarButton.create("stochasticTransition.png", "Stochastic Transition",
+		stochasticTransition = ToolBarButton.create("stochasticTransition.png", "Stochastic Transition",
 				this::onStochasticTransitionClicked);
-		final JButton center = ToolBarButton.create("centerGraph.png", "Center Graph", this::onCenterClicked);
-		final JButton move = ToolBarButton.create("move.png", "Move Graph", this::onMoveClicked);
-		final JButton zoomIn = ToolBarButton.create("zoomPlus.png", "Zoom In", this::onZoomInClicked);
-		final JButton zoomOut = ToolBarButton.create("zoomMinus.png", "Zoom Out", this::onZoomOutClicked);
+		center = ToolBarButton.create("centerGraph.png", "Center Graph", this::onCenterClicked);
+		move = ToolBarButton.create("move.png", "Move Graph", this::onMoveClicked);
+		zoomIn = ToolBarButton.create("zoomPlus.png", "Zoom In", this::onZoomInClicked);
+		zoomOut = ToolBarButton.create("zoomMinus.png", "Zoom Out", this::onZoomOutClicked);
 		trash = ToolBarButton.create("Trash.png", "Delete Selected Items", this::onDelClicked);
 		// trash.setMnemonic(KeyEvent.VK_DELETE);
-		final JButton info = ToolBarButton.create("InfoToolBarButton.png", "Info", this::onInfoClicked);
-		final JButton infoExtended = ToolBarButton.create("InfoToolBarButtonextended.png", "More Info",
-				this::onInfoExtendedClicked);
-
-		final JButton fullScreen = ToolBarButton.create("newFullScreen.png", "Full Screen", this::onFullScreenClicked);
+		info = ToolBarButton.create("InfoToolBarButton.png", "Info", this::onInfoClicked);
+		infoExtended = ToolBarButton.create("InfoToolBarButtonextended.png", "More Info", this::onInfoExtendedClicked);
 		merge = ToolBarButton.create("compare.png", "Compare / Align Graphs", this::onMergeClicked);
 
 		JButton covGraph = new ToolBarButton("Cov/Reach Graph");
@@ -80,44 +86,9 @@ public class ToolBar {
 		editNodes.setToolTipText("Edit PN-Elements");
 		editNodes.addActionListener(e -> onEditElementsClicked());
 
-		// JButton heatmap = ToolBarButton.create("heatmapGraph.png", "Create Heatgraph",
-		// ToolbarActionCommands.heatmap.value);
-
 		edit = new ToolBarButton(ImagePath.getInstance().getImageIcon("TitleGraph.png"));
 		edit.setToolTipText("Edit Graph");
 		edit.addActionListener(e -> onEditClicked());
-
-		viewPortControls = new ToolBarPanel();
-		viewPortControls.setLayout(new GridLayout(1, 6, 4, 4));
-		viewPortControls.add(fullScreen);
-		viewPortControls.add(zoomIn);
-		viewPortControls.add(zoomOut);
-		viewPortControls.add(center);
-		viewPortControls.add(info);
-		viewPortControls.add(infoExtended);
-
-		editControls = new ToolBarPanel();
-		editControls.setLayout(new GridLayout(1, 6, 4, 4));
-		editControls.add(edit);
-		editControls.add(pick);
-		editControls.add(move);
-		editControls.add(trash);
-		editControls.add(hierarchy);
-
-		petriNetControls = new ToolBarPanel();
-		petriNetControls.setLayout(new GridLayout(1, 6, 4, 4));
-		petriNetControls.add(discretePlace);
-		petriNetControls.add(continuousPlace);
-		petriNetControls.add(discreteTransition);
-		petriNetControls.add(continuousTransition);
-		petriNetControls.add(stochasticTransition);
-
-		featureControls = new ToolBarPanel();
-		featureControls.setLayout(new GridLayout(1, 4, 4, 4));
-		featureControls.add(merge);
-		if (SettingsManager.getInstance().isDeveloperMode()) {
-			featureControls.add(parallelView);
-		}
 
 		nodeAdjustmentMenuButton = new NodeAdjustmentToolBarMenuButton();
 		nodeGroupingMenuButton = new NodeGroupingToolBarMenuButton();
@@ -126,13 +97,28 @@ public class ToolBar {
 		bar.add(newBiologicalNetwork);
 		bar.add(newPetriNet);
 		bar.add(new ToolBarSeparator(), "growy");
-		bar.add(viewPortControls);
+		bar.add(zoomIn);
+		bar.add(zoomOut);
+		bar.add(center);
+		bar.add(info);
+		bar.add(infoExtended);
 		bar.add(new ToolBarSeparator(), "growy");
-		bar.add(editControls);
+		bar.add(edit);
+		bar.add(pick);
+		bar.add(move);
+		bar.add(trash);
+		bar.add(hierarchy);
 		bar.add(new ToolBarSeparator(), "growy");
-		bar.add(petriNetControls);
+		bar.add(discretePlace);
+		bar.add(continuousPlace);
+		bar.add(discreteTransition);
+		bar.add(continuousTransition);
+		bar.add(stochasticTransition);
 		bar.add(new ToolBarSeparator(), "growy");
-		bar.add(featureControls);
+		bar.add(merge);
+		if (SettingsManager.getInstance().isDeveloperMode()) {
+			bar.add(parallelView);
+		}
 		bar.add(annotationToolBarMenuButton);
 		bar.add(new ToolBarSeparator(), "growy");
 		bar.add(nodeAdjustmentMenuButton);
@@ -172,22 +158,34 @@ public class ToolBar {
 		final boolean petriNetView = pathway != null && pathway.isPetriNet();
 		// Enable/disable editing buttons
 		final boolean editButtonsEnabled = pathway != null;
-		for (final Component child : editControls.getComponents())
-			child.setEnabled(editButtonsEnabled);
-		for (final Component child : petriNetControls.getComponents())
-			child.setEnabled(editButtonsEnabled);
-		for (final Component child : viewPortControls.getComponents())
-			child.setEnabled(editButtonsEnabled);
+		edit.setEnabled(editButtonsEnabled);
+		pick.setEnabled(editButtonsEnabled);
+		move.setEnabled(editButtonsEnabled);
+		trash.setEnabled(editButtonsEnabled);
+		hierarchy.setEnabled(editButtonsEnabled);
+		discretePlace.setEnabled(editButtonsEnabled);
+		continuousPlace.setEnabled(editButtonsEnabled);
+		discreteTransition.setEnabled(editButtonsEnabled);
+		continuousTransition.setEnabled(editButtonsEnabled);
+		stochasticTransition.setEnabled(editButtonsEnabled);
+		zoomIn.setEnabled(editButtonsEnabled);
+		zoomOut.setEnabled(editButtonsEnabled);
+		center.setEnabled(editButtonsEnabled);
+		info.setEnabled(editButtonsEnabled);
+		infoExtended.setEnabled(editButtonsEnabled);
 		annotationToolBarMenuButton.setEnabled(editButtonsEnabled);
 		nodeGroupingMenuButton.setEnabled(editButtonsEnabled);
-		for (final Component child : featureControls.getComponents())
-			child.setEnabled(editButtonsEnabled);
+		merge.setEnabled(editButtonsEnabled);
+		parallelView.setEnabled(editButtonsEnabled);
 		nodeAdjustmentMenuButton.setEnabled(editButtonsEnabled);
 
 		if (editButtonsEnabled) {
 			// Enable/disable petri net buttons
-			for (final Component child : petriNetControls.getComponents())
-				child.setEnabled(petriNetView);
+			discretePlace.setEnabled(petriNetView);
+			continuousPlace.setEnabled(petriNetView);
+			discreteTransition.setEnabled(petriNetView);
+			continuousTransition.setEnabled(petriNetView);
+			stochasticTransition.setEnabled(petriNetView);
 			// Enable/disable biological graph buttons
 			edit.setEnabled(!petriNetView);
 			merge.setEnabled(!petriNetView);
@@ -286,10 +284,6 @@ public class ToolBar {
 			MyGraph g = GraphInstance.getPathway().getGraph();
 			g.zoomOut();
 		}
-	}
-
-	private void onFullScreenClicked() {
-		MainWindow.getInstance().setFullScreen();
 	}
 
 	private void onEditClicked() {

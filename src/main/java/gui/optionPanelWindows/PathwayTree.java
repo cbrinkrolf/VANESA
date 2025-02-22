@@ -97,7 +97,7 @@ public class PathwayTree implements TreeSelectionListener {
 			w.setCursor(Cursor.WAIT_CURSOR);
 			String newPathwayName = con.addPathway(pwName, newPW);
 			newPW = con.getPathway(newPathwayName);
-			w.addTab(newPW.getTab().getTitleTab());
+			w.addTab(newPW.getTab());
 			w.setCursor(Cursor.DEFAULT_CURSOR);
 			w.updateAllGuiElements();
 		}

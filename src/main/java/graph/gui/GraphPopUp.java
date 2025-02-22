@@ -200,7 +200,7 @@ public class GraphPopUp {
 								GraphContainer con = GraphContainer.getInstance();
 								String newPathwayName = con.addPathway(pwName, newPW);
 								newPW = con.getPathway(newPathwayName);
-								w.addTab(newPW.getTab().getTitleTab());
+								w.addTab(newPW.getTab());
 								w.setCursor(Cursor.DEFAULT_CURSOR);
 								map.setPathwayLink(newPW);
 								map.setColor(Color.BLUE);
@@ -215,7 +215,7 @@ public class GraphPopUp {
 						GraphContainer con = GraphContainer.getInstance();
 						String newPathwayName = con.addPathway(pwName, pwLink);
 						pwLink = con.getPathway(newPathwayName);
-						w.addTab(pwLink.getTab().getTitleTab());
+						w.addTab(pwLink.getTab());
 						w.setCursor(Cursor.DEFAULT_CURSOR);
 					}
 					w.updateAllGuiElements();
@@ -254,7 +254,7 @@ public class GraphPopUp {
 			GraphContainer con = GraphContainer.getInstance();
 			String newPathwayName = con.addPathway(pwName, pw.getParent());
 			Pathway newPW = con.getPathway(newPathwayName);
-			w.addTab(newPW.getTab().getTitleTab());
+			w.addTab(newPW.getTab());
 			w.setCursor(Cursor.DEFAULT_CURSOR);
 			w.updateAllGuiElements();
 		}

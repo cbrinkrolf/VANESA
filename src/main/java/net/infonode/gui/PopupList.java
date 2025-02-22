@@ -22,7 +22,6 @@
 // $Id: PopupList.java,v 1.13 2005/06/29 11:57:40 johan Exp $
 package net.infonode.gui;
 
-import net.infonode.gui.panel.BaseContainer;
 import net.infonode.tabbedpanel.Tab;
 
 import javax.swing.*;
@@ -34,7 +33,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-public class PopupList extends BaseContainer {
+public class PopupList extends JPanel {
 	private static class PopupButtonModel extends DefaultButtonModel {
 		private boolean pressed;
 
@@ -150,7 +149,7 @@ public class PopupList extends BaseContainer {
 	private final ArrayList<PopupListListener> listeners = new ArrayList<>(1);
 
 	public PopupList(AbstractButton component) {
-		super(false, new BorderLayout());
+		super(new BorderLayout());
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		setButton(component);
 
