@@ -9,6 +9,7 @@ import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import graph.jung.classes.MyGraph;
+import gui.PopUpDialog;
 
 public class GraphContainer {
 	private final HashMap<String, Pathway> map = new HashMap<>();
@@ -126,5 +127,19 @@ public class GraphContainer {
                 g.setMouseModeHierarchy();
             }
         }
+	}
+
+	public boolean ensurePathwayWithAtLeastOneElement() {
+		final GraphContainer con = GraphContainer.getInstance();
+		if (!con.containsPathway()) {
+			PopUpDialog.getInstance().show("Error", "Please create a network first.");
+			return false;
+		}
+		Pathway pw = GraphInstance.getPathway();
+		if (pw == null || !pw.hasGotAtLeastOneElement()) {
+			PopUpDialog.getInstance().show("Error", "Please create a network first.");
+			return false;
+		}
+		return true;
 	}
 }

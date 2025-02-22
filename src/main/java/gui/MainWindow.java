@@ -64,7 +64,7 @@ public class MainWindow implements ApplicationListener {
 
 	private final GraphContainer con = GraphContainer.getInstance();
 	private int addedTabs = 0;
-	private final MenuBarClass myMenu;
+	private final MainMenuBar mainMenuBar;
 
 	private final OptionPanel optionPanel;
 
@@ -87,7 +87,7 @@ public class MainWindow implements ApplicationListener {
 		application.setEnabledPreferencesMenu(true);
 
 		// create menu bar
-		myMenu = new MenuBarClass(application);
+		mainMenuBar = new MainMenuBar(application);
 
 		// load dock icon on mac osx
 		ImagePath imagePath = ImagePath.getInstance();
@@ -125,9 +125,9 @@ public class MainWindow implements ApplicationListener {
 		});
 		bar = new ToolBar();
 		// create menu
-		frame.setJMenuBar(myMenu.returnMenu());
+		frame.setJMenuBar(mainMenuBar);
 		root = (JComponent) frame.getContentPane();
-		root.setLayout(new MigLayout("ins 0", "[][grow]", "[][][grow]"));
+		root.setLayout(new MigLayout("ins 0", "[][grow]", "[]0[][grow]"));
 		final JSeparator topSeparator = new JSeparator();
 		topSeparator.setBackground(Color.BLACK);
 		root.add(topSeparator, "height 2:2:2, span 2, growx, wrap");
@@ -277,7 +277,7 @@ public class MainWindow implements ApplicationListener {
 		addedTabs++;
 		rootWindow.addTab(tab);
 		setSelectedTab(tab);
-		myMenu.enableCloseAndSaveFunctions();
+		mainMenuBar.enableCloseAndSaveFunctions();
 	}
 
 	public int getTabCount() {
@@ -314,7 +314,7 @@ public class MainWindow implements ApplicationListener {
 		for (int i = 0; i < tabCount; i++) {
 			removeTab(0);
 		}
-		myMenu.disableCloseAndSaveFunctions();
+		mainMenuBar.disableCloseAndSaveFunctions();
 		con.removeAllPathways();
 		optionPanel.removeAllElements();
 	}
@@ -324,7 +324,7 @@ public class MainWindow implements ApplicationListener {
 				&& con.getAllPathways().contains(pw);
 		if (isLastTabOfView) {
 			addedTabs = 0;
-			myMenu.disableCloseAndSaveFunctions();
+			mainMenuBar.disableCloseAndSaveFunctions();
 			optionPanel.removeAllElements();
 		}
 		if (pw.hasGotAtLeastOneElement() && ask) {
@@ -410,8 +410,8 @@ public class MainWindow implements ApplicationListener {
 		return frame;
 	}
 
-	public MenuBarClass getMenu() {
-		return myMenu;
+	public MainMenuBar getMenu() {
+		return mainMenuBar;
 	}
 
 	public void setCursor(int cursor) {

@@ -74,8 +74,8 @@ public class ToolBar {
 		zoomOut = ToolBarButton.create("zoomMinus.png", "Zoom Out", this::onZoomOutClicked);
 		trash = ToolBarButton.create("Trash.png", "Delete Selected Items", this::onDelClicked);
 		// trash.setMnemonic(KeyEvent.VK_DELETE);
-		info = ToolBarButton.create("InfoToolBarButton.png", "Info", this::onInfoClicked);
-		infoExtended = ToolBarButton.create("InfoToolBarButtonextended.png", "More Info", this::onInfoExtendedClicked);
+		info = ToolBarButton.create("showInfoWindow.svg", "Info", this::onInfoClicked);
+		infoExtended = ToolBarButton.create("showInfoWindowExt.svg", "More Info", this::onInfoExtendedClicked);
 		merge = ToolBarButton.create("compare.png", "Compare / Align Graphs", this::onMergeClicked);
 
 		JButton covGraph = new ToolBarButton("Cov/Reach Graph");

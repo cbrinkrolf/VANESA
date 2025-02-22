@@ -28,7 +28,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.xml.stream.XMLStreamException;
 
-import edu.uci.ics.jung.algorithms.layout.*;
 import org.apache.batik.ext.awt.image.codec.png.PNGEncodeParam;
 import org.apache.batik.ext.awt.image.codec.png.PNGImageEncoder;
 import org.apache.commons.io.FileUtils;
@@ -44,7 +43,6 @@ import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import configurations.ProgramFileLock;
 import configurations.SettingsManager;
-import configurations.gui.LayoutConfig;
 import configurations.gui.SettingsPanel;
 import dataMapping.DataMappingColorMVC;
 import database.mirna.MirnaSearch;
@@ -61,12 +59,8 @@ import graph.algorithms.gui.RandomHamiltonGraphGui;
 import graph.algorithms.gui.RandomRegularGraphGui;
 import graph.algorithms.gui.smacof.view.SmacofView;
 import graph.jung.classes.MyGraph;
-import graph.layouts.gemLayout.GEMLayout;
-import graph.layouts.hctLayout.HCTLayout;
-import graph.layouts.hebLayout.HEBLayout;
 import gui.AboutWindow;
 import gui.AllPopUpsWindow;
-import gui.InfoWindow;
 import gui.LabelToDataMappingWindow;
 import gui.LabelToDataMappingWindow.InputFormatException;
 import gui.MainWindow;
@@ -171,35 +165,8 @@ public class MenuListener implements ActionListener {
 			ProgramFileLock.releaseLock();
 			System.exit(0);
 			break;
-		case springLayout:
-			changeLayout(SpringLayout.class);
-			break;
-		case kkLayout:
-			changeLayout(KKLayout.class);
-			break;
-		case frLayout:
-			changeLayout(FRLayout.class);
-			break;
-		case circleLayout:
-			changeLayout(CircleLayout.class);
-			break;
-		case hebLayout:
-			changeLayout(HEBLayout.class);
-			break;
-		case hctLayout:
-			changeLayout(HCTLayout.class);
-			break;
-		case gemLayout:
-			changeLayout(GEMLayout.class);
-			break;
-		case isomLayout:
-			changeLayout(ISOMLayout.class);
-			break;
 		case internet:
 			new SettingsPanel(0);
-			break;
-		case interaction:
-			interaction();
 			break;
 		case devMode:
 			devMode();
@@ -300,41 +267,21 @@ public class MenuListener implements ActionListener {
 		}
 	}
 
-	private static void interaction() {
-		if (ensurePathwayWithAtLeastOneElement()) {
-			new InfoWindow(false);
-		}
-	}
-
-	private static boolean ensurePathwayWithAtLeastOneElement() {
-		final GraphContainer con = GraphContainer.getInstance();
-		if (!con.containsPathway()) {
-			PopUpDialog.getInstance().show("Error", "Please create a network first.");
-			return false;
-		}
-		Pathway pw = GraphInstance.getPathway();
-		if (pw == null || !pw.hasGotAtLeastOneElement()) {
-			PopUpDialog.getInstance().show("Error", "Please create a network first.");
-			return false;
-		}
-		return true;
-	}
-
 	private static void datamining() {
-		if (ensurePathwayWithAtLeastOneElement()) {
+		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			new SmacofView();
 		}
 	}
 
 	private static void rendererSettings() {
-		if (ensurePathwayWithAtLeastOneElement()) {
+		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			PreRenderManager.getInstance();
 		}
 	}
 
 	private static void dataLabelMapping() {
 		// Open new window for file input
-		if (ensurePathwayWithAtLeastOneElement()) {
+		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			try {
 				new LabelToDataMappingWindow();
 			} catch (IOException ioe) {
@@ -348,13 +295,13 @@ public class MenuListener implements ActionListener {
 	}
 
 	private static void enrichGene() {
-		if (ensurePathwayWithAtLeastOneElement()) {
+		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			MirnaSearch.enrichGenes(GraphInstance.getPathway(), true, true, false);
 		}
 	}
 
 	private static void enrichMirna() {
-		if (ensurePathwayWithAtLeastOneElement()) {
+		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			MirnaSearch.enrichMirnas(GraphInstance.getPathway(), true, true, false);
 		}
 	}
@@ -411,7 +358,7 @@ public class MenuListener implements ActionListener {
 	}
 
 	private static void transform() {
-		if (ensurePathwayWithAtLeastOneElement()) {
+		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			Pathway pw = GraphInstance.getPathway();
 			if (!pw.isPetriNet()) {
 				List<Rule> rules = RuleManager.getInstance().getActiveRules();
@@ -443,7 +390,7 @@ public class MenuListener implements ActionListener {
 	}
 
 	private static void wuff() {
-		if (ensurePathwayWithAtLeastOneElement()) {
+		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			final Pathway pw = GraphInstance.getPathway();
 			for (final BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 				if (bna instanceof DynamicNode) {
@@ -456,7 +403,7 @@ public class MenuListener implements ActionListener {
 	}
 
 	private static void graphPicture() {
-		if (ensurePathwayWithAtLeastOneElement()) {
+		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			Pathway pw = GraphInstance.getPathway();
 			SuffixAwareFilter[] filters;
 			if (SettingsManager.getInstance().getDefaultImageExportFormat()
@@ -557,7 +504,7 @@ public class MenuListener implements ActionListener {
 	}
 
 	private static void simulate() {
-		if (ensurePathwayWithAtLeastOneElement()) {
+		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			GraphInstance.getPathway().getPetriNetSimulation().showMenu();
 		}
 	}
@@ -859,23 +806,8 @@ public class MenuListener implements ActionListener {
 		SettingsManager.getInstance().setDeveloperMode(!SettingsManager.getInstance().isDeveloperMode());
 	}
 
-	@SuppressWarnings("rawtypes")
-	private static void changeLayout(final Class<? extends Layout> layoutClass) {
-		final GraphContainer con = GraphContainer.getInstance();
-		final Pathway pw = GraphInstance.getPathway();
-		if (con.containsPathway() && pw != null) {
-			if (pw.hasGotAtLeastOneElement()) {
-				LayoutConfig.changeToLayout(layoutClass);
-			} else {
-				PopUpDialog.getInstance().show("Error", "Please create a network first.");
-			}
-		} else {
-			PopUpDialog.getInstance().show("Error", "Please create a network first.");
-		}
-	}
-
 	private static void save() {
-		if (ensurePathwayWithAtLeastOneElement()) {
+		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			Pathway pw = GraphInstance.getPathway();
 			if (pw.getFile() != null) {
 				JSBMLOutput jsbmlOutput;
@@ -902,13 +834,13 @@ public class MenuListener implements ActionListener {
 	}
 
 	private static void saveAs() {
-		if (ensurePathwayWithAtLeastOneElement()) {
+		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.SBML }, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 		}
 	}
 
 	private static void exportNetwork() {
-		if (ensurePathwayWithAtLeastOneElement()) {
+		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			new SaveDialog(
 					new SuffixAwareFilter[] { SuffixAwareFilter.GRAPH_ML, SuffixAwareFilter.MO, SuffixAwareFilter.CSML,
 							SuffixAwareFilter.PNML, SuffixAwareFilter.GRAPH_TEXT_FILE },
