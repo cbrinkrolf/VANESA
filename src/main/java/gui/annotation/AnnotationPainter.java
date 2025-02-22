@@ -8,15 +8,10 @@ import edu.uci.ics.jung.visualization.annotations.AnnotatingModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 import graph.GraphInstance;
 import graph.eventhandlers.MyAnnotatingGraphMousePlugin;
-import gui.ImagePath;
 import gui.MainWindow;
 import util.MyColorChooser;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AnnotationPainter {
 	private static AnnotationPainter instance;
@@ -24,13 +19,7 @@ public class AnnotationPainter {
 	public static final int ELLIPSE = 1;
 	public static final int POLYGON = 3;
 	public static final int TEXT = 4;
-	// private int currentRangeType = RECTANGLE;
-	// private boolean enabled;
-	private final List<Action> selectShapeActions = new ArrayList<>();
-	private final List<Action> selectColorActions = new ArrayList<>();
-	private final ImagePath imagePath = ImagePath.getInstance();
-	// private JMenuItem dropRange;
-	private Color fillColor = Color.cyan;
+	private Color fillColor = new Color(100, 149, 237);
 	private Color textColor = Color.black;
 	private MyAnnotatingGraphMousePlugin<BiologicalNodeAbstract, BiologicalEdgeAbstract> annotatingPlugin;
 
@@ -39,78 +28,6 @@ public class AnnotationPainter {
 			instance = new AnnotationPainter();
 		}
 		return instance;
-	}
-
-	public AnnotationPainter() {
-		initShapeActions();
-		initColorActions();
-	}
-
-	private void initShapeActions() {
-		Action a = new AbstractAction() {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				setCurrentRangeType(RECTANGLE);
-			}
-		};
-		initAction(a, "rectangle.png", "rectangle");
-		selectShapeActions.add(a);
-		a = new AbstractAction() {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				setCurrentRangeType(ELLIPSE);
-			}
-		};
-		initAction(a, "ellipse.png", "ellipse");
-		selectShapeActions.add(a);
-
-		a = new AbstractAction() {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				setCurrentRangeType(TEXT);
-			}
-		};
-		initAction(a, "text.png", "text");
-		selectShapeActions.add(a);
-	}
-
-	private void initColorActions() {
-		Action a = new AbstractAction() {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				// AnnotationPainter.this.setFillColor(getColor(fillColor));
-				fillColor = getColor(fillColor);
-				if (annotatingPlugin != null) {
-					annotatingPlugin.setAnnotationColor(fillColor);
-				}
-			}
-		};
-		initAction(a, "comparison.png", "select range color");
-		selectColorActions.add(a);
-		a = new AbstractAction() {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				textColor = getColor(textColor);
-				if (annotatingPlugin != null) {
-					annotatingPlugin.setAnnotationColor(textColor);
-				}
-			}
-		};
-		initAction(a, "font.png", "select text color");
-		selectColorActions.add(a);
-	}
-
-	public List<Action> getSelectShapeActions() {
-		return selectShapeActions;
-	}
-
-	public List<Action> getSelectColorActions() {
-		return selectColorActions;
 	}
 
 	public void setCurrentRangeType(int currentRangeType) {
@@ -136,7 +53,7 @@ public class AnnotationPainter {
 		// }
 
 		// create a GraphMouse for the main view
-		final AnnotatingModalGraphMouse<BiologicalNodeAbstract, BiologicalEdgeAbstract> graphMouse = new AnnotatingModalGraphMouse<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
+		final AnnotatingModalGraphMouse<BiologicalNodeAbstract, BiologicalEdgeAbstract> graphMouse = new AnnotatingModalGraphMouse<>(
 				rc, annotatingPlugin);
 		// AnnotationManager m = new AnnotationManager(rc);
 		// VisualizationViewer<BiologicalNodeAbstract,BiologicalEdgeAbstract> vv
@@ -167,31 +84,46 @@ public class AnnotationPainter {
 		}
 	}
 
-	private void initAction(Action a, String image, String desc) {
-		a.putValue(Action.SMALL_ICON, imagePath.getImageIcon(image));
-		a.putValue(Action.SHORT_DESCRIPTION, desc);
+	public Color chooseColor(final Color oldColor) {
+		MyColorChooser mc = new MyColorChooser(MainWindow.getInstance().getFrame(), "Choose color", true, oldColor);
+		return mc.isOkAction() ? mc.getColor() : oldColor;
 	}
 
 	public Color getFillColor() {
 		return fillColor;
 	}
 
-	public void setFillColor(Color fillColor) {
-		try {
-			if (!this.fillColor.equals(fillColor)) {
-				int alpha = 150;
-				this.fillColor = new Color(fillColor.getRed(), fillColor.getGreen(), fillColor.getBlue(), alpha);
+	public void setFillColor(final Color color) {
+		if (color != null) {
+			fillColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), 150);
+		} else {
+			fillColor = Color.GRAY;
+		}
+		if (annotatingPlugin != null) {
+			if (annotatingPlugin.getCurrentType() == TEXT) {
+				annotatingPlugin.setAnnotationColor(textColor);
+			} else {
+				annotatingPlugin.setAnnotationColor(fillColor);
 			}
-		} catch (NullPointerException e) {
 		}
 	}
 
-	private Color getColor(Color oldColor) {
-		MyColorChooser mc = new MyColorChooser(MainWindow.getInstance().getFrame(), "Choose color", true, oldColor);
-		return mc.isOkAction() ? mc.getColor() : oldColor;
+	public Color getTextColor() {
+		return textColor;
 	}
 
-	public void setTextColor(Color textColor) {
-		this.textColor = textColor;
+	public void setTextColor(final Color color) {
+		if (color != null) {
+			textColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
+		} else {
+			textColor = Color.BLACK;
+		}
+		if (annotatingPlugin != null) {
+			if (annotatingPlugin.getCurrentType() == TEXT) {
+				annotatingPlugin.setAnnotationColor(textColor);
+			} else {
+				annotatingPlugin.setAnnotationColor(fillColor);
+			}
+		}
 	}
 }

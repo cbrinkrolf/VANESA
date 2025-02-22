@@ -35,6 +35,16 @@ public class ToolBarButton extends JButton implements MouseListener {
 	}
 
 	@Override
+	public Dimension getMaximumSize() {
+		return new Dimension(32, 32);
+	}
+
+	@Override
+	public Dimension getMinimumSize() {
+		return new Dimension(32, 32);
+	}
+
+	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
 
@@ -58,5 +68,12 @@ public class ToolBarButton extends JButton implements MouseListener {
 	public void mouseExited(MouseEvent e) {
 		setContentAreaFilled(false);
 		setBorderPainted(false);
+	}
+
+	public static ToolBarButton create(String imageFileName, String toolTipText, Runnable action) {
+		final ToolBarButton button = new ToolBarButton(ImagePath.getInstance().getImageIcon(imageFileName));
+		button.setToolTipText(toolTipText);
+		button.addActionListener(e -> action.run());
+		return button;
 	}
 }

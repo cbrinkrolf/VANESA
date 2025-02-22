@@ -514,7 +514,6 @@ public class RuleEditingWindow implements ActionListener {
 
 		if (bn) {
 			JButton edit = new ToolBarButton(ImagePath.getInstance().getImageIcon("TitleGraph.png"));
-			edit.setSelectedIcon(ImagePath.getInstance().getImageIcon("editSelected.png"));
 			edit.setToolTipText("Edit graph");
 			edit.setActionCommand("edit");
 			edit.addActionListener(listener);

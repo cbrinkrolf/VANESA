@@ -30,6 +30,10 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends AnnotatingGraphMousePlug
 		vv = GraphInstance.getMyGraph().getVisualizationViewer();
 	}
 
+	public int getCurrentType() {
+		return currentType;
+	}
+
 	public void setCurrentType(int type) {
 		this.currentType = type;
 		if (type == AnnotationPainter.RECTANGLE) {

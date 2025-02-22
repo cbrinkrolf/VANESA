@@ -102,6 +102,7 @@ public class Pathway extends GraphicalElement implements Cloneable {
 		this.title = this.name;
 		graph = new MyGraph(this);
 		tab = new GraphTab(this.name, graph.getGraphVisualization());
+		tab.setBiologicalNetworkIcon();
 	}
 
 	// pw is bna node
@@ -699,6 +700,17 @@ public class Pathway extends GraphicalElement implements Cloneable {
 		if (isPetriNet) {
 			petriNetProperties = new PetriNetProperties();
 		}
+		updateTabIcon();
+	}
+
+	private void updateTabIcon() {
+		if (tab != null) {
+			if (isPetriNet) {
+				tab.setPetriNetworkIcon();
+			} else {
+				tab.setBiologicalNetworkIcon();
+			}
+		}
 	}
 
 	public Pathway getParent() {
@@ -803,6 +815,7 @@ public class Pathway extends GraphicalElement implements Cloneable {
 		if (tab == null) {
 			tab = new GraphTab(name, getGraph().getGraphVisualization());
 			tab.setTitle(name);
+			updateTabIcon();
 		}
 		return tab;
 	}

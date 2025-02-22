@@ -148,7 +148,7 @@ public class MainWindow implements ApplicationListener {
 		root = (JComponent) frame.getContentPane();
 		// getContentPane().add(new ToolBar(false).getToolBar(),
 		// BorderLayout.EAST);
-		root.add(bar.getToolBar(), BorderLayout.EAST);
+		root.add(bar.getToolBar(), BorderLayout.NORTH);
 		// main graph view in the middle
 		// getContentPane().add(getRootWindow(), BorderLayout.CENTER);
 		// root.add(getRootWindow(), BorderLayout.CENTER);

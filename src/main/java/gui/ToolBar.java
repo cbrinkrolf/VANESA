@@ -3,7 +3,6 @@ package gui;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.*;
@@ -12,121 +11,66 @@ import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.SettingsManager;
-import edu.uci.ics.jung.visualization.picking.PickedState;
+import graph.CreatePathway;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.algorithms.gui.CompareGraphsGUI;
-import graph.hierarchies.AutoCoarse;
 import graph.jung.classes.MyGraph;
-import gui.annotation.AnnotationPainter;
 import net.miginfocom.swing.MigLayout;
 import petriNet.PNTableDialog;
 import petriNet.ReachController;
 
 public class ToolBar {
 	private final JToolBar bar = new JToolBar();
-    private final JButton merge;
+	private final JButton merge;
 	private final JButton edit;
 	private final JPanel petriNetControls;
 	private final JPanel editControls;
 	private final JPanel viewPortControls;
-	private final JPanel infoPanel;
 	private final JPanel featureControls;
-	private final JPanel nodeAdjustmentControls;
-	private final JButton adjustDown;
-	private final JButton adjustLeft;
-	private final JButton adjustHorizontalSpace;
-	private final JButton adjustVerticalSpace;
+	private final NodeAdjustmentToolBarMenuButton nodeAdjustmentMenuButton;
+	private final NodeGroupingToolBarMenuButton nodeGroupingMenuButton;
+	private final AnnotationToolBarMenuButton annotationToolBarMenuButton;
 	private final JButton trash;
-	private final JButton mergeSelectedNodes;
-	private final JButton splitNode;
-	private final JButton coarseSelectedNodes;
-	private final JButton flatSelectedNodes;
-	private final JButton groupSelectedNodes;
-	private final JButton deleteGroup;
-	private final JButton enterSelectedNode;
 
 	private Pathway lastPathway;
 	private ItemListener lastPathwayItemListener;
 
 	public ToolBar() {
-		bar.setOrientation(1);
+		bar.setOrientation(SwingConstants.HORIZONTAL);
 		bar.setFloatable(false);
-		MigLayout bl = new MigLayout("insets 0, wrap 1");
-		bar.setLayout(bl);
+		bar.setLayout(new MigLayout("insets 0"));
 
-		final JButton newDoc = new NewDocumentToolBarButton();
-		final JButton parallelView = createToolBarButton("parallelview.png", "Create ParallelView From Graphs",
-										   this::onParallelViewClicked);
-		final JButton pick = createToolBarButton("newPick.png", "Pick Element", this::onPickClicked);
-		final JButton hierarchy = createToolBarButton("hierarchy_button.png", "Hierarchy Mode",
-													  this::onHierarchyClicked);
-		final JButton discretePlace = createToolBarButton("discretePlace.png", "Discrete Place",
-														  this::onDiscretePlaceClicked);
-		final JButton continuousPlace = createToolBarButton("continuousPlace.png", "Continuous Place",
-															this::onContinuousPlaceClicked);
-		final JButton discreteTransition = createToolBarButton("discreteTransition.png", "Discrete Transition",
-															   this::onDiscreteTransitionClicked);
-		final JButton continuousTransition = createToolBarButton("continuousTransition.png", "Continuous Transition",
-																 this::onContinuousTransitionClicked);
-		final JButton stochasticTransition = createToolBarButton("stochasticTransition.png", "Stochastic Transition",
-																 this::onStochasticTransitionClicked);
-		final JButton center = createToolBarButton("centerGraph.png", "Center Graph", this::onCenterClicked);
-		final JButton move = createToolBarButton("move.png", "Move Graph", this::onMoveClicked);
-		final JButton zoomIn = createToolBarButton("zoomPlus.png", "Zoom In", this::onZoomInClicked);
-		final JButton zoomOut = createToolBarButton("zoomMinus.png", "Zoom Out", this::onZoomOutClicked);
-		trash = createToolBarButton("Trash.png", "Delete Selected Items", this::onDelClicked);
+		final JButton newBiologicalNetwork = ToolBarButton.create("newBiologicalNetwork.svg",
+				"Create New Biological Network", this::onNewBiologicalNetwork);
+		final JButton newPetriNet = ToolBarButton.create("newPetriNetwork.svg", "Create New Petri Net",
+				this::onNewPetriNet);
+		final JButton parallelView = ToolBarButton.create("parallelview.png", "Create ParallelView From Graphs",
+				this::onParallelViewClicked);
+		final JButton pick = ToolBarButton.create("newPick.png", "Pick Element", this::onPickClicked);
+		final JButton hierarchy = ToolBarButton.create("hierarchy.svg", "Hierarchy Mode", this::onHierarchyClicked);
+		final JButton discretePlace = ToolBarButton.create("discretePlace.png", "Discrete Place",
+				this::onDiscretePlaceClicked);
+		final JButton continuousPlace = ToolBarButton.create("continuousPlace.png", "Continuous Place",
+				this::onContinuousPlaceClicked);
+		final JButton discreteTransition = ToolBarButton.create("discreteTransition.png", "Discrete Transition",
+				this::onDiscreteTransitionClicked);
+		final JButton continuousTransition = ToolBarButton.create("continuousTransition.png", "Continuous Transition",
+				this::onContinuousTransitionClicked);
+		final JButton stochasticTransition = ToolBarButton.create("stochasticTransition.png", "Stochastic Transition",
+				this::onStochasticTransitionClicked);
+		final JButton center = ToolBarButton.create("centerGraph.png", "Center Graph", this::onCenterClicked);
+		final JButton move = ToolBarButton.create("move.png", "Move Graph", this::onMoveClicked);
+		final JButton zoomIn = ToolBarButton.create("zoomPlus.png", "Zoom In", this::onZoomInClicked);
+		final JButton zoomOut = ToolBarButton.create("zoomMinus.png", "Zoom Out", this::onZoomOutClicked);
+		trash = ToolBarButton.create("Trash.png", "Delete Selected Items", this::onDelClicked);
 		// trash.setMnemonic(KeyEvent.VK_DELETE);
-		final JButton info = createToolBarButton("InfoToolBarButton.png", "Info", this::onInfoClicked);
-		final JButton infoExtended = createToolBarButton("InfoToolBarButtonextended.png", "More Info",
-														 this::onInfoExtendedClicked);
-		mergeSelectedNodes = createToolBarButton("MergeNodesButton.png", "Merge Selected Nodes",
-												 this::onMergeSelectedNodesClicked);
-		splitNode = createToolBarButton("SplitNodesButton.png", "Split Node (inverse operation of \"merge nodes\")",
-										this::onSplitNodeClicked);
-		coarseSelectedNodes = createToolBarButton("CoarseNodesButton.png", "Coarse Selected Nodes",
-												  this::onCoarseSelectedNodesClicked);
-		flatSelectedNodes = createToolBarButton("FlatNodesButton.png", "Flat Selected Coarse Node(s)",
-												this::onFlatSelectedNodesClicked);
-		groupSelectedNodes = createToolBarButton("GroupButton.png", "Group Selected Nodes", this::onGroupClicked);
-		deleteGroup = createToolBarButton("UngroupButton.png", "Delete Selected Group", this::onDeleteGroupClicked);
-		enterSelectedNode = createToolBarButton("enterNode.png", "Enter Selected Coarse Node(s)",
-												this::onEnterNodeClicked);
-		final JButton autoCoarse = createToolBarButton("autocoarse.png", "Autocoarse Current Pathway",
-													   this::onAutoCoarseClicked);
+		final JButton info = ToolBarButton.create("InfoToolBarButton.png", "Info", this::onInfoClicked);
+		final JButton infoExtended = ToolBarButton.create("InfoToolBarButtonextended.png", "More Info",
+				this::onInfoExtendedClicked);
 
-		/*
-		 * JButton convertIntoPetriNet = new ToolBarButton("convertIntoPetriNet");
-		 * convertIntoPetriNet.setToolTipText("Convert Into Petri Net");
-		 * convertIntoPetriNet.setActionCommand(ToolbarActionCommands.convertIntoPetriNet.value);
-		 * convertIntoPetriNet.addActionListener(ToolBarListener.getInstance());
-		 */
-
-		final JButton fullScreen = createToolBarButton("newFullScreen.png", "Full Screen", this::onFullScreenClicked);
-		final JButton stretchEdges = createToolBarButton("stretchEdges.png", "Stretch Edge Length",
-														 this::onStretchEdgesClicked);
-		final JButton compressEdges = createToolBarButton("compressEdges.png", "Compress Edge Length",
-														  this::onCompressEdgesClicked);
-		merge = createToolBarButton("compare.png", "Compare / Align Graphs", this::onMergeClicked);
-
-		infoPanel = new ToolBarPanel();
-		infoPanel.setLayout(new GridLayout(0, 3, 4, 4));
-		infoPanel.add(mergeSelectedNodes);
-		infoPanel.add(splitNode);
-		infoPanel.add(new JLabel());
-		infoPanel.add(coarseSelectedNodes);
-		infoPanel.add(flatSelectedNodes);
-		infoPanel.add(enterSelectedNode);
-		if (SettingsManager.getInstance().isDeveloperMode()) {
-			infoPanel.add(autoCoarse);
-		}
-		infoPanel.add(groupSelectedNodes);
-		infoPanel.add(deleteGroup);
-
-		final ButtonChooser chooser = new ButtonChooser(AnnotationPainter.getInstance().getSelectShapeActions());
-		chooser.setToolTipText("Draw compartments");
-		final ButtonChooser colorChooser = new ButtonChooser(AnnotationPainter.getInstance().getSelectColorActions());
-		colorChooser.setToolTipText("Set compartment colors");
+		final JButton fullScreen = ToolBarButton.create("newFullScreen.png", "Full Screen", this::onFullScreenClicked);
+		merge = ToolBarButton.create("compare.png", "Compare / Align Graphs", this::onMergeClicked);
 
 		JButton covGraph = new ToolBarButton("Cov/Reach Graph");
 		covGraph.setToolTipText("Create Cov/Reach Graph");
@@ -136,16 +80,15 @@ public class ToolBar {
 		editNodes.setToolTipText("Edit PN-Elements");
 		editNodes.addActionListener(e -> onEditElementsClicked());
 
-		// JButton heatmap = createToolBarButton("heatmapGraph.png", "Create Heatgraph",
+		// JButton heatmap = ToolBarButton.create("heatmapGraph.png", "Create Heatgraph",
 		// ToolbarActionCommands.heatmap.value);
 
 		edit = new ToolBarButton(ImagePath.getInstance().getImageIcon("TitleGraph.png"));
-		edit.setSelectedIcon(ImagePath.getInstance().getImageIcon("editSelected.png"));
 		edit.setToolTipText("Edit Graph");
 		edit.addActionListener(e -> onEditClicked());
 
 		viewPortControls = new ToolBarPanel();
-		viewPortControls.setLayout(new GridLayout(2, 3, 4, 4));
+		viewPortControls.setLayout(new GridLayout(1, 6, 4, 4));
 		viewPortControls.add(fullScreen);
 		viewPortControls.add(zoomIn);
 		viewPortControls.add(zoomOut);
@@ -154,87 +97,47 @@ public class ToolBar {
 		viewPortControls.add(infoExtended);
 
 		editControls = new ToolBarPanel();
-		editControls.setLayout(new GridLayout(2, 3, 4, 4));
+		editControls.setLayout(new GridLayout(1, 6, 4, 4));
 		editControls.add(edit);
 		editControls.add(pick);
 		editControls.add(move);
 		editControls.add(trash);
 		editControls.add(hierarchy);
 
-		JPanel printControls = new ToolBarPanel();
-		printControls.setLayout(new GridLayout(1, 2, 4, 4));
-		printControls.add(newDoc);
-
-		// Add buttons to experiment with Grid Layout
 		petriNetControls = new ToolBarPanel();
-		petriNetControls.setLayout(new GridLayout(2, 3, 4, 4));
-
+		petriNetControls.setLayout(new GridLayout(1, 6, 4, 4));
 		petriNetControls.add(discretePlace);
 		petriNetControls.add(continuousPlace);
-		petriNetControls.add(new JLabel());
 		petriNetControls.add(discreteTransition);
 		petriNetControls.add(continuousTransition);
 		petriNetControls.add(stochasticTransition);
 
 		featureControls = new ToolBarPanel();
-		featureControls.setLayout(new GridLayout(0, 3, 4, 4));
+		featureControls.setLayout(new GridLayout(1, 4, 4, 4));
 		featureControls.add(merge);
-		featureControls.add(chooser);
-		featureControls.add(colorChooser);
 		if (SettingsManager.getInstance().isDeveloperMode()) {
-			// featureControls.add(heatmap);
 			featureControls.add(parallelView);
 		}
 
-		// featureControls.setMaximumSize(featureControls.getPreferredSize());
-		// featureControls.setAlignmentX(Component.LEFT_ALIGNMENT);
-		// featureControls.setAlignmentY(Component.TOP_ALIGNMENT);
+		nodeAdjustmentMenuButton = new NodeAdjustmentToolBarMenuButton();
+		nodeGroupingMenuButton = new NodeGroupingToolBarMenuButton();
+		annotationToolBarMenuButton = new AnnotationToolBarMenuButton();
 
-		JPanel toolBarControlControls = new ToolBarPanel();
-		toolBarControlControls.setLayout(new GridLayout(2, 1, 4, 4));
-		// if (!petriNetView) {
-		// toolBarControlControls.add(petriNet);
-		// toolBarControlControls.add(convertIntoPetriNet);
-		// }
-
-		adjustDown = createToolBarButton("adjustDown.png", "Adjust Selected Nodes To Lowest Node",
-										 this::onAdjustDownClicked);
-		adjustLeft = createToolBarButton("adjustLeft.png", "Adjust Selected Nodes To Left", this::onAdjustLeftClicked);
-		adjustHorizontalSpace = createToolBarButton("adjustHorizontalSpace.png",
-													"Adjust Horizontal Space of Selected Nodes",
-													this::onAdjustHorizontalSpaceClicked);
-		adjustVerticalSpace = createToolBarButton("adjustVerticalSpace.png", "Adjust Vertical Space of Selected Nodes",
-												  this::onAdjustVerticalSpaceClicked);
-		nodeAdjustmentControls = new ToolBarPanel();
-		nodeAdjustmentControls.setLayout(new GridLayout(2, 2, 4, 4));
-		nodeAdjustmentControls.add(compressEdges);
-		nodeAdjustmentControls.add(adjustDown);
-		nodeAdjustmentControls.add(adjustHorizontalSpace);
-		nodeAdjustmentControls.add(stretchEdges);
-		nodeAdjustmentControls.add(adjustLeft);
-		nodeAdjustmentControls.add(adjustVerticalSpace);
-
-		// bar.add(toolBarControlControls);
-		// if (petriNetView) {
-		//   toolBarControlControls.add(covGraph);
-		//   toolBarControlControls.add(editNodes);
-		//   toolBarControlControls.add(loadModResult);
-		//   toolBarControlControls.add(simulate);
-		// }
-		// bar.add(new JSeparator());
-		bar.add(printControls);
-		bar.add(new ToolBarSeparator(), "growx, wrap");
-		bar.add(editControls);
-		bar.add(new ToolBarSeparator(), "growx, wrap");
-		bar.add(petriNetControls);
-		bar.add(new ToolBarSeparator(), "growx, wrap");
-		bar.add(featureControls, "wrap");
-		bar.add(new ToolBarSeparator(), "growx, wrap");
+		bar.add(newBiologicalNetwork);
+		bar.add(newPetriNet);
+		bar.add(new ToolBarSeparator(), "growy");
 		bar.add(viewPortControls);
-		bar.add(new ToolBarSeparator(), "growx, wrap");
-		bar.add(nodeAdjustmentControls);
-		bar.add(new ToolBarSeparator(), "growx, wrap");
-		bar.add(infoPanel, "wrap");
+		bar.add(new ToolBarSeparator(), "growy");
+		bar.add(editControls);
+		bar.add(new ToolBarSeparator(), "growy");
+		bar.add(petriNetControls);
+		bar.add(new ToolBarSeparator(), "growy");
+		bar.add(featureControls);
+		bar.add(annotationToolBarMenuButton);
+		bar.add(new ToolBarSeparator(), "growy");
+		bar.add(nodeAdjustmentMenuButton);
+		bar.add(new ToolBarSeparator(), "growy");
+		bar.add(nodeGroupingMenuButton);
 
 		bar.validate();
 		bar.repaint();
@@ -275,12 +178,11 @@ public class ToolBar {
 			child.setEnabled(editButtonsEnabled);
 		for (final Component child : viewPortControls.getComponents())
 			child.setEnabled(editButtonsEnabled);
-		for (final Component child : infoPanel.getComponents())
-			child.setEnabled(editButtonsEnabled);
+		annotationToolBarMenuButton.setEnabled(editButtonsEnabled);
+		nodeGroupingMenuButton.setEnabled(editButtonsEnabled);
 		for (final Component child : featureControls.getComponents())
 			child.setEnabled(editButtonsEnabled);
-		for (final Component child : nodeAdjustmentControls.getComponents())
-			child.setEnabled(editButtonsEnabled);
+		nodeAdjustmentMenuButton.setEnabled(editButtonsEnabled);
 
 		if (editButtonsEnabled) {
 			// Enable/disable petri net buttons
@@ -313,27 +215,23 @@ public class ToolBar {
 
 	private void updateEnabledStateForSelectionDependentButtons(final Set<BiologicalNodeAbstract> selection) {
 		final int selectedNodeCount = selection.size();
-		adjustDown.setEnabled(selectedNodeCount > 1);
-		adjustLeft.setEnabled(selectedNodeCount > 1);
-		adjustHorizontalSpace.setEnabled(selectedNodeCount > 2);
-		adjustVerticalSpace.setEnabled(selectedNodeCount > 2);
+		nodeAdjustmentMenuButton.updateEnabledStateForSelectionDependentButtons(selection);
+		nodeGroupingMenuButton.updateEnabledStateForSelectionDependentButtons(selection);
 		trash.setEnabled(selectedNodeCount > 0);
-		mergeSelectedNodes.setEnabled(selectedNodeCount > 1);
-		splitNode.setEnabled(selectedNodeCount > 0);
-		coarseSelectedNodes.setEnabled(selectedNodeCount > 1);
-		final boolean allCoarseNodes = selection.stream().allMatch(BiologicalNodeAbstract::isCoarseNode);
-		flatSelectedNodes.setEnabled(selectedNodeCount > 0 && allCoarseNodes);
-		// Restrict entering a coarse node to a single node as it crashes otherwise.
-		enterSelectedNode.setEnabled(selectedNodeCount == 1 && allCoarseNodes);
-		groupSelectedNodes.setEnabled(selectedNodeCount > 1);
-		deleteGroup.setEnabled(selectedNodeCount > 0 && selection.stream().allMatch(BiologicalNodeAbstract::isInGroup));
 	}
 
-	private static JButton createToolBarButton(String imageFileName, String toolTipText, Runnable action) {
-		JButton button = new ToolBarButton(ImagePath.getInstance().getImageIcon(imageFileName));
-		button.setToolTipText(toolTipText);
-		button.addActionListener(e -> action.run());
-		return button;
+	private void onNewBiologicalNetwork() {
+		new CreatePathway();
+		GraphInstance.getPathway().setIsPetriNet(false);
+		MainWindow.getInstance().getBar().updateVisibility();
+		MainWindow.getInstance().updateAllGuiElements();
+	}
+
+	private void onNewPetriNet() {
+		new CreatePathway();
+		GraphInstance.getPathway().setIsPetriNet(true);
+		MainWindow.getInstance().getBar().updateVisibility();
+		MainWindow.getInstance().updateAllGuiElements();
 	}
 
 	private void onParallelViewClicked() {
@@ -392,22 +290,6 @@ public class ToolBar {
 
 	private void onFullScreenClicked() {
 		MainWindow.getInstance().setFullScreen();
-	}
-
-	private void onCompressEdgesClicked() {
-		GraphContainer con = GraphContainer.getInstance();
-		if (con.containsPathway()) {
-			GraphInstance.getPathway().stretchGraph(0.9);
-			GraphInstance.getPathway().updateMyGraph();
-		}
-	}
-
-	private void onStretchEdgesClicked() {
-		GraphContainer con = GraphContainer.getInstance();
-		if (con.containsPathway()) {
-			GraphInstance.getPathway().stretchGraph(1.1);
-			GraphInstance.getPathway().updateMyGraph();
-		}
 	}
 
 	private void onEditClicked() {
@@ -513,135 +395,12 @@ public class ToolBar {
 		new PNTableDialog().setVisible(true);
 	}
 
-	private void onGroupClicked() {
-		GraphContainer con = GraphContainer.getInstance();
-		if (con.containsPathway()) {
-			GraphInstance.getPathway().groupSelectedNodes();
-			GraphInstance.getPathway().updateMyGraph();
-			final Set<BiologicalNodeAbstract> selection = GraphInstance.getPathway().getSelectedNodes();
-			updateEnabledStateForSelectionDependentButtons(selection);
-		}
-	}
-
-	private void onDeleteGroupClicked() {
-		GraphContainer con = GraphContainer.getInstance();
-		if (con.containsPathway()) {
-			GraphInstance.getPathway().deleteGroup();
-			GraphInstance.getPathway().updateMyGraph();
-		}
-	}
-
-	private void onCoarseSelectedNodesClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			final Pathway pathway = GraphInstance.getPathway();
-			final PickedState<BiologicalNodeAbstract> pickedState = pathway.getGraph().getVisualizationViewer()
-																		   .getPickedVertexState();
-			Set<BiologicalNodeAbstract> selectedNodes = new HashSet<>(pickedState.getPicked());
-			BiologicalNodeAbstract.coarse(selectedNodes);
-			GraphInstance.getPathway().updateMyGraph();
-			GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
-			pickedState.clear();
-			updateEnabledStateForSelectionDependentButtons(new HashSet<>());
-		}
-	}
-
-	private void onFlatSelectedNodesClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			final Pathway pathway = GraphInstance.getPathway();
-			final PickedState<BiologicalNodeAbstract> pickedState = pathway.getGraph().getVisualizationViewer()
-																		   .getPickedVertexState();
-			for (BiologicalNodeAbstract node : pickedState.getPicked()) {
-				node.flat();
-				pathway.updateMyGraph();
-				MainWindow.getInstance().removeTab(false, node.getTab().getTitleTab(), node);
-			}
-			pathway.getGraph().getVisualizationViewer().repaint();
-			pickedState.clear();
-			updateEnabledStateForSelectionDependentButtons(new HashSet<>());
-		}
-	}
-
-	private void onEnterNodeClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			MainWindow w = MainWindow.getInstance();
-			GraphContainer con = GraphContainer.getInstance();
-			for (BiologicalNodeAbstract node : GraphInstance.getPathway().getGraph().getVisualizationViewer()
-					.getPickedVertexState().getPicked()) {
-				if (!node.isCoarseNode() && !node.isMarkedAsCoarseNode()) {
-					continue;
-				}
-				w.setCursor(Cursor.WAIT_CURSOR);
-				for (BiologicalNodeAbstract n : node.getVertices().keySet()) {
-					node.getVertices().put(n, GraphInstance.getPathway().getVertices().get(n));
-				}
-				String newPathwayName = con.addPathway(node.getLabel(), node);
-				Pathway pw = con.getPathway(newPathwayName);
-				w.addTab(pw.getTab().getTitleTab());
-				w.setCursor(Cursor.DEFAULT_CURSOR);
-				GraphInstance.getPathway().setIsPetriNet(node.isPetriNet());
-				w.getBar().updateVisibility();
-				w.updateAllGuiElements();
-				GraphInstance.getPathway().updateMyGraph();
-				GraphInstance.getPathway().getGraph().normalCentering();
-			}
-		}
-	}
-
-	private void onAutoCoarseClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			AutoCoarse.coarseSeparatedSubGraphs(GraphInstance.getPathway());
-			GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
-		}
-	}
-
 	private void onHierarchyClicked() {
 		GraphContainer con = GraphContainer.getInstance();
 		if (con.containsPathway()) {
 			con.changeMouseFunction("hierarchy");
 			MyGraph g = GraphInstance.getPathway().getGraph();
 			g.disableGraphTheory();
-		}
-	}
-
-	private void onMergeSelectedNodesClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			Pathway pw = GraphInstance.getPathway();
-			pw.mergeNodes(pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
-		}
-	}
-
-	private void onSplitNodeClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			Pathway pw = GraphInstance.getPathway();
-			pw.splitNode(pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
-		}
-	}
-
-	private void onAdjustDownClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			Set<BiologicalNodeAbstract> nodes = GraphInstance.getPathway().getSelectedNodes();
-			GraphInstance.getPathway().adjustDown(nodes);
-		}
-	}
-
-	private void onAdjustLeftClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			Set<BiologicalNodeAbstract> nodes = GraphInstance.getPathway().getSelectedNodes();
-			GraphInstance.getPathway().adjustLeft(nodes);
-		}
-	}
-
-	private void onAdjustHorizontalSpaceClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			Set<BiologicalNodeAbstract> nodes = GraphInstance.getPathway().getSelectedNodes();
-			GraphInstance.getPathway().adjustHorizontalSpace(nodes);
-		}
-	}
-
-	private void onAdjustVerticalSpaceClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			Set<BiologicalNodeAbstract> nodes = GraphInstance.getPathway().getSelectedNodes();
-			GraphInstance.getPathway().adjustVerticalSpace(nodes);
 		}
 	}
 }
