@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -107,6 +108,8 @@ public class PetriNetSimulation implements ActionListener {
 	private boolean exportPrtoectedVariables = true;
 
 	private String customeExecutable = "";// "_omcQ_27D15_5FCPM_5FPN_2Esbml_27.exe";
+
+	private boolean cleanUpDirAfterCompilation = !true;
 
 	// CHRIS refactored version of threads for simulation needs to be tested and
 	// evaluated. maybe show more hints / error messages
@@ -907,6 +910,12 @@ public class PetriNetSimulation implements ActionListener {
 					stopAction();
 				}
 				compiling = false;
+				if (cleanUpDirAfterCompilation) {
+					// could be threaded maybe
+					System.out.println("cleaning up working directory");
+					cleanUpWorkingDirectory();
+					System.out.println("finished cleaning up working directory");
+				}
 			}
 		};
 	}
@@ -963,7 +972,6 @@ public class PetriNetSimulation implements ActionListener {
 				}
 				// }
 				System.out.println("all thread finished");
-				// s = null;
 			}
 		};// --------end all thread
 	}
@@ -1166,5 +1174,29 @@ public class PetriNetSimulation implements ActionListener {
 
 	public SimMenu getMenu() {
 		return this.menu;
+	}
+
+	private void cleanUpWorkingDirectory() {
+		long bytes = 0;
+		int deletedFileCount = 0;
+		final File dirSim = pathSim.toFile();
+		if (dirSim.isDirectory()) {
+			// FileUtils.cleanDirectory(dirSim);
+			String[] extensions = { "bat", "c", "h", "o", "json", "intdata", "realdata" };
+			Collection<File> files = FileUtils.listFiles(dirSim, extensions, false);
+
+			for (File f : files) {
+				try {
+					bytes += FileUtils.sizeOf(f);
+					FileUtils.delete(f);
+					deletedFileCount++;
+				} catch (IOException e) {
+					e.printStackTrace();
+					PopUpDialog.getInstance().show("Error deleting file: " + f.getName(), e.getMessage());
+				}
+			}
+		}
+		System.out.println("deleted files: " + deletedFileCount + ", freed disk space: "
+				+ FileUtils.byteCountToDisplaySize(bytes));
 	}
 }
