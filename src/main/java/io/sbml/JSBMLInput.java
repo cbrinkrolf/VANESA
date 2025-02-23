@@ -252,16 +252,18 @@ public class JSBMLInput {
 						elSub = reacAnnotation.getChild("Parameters", null);
 						// elSubSub = elSub.getChild("x_Coordinate", null);
 						ArrayList<Parameter> parameters = new ArrayList<>();
-						for (int j = 0; j < elSub.getChildren().size(); j++) {
-							Element elSubSub = elSub.getChildren().get(j);
-							String pname = elSubSub.getChild("Name", null).getAttributeValue("Name");
-							double value = Double
-									.parseDouble(elSubSub.getChild("Value", null).getAttributeValue("Value"));
-							String unit = "";
-							if (elSubSub.getChild("Unit", null) != null) {
-								unit = elSubSub.getChild("Unit", null).getAttributeValue("Unit");
+						if (elSub != null) {
+							for (int j = 0; j < elSub.getChildren().size(); j++) {
+								Element elSubSub = elSub.getChildren().get(j);
+								String pname = elSubSub.getChild("Name", null).getAttributeValue("Name");
+								double value = Double
+										.parseDouble(elSubSub.getChild("Value", null).getAttributeValue("Value"));
+								String unit = "";
+								if (elSubSub.getChild("Unit", null) != null) {
+									unit = elSubSub.getChild("Unit", null).getAttributeValue("Unit");
+								}
+								parameters.add(new Parameter(pname, value, unit));
 							}
-							parameters.add(new Parameter(pname, value, unit));
 						}
 						bea.setParameters(parameters);
 
