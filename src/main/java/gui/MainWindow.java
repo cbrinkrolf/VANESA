@@ -25,9 +25,6 @@ import io.OpenDialog;
 import io.SuffixAwareFilter;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.io.FilenameUtils;
-import org.jdesktop.jxlayer.JXLayer;
-import org.jdesktop.jxlayer.plaf.effect.BufferedImageOpEffect;
-import org.jdesktop.jxlayer.plaf.ext.LockableUI;
 import org.simplericity.macify.eawt.Application;
 import org.simplericity.macify.eawt.ApplicationEvent;
 import org.simplericity.macify.eawt.ApplicationListener;
@@ -58,7 +55,7 @@ public class MainWindow implements ApplicationListener {
 	private List<Bean> beansList = new ArrayList<>();
 	private String loadedYaml = null;
 
-	private final LockableUI blurUI = new LockableUI(new BufferedImageOpEffect(new BlurFilter()));
+	private final LockableBlurLayer blurUI;
 
 	private final GraphContainer con = GraphContainer.getInstance();
 	private int addedTabs = 0;
@@ -135,9 +132,8 @@ public class MainWindow implements ApplicationListener {
 		rootWindow = new TabbedPanel();
 		rootWindow.addTabListener(new GraphTabListener(this));
 		root.add(rootWindow, "grow");
-		JXLayer<JComponent> layer = new JXLayer<>(root);
-		layer.setUI(blurUI);
-		frame.setContentPane(layer);
+		blurUI = new LockableBlurLayer(root);
+		frame.setContentPane(blurUI);
 		frame.setVisible(true);
 		initializeDragDrop();
 		try {
