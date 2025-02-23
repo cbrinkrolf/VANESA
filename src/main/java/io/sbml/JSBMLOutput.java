@@ -56,11 +56,10 @@ import gui.annotation.RangeSelector;
  *
  */
 public class JSBMLOutput {
-	
+
 	// TODO rewrite JSBML import / export using standard to SBML structure
 	// TODO update JSBML lib
-	
-	
+
 	/*
 	 * the sbml document which has to be filled
 	 */
@@ -238,8 +237,8 @@ public class JSBMLOutput {
 		}
 
 		// Do not write the SBML document if error occurred.
-		System.out.println("message lengths: "+message.length());
-		if(message.length() > 0){
+		System.out.println("message lengths: " + message.length());
+		if (message.length() > 0) {
 			try {
 				os.close();
 			} catch (IOException e) {
@@ -247,7 +246,7 @@ public class JSBMLOutput {
 			}
 			return message;
 		}
-		
+
 		// Write the SBML document to a file.
 		try {
 			// System.out.println("vor write");
@@ -589,7 +588,8 @@ public class JSBMLOutput {
 				} else if (oneNode instanceof ContinuousTransition) {
 					el.addChild(createElSub(((ContinuousTransition) oneNode).getMaximalSpeed(), "maximalSpeed"));
 				} else if (oneNode instanceof StochasticTransition) {
-					XMLNode elDistributionProps = new XMLNode(new XMLNode(new XMLTriple("distributionProperties", "", ""), new XMLAttributes()));
+					XMLNode elDistributionProps = new XMLNode(
+							new XMLNode(new XMLTriple("distributionProperties", "", ""), new XMLAttributes()));
 					StochasticTransition st = (StochasticTransition) oneNode;
 					elDistributionProps.addChild(createElSub(st.getDistribution(), "distribution"));
 					elDistributionProps.addChild(createElSub(String.valueOf(st.getH()), "h"));
@@ -600,7 +600,8 @@ public class JSBMLOutput {
 					elDistributionProps.addChild(createElSub(String.valueOf(st.getSigma()), "sigma"));
 					String eventsString = st.getEvents().stream().map(String::valueOf).collect(Collectors.joining(","));
 					elDistributionProps.addChild(createElSub(eventsString, "discreteEvents"));
-					String probsString = st.getProbabilities().stream().map(String::valueOf).collect(Collectors.joining(","));
+					String probsString = st.getProbabilities().stream().map(String::valueOf)
+							.collect(Collectors.joining(","));
 					elDistributionProps.addChild(createElSub(probsString, "discreteEventProbabilities"));
 					el.addChild(elDistributionProps);
 				}
@@ -626,8 +627,20 @@ public class JSBMLOutput {
 		el.addChild(createElSub(oneEdge.getBiologicalElement(), "BiologicalElement"));
 		el.addChild(createElSub(oneEdge.getDescription(), "Description"));
 		el.addChild(createElSub(oneEdge.getComments(), "Comments"));
-		// el.addChild(createElSub(String.valueOf(oneEdge.hasFeatureEdge()), "HasFeatureEdge"));
-		// el.addChild(createElSub(String.valueOf(oneEdge.hasKEGGEdge()), "HasKEGGEdge"));
+		// el.addChild(createElSub(String.valueOf(oneEdge.hasFeatureEdge()),
+		// "HasFeatureEdge"));
+		// el.addChild(createElSub(String.valueOf(oneEdge.hasKEGGEdge()),
+		// "HasKEGGEdge"));
+
+		XMLNode elParameters = new XMLNode(new XMLNode(new XMLTriple("Parameters", "", ""), new XMLAttributes()));
+		for (Parameter param : oneEdge.getParameters()) {
+			XMLNode elSubSub = new XMLNode(new XMLNode(new XMLTriple("Parameter", "", ""), new XMLAttributes()));
+			elSubSub.addChild(createElSub(param.getName(), "Name"));
+			elSubSub.addChild(createElSub(param.getValue() + "", "Value"));
+			elSubSub.addChild(createElSub(param.getUnit(), "Unit"));
+			elParameters.addChild(elSubSub);
+		}
+		el.addChild(elParameters);
 
 		// Save additional data
 		if (oneEdge instanceof biologicalObjects.edges.ReactionPair) {
@@ -637,10 +650,11 @@ public class JSBMLOutput {
 			// only if the following data has to be saved
 			if (reactionPair.hasReactionPairEdge()) {
 				ReactionPairEdge rpe = reactionPair.getReactionPairEdge();
-				boolean kegg = StringUtils.isNotEmpty(rpe.getReactionPairID()) ||
-							   StringUtils.isNotEmpty(rpe.getName()) || StringUtils.isNotEmpty(rpe.getType());
+				boolean kegg = StringUtils.isNotEmpty(rpe.getReactionPairID()) || StringUtils.isNotEmpty(rpe.getName())
+						|| StringUtils.isNotEmpty(rpe.getType());
 				if (kegg) {
-					XMLNode elSub = new XMLNode(new XMLNode(new XMLTriple("ReactionPairEdge", "", ""), new XMLAttributes()));
+					XMLNode elSub = new XMLNode(
+							new XMLNode(new XMLTriple("ReactionPairEdge", "", ""), new XMLAttributes()));
 					elSub.addChild(createElSub(rpe.getReactionPairID(), "ReactionPairEdgeID"));
 					elSub.addChild(createElSub(rpe.getName(), "ReactionPairName"));
 					elSub.addChild(createElSub(rpe.getType(), "ReactionPairType"));
@@ -652,7 +666,8 @@ public class JSBMLOutput {
 			el.addChild(createElSub(String.valueOf(pnArc.getProbability()), "Probability"));
 			el.addChild(createElSub(String.valueOf(pnArc.getPriority()), "Priority"));
 		} else if (oneEdge instanceof Inhibition) {
-			el.addChild(createElSub(String.valueOf(((Inhibition) oneEdge).isAbsoluteInhibition()), "absoluteInhibition"));
+			el.addChild(
+					createElSub(String.valueOf(((Inhibition) oneEdge).isAbsoluteInhibition()), "absoluteInhibition"));
 		}
 		Annotation a = new Annotation();
 		a.appendNonRDFAnnotation(el);
