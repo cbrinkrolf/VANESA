@@ -1135,8 +1135,8 @@ public class RuleEditingWindow implements ActionListener {
 		RuleEdge re;
 		BiologicalEdgeAbstract bea;
 		Map<BiologicalEdgeAbstract, RuleEdge> beaToRuleEdge = new HashMap<BiologicalEdgeAbstract, RuleEdge>();
-		for (int i = 0; i < bn.getAllEdgesSorted().size(); i++) {
-			bea = bn.getAllEdgesSorted().get(i);
+		for (int i = 0; i < bn.getAllEdgesSortedByID().size(); i++) {
+			bea = bn.getAllEdgesSortedByID().get(i);
 			re = new RuleEdge(bea.getName(), bea.getBiologicalElement(), bnaToBNRuleNode.get(bea.getFrom()),
 					bnaToBNRuleNode.get(bea.getTo()));
 			re.setDirected(bea.isDirected());
@@ -1159,8 +1159,8 @@ public class RuleEditingWindow implements ActionListener {
 				rn.getParameterMap().put(param, getParameterMapping(bna).get(param));
 			}
 		}
-		for (int i = 0; i < pn.getAllEdgesSorted().size(); i++) {
-			bea = pn.getAllEdgesSorted().get(i);
+		for (int i = 0; i < pn.getAllEdgesSortedByID().size(); i++) {
+			bea = pn.getAllEdgesSortedByID().get(i);
 			re = new RuleEdge(bea.getName(), bea.getBiologicalElement(), bnaToPNRuleNode.get(bea.getFrom()),
 					bnaToPNRuleNode.get(bea.getTo()));
 			rule.addPetriEdge(re);

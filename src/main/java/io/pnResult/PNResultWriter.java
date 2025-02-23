@@ -53,7 +53,7 @@ public class PNResultWriter {
 				transitions.add((Transition) bna);
 			}
 		}
-		List<BiologicalEdgeAbstract> edges = new ArrayList<>(pw.getAllEdgesSorted());
+		List<BiologicalEdgeAbstract> edges = new ArrayList<>(pw.getAllEdgesSortedByID());
 		for (Place item : places) {
 			headers.add("\"" + item.getName() + "\"");
 		}

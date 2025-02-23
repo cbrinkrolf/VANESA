@@ -3,8 +3,11 @@ package biologicalObjects.edges;
 import java.awt.Color;
 import java.awt.Shape;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -154,6 +157,21 @@ public abstract class BiologicalEdgeAbstract extends GraphicalElement implements
 
 	public List<Parameter> getParameters() {
 		return parameters;
+	}
+
+	public List<Parameter> getParametersSortedAlphabetically() {
+		Map<String, Parameter> map = new HashMap<>();
+		for (Parameter p : getParameters()) {
+			String name = p.getName();
+			map.put(name, p);
+		}
+		List<String> names = new ArrayList<>(map.keySet());
+		Collections.sort(names);
+		List<Parameter> sortedList = new ArrayList<>();
+		for (String name : names) {
+			sortedList.add(map.get(name));
+		}
+		return sortedList;
 	}
 
 	@Override

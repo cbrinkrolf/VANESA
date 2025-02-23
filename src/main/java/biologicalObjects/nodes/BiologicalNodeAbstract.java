@@ -785,6 +785,21 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		return parameters;
 	}
 
+	public List<Parameter> getParametersSortedAlphabetically() {
+		Map<String, Parameter> map = new HashMap<>();
+		for (Parameter p : getParameters()) {
+			String name = p.getName();
+			map.put(name, p);
+		}
+		List<String> names = new ArrayList<>(map.keySet());
+		Collections.sort(names);
+		List<Parameter> sortedList = new ArrayList<>();
+		for (String name : names) {
+			sortedList.add(map.get(name));
+		}
+		return sortedList;
+	}
+
 	public void setParameters(List<Parameter> parameters) {
 		this.parameters = parameters;
 	}

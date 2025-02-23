@@ -19,7 +19,6 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -69,7 +68,7 @@ public class PetriNetSimulation implements ActionListener {
 	private Thread waitForServerConnection = null;
 
 	private BufferedReader outputReader;
-	private HashMap<BiologicalEdgeAbstract, String> bea2key;
+	private Map<BiologicalEdgeAbstract, String> bea2key;
 
 	private ChangedFlags flags;
 	private Server s = null;
@@ -96,7 +95,7 @@ public class PetriNetSimulation implements ActionListener {
 
 	// private final String pnLibVersion = "3.0.0";
 	// supported PNlib versions
-	private final ArrayList<String> pnLibVersions = new ArrayList<>() {
+	private final List<String> pnLibVersions = new ArrayList<>() {
 		private static final long serialVersionUID = 176815129085958L;
 		{
 			add("3.0.0");

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +29,7 @@ import graph.GraphInstance;
 import graph.gui.Parameter;
 import util.StochasticDistribution;
 import util.StringLengthComparator;
+import util.VanesaUtility;
 
 /**
  * @author Rafael, cbrinkro
@@ -44,16 +44,16 @@ public class MOoutput extends BaseWriter<Pathway> {
 	private final StringBuilder parametersSB = new StringBuilder();
 	private final StringBuilder edgesSB = new StringBuilder();
 
-	private final Hashtable<String, ArrayList<BiologicalNodeAbstract>> actualInEdges = new Hashtable<>();
-	private final Hashtable<String, ArrayList<BiologicalNodeAbstract>> actualOutEdges = new Hashtable<>();
-	private final Hashtable<BiologicalNodeAbstract, String> nodeType = new Hashtable<>();
-	private final HashMap<BiologicalNodeAbstract, String> vertex2name = new HashMap<>();
-	private final HashMap<String, String> inWeights = new HashMap<>();
-	private final HashMap<String, String> outWeights = new HashMap<>();
-	private final HashMap<String, String> outPrio = new HashMap<>();
-	private final HashMap<String, String> outProb = new HashMap<>();
+	private final Map<String, ArrayList<BiologicalNodeAbstract>> actualInEdges = new HashMap<>();
+	private final Map<String, ArrayList<BiologicalNodeAbstract>> actualOutEdges = new HashMap<>();
+	private final Map<BiologicalNodeAbstract, String> nodeType = new HashMap<>();
+	private final Map<BiologicalNodeAbstract, String> vertex2name = new HashMap<>();
+	private final Map<String, String> inWeights = new HashMap<>();
+	private final Map<String, String> outWeights = new HashMap<>();
+	private final Map<String, String> outPrio = new HashMap<>();
+	private final Map<String, String> outProb = new HashMap<>();
 
-	private final HashMap<BiologicalEdgeAbstract, String> bea2resultkey = new HashMap<>();
+	private final Map<BiologicalEdgeAbstract, String> bea2resultkey = new HashMap<>();
 
 	private Set<BiologicalNodeAbstract> marked;
 
@@ -213,17 +213,35 @@ public class MOoutput extends BaseWriter<Pathway> {
 	private void buildParameters(Pathway pw) {
 		for (BiologicalNodeAbstract bna : pw.getAllGraphNodesSortedAlphabetically()) {
 			if (!bna.isLogical()) {
-				for (int i = 0; i < bna.getParameters().size(); i++) {
+				for (Parameter p : bna.getParametersSortedAlphabetically()) {
 					// params += this.indentation + "parameter Real
 					// "+bna.getParameters().get(i).getName()+" =
 					// "+bna.getParameters().get(i).getValue()+";" + this.endl;
 					parametersSB.append(INDENT).append("parameter Real '_").append(bna.getName()).append("_")
-							.append(bna.getParameters().get(i).getName()).append("'");
-					if (bna.getParameters().get(i).getUnit().length() > 0) {
-						parametersSB.append("(final unit=\"").append(bna.getParameters().get(i).getUnit())
-								.append("\")");
+							.append(p.getName()).append("'");
+					if (p.getUnit().length() > 0) {
+						parametersSB.append("(final unit=\"").append(p.getUnit()).append("\")");
 					}
-					parametersSB.append(" = ").append(bna.getParameters().get(i).getValue()).append(";").append(ENDL);
+					parametersSB.append(" = ").append(p.getValue()).append(";").append(ENDL);
+				}
+				// functions and parameters at arcs belong to the corresponding transition
+				if (bna instanceof Transition) {
+					for (BiologicalEdgeAbstract bea : VanesaUtility
+							.getEdgesSortedByID(pw.getGraph().getJungGraph().getIncidentEdges(bna))) {
+						for (Parameter p : bea.getParametersSortedAlphabetically()) {
+
+							// params += this.indentation + "parameter Real
+							// "+bna.getParameters().get(i).getName()+" =
+							// "+bna.getParameters().get(i).getValue()+";" + this.endl;
+							parametersSB.append(INDENT).append("parameter Real '__").append(bna.getName()).append("_")
+									.append(p.getName()).append("'");
+							if (p.getUnit().length() > 0) {
+								parametersSB.append("(final unit=\"").append(p.getUnit()).append("\")");
+							}
+							parametersSB.append(" = ").append(p.getValue()).append(";").append(ENDL);
+						}
+					}
+
 				}
 			}
 		}
@@ -367,7 +385,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 				} else if (biologicalElement.equals(Elementdeclerations.discreteTransition)) {
 
 					dt = (DiscreteTransition) bna;
-					delay = this.replaceAll(dt.getDelay(), dt.getParameters(), dt);
+					delay = this.replaceAll(dt.getDelay(), dt.getParameters(), dt.getName(), false);
 					attr.append("delay=" + delay);
 					// places = places.concat(getTransitionString(bna,
 					// getModelicaString(t), bna.getName(), atr, in, out));
@@ -375,7 +393,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 				} else if (biologicalElement.equals(Elementdeclerations.continuousTransition)) {
 					ct = (ContinuousTransition) bna;
 					// System.out.println(ct.getMaximalSpeed());
-					speed = this.replaceAll(ct.getMaximalSpeed(), ct.getParameters(), ct);
+					speed = this.replaceAll(ct.getMaximalSpeed(), ct.getParameters(), ct.getName(), false);
 					// System.out.println(speed);
 					// if (ct.isKnockedOut()) {
 					// attr.append("maximumSpeed(final unit=\"mmol/min\")=0/*" + speed + "*/");
@@ -409,7 +427,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 		inhibitCount = 0;
 		testArcCount = 0;
 		StringBuilder weight = new StringBuilder();
-		for (BiologicalEdgeAbstract bea : pw.getAllEdgesSorted()) {
+		for (BiologicalEdgeAbstract bea : pw.getAllEdgesSortedByID()) {
 			weight.setLength(0);
 			String fromString = vertex2name.get(this.resolveReference(bea.getFrom()));
 			String toString = vertex2name.get(this.resolveReference(bea.getTo()));
@@ -612,13 +630,13 @@ public class MOoutput extends BaseWriter<Pathway> {
 		return result;
 	}
 
-	public HashMap<BiologicalEdgeAbstract, String> getBea2resultkey() {
+	public Map<BiologicalEdgeAbstract, String> getBea2resultkey() {
 		return bea2resultkey;
 	}
 
-	private String replaceAll(String function, List<Parameter> params, BiologicalNodeAbstract node) {
+	private String replaceAll(String function, List<Parameter> params, String nodePrefix, boolean isEdge) {
 
-		String mFunction = this.replaceParameters(function, params, node);
+		String mFunction = this.replaceParameters(function, params, nodePrefix, isEdge);
 		mFunction = this.replaceNames(mFunction);
 		return mFunction;
 	}
@@ -712,8 +730,12 @@ public class MOoutput extends BaseWriter<Pathway> {
 				}
 			}
 		}
-		return replaceNames(bea.getFunction());
-
+		if (bea.getTo() instanceof Transition) {
+			return replaceAll(bea.getFunction(), bea.getParameters(), bea.getTo().getName(), true);
+		} else {
+			return replaceAll(bea.getFunction(), bea.getParameters(), bea.getFrom().getName(), true);
+		}
+		// return replaceNames(bea.getFunction());
 	}
 
 	private String replaceNames(String function) {
@@ -793,7 +815,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 		return mFunction.toString();
 	}
 
-	private String replaceParameters(String function, List<Parameter> params, BiologicalNodeAbstract node) {
+	private String replaceParameters(String function, List<Parameter> params, String nodePrefix, boolean isEdge) {
 		StringBuilder mFunction = new StringBuilder(function);
 
 		// replace parameters
@@ -835,7 +857,15 @@ public class MOoutput extends BaseWriter<Pathway> {
 					// {
 					if (check && CHARS.contains(r)) {
 						// mFunction = mFunction.replaceFirst(name, mNames.get(name));
-						insert = "'_" + node.getName() + "_" + name + "'";
+						if (isEdge) {
+							// parameters of arcs (assigned to transitions), start with double underscores
+							// to avoid naming conflicts between regular transition parameters and arc
+							// parameters
+							insert = "'__" + nodePrefix + "_" + name + "'";
+						} else {
+							insert = "'_" + nodePrefix + "_" + name + "'";
+						}
+
 						mFunction.replace(idxNew, idxNew + name.length(), insert);
 						// mFunction.insert(idxNew, "_" + node.getName() + "_");
 						// index = idxNew + name.length() + 2

@@ -29,7 +29,7 @@ public class Server {
 
 	private Thread serverThread;
 	private java.net.ServerSocket serverSocket;
-	private final HashMap<BiologicalEdgeAbstract, String> bea2key;
+	private final Map<BiologicalEdgeAbstract, String> bea2key;
 	private boolean running = true;
 	private boolean readyToConnect = false;
 	private final Pathway pw;
@@ -52,7 +52,7 @@ public class Server {
 
 	private long lastSyso = 0;
 
-	public Server(final Pathway pw, final HashMap<BiologicalEdgeAbstract, String> bea2key, final String simId,
+	public Server(final Pathway pw, final Map<BiologicalEdgeAbstract, String> bea2key, final String simId,
 			final int port) {
 		this.pw = pw;
 		this.bea2key = bea2key;
@@ -157,8 +157,8 @@ public class Server {
 						for (int b = 0; b < bools; b++) {
 							values.add(bb.get());
 						}
-						final String[] sValues = (new String(buffer, expectedPayloadSize,
-								length - expectedPayloadSize)).split(NAME_SEPARATOR);
+						final String[] sValues = (new String(buffer, expectedPayloadSize, length - expectedPayloadSize))
+								.split(NAME_SEPARATOR);
 						Collections.addAll(values, sValues);
 						setData(name2index, values);
 					}
@@ -293,7 +293,8 @@ public class Server {
 	}
 
 	private void checkAndAddValue(final GraphElementAbstract gea, final int type, final Object o) {
-		// TODO: values should be stored in their original datatype. Especially long to double may cause issues for large values.
+		// TODO: values should be stored in their original datatype. Especially long to
+		// double may cause issues for large values.
 		final double value;
 		if (o instanceof Integer) {
 			value = (double) (int) o;

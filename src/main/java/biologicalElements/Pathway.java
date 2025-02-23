@@ -47,6 +47,7 @@ import petriNet.PetriNetProperties;
 import petriNet.PetriNetSimulation;
 import transformation.TransformationInformation;
 import util.FormulaSafety;
+import util.VanesaUtility;
 
 public class Pathway extends GraphicalElement implements Cloneable {
 	private File file = null;
@@ -395,18 +396,8 @@ public class Pathway extends GraphicalElement implements Cloneable {
 		return getGraph().getAllEdges();
 	}
 
-	public List<BiologicalEdgeAbstract> getAllEdgesSorted() {
-		Map<Integer, BiologicalEdgeAbstract> map = new HashMap<>();
-		for (BiologicalEdgeAbstract bea : this.getAllEdges()) {
-			map.put(bea.getID(), bea);
-		}
-		ArrayList<Integer> ids = new ArrayList<>(map.keySet());
-		ids.sort(Integer::compare);
-		List<BiologicalEdgeAbstract> sortedList = new ArrayList<>();
-		for (Integer id : ids) {
-			sortedList.add(map.get(id));
-		}
-		return sortedList;
+	public List<BiologicalEdgeAbstract> getAllEdgesSortedByID() {
+		return VanesaUtility.getEdgesSortedByID(getAllEdges());
 	}
 
 	public Collection<BiologicalNodeAbstract> getAllGraphNodes() {

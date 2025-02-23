@@ -1,5 +1,22 @@
 package util;
 
+import java.awt.Color;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.DatagramSocket;
+import java.net.ServerSocket;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
@@ -12,17 +29,8 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaderSAX2Factory;
 import org.xml.sax.InputSource;
 
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.DatagramSocket;
-import java.net.ServerSocket;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import gui.PopUpDialog;
 
 public class VanesaUtility {
 	public static double round(double value, int decimalPlaces) {
@@ -78,8 +86,8 @@ public class VanesaUtility {
 			handler.save(file);
 		}
 		Parameters params = new Parameters();
-		FileBasedConfigurationBuilder<XMLConfiguration> builder =
-				new FileBasedConfigurationBuilder<>(XMLConfiguration.class).configure(params.fileBased().setFile(file));
+		FileBasedConfigurationBuilder<XMLConfiguration> builder = new FileBasedConfigurationBuilder<>(
+				XMLConfiguration.class).configure(params.fileBased().setFile(file));
 		builder.setAutoSave(true);
 		return builder.getConfiguration();
 	}
@@ -97,6 +105,7 @@ public class VanesaUtility {
 				desktop.browse(uri);
 			} catch (IOException e) {
 				e.printStackTrace();
+				PopUpDialog.getInstance().show("URL Error", e.getMessage());
 			}
 		}
 	}
@@ -104,7 +113,8 @@ public class VanesaUtility {
 	public static Document loadXmlDocument(InputStream inputStream) {
 		// changed empty constructor SAXBuilder builder = new SAXBuilder();
 		// to following, because open JDK got an error with empty constructor
-		// see: https://stackoverflow.com/questions/11409025/exceptionininitializererror-while-creating-ant-custom-task
+		// see:
+		// https://stackoverflow.com/questions/11409025/exceptionininitializererror-while-creating-ant-custom-task
 		SAXBuilder builder = new SAXBuilder(new XMLReaderSAX2Factory(false, "org.apache.xerces.parsers.SAXParser"));
 		InputSource in = new InputSource(inputStream);
 		// SBMLReader.read(inputStream);
@@ -133,40 +143,54 @@ public class VanesaUtility {
 		}
 		return array;
 	}
-	
+
 	/**
 	 * Checks to see if a specific port is available.
 	 *
 	 * @param port the port to check for availability
 	 */
 	public static boolean isPortAvailable(int port) {
-	    //if (port < MIN_PORT_NUMBER || port > MAX_PORT_NUMBER) {
-	    //    throw new IllegalArgumentException("Invalid start port: " + port);
-	   // }
+		// if (port < MIN_PORT_NUMBER || port > MAX_PORT_NUMBER) {
+		// throw new IllegalArgumentException("Invalid start port: " + port);
+		// }
 
-	    ServerSocket ss = null;
-	    DatagramSocket ds = null;
-	    try {
-	        ss = new ServerSocket(port);
-	        ss.setReuseAddress(true);
-	        ds = new DatagramSocket(port);
-	        ds.setReuseAddress(true);
-	        return true;
-	    } catch (IOException e) {
-	    } finally {
-	        if (ds != null) {
-	            ds.close();
-	        }
+		ServerSocket ss = null;
+		DatagramSocket ds = null;
+		try {
+			ss = new ServerSocket(port);
+			ss.setReuseAddress(true);
+			ds = new DatagramSocket(port);
+			ds.setReuseAddress(true);
+			return true;
+		} catch (IOException e) {
+		} finally {
+			if (ds != null) {
+				ds.close();
+			}
 
-	        if (ss != null) {
-	            try {
-	                ss.close();
-	            } catch (IOException e) {
-	                /* should not be thrown */
-	            }
-	        }
-	    }
+			if (ss != null) {
+				try {
+					ss.close();
+				} catch (IOException e) {
+					/* should not be thrown */
+				}
+			}
+		}
 
-	    return false;
+		return false;
+	}
+
+	public static List<BiologicalEdgeAbstract> getEdgesSortedByID(Collection<BiologicalEdgeAbstract> edges) {
+		Map<Integer, BiologicalEdgeAbstract> map = new HashMap<>();
+		for (BiologicalEdgeAbstract bea : edges) {
+			map.put(bea.getID(), bea);
+		}
+		ArrayList<Integer> ids = new ArrayList<>(map.keySet());
+		ids.sort(Integer::compare);
+		List<BiologicalEdgeAbstract> sortedList = new ArrayList<>();
+		for (Integer id : ids) {
+			sortedList.add(map.get(id));
+		}
+		return sortedList;
 	}
 }

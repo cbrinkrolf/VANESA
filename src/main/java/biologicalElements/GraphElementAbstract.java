@@ -61,6 +61,8 @@ public interface GraphElementAbstract {
 
 	List<Parameter> getParameters();
 
+	List<Parameter> getParametersSortedAlphabetically();
+
 	void setParameters(List<Parameter> parameters);
 
 	Set<String> getLabelSet();
