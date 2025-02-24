@@ -313,7 +313,11 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 						"span, wrap 10, growx, align center");
 				main.add(pane, "span, wrap");
 				main.add(controlPanel, "gap 10, wrap 15, growx");
-				pane.setPreferredSize(new Dimension(400, 200));
+				int x = 360;
+				// native ratio of chart pane is 4:3
+				int y = (int) (x * 3.0 / 4.0);
+
+				pane.setPreferredSize(new Dimension(x, y));
 				// main.add(mainPanel);
 				main.setVisible(true);
 
@@ -966,7 +970,6 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	 * each biological node apparent in the pathway (i.e. not being a reference).
 	 */
 	public void stateChanged(ChangeEvent e) {
-		// System.out.println("state changed");
 		boolean isValidPN = pw.isPetriNet() && pw.getPetriPropertiesNet().isPetriNetSimulation();
 		boolean isValidHiddenPN = !pw.isPetriNet() && pw.getTransformationInformation() != null
 				&& pw.getTransformationInformation().getPetriNet() != null
@@ -1170,7 +1173,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		String simId;
 		while (it.hasNext()) {
 			simId = it.next();
-			System.out.println("adding");
+			// System.out.println("adding");
 			addSimulationToChart(simId);
 			// System.out.println("update");
 			try {
