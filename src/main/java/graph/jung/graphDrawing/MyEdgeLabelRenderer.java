@@ -31,7 +31,7 @@ public class MyEdgeLabelRenderer extends BasicEdgeLabelRenderer<BiologicalNodeAb
 
 	private final GraphSettings settings = GraphSettings.getInstance();
 	private final Color pickedEdgeLabelColor;
-	private boolean rotateEdgeLabels;
+	private final boolean rotateEdgeLabels;
 	private boolean disabled;
 
 	public MyEdgeLabelRenderer(final Color pickedEdgeLabelColor) {
@@ -42,7 +42,6 @@ public class MyEdgeLabelRenderer extends BasicEdgeLabelRenderer<BiologicalNodeAb
 		super();
 		this.pickedEdgeLabelColor = pickedEdgeLabelColor;
 		this.rotateEdgeLabels = rotateEdgeLabels;
-
 	}
 
 	@Override
@@ -51,7 +50,7 @@ public class MyEdgeLabelRenderer extends BasicEdgeLabelRenderer<BiologicalNodeAb
 		if (disabled) {
 			return;
 		}
-		if (label == null || label.length() == 0)
+		if (label == null || label.isEmpty())
 			return;
 
 		Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph = layout.getGraph();
@@ -59,15 +58,11 @@ public class MyEdgeLabelRenderer extends BasicEdgeLabelRenderer<BiologicalNodeAb
 		Pair<BiologicalNodeAbstract> endpoints = graph.getEndpoints(e);
 		BiologicalNodeAbstract v1 = endpoints.getFirst();
 		BiologicalNodeAbstract v2 = endpoints.getSecond();
-		if (!rc.getEdgeIncludePredicate().apply(Context
-				.<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>getInstance(graph, e)))
+		if (!rc.getEdgeIncludePredicate().apply(Context.getInstance(graph, e)))
 			return;
 
-		if (!rc.getVertexIncludePredicate().apply(Context
-				.<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalNodeAbstract>getInstance(graph, v1))
-				&& !rc.getVertexIncludePredicate().apply(Context
-						.<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalNodeAbstract>getInstance(
-								graph, v2)))
+		if (!rc.getVertexIncludePredicate().apply(Context.getInstance(graph, v1)) && !rc.getVertexIncludePredicate()
+				.apply(Context.getInstance(graph, v2)))
 			return;
 
 		Point2D p1 = layout.apply(v1);
@@ -84,9 +79,7 @@ public class MyEdgeLabelRenderer extends BasicEdgeLabelRenderer<BiologicalNodeAb
 		float distY = y2 - y1;
 		double totalLength = Math.sqrt(distX * distX + distY * distY);
 
-		double closeness = rc.getEdgeLabelClosenessTransformer().apply(Context
-				.<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>getInstance(graph, e))
-				.doubleValue();
+		double closeness = rc.getEdgeLabelClosenessTransformer().apply(Context.getInstance(graph, e)).doubleValue();
 
 		int posX = (int) (x1 + (closeness) * distX);
 		int posY = (int) (y1 + (closeness) * distY);

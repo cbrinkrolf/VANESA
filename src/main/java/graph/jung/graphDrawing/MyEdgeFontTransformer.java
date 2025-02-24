@@ -8,7 +8,6 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import configurations.GraphSettings;
 
 public class MyEdgeFontTransformer implements Function<BiologicalEdgeAbstract, Font> {
-
 	private final GraphSettings settings = GraphSettings.getInstance();
 
 	@Override

@@ -8,7 +8,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.GraphSettings;
 
 public class MyVertexFontTransformer implements Function<BiologicalNodeAbstract, Font> {
-
 	private final GraphSettings settings = GraphSettings.getInstance();
 
 	@Override
@@ -16,8 +15,6 @@ public class MyVertexFontTransformer implements Function<BiologicalNodeAbstract,
 		if (settings.getVertexFont() != null) {
 			return settings.getVertexFont();
 		}
-		// apply default font
 		return null;
 	}
-
 }

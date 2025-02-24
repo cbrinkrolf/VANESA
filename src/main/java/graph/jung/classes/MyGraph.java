@@ -370,8 +370,16 @@ public class MyGraph {
 	}
 
 	private void updateLabelVisibilityOnZoom() {
-		vlr.setDisabled(vv.getFont().getSize() * vv.getScale() <= 6);
-		elr.setDisabled(vv.getFont().getSize() * vv.getScale() <= 6);
+		Font vertexFont = GraphSettings.getInstance().getVertexFont();
+		if (vertexFont == null) {
+			vertexFont = vv.getFont();
+		}
+		Font edgeFont = GraphSettings.getInstance().getEdgeFont();
+		if (edgeFont == null) {
+			edgeFont = vv.getFont();
+		}
+		vlr.setDisabled(vertexFont.getSize() * vv.getScale() <= 6);
+		elr.setDisabled(edgeFont.getSize() * vv.getScale() <= 6);
 	}
 
 	public void makeDefaultObjectVisualization() {
