@@ -1,22 +1,33 @@
 package graph.jung.graphDrawing;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
 import java.io.Serializable;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.GraphSettings;
-import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.util.Context;
+import edu.uci.ics.jung.graph.util.Pair;
+import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.RenderContext;
+import edu.uci.ics.jung.visualization.renderers.BasicEdgeLabelRenderer;
+import edu.uci.ics.jung.visualization.renderers.Renderer;
+import edu.uci.ics.jung.visualization.transform.shape.GraphicsDecorator;
 
 /**
  * Edge label renderer based on a JLabel.
  */
-public class MyEdgeLabelRenderer extends JLabel implements EdgeLabelRenderer, Serializable {
+public class MyEdgeLabelRenderer extends BasicEdgeLabelRenderer<BiologicalNodeAbstract, BiologicalEdgeAbstract>
+		implements Renderer.EdgeLabel<BiologicalNodeAbstract, BiologicalEdgeAbstract>, Serializable {
 	private static final long serialVersionUID = 6360860594551716099L;
-	private static final Border noFocusBorder = new EmptyBorder(0, 0, 0, 0);
 
 	private final GraphSettings settings = GraphSettings.getInstance();
 	private final Color pickedEdgeLabelColor;
@@ -31,143 +42,105 @@ public class MyEdgeLabelRenderer extends JLabel implements EdgeLabelRenderer, Se
 		super();
 		this.pickedEdgeLabelColor = pickedEdgeLabelColor;
 		this.rotateEdgeLabels = rotateEdgeLabels;
-		setOpaque(true);
-		setBorder(noFocusBorder);
+
 	}
 
 	@Override
-	public boolean isRotateEdgeLabels() {
-		return rotateEdgeLabels;
-	}
-
-	@Override
-	public void setRotateEdgeLabels(final boolean rotateEdgeLabels) {
-		this.rotateEdgeLabels = rotateEdgeLabels;
-	}
-
-	/**
-	 * Overrides <code>JComponent.setBackground</code> to assign the unselected-background color to the specified
-	 * color.
-	 */
-	@Override
-	public Color getForeground() {
-		if (settings != null && settings.isBackgroundColor()) {
-			return Color.WHITE;
+	public void labelEdge(RenderContext<BiologicalNodeAbstract, BiologicalEdgeAbstract> rc,
+			Layout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout, BiologicalEdgeAbstract e, String label) {
+		if (disabled) {
+			return;
 		}
-		return super.getForeground();
-	}
+		if (label == null || label.length() == 0)
+			return;
 
-	public boolean isDisabled() {
-		return disabled;
+		Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph = layout.getGraph();
+		// don't draw edge if either incident vertex is not drawn
+		Pair<BiologicalNodeAbstract> endpoints = graph.getEndpoints(e);
+		BiologicalNodeAbstract v1 = endpoints.getFirst();
+		BiologicalNodeAbstract v2 = endpoints.getSecond();
+		if (!rc.getEdgeIncludePredicate().apply(Context
+				.<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>getInstance(graph, e)))
+			return;
+
+		if (!rc.getVertexIncludePredicate().apply(Context
+				.<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalNodeAbstract>getInstance(graph, v1))
+				&& !rc.getVertexIncludePredicate().apply(Context
+						.<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalNodeAbstract>getInstance(
+								graph, v2)))
+			return;
+
+		Point2D p1 = layout.apply(v1);
+		Point2D p2 = layout.apply(v2);
+		p1 = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, p1);
+		p2 = rc.getMultiLayerTransformer().transform(Layer.LAYOUT, p2);
+		float x1 = (float) p1.getX();
+		float y1 = (float) p1.getY();
+		float x2 = (float) p2.getX();
+		float y2 = (float) p2.getY();
+
+		GraphicsDecorator g = rc.getGraphicsContext();
+		float distX = x2 - x1;
+		float distY = y2 - y1;
+		double totalLength = Math.sqrt(distX * distX + distY * distY);
+
+		double closeness = rc.getEdgeLabelClosenessTransformer().apply(Context
+				.<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>getInstance(graph, e))
+				.doubleValue();
+
+		int posX = (int) (x1 + (closeness) * distX);
+		int posY = (int) (y1 + (closeness) * distY);
+
+		int xDisplacement = (int) (rc.getLabelOffset() * (distY / totalLength));
+		int yDisplacement = (int) (rc.getLabelOffset() * (-distX / totalLength));
+
+		Component component = prepareRenderer(rc, rc.getEdgeLabelRenderer(), label, rc.getPickedEdgeState().isPicked(e),
+				e);
+
+		Dimension d = component.getPreferredSize();
+
+		Shape edgeShape = rc.getEdgeShapeTransformer().apply(e);
+
+		double parallelOffset = 1;
+
+		parallelOffset += rc.getParallelEdgeIndexFunction().getIndex(graph, e);
+
+		parallelOffset *= d.height;
+		if (edgeShape instanceof Ellipse2D) {
+			parallelOffset += edgeShape.getBounds().getHeight();
+			parallelOffset = -parallelOffset;
+		}
+
+		AffineTransform old = g.getTransform();
+		AffineTransform xform = new AffineTransform(old);
+		xform.translate(posX + xDisplacement, posY + yDisplacement);
+		double dx = x2 - x1;
+		double dy = y2 - y1;
+		if (rotateEdgeLabels) {
+			double theta = Math.atan2(dy, dx);
+			if (dx < 0) {
+				theta += Math.PI;
+			}
+			xform.rotate(theta);
+		}
+		if (dx < 0) {
+			parallelOffset = -parallelOffset;
+		}
+
+		if (rc.getPickedEdgeState().isPicked(e)) {
+			component.setForeground(pickedEdgeLabelColor);
+		} else if (settings.isBackgroundColor()) {
+			component.setForeground(Color.WHITE);
+		}
+
+		xform.translate(-d.width / 2, -(d.height / 2 - parallelOffset));
+		g.setTransform(xform);
+		g.draw(component, rc.getRendererPane(), 0, 0, d.width, d.height, true);
+
+		g.setTransform(old);
 	}
 
 	public void setDisabled(final boolean disabled) {
 		this.disabled = disabled;
-	}
-
-	/**
-	 * Notification from the <code>UIManager</code> that the look and feel [L&F] has changed. Replaces the current UI
-	 * object with the latest version from the <code>UIManager</code>.
-	 *
-	 * @see JComponent#updateUI
-	 */
-	@Override
-	public void updateUI() {
-		super.updateUI();
-		setForeground(null);
-		setBackground(null);
-	}
-
-	@Override
-	public void paint(Graphics g) {
-		if (!disabled) {
-			super.paint(g);
-		}
-	}
-
-	@Override
-	public <BiologicalNodeAbstract> Component getEdgeLabelRendererComponent(JComponent vv, Object value, Font font,
-																			boolean isSelected,
-																			BiologicalNodeAbstract bea) {
-		super.setForeground(vv.getForeground());
-		if (isSelected)
-			setForeground(pickedEdgeLabelColor);
-		super.setBackground(vv.getBackground());
-		if (font != null) {
-			setFont(font);
-		} else {
-			setFont(vv.getFont());
-		}
-		setIcon(null);
-		setBorder(noFocusBorder);
-		setText(value == null ? "" : value.toString());
-		return this;
-	}
-
-	/*
-	 * The following methods are overridden as a performance measure to to prune
-	 * code-paths are often called in the case of renders but which we know are
-	 * unnecessary. Great care should be taken when writing your own renderer to
-	 * weigh the benefits and drawbacks of overriding methods like these.
-	 */
-
-	/**
-	 * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for more information.
-	 */
-	@Override
-	public boolean isOpaque() {
-		final Color back = getBackground();
-		Component p = getParent();
-		if (p != null) {
-			p = p.getParent();
-		}
-		boolean colorMatch = back != null && p != null && back.equals(p.getBackground()) && p.isOpaque();
-		return !colorMatch && super.isOpaque();
-	}
-
-	/**
-	 * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for more information.
-	 */
-	@Override
-	public void validate() {
-	}
-
-	/**
-	 * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for more information.
-	 */
-	@Override
-	public void revalidate() {
-	}
-
-	/**
-	 * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for more information.
-	 */
-	@Override
-	public void repaint(long tm, int x, int y, int width, int height) {
-	}
-
-	/**
-	 * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for more information.
-	 */
-	@Override
-	public void repaint(Rectangle r) {
-	}
-
-	/**
-	 * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for more information.
-	 */
-	@Override
-	protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-		// Strings get interned...
-		if ("text".equals(propertyName)) {
-			super.firePropertyChange(propertyName, oldValue, newValue);
-		}
-	}
-
-	/**
-	 * Overridden for performance reasons. See the <a href="#override">Implementation Note</a> for more information.
-	 */
-	@Override
-	public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {
 	}
 }

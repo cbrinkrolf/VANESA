@@ -11,8 +11,6 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.HashMap;
@@ -372,8 +370,8 @@ public class MyGraph {
 	}
 
 	private void updateLabelVisibilityOnZoom() {
-		vlr.setDisabled(elr.getFont().getSize() * vv.getScale() <= 6);
-		elr.setDisabled(elr.getFont().getSize() * vv.getScale() <= 6);
+		vlr.setDisabled(vv.getFont().getSize() * vv.getScale() <= 6);
+		elr.setDisabled(vv.getFont().getSize() * vv.getScale() <= 6);
 	}
 
 	public void makeDefaultObjectVisualization() {
@@ -426,7 +424,8 @@ public class MyGraph {
 		pr.setEdgeDrawPaintTransformer(edpf);
 		pr.setEdgeFillPaintTransformer(efpf);
 		pr.setEdgeShapeTransformer(esf);
-		pr.setEdgeLabelRenderer(elr);
+		// pr.setEdgeLabelRenderer(elr);
+		vv.getRenderer().setEdgeLabelRenderer(elr);
 		// arrows
 		pr.setEdgeArrowTransformer(eaf);
 		pr.setArrowDrawPaintTransformer(adpt);
@@ -455,7 +454,8 @@ public class MyGraph {
 		satellitePr.setEdgeDrawPaintTransformer(edpf);
 		satellitePr.setEdgeFillPaintTransformer(efpf);
 		satellitePr.setEdgeShapeTransformer(esf);
-		satellitePr.setEdgeLabelRenderer(elr);
+		vv2.getRenderer().setEdgeLabelRenderer(elr);
+
 		// arrows
 		satellitePr.setEdgeArrowTransformer(eaf);
 		satellitePr.setArrowDrawPaintTransformer(adpt);
@@ -868,7 +868,7 @@ public class MyGraph {
 		pr_compare.setEdgeFillPaintTransformer(efpf);
 		pr_compare.setEdgeShapeTransformer(esf);
 		pr_compare.setVertexLabelRenderer(vlr);
-		pr_compare.setEdgeLabelRenderer(elr);
+		// pr_compare.setEdgeLabelRenderer(elr);
 		pr_compare.setEdgeArrowTransformer(eaf);
 		pr_compare.setArrowDrawPaintTransformer(adpt);
 		pr_compare.setArrowFillPaintTransformer(afpt);
@@ -1369,5 +1369,6 @@ public class MyGraph {
 					g2d.setStroke(old_stroke);
 			}
 		});
+		// vv.getRenderer().setEdgeLabelRenderer(null);
 	}
 }
