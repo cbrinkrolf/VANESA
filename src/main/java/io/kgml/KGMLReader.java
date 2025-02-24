@@ -130,7 +130,7 @@ public class KGMLReader extends BaseReader<Pathway> {
         populatePathway(pw, pathwayId, entries, relations);
         pw.getGraph().restartVisualizationModel();
         pw.getGraph().normalCentering();
-        MainWindow.getInstance().updateProjectProperties();
+        MainWindow.getInstance().updateAllGuiElements();
         return pw;
     }
 
