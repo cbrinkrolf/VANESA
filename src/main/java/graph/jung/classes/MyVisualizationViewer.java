@@ -9,6 +9,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import biologicalElements.Pathway;
+import configurations.SettingsManager;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationServer;
@@ -20,11 +21,10 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	private final Pathway pw;
 	private Point2D mousePoint = new Point2D.Double(0, 0);
 	private int fpsCounter = 0;
-	private long start = 0;
-	private boolean printFPS = !true;
+	private long fpsTimer = System.currentTimeMillis();
 
-	private Font fontBold = new Font("default", Font.BOLD, 12);
-	private Font fontPlain = new Font("default", Font.PLAIN, 12);
+	private final Font fontBold = new Font("default", Font.BOLD, 12);
+	private final Font fontPlain = new Font("default", Font.PLAIN, 12);
 
 	public MyVisualizationViewer(VisualizationModel<V, E> arg0, Dimension arg2, Pathway pw) {
 		super(arg0, arg2);
@@ -78,10 +78,8 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 
 		// g2d.drawString("x", 580, 533);
 		// ContainerSingelton.getInstance().setPetriView(true);
-		if (printFPS) {
-			fpsCounter++;
-			printFPS();
-		}
+
+		// not usable as change-based rendering is used: drawFPS(g2d);
 	}
 
 	public List<VisualizationServer.Paintable> getPreRenderers() {
@@ -115,12 +113,17 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		g2d.drawString(text, (int) (getWidth() - bounds.getWidth()) - 10, 22);
 	}
 
-	private void printFPS() {
-		long stop = System.currentTimeMillis();
-		if (stop - start > 1000) {
-			System.out.println("FPS: " + fpsCounter);
-			fpsCounter = 0;
-			start = stop;
+	private void drawFPS(final Graphics2D g2d) {
+		if (SettingsManager.getInstance().isDeveloperMode()) {
+			g2d.drawString("FPS: " + fpsCounter, getWidth() - 75, 33);
+			fpsCounter++;
+			long stop = System.currentTimeMillis();
+			if (stop - fpsTimer > 1000) {
+				fpsCounter = 0;
+				fpsTimer += 1000;
+			}
+		} else {
+			fpsTimer = System.currentTimeMillis();
 		}
 	}
 }
