@@ -109,8 +109,6 @@ public class PetriNetSimulation implements ActionListener {
 
 	private String customeExecutable = "";// "_omcQ_27D15_5FCPM_5FPN_2Esbml_27.exe";
 
-	private boolean cleanUpDirAfterCompilation = !true;
-
 	// CHRIS refactored version of threads for simulation needs to be tested and
 	// evaluated. maybe show more hints / error messages
 	// CHRIS log also simulation properties (start / number of intervals, duration
@@ -901,6 +899,7 @@ public class PetriNetSimulation implements ActionListener {
 						waitForServerConnection.start();
 					} else {
 						logAndShow("Compilen was not successful. No executable was generated!");
+						compiling = false;
 						stopAction();
 					}
 				} catch (Exception e) {
@@ -910,7 +909,7 @@ public class PetriNetSimulation implements ActionListener {
 					stopAction();
 				}
 				compiling = false;
-				if (cleanUpDirAfterCompilation) {
+				if (SettingsManager.getInstance().isCleanWorkingDirAfterCompilation() && buildSuccess) {
 					// could be threaded maybe
 					System.out.println("cleaning up working directory");
 					cleanUpWorkingDirectory();
@@ -1177,26 +1176,34 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private void cleanUpWorkingDirectory() {
-		long bytes = 0;
-		int deletedFileCount = 0;
-		final File dirSim = pathSim.toFile();
-		if (dirSim.isDirectory()) {
-			// FileUtils.cleanDirectory(dirSim);
-			String[] extensions = { "bat", "c", "h", "o", "json", "intdata", "realdata" };
-			Collection<File> files = FileUtils.listFiles(dirSim, extensions, false);
+		new Thread() {
 
-			for (File f : files) {
-				try {
-					bytes += FileUtils.sizeOf(f);
-					FileUtils.delete(f);
-					deletedFileCount++;
-				} catch (IOException e) {
-					e.printStackTrace();
-					PopUpDialog.getInstance().show("Error deleting file: " + f.getName(), e.getMessage());
+			@Override
+			public void run() {
+				long bytes = 0;
+				int deletedFileCount = 0;
+				final File dirSim = pathSim.toFile();
+				if (dirSim.isDirectory()) {
+					// FileUtils.cleanDirectory(dirSim);
+					String[] extensions = { "bat", "c", "h", "o", "json", "intdata", "realdata" };
+					Collection<File> files = FileUtils.listFiles(dirSim, extensions, false);
+
+					for (File f : files) {
+						try {
+							bytes += FileUtils.sizeOf(f);
+							FileUtils.delete(f);
+							deletedFileCount++;
+						} catch (IOException e) {
+							e.printStackTrace();
+							if (SettingsManager.getInstance().isDeveloperMode()) {
+								PopUpDialog.getInstance().show("Error deleting file: " + f.getName(), e.getMessage());
+							}
+						}
+					}
 				}
+				System.out.println("deleted files: " + deletedFileCount + ", freed disk space: "
+						+ FileUtils.byteCountToDisplaySize(bytes));
 			}
-		}
-		System.out.println("deleted files: " + deletedFileCount + ", freed disk space: "
-				+ FileUtils.byteCountToDisplaySize(bytes));
+		}.start();
 	}
 }

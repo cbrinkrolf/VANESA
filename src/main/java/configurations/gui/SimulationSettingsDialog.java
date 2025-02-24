@@ -22,6 +22,7 @@ public class SimulationSettingsDialog {
 	private final JLabel lblPathPNlib;
 	private final JCheckBox overrideOMPath;
 	private final JCheckBox overridePNlibPath;
+	private final JCheckBox cleanWorkingDirAfterCompilation;
 
 	private String pathOM;
 	private String pathPNlib;
@@ -46,7 +47,8 @@ public class SimulationSettingsDialog {
 
 		JButton chooseOMPath = new JButton("Choose folder");
 		chooseOMPath.addActionListener(e -> onChooseOMPathClicked());
-		chooseOMPath.setToolTipText("Root folder of OpenModelica that contains folders: bin, lib, tools, among others.");
+		chooseOMPath
+				.setToolTipText("Root folder of OpenModelica that contains folders: bin, lib, tools, among others.");
 		panel.add(chooseOMPath);
 
 		overrideOMPath = new JCheckBox();
@@ -63,14 +65,25 @@ public class SimulationSettingsDialog {
 
 		JButton choosePNlibPath = new JButton("Choose folder");
 		choosePNlibPath.addActionListener(e -> onChoosePNlibPathClicked());
-		choosePNlibPath.setToolTipText("Root folder that contains one or multiple folders / versions of PNlib. Each folder of a PNlib verison must contain a folder named 'PNlib' containing a 'package.mo' file.");
+		choosePNlibPath.setToolTipText(
+				"Root folder that contains one or multiple folders / versions of PNlib. Each folder of a PNlib verison must contain a folder named 'PNlib' containing a 'package.mo' file.");
 		panel.add(choosePNlibPath);
 
 		overridePNlibPath = new JCheckBox();
 		overridePNlibPath.setSelected(settings.isOverridePNlibPath());
 		overridePNlibPath.setText("override system defaults:");
 		overridePNlibPath.setHorizontalTextPosition(SwingConstants.LEFT);
+
 		panel.add(overridePNlibPath, "wrap");
+
+		cleanWorkingDirAfterCompilation = new JCheckBox();
+		cleanWorkingDirAfterCompilation.setSelected(settings.isCleanWorkingDirAfterCompilation());
+		cleanWorkingDirAfterCompilation.setText("Clean working directory after compiling");
+		cleanWorkingDirAfterCompilation.setHorizontalTextPosition(SwingConstants.LEFT);
+		cleanWorkingDirAfterCompilation
+				.setToolTipText("delets all unnecessary files for simulation genererated during compilation");
+		panel.add(cleanWorkingDirAfterCompilation, "span 2, wrap");
+
 	}
 
 	public JPanel getPanel() {
@@ -84,6 +97,7 @@ public class SimulationSettingsDialog {
 		lblPathPNlib.setText(pathPNlib);
 		overrideOMPath.setSelected(false);
 		overridePNlibPath.setSelected(false);
+		cleanWorkingDirAfterCompilation.setSelected(true);
 		return true;
 	}
 
@@ -92,6 +106,7 @@ public class SimulationSettingsDialog {
 		settings.setPNlibPath(pathPNlib, overridePNlibPath.isSelected());
 		settings.setOverrideOMPath(overrideOMPath.isSelected());
 		settings.setOverridePNlibPath(overridePNlibPath.isSelected());
+		settings.setCleanWorkingDirAfterCompilation(cleanWorkingDirAfterCompilation.isSelected());
 		return true;
 	}
 

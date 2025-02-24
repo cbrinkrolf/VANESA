@@ -310,4 +310,14 @@ public class SettingsManager {
 		setProperty("isOmitPaintInvisibleNodes", omitPaintInvisibleNodes.toString());
 	}
 
+	// should be on by default
+	public boolean isCleanWorkingDirAfterCompilation() {
+		String property = getProperty("isCleanWorkingDirAfterCompilation");
+		return StringUtils.isEmpty(property) || property.equals("true");
+	}
+
+	public void setCleanWorkingDirAfterCompilation(Boolean cleanWorkingDirAfterCompilation) {
+		setProperty("isCleanWorkingDirAfterCompilation", cleanWorkingDirAfterCompilation.toString());
+	}
+
 }
