@@ -205,61 +205,29 @@ public abstract class BiologicalEdgeAbstract extends GraphicalElement implements
 		}
 	}
 
-	/*
-	 * private boolean stringsEqualAndAreNotEmpty(String s1, String s2) { return
-	 * s1.length() > 0 && s2.length() > 0 && s1.equalsIgnoreCase(s2); }
-	 */
-
-	/**
-	 * checks if the given BiologicalNodeAbstract is equal to this one nodes are
-	 * equal if name OR label match (also when name matches the label of the other
-	 * node)
-	 */
-	/*
-	 * public boolean equals(Object o) {
-	 * 
-	 * if (!(o instanceof BiologicalNodeAbstract)) { return super.equals(o); }
-	 * 
-	 * BiologicalNodeAbstract bna = (BiologicalNodeAbstract) o;
-	 * 
-	 * String name = this.getName(); String label = this.getLabel();
-	 * 
-	 * String name2 = bna.getName(); String label2 = bna.getLabel();
-	 * 
-	 * return stringsEqualAndAreNotEmpty(name,name2) //||
-	 * stringsEqualAndAreNotEmpty(name,label2) //||
-	 * stringsEqualAndAreNotEmpty(label,name2) ||
-	 * stringsEqualAndAreNotEmpty(label,label2); }
-	 */
-
 	private String getCorrectLabel(Integer type) {
-		if ((getLabel().length() == 0 || getLabel().equals(" "))
-				&& (getName().length() == 0 || getName().equals(" "))) {
+		final boolean labelEmpty = StringUtils.isEmpty(label);
+		final boolean nameEmpty = StringUtils.isEmpty(name);
+		if (labelEmpty && nameEmpty) {
 			return "";
-		} else {
-			if (type == GraphSettings.SHOW_LABEL) {
-				if (getLabel().equals("1") && this instanceof BiologicalEdgeAbstract) {
-					return "";
-				}
-				if (getLabel().length() == 0 || getLabel().equals(" ")) {
-					return getName();
-				}
-				return getLabel();
-			} else if (type == GraphSettings.SHOW_NAME) {
-				if (getName().length() == 0 || getName().equals(" ")) {
-					return getLabel();
-				}
-				return getName();
-			} else if (type == GraphSettings.SHOW_LABEL_AND_NAME) {
-				if (getName().length() == 0 || getName().equals(" ")) {
-					return getLabel();
-				} else if (getLabel().length() == 0 || getLabel().equals(" ")) {
-					return getName();
-				}
-				return getLabel() + "  -|-  " + getName();
-			} else if (type == GraphSettings.SHOW_NONE) {
+		}
+		if (type == GraphSettings.SHOW_LABEL) {
+			if (label.equals("1")) { // always true:  && this instanceof BiologicalEdgeAbstract
 				return "";
 			}
+			return labelEmpty ? name : label;
+		}
+		if (type == GraphSettings.SHOW_NAME) {
+			return nameEmpty ? label : name;
+		}
+		if (type == GraphSettings.SHOW_LABEL_AND_NAME) {
+			if (nameEmpty) {
+				return label;
+			}
+			if (labelEmpty) {
+				return name;
+			}
+			return label + "  -|-  " + name;
 		}
 		return "";
 	}
@@ -321,7 +289,7 @@ public abstract class BiologicalEdgeAbstract extends GraphicalElement implements
 
 	public void setName(String name) {
 		this.name = name.trim();
-		if (label.length() == 0) {
+		if (StringUtils.isEmpty(label)) {
 			label = name;
 		}
 	}
@@ -334,10 +302,9 @@ public abstract class BiologicalEdgeAbstract extends GraphicalElement implements
 		labelSet.remove(this.label);
 		this.label = label.trim();
 		labelSet.add(this.label);
-		if (name.length() == 0) {
+		if (StringUtils.isEmpty(name)) {
 			name = label;
 		}
-		// this.networklabel = label;
 	}
 
 	public boolean isEdge() {
