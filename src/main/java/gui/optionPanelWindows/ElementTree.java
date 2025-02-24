@@ -1,16 +1,11 @@
 package gui.optionPanelWindows;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.*;
 
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
+import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -29,7 +24,7 @@ import graph.GraphInstance;
 import graph.jung.classes.MyVisualizationViewer;
 import net.miginfocom.swing.MigLayout;
 
-public class ElementTree implements TreeSelectionListener, ActionListener {
+public class ElementTree extends JPanel implements TreeSelectionListener {
 	private JXTree tree = null;
 	private final Map<Integer, BiologicalNodeAbstract> table = new HashMap<>();
 	private DefaultMutableTreeNode node;
@@ -37,12 +32,19 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 	private boolean emptyScrollPane = true;
 	private DefaultTreeModel model;
 	private DefaultMutableTreeNode root;
-	private JPanel panel;
-	private final JCheckBox box = new JCheckBox("Center picked element in the viewport");
 
 	public ElementTree() {
+		setLayout(new MigLayout("ins 0, wrap, fill, debug"));
 		scrollTree = new JScrollPane();
-		scrollTree.setPreferredSize(new Dimension(350, 200));
+		add(scrollTree, "growx, height 200:200:200");
+		final JCheckBox centerPickedCheckbox = new JCheckBox("Center picked element in the viewport");
+		centerPickedCheckbox.addActionListener(
+				e -> GraphInstance.getPathway().getGraph().setAnimatedPicking(centerPickedCheckbox.isSelected()));
+		add(centerPickedCheckbox, "growx");
+		add(new JSeparator(), "growx");
+		final JLabel info = new JLabel("Elements marked by an asterisk (*) contain data base information");
+		add(info, "growx");
+		setVisible(false);
 	}
 
 	public void revalidateTree() {
@@ -56,32 +58,16 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 			emptyScrollPane = false;
 		}
 		scrollTree.setVisible(true);
-		panel.setVisible(true);
-		panel.revalidate();
+		setVisible(true);
+		revalidate();
 	}
 
 	public void removeTree() {
-		panel.setVisible(false);
-	}
-
-	public JPanel getScrollTree() {
-		MigLayout layout = new MigLayout("", "[grow]", "");
-		panel = new JPanel();
-		panel.setLayout(layout);
-		panel.add(scrollTree, "wrap 10, align center");
-		scrollTree.setPreferredSize(new Dimension(300, 200));
-		box.setActionCommand("animated");
-		box.addActionListener(this);
-		panel.add(box, "align left, wrap 8");
-		panel.add(new JSeparator(), "wrap 5, growx, span,");
-		JLabel info = new JLabel("Elements marked by an asterisk (*) contain data base information");
-		panel.add(info, "wrap 5, align center");
-		panel.setVisible(false);
-		return panel;
+		setVisible(false);
 	}
 
 	private void initTree() {
-		Pathway pw = GraphInstance.getPathway();
+		final Pathway pw = GraphInstance.getPathway();
 		tree = new JXTree();
 		root = new DefaultMutableTreeNode("Pathway Elements");
 		model = (DefaultTreeModel) tree.getModel();
@@ -95,18 +81,13 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 		// tree.setHighlighters(HighlighterFactory.createSimpleStriping());
 		tree.addHighlighter(new ColorHighlighter());
 		tree.expandAll();
-		Vector<String> v = new Vector<>();
-		Map<String, BiologicalNodeAbstract> currentTable = new HashMap<>();
+		final Vector<String> v = new Vector<>();
+		final Map<String, BiologicalNodeAbstract> currentTable = new HashMap<>();
 		// sorting
 		int i = 0;
-		for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
+		for (final BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 			if (!bna.isLogical()) {
-				String lbl;
-				if (bna.getLabel().length() == 0) {
-					lbl = "id_" + bna.getID();
-				} else {
-					lbl = bna.getLabel();
-				}
+				final String lbl = bna.getLabel().isEmpty() ? "id_" + bna.getID() : bna.getLabel();
 				v.add(lbl + i);
 				currentTable.put(lbl + i, bna);
 				i++;
@@ -115,14 +96,9 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 		Collections.sort(v);
 		i = 0;
 		for (String s : v) {
-			BiologicalNodeAbstract bna = currentTable.get(s);
-			String lbl;
-			if (bna.getLabel().length() == 0) {
-				lbl = "id_" + bna.getID();
-			} else {
-				lbl = bna.getLabel();
-			}
-			DefaultMutableTreeNode vertexNode;
+			final BiologicalNodeAbstract bna = currentTable.get(s);
+			final String lbl = bna.getLabel().isEmpty() ? "id_" + bna.getID() : bna.getLabel();
+			final DefaultMutableTreeNode vertexNode;
 			if (bna.hasBrendaNode() || bna.hasKEGGNode()) {
 				vertexNode = new DefaultMutableTreeNode(lbl + " *");
 			} else {
@@ -137,19 +113,14 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 		model.reload();
 	}
 
-	private void addChildNodes(BiologicalNodeAbstract vertex, DefaultMutableTreeNode n) {
+	private void addChildNodes(final BiologicalNodeAbstract vertex, final DefaultMutableTreeNode n) {
 		if (vertex.getAllGraphNodes().isEmpty()) {
 			return;
 		}
-		for (BiologicalNodeAbstract child : vertex.getAllGraphNodes()) {
+		for (final BiologicalNodeAbstract child : vertex.getAllGraphNodes()) {
 			if (!vertex.getEnvironment().contains(child)) {
-				String lbl;
-				if (child.getLabel().length() == 0) {
-					lbl = "id_" + child.getID();
-				} else {
-					lbl = child.getLabel();
-				}
-				DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(lbl);
+				final String lbl = child.getLabel().isEmpty() ? "id_" + child.getID() : child.getLabel();
+				final DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(lbl);
 				addChildNodes(child, childNode);
 				n.add(childNode);
 			}
@@ -159,23 +130,18 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 	private void updateTree() {
 		table.clear();
 		model.removeNodeFromParent(node);
-		Pathway pw = GraphInstance.getPathway();
+		final Pathway pw = GraphInstance.getPathway();
 		if (pw == null) {
 			return;
 		}
 		node = new DefaultMutableTreeNode("Nodes");
 		root.add(node);
-		Vector<String> v = new Vector<String>();
-		Hashtable<String, BiologicalNodeAbstract> currenTable = new Hashtable<String, BiologicalNodeAbstract>();
+		final Vector<String> v = new Vector<>();
+		final Hashtable<String, BiologicalNodeAbstract> currenTable = new Hashtable<>();
 		int i = 0;
-		for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
+		for (final BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 			if (!bna.isLogical()) {
-				String lbl;
-				if (bna.getLabel().length() == 0) {
-					lbl = "id_" + bna.getID();
-				} else {
-					lbl = bna.getLabel();
-				}
+				final String lbl = bna.getLabel().isEmpty() ? "id_" + bna.getID() : bna.getLabel();
 				v.add(lbl + i);
 				currenTable.put(lbl + i, bna);
 				i++;
@@ -184,15 +150,10 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 
 		Collections.sort(v);
 		i = 0;
-		for (String s : v) {
-			BiologicalNodeAbstract bna = currenTable.get(s);
-			String lbl;
-			if (bna.getLabel().length() == 0) {
-				lbl = "id_" + bna.getID();
-			} else {
-				lbl = bna.getLabel();
-			}
-			DefaultMutableTreeNode vertexNode;
+		for (final String s : v) {
+			final BiologicalNodeAbstract bna = currenTable.get(s);
+			final String lbl = bna.getLabel().isEmpty() ? "id_" + bna.getID() : bna.getLabel();
+			final DefaultMutableTreeNode vertexNode;
 			if (bna.hasBrendaNode() || bna.hasKEGGNode()) {
 				vertexNode = new DefaultMutableTreeNode(lbl + " *");
 			} else {
@@ -281,13 +242,6 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 				vv.getPickedVertexState().pick(bna, true);
 			}
 			// picking.animatePicking(v, box.isSelected());
-		}
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("animated")) {
-			GraphInstance.getPathway().getGraph().setAnimatedPicking(box.isSelected());
 		}
 	}
 }

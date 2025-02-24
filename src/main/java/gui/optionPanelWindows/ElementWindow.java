@@ -159,7 +159,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			// break;
 			// }
 			// }
-//
+			//
 			// // Sort for more convenient display
 			// Collections.sort(experimentEntries);
 			// Collections.sort(databaseIdEntries);
@@ -342,9 +342,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				aaSequence.addFocusListener(pwl);
 				p.add(new JLabel("AA-Sequence"), "gap 5 ");
 				p.add(aaSequence, "wrap, span 3");
-			}
-
-			else if (ab instanceof DNA) {
+			} else if (ab instanceof DNA) {
 				DNA dna = (DNA) ab;
 				JTextField ntSequence = new JTextField(20);
 				ntSequence.setText(dna.getNtSequence());
@@ -823,7 +821,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 			p.add(hideNeighbours, "flowx, split 2");
 		}
 
-		if (ab instanceof DynamicNode || ab instanceof BiologicalEdgeAbstract || ab instanceof ContinuousTransition || ab instanceof DiscreteTransition) {
+		if (ab instanceof DynamicNode || ab instanceof BiologicalEdgeAbstract || ab instanceof ContinuousTransition
+				|| ab instanceof DiscreteTransition) {
 			parametersButton.setText("Function Builder");
 			parametersButton.setToolTipText("Build function and edit parameters");
 		} else {
@@ -839,7 +838,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 			p.add(plotColorButton, "");
 		}
 		p.add(fillColorButton, "wrap");
-
 	}
 
 	public JPanel getPanel() {
@@ -848,11 +846,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 	}
 
 	public void revalidateView() {
-		// System.out.println("revalidate");
-
-		if (GraphInstance.getSelectedObject() instanceof BiologicalNodeAbstract
-				&& ((BiologicalNodeAbstract) GraphInstance.getSelectedObject()).isLogical()) {
-			this.ref = ((BiologicalNodeAbstract) GraphInstance.getSelectedObject()).getLogicalReference();
+		final GraphElementAbstract selectedElement = GraphInstance.getSelectedObject();
+		if (selectedElement instanceof BiologicalNodeAbstract
+				&& ((BiologicalNodeAbstract) selectedElement).isLogical()) {
+			this.ref = ((BiologicalNodeAbstract) selectedElement).getLogicalReference();
 		} else {
 			this.ref = null;
 		}
@@ -860,38 +857,28 @@ public class ElementWindow implements ActionListener, ItemListener {
 		this.removeAllElements();
 
 		if (emptyPane) {
-			// System.out.println("empty");
-			updateWindow(GraphInstance.getSelectedObject());
+			updateWindow(selectedElement);
 			p.setVisible(true);
 			p.repaint();
 			p.revalidate();
 			emptyPane = false;
-			// System.out.println("done");
 		} else {
-			// System.out.println("else");
-			// System.out.println("begin");
-			Thread worker = new Thread() {
-				public void run() {
-					// dirty hack
-					try {
-						p.removeAll();
-						// removeAllElements();
-						// System.out.println("begin");
-					} catch (Exception e) {
-						e.printStackTrace();
-						revalidateView();
-					}
-					// System.out.println("swing");
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							updateWindow(GraphInstance.getSelectedObject());
-							p.setVisible(true);
-							p.repaint();
-							p.revalidate();
-						}
-					});
+			final Thread worker = new Thread(() -> {
+				// dirty hack
+				try {
+					p.removeAll();
+					// removeAllElements();
+				} catch (Exception e) {
+					e.printStackTrace();
+					revalidateView();
 				}
-			};
+				SwingUtilities.invokeLater(() -> {
+					updateWindow(selectedElement);
+					p.setVisible(true);
+					p.repaint();
+					p.revalidate();
+				});
+			});
 			worker.start();
 		}
 	}
@@ -957,8 +944,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 		} else if ("pathwayLink".equals(event)) {
 			if (JOptionPane.showConfirmDialog(w.getFrame(),
 					"If you delete the PathwayLink the Sub-Pathway (with all eventually made changes within it) will be lost. Do you want to do this?",
-					"Delete the Sub-Pathway...", JOptionPane.YES_NO_OPTION,
-					JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION && ab instanceof PathwayMap) {
+					"Delete the Sub-Pathway...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
+					== JOptionPane.YES_OPTION && ab instanceof PathwayMap) {
 				((PathwayMap) ab).setPathwayLink(null);
 				w.updateElementTree();
 				w.updatePathwayTree();
@@ -1154,13 +1141,13 @@ public class ElementWindow implements ActionListener, ItemListener {
 					token.setText(String.valueOf(place.getToken()));
 				}
 				// token.repaint();
-			} else{
+			} else {
 				Pathway pw = GraphInstance.getPathway();
-				if(pw.getTransformationInformation() != null){
-					if(pw.getTransformationInformation().getBnToPnMapping().containsKey(ab)){
-						BiologicalNodeAbstract node =  pw.getTransformationInformation().getBnToPnMapping().get(ab);
-						if(node instanceof Place){
-							if(concentration != null){
+				if (pw.getTransformationInformation() != null) {
+					if (pw.getTransformationInformation().getBnToPnMapping().containsKey(ab)) {
+						BiologicalNodeAbstract node = pw.getTransformationInformation().getBnToPnMapping().get(ab);
+						if (node instanceof Place) {
+							if (concentration != null) {
 								concentration.setText(String.valueOf(((Place) node).getToken()));
 							}
 						}

@@ -12,7 +12,7 @@ import net.miginfocom.swing.MigLayout;
 
 public class GraphAlgorithmsWindow {
     private JTabbedPane tabbedPanel;
-    private final JPanel p = new JPanel(new MigLayout("ins 0, wrap 1"));
+    private final JPanel p = new JPanel(new MigLayout("ins 0, wrap 1, fill"));
     boolean emptyPane = true;
 
     private ShortestPathGui shortestPath = new ShortestPathGui();
@@ -30,7 +30,7 @@ public class GraphAlgorithmsWindow {
         removeAllElements();
         if (emptyPane) {
             init();
-            p.add(tabbedPanel);//, BorderLayout.CENTER);
+            p.add(tabbedPanel, "growx");
             emptyPane = false;
         }
         coloredGraph.revalidateView();

@@ -33,6 +33,9 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import gui.PopUpDialog;
 
 public class VanesaUtility {
+	public static final Color POSITIVE_BUTTON_COLOR = new Color(186, 255, 201);
+	public static final Color NEGATIVE_BUTTON_COLOR = new Color(255, 179, 186);
+
 	public static double round(double value, int decimalPlaces) {
 		double factor = Math.pow(10, decimalPlaces);
 		return Math.round(value * factor) / factor;

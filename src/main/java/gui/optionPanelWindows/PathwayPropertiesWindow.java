@@ -2,7 +2,6 @@ package gui.optionPanelWindows;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
@@ -27,181 +26,146 @@ import gui.PopUpDialog;
 import gui.visualization.CompartmentRenderer;
 import net.miginfocom.swing.MigLayout;
 import util.MyColorChooser;
+import util.VanesaUtility;
 
-public class PathwayPropertiesWindow implements ActionListener, ItemListener {
+public class PathwayPropertiesWindow extends JPanel implements ItemListener {
+	/**
+	 * Regular expression to check for valid compartment names. Compartment name must start with a letter or dash and
+	 * may only contain letters, digites, and dash symbol (SBML L3V1, reference section 3.1.7)
+	 */
+	private static final Pattern COMPARTMENT_NAME_PATTERN = Pattern.compile("^[a-zA-Z-][a-zA-Z\\d-]*$");
 
-	private JPanel p = new JPanel();
 	private JCheckBox drawCompartments;
 	private JCheckBox drawCompartmentsExperimental;
-	private JButton createDefault;
 	private JTextField name;
 	private JButton color;
 	private Pathway pw;
 	private CompartmentRenderer compRenderer = null;
 
 	public PathwayPropertiesWindow() {
-
-	}
-
-	public JPanel getPanel() {
-		p.setVisible(false);
-		return p;
+		setLayout(new MigLayout("ins 0, wrap 3, fill", "[grow][][]"));
+		setVisible(false);
 	}
 
 	public void removeAllElements() {
-		p.removeAll();
-		p.setVisible(false);
+		removeAll();
+		setVisible(false);
 	}
 
 	public void revalidateView() {
-		p.removeAll();
-		this.pw = GraphInstance.getPathway();
+		removeAll();
+		pw = GraphInstance.getPathway();
 		if (compRenderer == null) {
 			compRenderer = new CompartmentRenderer(pw);
 		} else {
 			compRenderer.setPathway(pw);
 		}
-		MigLayout layout = new MigLayout("fillx", "[grow,fill]", "");
-		p.setLayout(layout);
 		drawCompartments = new JCheckBox("draw compartments");
 		if (pw.getCompartmentManager().isDrawCompartments()) {
 			drawCompartments.setSelected(true);
 		}
 		drawCompartments.setActionCommand("drawCompartments");
 		drawCompartments.addItemListener(this);
-		p.add(drawCompartments, "wrap");
+		add(drawCompartments, "growx, span 3");
 
 		drawCompartmentsExperimental = new JCheckBox("draw experimental");
 		drawCompartmentsExperimental.setActionCommand("drawCompartmentsExperimental");
 		drawCompartmentsExperimental.addItemListener(this);
 		drawCompartmentsExperimental.setEnabled(false);
-		p.add(drawCompartmentsExperimental, "wrap");
-		// p.add(new JLabel("draw compartments"));
+		add(drawCompartmentsExperimental, "growx, span 3");
 
-		createDefault = new JButton("create default");
-		createDefault.setActionCommand("createDefault");
-		createDefault.addActionListener(this);
+		final JButton createDefault = new JButton("create default");
+		createDefault.addActionListener(e -> createDefaultCompartments());
+		add(createDefault, "growx, span 3");
 
-		p.add(createDefault, "wrap");
-
-		p.add(new JSeparator(), "span, growx, gaptop 7 ");
-		p.add(new JLabel("add new compartment:"), "wrap");
+		add(new JSeparator(), "growx, span 3");
+		add(new JLabel("Add new compartment:"), "growx, span 3");
 		name = new JTextField(10);
-		p.add(name);
+		add(name, "growx");
 		color = new JButton("color");
 		color.setBackground(new Color(125, 125, 125));
 		color.setToolTipText("Select fill color");
-		color.setActionCommand("color");
-		color.addActionListener(this);
-		p.add(color);
+		color.addActionListener(this::chooseAddCompartmentColor);
+		add(color, "width 60:60:60");
 
-		JButton add = new JButton("add");
-		add.setActionCommand("add");
-		add.addActionListener(this);
-		p.add(add, "wrap");
+		final JButton add = new JButton("add");
+		add.setBackground(VanesaUtility.POSITIVE_BUTTON_COLOR);
+		add.addActionListener(e -> addCompartment());
+		add(add, "width 60:60:60");
 
-		p.add(new JSeparator(), "span, growx, gaptop 7 ");
+		add(new JSeparator(), "growx, span 3");
 		drawList();
-		p.revalidate();
-		p.setVisible(true);
-
+		revalidate();
+		setVisible(true);
 	}
 
 	private void drawList() {
-		List<Compartment> compartments = pw.getCompartmentManager().getAllCompartmentsAlphabetically();
-
-		for (Compartment c : compartments) {
-			p.add(new JLabel(c.getName()));
-			JButton color = new JButton("color");
+		final List<Compartment> compartments = pw.getCompartmentManager().getAllCompartmentsAlphabetically();
+		for (final Compartment c : compartments) {
+			add(new JLabel(c.getName()), "growx");
+			final JButton color = new JButton("color");
 			color.setBackground(c.getColor());
-			color.setActionCommand("color_" + c.getName());
-			color.addActionListener(this);
-			p.add(color);
-			JButton del = new JButton("delete");
-			del.setActionCommand("del_" + c.getName());
-			del.addActionListener(this);
-			p.add(del, "wrap");
-
-		}
-
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		String command = e.getActionCommand();
-
-		if (command.equals("createDefault")) {
-			pw.getCompartmentManager().addDefaultCompartments();
-			this.revalidateView();
-		} else if (command.equals("add")) {
-			// CHRIS check regEx for identifier
-			String cName = name.getText().trim();
-			if (cName.length() > 0) {
-				// compartment name must start with a letter or dash and may only contain
-				// letters, digites, and dash symbol (SBML L3V1, reference section 3.1.7)
-				Pattern pattern = Pattern.compile("^[a-zA-Z-][a-zA-Z\\d-]*$");
-				Matcher matcher = pattern.matcher(cName);
-				if (matcher.find()) {
-					if (pw.getCompartmentManager().getCompartment(cName) == null) {
-						pw.getCompartmentManager().add(new Compartment(cName, color.getBackground()));
-						this.revalidateView();
-					} else {
-						PopUpDialog.getInstance().show("Error", "Name of new compartment is already in use!");
-					}
-				} else {
-					PopUpDialog.getInstance().show("Error",
-							"Name of new compartment may only contain the following characters:\r\n [a-z], [A-Z], [0-9], [-], and must start with a letter or the dash symbol!");
-				}
-			} else {
-				PopUpDialog.getInstance().show("Error", "Name of new compartment must not be empty!");
-			}
-
-		} else if (command.equals("color")) {
-			JButton b = ((JButton) e.getSource());
-			// Color newColor =
-			// JColorChooser.showDialog(MainWindow.getInstance().getFrame(), "Choose color",
-			// b.getBackground());
-
-			MyColorChooser mc = new MyColorChooser(MainWindow.getInstance().getFrame(), "Choose color", true,
-					b.getBackground());
-			if (mc.isOkAction()) {
-				b.setBackground(mc.getColor());
-			}
-
-		} else if (command.startsWith("color_")) {
-			String cName = command.substring(6);
-			Compartment c = pw.getCompartmentManager().getCompartment(cName);
-			if (c != null) {
-				JButton b = ((JButton) e.getSource());
-				// Color newColor =
-				// JColorChooser.showDialog(MainWindow.getInstance().getFrame(), "Choose new
-				// color",
-				// b.getBackground());
-
-				MyColorChooser mc = new MyColorChooser(MainWindow.getInstance().getFrame(), "Choose color", true,
+			color.addActionListener(e -> {
+				final JButton b = ((JButton) e.getSource());
+				final MyColorChooser mc = new MyColorChooser(MainWindow.getInstance().getFrame(), "Choose color", true,
 						b.getBackground());
 				if (mc.isOkAction()) {
-					Color newColor = mc.getColor();
-					b.setBackground(newColor);
-					c.setColor(newColor);
+					b.setBackground(mc.getColor());
+					c.setColor(mc.getColor());
 				}
-			}
-		} else if (command.startsWith("del_")) {
-			String cName = command.substring(4);
-			Compartment c = pw.getCompartmentManager().getCompartment(cName);
-			if (c != null) {
+			});
+			add(color, "width 60:60:60");
+			final JButton del = new JButton("delete");
+			del.setBackground(VanesaUtility.NEGATIVE_BUTTON_COLOR);
+			del.setActionCommand("del_" + c.getName());
+			del.addActionListener(e -> {
 				pw.getCompartmentManager().remove(c);
 				revalidateView();
+			});
+			add(del, "width 60:60:60");
+		}
+	}
+
+	private void createDefaultCompartments() {
+		pw.getCompartmentManager().addDefaultCompartments();
+		revalidateView();
+	}
+
+	private void chooseAddCompartmentColor(final ActionEvent e) {
+		final JButton b = ((JButton) e.getSource());
+		final MyColorChooser mc = new MyColorChooser(MainWindow.getInstance().getFrame(), "Choose color", true,
+				b.getBackground());
+		if (mc.isOkAction()) {
+			b.setBackground(mc.getColor());
+		}
+	}
+
+	private void addCompartment() {
+		final String cName = name.getText().trim();
+		if (cName.isEmpty()) {
+			PopUpDialog.getInstance().show("Error", "Name of new compartment must not be empty!");
+		} else {
+			final Matcher matcher = COMPARTMENT_NAME_PATTERN.matcher(cName);
+			if (matcher.find()) {
+				if (pw.getCompartmentManager().getCompartment(cName) == null) {
+					pw.getCompartmentManager().add(new Compartment(cName, color.getBackground()));
+					this.revalidateView();
+				} else {
+					PopUpDialog.getInstance().show("Error", "Name of new compartment is already in use!");
+				}
+			} else {
+				PopUpDialog.getInstance().show("Error",
+						"Name of new compartment may only contain the following characters:\r\n [a-z], [A-Z], [0-9], [-], and must start with a letter or the dash symbol!");
 			}
 		}
 	}
 
 	@Override
-	public void itemStateChanged(ItemEvent e) {
-		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph()
+	public void itemStateChanged(final ItemEvent e) {
+		final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph()
 				.getVisualizationViewer();
 		if (e.getSource().equals(drawCompartments)) {
-			if (e.getStateChange() == 1) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
 				vv.addPreRenderPaintable(compRenderer);
 				pw.getCompartmentManager().setDrawCompartments(true);
 			} else {
@@ -210,7 +174,7 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 			}
 			vv.repaint();
 		} else if (e.getSource().equals(drawCompartmentsExperimental)) {
-			if (e.getStateChange() == 1) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
 				// vv.setEsperimentalCompartments(true);
 			} else {
 				// vv.setEsperimentalCompartments(false);

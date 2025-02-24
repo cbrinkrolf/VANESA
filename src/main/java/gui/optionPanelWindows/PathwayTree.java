@@ -1,7 +1,6 @@
 package gui.optionPanelWindows;
 
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -23,13 +22,10 @@ import graph.GraphInstance;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
-public class PathwayTree implements TreeSelectionListener {
-	private JXTree tree = new JXTree(new DefaultMutableTreeNode());
-	private JScrollPane scrollTree = new JScrollPane();
-	private DefaultTreeModel model;
-	private HashMap<DefaultMutableTreeNode, Pathway> map = new HashMap<DefaultMutableTreeNode, Pathway>();
+public class PathwayTree extends JPanel implements TreeSelectionListener {
+	private final JXTree tree = new JXTree(new DefaultMutableTreeNode());
+	private final HashMap<DefaultMutableTreeNode, Pathway> map = new HashMap<>();
 	private DefaultMutableTreeNode actualNode;
-	private JPanel p = new JPanel();
 
 	public PathwayTree() {
 		tree.setEditable(false);
@@ -38,13 +34,11 @@ public class PathwayTree implements TreeSelectionListener {
 		tree.addTreeSelectionListener(this);
 		tree.addHighlighter(new ColorHighlighter());
 		tree.expandAll();
-		p.setLayout(new MigLayout("", "[grow]", ""));
-		scrollTree.setPreferredSize(new Dimension(300, 200));
+		setLayout(new MigLayout("ins 0, wrap, fill"));
+		final JScrollPane scrollTree = new JScrollPane();
 		scrollTree.setViewportView(tree);
-		p.add(scrollTree, "wrap 10, align center");
-		p.setVisible(true);
-		scrollTree.setVisible(true);
-		tree.setVisible(true);
+		add(scrollTree, "growx, height 200:200:200");
+		setVisible(false);
 	}
 
 	private void buildTree(Pathway rootPW, DefaultMutableTreeNode root) {
@@ -62,14 +56,14 @@ public class PathwayTree implements TreeSelectionListener {
 	public void revalidateView() {
 		tree.removeAll();
 		actualNode = null;
-		model = (DefaultTreeModel) tree.getModel();
-		Pathway pw = GraphInstance.getPathway();
+		final DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+		final Pathway pw = GraphInstance.getPathway();
 		if (pw == null)
 			return;
-		Pathway rootPW = pw.getRootPathway();
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Pathways Tree:");
+		final Pathway rootPW = pw.getRootPathway();
+		final DefaultMutableTreeNode root = new DefaultMutableTreeNode("Pathways Tree:");
 		model.setRoot(root);
-		DefaultMutableTreeNode node = new DefaultMutableTreeNode(rootPW.getTitle());
+		final DefaultMutableTreeNode node = new DefaultMutableTreeNode(rootPW.getTitle());
 		root.add(node);
 		buildTree(rootPW, node);
 		if (actualNode == null)
@@ -82,7 +76,7 @@ public class PathwayTree implements TreeSelectionListener {
 		tree.removeTreeSelectionListener(this);
 		tree.setSelectionPath(new TreePath(actualNode.getPath()));
 		tree.addTreeSelectionListener(this);
-		p.setVisible(true);
+		setVisible(true);
 	}
 
 	@Override
@@ -105,11 +99,6 @@ public class PathwayTree implements TreeSelectionListener {
 
 	public void removeTree() {
 		tree.removeAll();
-		p.setVisible(false);
-	}
-
-	public JPanel getPanel() {
-		p.setVisible(false);
-		return p;
+		setVisible(false);
 	}
 }

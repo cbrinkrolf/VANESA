@@ -1,7 +1,5 @@
 package gui;
 
-import java.awt.BorderLayout;
-
 import javax.swing.*;
 
 import org.jdesktop.swingx.JXTaskPane;
@@ -23,7 +21,6 @@ import net.miginfocom.swing.MigLayout;
 public class OptionPanel {
 	private final JScrollPane scrollPane;
 	private final JPanel panel;
-	private final DatabaseWindow databaseWindow;
 	private final ElementTree tree;
 	private final SimulationResultsPlot simResWindow;
 	private final BuildingBlocks bb;
@@ -34,16 +31,8 @@ public class OptionPanel {
 	private final GraphAlgorithmsWindow graphAlgorithms;
 	private final PathwayPropertiesWindow pathwayPropertiesWindow;
 
-	private final JXTaskPane elements;
-	private final JXTaskPane satellite;
 	private final JXTaskPane simResView;
-	private final JXTaskPane generalProperties;
 	private final JXTaskPane databaseSearch;
-	private final JXTaskPane project;
-	private final JXTaskPane theory;
-	private final JXTaskPane pathways;
-	private final JXTaskPane bbProperties;
-	private final JXTaskPane pathwayProperties;
 
 	private boolean updatePanels = true;
 	private int lastFullWidth = -1;
@@ -63,60 +52,40 @@ public class OptionPanel {
 		taskPaneContainer.setLayout(new MigLayout("insets 0, wrap, fill"));
 		taskPaneContainer.setBorder(BorderFactory.createEmptyBorder(0, 0, 6, 0));
 
-		databaseSearch = new JXTaskPane("Database Search",
-				ImagePath.getInstance().getImageIcon("database-search-outline.png", 16, 16));
+		final DatabaseWindow databaseWindow = new DatabaseWindow();
+		databaseSearch = createCollapsiblePane("Database Search",
+				ImagePath.getInstance().getImageIcon("database-search-outline.png", 16, 16), false, databaseWindow);
 		databaseSearch.setSpecial(true);
-		databaseSearch.setCollapsed(false);
 		databaseSearch.setScrollOnExpand(true);
-		databaseWindow = new DatabaseWindow();
-		databaseSearch.add(databaseWindow.getPanel());
 
-		elements = new JXTaskPane("Graph Elements");
 		tree = new ElementTree();
-		elements.add(tree.getScrollTree());
-		elements.setCollapsed(true);
+		final JXTaskPane elements = createCollapsiblePane("Graph Elements", null, true, tree);
 
-		pathways = new JXTaskPane("Pathway Tree");
 		pathwayTree = new PathwayTree();
-		pathways.add(pathwayTree.getPanel());
-		pathways.setCollapsed(true);
+		final JXTaskPane pathways = createCollapsiblePane("Pathway Tree", null, true, pathwayTree);
 
-		theory = new JXTaskPane("Graph Analysis");
 		graphAlgorithms = new GraphAlgorithmsWindow();
-		theory.add(graphAlgorithms.getTheoryPane());
-		theory.setCollapsed(true);
+		final JXTaskPane theory = createCollapsiblePane("Graph Analysis", null, true, graphAlgorithms.getTheoryPane());
 
-		satellite = new JXTaskPane("Satellite View");
 		satelliteWindow = new SatelliteWindow();
-		satellite.add(satelliteWindow.getSatellitePane());
-		satellite.setCollapsed(true);
+		final JXTaskPane satellite = createCollapsiblePane("Satellite View", null, true, satelliteWindow);
 
-		// // init task pane and viz-component
-		simResView = new JXTaskPane("Petri Net Simulation");
-		simResView.setCollapsed(true);
-		// simResView.setAnimated(false);
 		simResWindow = new SimulationResultsPlot();
-		simResView.add(simResWindow.getPanel());
+		simResView = createCollapsiblePane("Petri Net Simulation", null, true, simResWindow);
 
-		generalProperties = new JXTaskPane("Element Properties");
 		elementWindow = new ElementWindow();
-		generalProperties.add(elementWindow.getPanel());
-		generalProperties.setCollapsed(true);
+		final JXTaskPane generalProperties = createCollapsiblePane("Element Properties", null, true,
+				elementWindow.getPanel());
 
-		pathwayProperties = new JXTaskPane("Pathway Properties");
 		pathwayPropertiesWindow = new PathwayPropertiesWindow();
-		pathwayProperties.add(pathwayPropertiesWindow.getPanel());
-		pathwayProperties.setCollapsed(true);
+		final JXTaskPane pathwayProperties = createCollapsiblePane("Pathway Properties", null, true,
+				pathwayPropertiesWindow);
 
-		bbProperties = new JXTaskPane("Building Blocks");
 		bb = new BuildingBlocks();
-		bbProperties.add(bb.getPanel());
-		bbProperties.setCollapsed(true);
+		final JXTaskPane bbProperties = createCollapsiblePane("Building Blocks", null, true, bb.getPanel());
 
-		project = new JXTaskPane("Project Description");
 		projectWindow = new ProjectWindow();
-		project.add(projectWindow.getPanel());
-		project.setCollapsed(true);
+		final JXTaskPane project = createCollapsiblePane("Project Description", null, true, projectWindow.getPanel());
 
 		// alignment = new JXTaskPane("Graph Alignment");
 		// alignment.setCollapsed(false);
@@ -140,7 +109,7 @@ public class OptionPanel {
 		taskPaneContainer.add(pathways, "growx");
 		// taskPaneContainer.add(dbProperties);
 		if (SettingsManager.getInstance().isDeveloperMode()) {
-//			taskPaneContainer.add(heatgraphProperties, "growx");
+			// taskPaneContainer.add(heatgraphProperties, "growx");
 			taskPaneContainer.add(project, "growx");
 			// taskPaneContainer.add(alignment);
 		} else {
@@ -156,6 +125,15 @@ public class OptionPanel {
 		scrollPane = new JScrollPane(panel);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+	}
+
+	private JXTaskPane createCollapsiblePane(final String title, final Icon icon, final boolean collapsed,
+			final JComponent container) {
+		final JXTaskPane pane = new JXTaskPane(title, icon);
+		pane.setLayout(new MigLayout("ins 0, fill"));
+		pane.add(container, "growx");
+		pane.setCollapsed(collapsed);
+		return pane;
 	}
 
 	public JScrollPane getPanel() {
