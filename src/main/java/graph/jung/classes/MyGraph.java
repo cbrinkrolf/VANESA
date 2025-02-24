@@ -371,10 +371,8 @@ public class MyGraph {
 	}
 
 	private void updateLabelVisibilityOnZoom() {
-		final int vertexFontSize = elr.getFont().getSize();
-		final int edgeFontSize = elr.getFont().getSize();
-		vlr.setDisabled(vertexFontSize * vv.getScale() < vertexFontSize * 0.5f);
-		elr.setDisabled(edgeFontSize * vv.getScale() < edgeFontSize * 0.5f);
+		vlr.setDisabled(elr.getFont().getSize() * vv.getScale() <= 6);
+		elr.setDisabled(elr.getFont().getSize() * vv.getScale() <= 6);
 	}
 
 	public void makeDefaultObjectVisualization() {
