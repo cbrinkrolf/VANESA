@@ -368,6 +368,7 @@ public class MyGraph {
 		improvePerformance(vv2);
 
 		vv.addMouseWheelListener(e -> updateLabelVisibilityOnZoom());
+		vv2.addMouseWheelListener(e -> updateLabelVisibilityOnZoom());
 	}
 
 	private void updateLabelVisibilityOnZoom() {
