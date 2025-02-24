@@ -11,6 +11,8 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.HashMap;
@@ -148,14 +150,14 @@ public class MyGraph {
 	private Function<? super BiologicalEdgeAbstract, Paint> arrowDrawPaintTransformerDefault;
 	private Function<? super BiologicalEdgeAbstract, Paint> arrowFillPaintTransformerDefault;
 
-	private PickedState<BiologicalNodeAbstract> stateV;
-	private PickedState<BiologicalEdgeAbstract> stateE;
+	private final PickedState<BiologicalNodeAbstract> stateV;
+	private final PickedState<BiologicalEdgeAbstract> stateE;
 	private final VisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract> visualizationModel;
 	private final AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> clusteringLayout;
-	private MyVertexLabelRenderer vlr = new MyVertexLabelRenderer(Color.blue);
-	private MyEdgeLabelRenderer elr = new MyEdgeLabelRenderer(Color.blue);
+	private final MyVertexLabelRenderer vlr = new MyVertexLabelRenderer(Color.blue);
+	private final MyEdgeLabelRenderer elr = new MyEdgeLabelRenderer(Color.blue);
 
-	private MyAnnotationManager annotationManager;
+	private final MyAnnotationManager annotationManager;
 
 	private boolean animatedPicking = false;
 
@@ -364,6 +366,15 @@ public class MyGraph {
 		disableAntliasing(SettingsManager.getInstance().isDisabledAntiAliasing());
 		improvePerformance(vv);
 		improvePerformance(vv2);
+
+		vv.addMouseWheelListener(e -> updateLabelVisibilityOnZoom());
+	}
+
+	private void updateLabelVisibilityOnZoom() {
+		final int vertexFontSize = elr.getFont().getSize();
+		final int edgeFontSize = elr.getFont().getSize();
+		vlr.setDisabled(vertexFontSize * vv.getScale() < vertexFontSize * 0.5f);
+		elr.setDisabled(edgeFontSize * vv.getScale() < edgeFontSize * 0.5f);
 	}
 
 	public void makeDefaultObjectVisualization() {
@@ -697,6 +708,7 @@ public class MyGraph {
 				} catch (InterruptedException ignored) {
 				}
 			}
+			updateLabelVisibilityOnZoom();
 		});
 		thread.start();
 	}
@@ -710,6 +722,7 @@ public class MyGraph {
 				} catch (InterruptedException ignored) {
 				}
 			}
+			updateLabelVisibilityOnZoom();
 		});
 		thread.start();
 	}
@@ -719,21 +732,14 @@ public class MyGraph {
 		return vv;
 	}
 
-	/** picks all elements in the graph */
+	/**
+	 * Picks all nodes and edges in the graph
+	 */
 	public void pickAllElements() {
-		Iterator<BiologicalNodeAbstract> it = this.getAllVertices().iterator();
-		BiologicalNodeAbstract bna;
-		while (it.hasNext()) {
-			bna = it.next();
-
-			// vv.getPickedVertexState().pick(bna, true);
+		for (final BiologicalNodeAbstract bna : g.getVertices()) {
 			stateV.pick(bna, true);
 		}
-
-		Iterator<BiologicalEdgeAbstract> it2 = this.getAllEdges().iterator();
-		BiologicalEdgeAbstract bea;
-		while (it2.hasNext()) {
-			bea = it2.next();
+		for (final BiologicalEdgeAbstract bea : g.getEdges()) {
 			stateE.pick(bea, true);
 		}
 	}
@@ -795,16 +801,14 @@ public class MyGraph {
 	}
 
 	public void removeAllVertices() {
-		Set<BiologicalNodeAbstract> nodes = new HashSet<BiologicalNodeAbstract>();
-		nodes.addAll(getAllVertices());
+		Set<BiologicalNodeAbstract> nodes = new HashSet<>(getAllVertices());
 		for (BiologicalNodeAbstract n : nodes) {
 			removeVertex(n);
 		}
 	}
 
 	public void removeAllEdges() {
-		Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
-		edges.addAll(getAllEdges());
+		Set<BiologicalEdgeAbstract> edges = new HashSet<>(getAllEdges());
 		for (BiologicalEdgeAbstract e : edges) {
 			removeEdge(e);
 		}
@@ -1150,12 +1154,12 @@ public class MyGraph {
 	}
 
 	public void normalCentering() {
-
-		if (!getAllVertices().isEmpty()) {
-			fitScaleOfViewer(this.vv);
-			fitScaleOfViewer(this.vv2);
-			normalCentering(this.vv);
-			normalCentering(this.vv2);
+		if (g.getVertexCount() > 0) {
+			fitScaleOfViewer(vv);
+			fitScaleOfViewer(vv2);
+			normalCentering(vv);
+			normalCentering(vv2);
+			updateLabelVisibilityOnZoom();
 		}
 	}
 
@@ -1315,7 +1319,7 @@ public class MyGraph {
 			@Override
 			public boolean apply(Context<Graph<V, E>, V> c) {
 				vv.getSize(size);
-				Point2D point = ((Function<V, Point2D>) vv.getGraphLayout()).apply(c.element);
+				Point2D point = vv.getGraphLayout().apply(c.element);
 				Point2D transformed = vv.getRenderContext().getMultiLayerTransformer().transform(point);
 				if (transformed.getX() < 0 || transformed.getX() > size.width) {
 					return false;
@@ -1344,14 +1348,14 @@ public class MyGraph {
 			public void paintEdge(RenderContext<V, E> rc, Layout<V, E> layout, E e) {
 				GraphicsDecorator g2d = rc.getGraphicsContext();
 				Graph<V, E> graph = layout.getGraph();
-				if (!rc.getEdgeIncludePredicate().apply(Context.<Graph<V, E>, E>getInstance(graph, e)))
+				if (!rc.getEdgeIncludePredicate().apply(Context.getInstance(graph, e)))
 					return;
 
 				Pair<V> endpoints = graph.getEndpoints(e);
 				V v1 = endpoints.getFirst();
 				V v2 = endpoints.getSecond();
-				if (!rc.getVertexIncludePredicate().apply(Context.<Graph<V, E>, V>getInstance(graph, v1))
-						&& !rc.getVertexIncludePredicate().apply(Context.<Graph<V, E>, V>getInstance(graph, v2)))
+				if (!rc.getVertexIncludePredicate().apply(Context.getInstance(graph, v1))
+						&& !rc.getVertexIncludePredicate().apply(Context.getInstance(graph, v2)))
 					return;
 
 				Stroke new_stroke = rc.getEdgeStrokeTransformer().apply(e);
