@@ -45,7 +45,9 @@ public class SettingsPanel extends JDialog {
 		pack();
 		// On linux the settings window sometimes moves behind the main window, so we
 		// force it to always be on top
-		setAlwaysOnTop(true);
+		// setAlwaysOnTop(true);
+		setModal(false);
+		requestFocus();
 		setResizable(false);
 		setVisible(true);
 	}
