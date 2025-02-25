@@ -12,6 +12,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -78,6 +80,12 @@ public class GraphSettingsDialog {
 
 	private JCheckBox useDefaultTransformators;
 	private JCheckBox useDefaultTransformatorsSatellite;
+
+	private JSpinner minVertexLabelFontSize;
+	private JSpinner minEdgeLabelFontSize;
+
+	private int minVertexLabelFontSizeOld = settings.getMinVertexFontSize();
+	private int minEdgeLabelFontSizeOld = settings.getMinEdgeFontSize();
 
 	private MainWindow w = MainWindow.getInstance();
 	private GraphContainer con = GraphContainer.getInstance();
@@ -338,6 +346,22 @@ public class GraphSettingsDialog {
 
 		panelRight.add(useDefaultTransformatorsSatellite, "wrap");
 
+		minVertexLabelFontSize = new JSpinner(new SpinnerNumberModel(settings.getMinVertexFontSize(), 0, 100, 1));
+		minVertexLabelFontSize
+				.setToolTipText("Minimal font size of vertex labels that define if vertex labels are drawn or hidden");
+		minVertexLabelFontSize.addChangeListener(e -> vertexFontSpinnerChangedEvent());
+
+		panelRight.add(new JLabel("Minimal font size of vertex labels: "));
+		panelRight.add(minVertexLabelFontSize, "wrap");
+
+		minEdgeLabelFontSize = new JSpinner(new SpinnerNumberModel(settings.getMinVertexFontSize(), 0, 100, 1));
+		minEdgeLabelFontSize
+				.setToolTipText("Minimal font size of edge labels that define if edge labels are drawn or hidden");
+		minEdgeLabelFontSize.addChangeListener(e -> edgeFontSpinnerChangedEvent());
+
+		panelRight.add(new JLabel("Minimal font size of edge labels: "));
+		panelRight.add(minEdgeLabelFontSize, "wrap");
+
 		panel = new JPanel(new GridLayout(0, 2));
 		panel.add(panelLeft);
 		panel.add(panelRight);
@@ -378,6 +402,12 @@ public class GraphSettingsDialog {
 		// PopUpDialog.getInstance().show("Error", "Please create a network before.");
 		// return false;
 		// }
+		minVertexLabelFontSize.getModel().setValue(6);
+		minEdgeLabelFontSize.getModel().setValue(6);
+		if (con.containsPathway()) {
+			GraphInstance.getPathway().getGraph().updateLabelVisibilityOnZoom();
+			GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
+		}
 		return true;
 	}
 
@@ -444,6 +474,12 @@ public class GraphSettingsDialog {
 		useDefaultTransformatorsSatellite.setSelected(settings.isDefaultTransformatorsSatellite());
 		if (con.containsPathway()) {
 			con.getPathway(w.getCurrentPathway()).getGraph().disableAntliasing(settings.isDisabledAntiAliasing());
+		}
+		settings.setMinVertexFontSize(minVertexLabelFontSizeOld);
+		settings.setMinEdgeFontSize(minEdgeLabelFontSizeOld);
+		if (con.containsPathway()) {
+			GraphInstance.getPathway().getGraph().updateLabelVisibilityOnZoom();
+			GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 		}
 		return true;
 	}
@@ -534,6 +570,28 @@ public class GraphSettingsDialog {
 			edgeFontLabel.setText("Font: " + f.getFontName() + ", " + f.getSize());
 		} else {
 			edgeFontLabel.setText("Font: default");
+		}
+	}
+
+	private void vertexFontSpinnerChangedEvent() {
+		if (minVertexLabelFontSize.getModel() instanceof SpinnerNumberModel) {
+			int size = ((SpinnerNumberModel) minVertexLabelFontSize.getModel()).getNumber().intValue();
+			settings.setMinVertexFontSize(size);
+			if (con.containsPathway()) {
+				GraphInstance.getPathway().getGraph().updateLabelVisibilityOnZoom();
+				GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
+			}
+		}
+	}
+
+	private void edgeFontSpinnerChangedEvent() {
+		if (minEdgeLabelFontSize.getModel() instanceof SpinnerNumberModel) {
+			int size = ((SpinnerNumberModel) minEdgeLabelFontSize.getModel()).getNumber().intValue();
+			settings.setMinEdgeFontSize(size);
+			if (con.containsPathway()) {
+				GraphInstance.getPathway().getGraph().updateLabelVisibilityOnZoom();
+				GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
+			}
 		}
 	}
 }

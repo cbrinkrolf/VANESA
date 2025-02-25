@@ -369,7 +369,7 @@ public class MyGraph {
 		vv2.addMouseWheelListener(e -> updateLabelVisibilityOnZoom());
 	}
 
-	private void updateLabelVisibilityOnZoom() {
+	public void updateLabelVisibilityOnZoom() {
 		Font vertexFont = GraphSettings.getInstance().getVertexFont();
 		if (vertexFont == null) {
 			vertexFont = vv.getFont();
@@ -378,8 +378,8 @@ public class MyGraph {
 		if (edgeFont == null) {
 			edgeFont = vv.getFont();
 		}
-		vlr.setDisabled(vertexFont.getSize() * vv.getScale() <= 6);
-		elr.setDisabled(edgeFont.getSize() * vv.getScale() <= 6);
+		vlr.setDisabled(vertexFont.getSize() * vv.getScale() <= settings.getMinVertexFontSize());
+		elr.setDisabled(edgeFont.getSize() * vv.getScale() <= settings.getMinEdgeFontSize());
 	}
 
 	public void makeDefaultObjectVisualization() {
