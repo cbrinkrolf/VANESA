@@ -31,6 +31,7 @@ public class SuffixAwareFilter extends FileFilter {
             "KEGG Markup Language (*.kgml)");
     public static final SuffixAwareFilter GRAPH_TEXT_FILE = new SuffixAwareFilter("txt", "Graph Text File (*.txt)");
     public static final SuffixAwareFilter PNML = new SuffixAwareFilter("pnml", "Petri Net Markup Language (*.pnml)");
+    public static final SuffixAwareFilter PN_DOC = new SuffixAwareFilter("html", "Petri Net Documentation (*.html)");
 
     private final String extension;
     private final String description;

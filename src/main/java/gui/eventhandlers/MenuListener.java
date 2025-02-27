@@ -1,19 +1,12 @@
 package gui.eventhandlers;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,11 +20,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.xml.stream.XMLStreamException;
-
-import org.apache.batik.ext.awt.image.codec.png.PNGEncodeParam;
-import org.apache.batik.ext.awt.image.codec.png.PNGImageEncoder;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.SystemUtils;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -47,7 +35,6 @@ import configurations.gui.SettingsPanel;
 import dataMapping.DataMappingColorMVC;
 import database.mirna.MirnaSearch;
 import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationImageServer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.CreatePathway;
 import graph.GraphContainer;
@@ -69,7 +56,6 @@ import gui.PopUpDialog;
 import gui.tables.MyTable;
 import gui.visualization.PreRenderManager;
 import io.OpenDialog;
-import io.PNDoc;
 import io.SaveDialog;
 import io.SuffixAwareFilter;
 import io.image.ComponentImageWriter;
@@ -226,7 +212,7 @@ public class MenuListener implements ActionListener {
 			rendererSettings();
 			break;
 		case createDoc:
-			createDoc();
+			new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.PN_DOC }, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 			break;
 		case dataLabelMapping:
 			dataLabelMapping();
@@ -419,87 +405,6 @@ public class MenuListener implements ActionListener {
 						SuffixAwareFilter.PDF };
 			}
 			new SaveDialog(filters, SaveDialog.DATA_TYPE_GRAPH_PICTURE, pw.prepareGraphToPrint());
-		}
-	}
-
-	private static void createDoc() {
-		Pathway pw = GraphInstance.getPathway();
-		PopUpDialog.getInstance().show("Latex generation", "Generation in progress, it will take a short moment!");
-		Path docDir = VanesaUtility.getWorkingDirectoryPath().resolve("documentation");
-		final File dir = docDir.toFile();
-		if (!dir.isDirectory()) {
-			dir.mkdir();
-		}
-		try {
-			FileUtils.cleanDirectory(dir);
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		}
-		VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = pw.prepareGraphToPrint();
-		try {
-			Dimension size = wvv.getSize();
-			BufferedImage image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_BYTE_INDEXED);
-			Graphics2D grp = image.createGraphics();
-			wvv.paint(grp);
-			File outfile = new File(docDir + "export.png");
-			OutputStream fos = new FileOutputStream(outfile);
-			PNGEncodeParam param = PNGEncodeParam.getDefaultEncodeParam(image);
-			PNGImageEncoder encoder = new PNGImageEncoder(fos, param);
-			try {
-				encoder.encode(image);
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			} finally {
-				fos.close();
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		Thread thread = new Thread(() -> {
-			try {
-				while (!new File(docDir + "export.png").exists()) {
-					Thread.sleep(100);
-				}
-			} catch (Exception e12) {
-				e12.printStackTrace();
-			}
-		});
-		thread.start();
-		new PNDoc(docDir + "doc.tex");
-		String bin = "pdflatex";
-		if (SystemUtils.IS_OS_WINDOWS) {
-			bin += ".exe";
-		}
-		ProcessBuilder pb;
-		Process p;
-		try {
-			pb = new ProcessBuilder(bin, docDir.resolve("doc.tex").toString());
-			pb.directory(docDir.toFile());
-			p = pb.start();
-			Thread t = new Thread(() -> {
-				try {
-					BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-					while (p.isAlive()) {
-						System.out.println(br.readLine());
-						Thread.sleep(100);
-					}
-					// p.destroyForcibly();
-					Process p2 = pb.start();
-					BufferedReader br2 = new BufferedReader(new InputStreamReader(p2.getInputStream()));
-					while (p2.isAlive()) {
-						System.out.println(br2.readLine());
-						Thread.sleep(100);
-					}
-					PopUpDialog.getInstance().show("Latex compilation successful!", "PDF can be found at:\n" + docDir);
-				} catch (Exception e13) {
-					e13.printStackTrace();
-				}
-			});
-			t.start();
-		} catch (IOException e1) {
-			PopUpDialog.getInstance().show("Compilation of latex failed!",
-					"pdflatex executable could not be found!\n Generated Latex file can be found at:\n" + docDir);
-			System.err.println("Could not compile latex. Find tex-file at: " + docDir);
 		}
 	}
 

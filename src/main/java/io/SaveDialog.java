@@ -138,7 +138,7 @@ public class SaveDialog {
 		return file;
 	}
 
-	private void write(Component c, String simId, File file) {
+	private void write(final Component c, final String simId, File file) {
 		file = ensureExtension(file, fileFilter);
 		if (fileFilter == SuffixAwareFilter.SBML) {
 			writeSBML(file);
@@ -150,6 +150,8 @@ public class SaveDialog {
 			write(new GraphTextWriter(file), GraphInstance.getPathway());
 		} else if (fileFilter == SuffixAwareFilter.VANESA_SIM_RESULT) {
 			writeSimulationResultCSV(simId, file);
+		} else if (fileFilter == SuffixAwareFilter.PN_DOC) {
+			writePetriNetDocumentation(file);
 		} else if (fileFilter == SuffixAwareFilter.PNML) {
 			write(new PNMLOutput(file), GraphInstance.getPathway());
 		} else if (fileFilter == SuffixAwareFilter.CSML) {
@@ -214,6 +216,21 @@ public class SaveDialog {
 		} else {
 			PopUpDialog.getInstance().show("Error", fileFilter + "\nNo Simulation results available to save!");
 		}
+	}
+
+	private void writePetriNetDocumentation(final File file) {
+		Pathway pw = GraphInstance.getPathway();
+		if (pw == null) {
+			return;
+		}
+		// if BN holds PN
+		if (!pw.isPetriNet()) {
+			if (pw.getTransformationInformation() == null || pw.getTransformationInformation().getPetriNet() == null) {
+				return;
+			}
+			pw = pw.getTransformationInformation().getPetriNet();
+		}
+		write(new PNDocWriter(file), pw, true);
 	}
 
 	private void writeMO(final File file) {
