@@ -52,7 +52,7 @@ public class SimulationResult {
 		this.time.add(time);
 	}
 
-	public void addValue(final GraphElementAbstract gea, final int type, final double value) {
+	public void addValue(final GraphElementAbstract gea, final int type, final Double value) {
 		if (!result.containsKey(gea, type)) {
 			result.put(gea, type, new Series());
 		}
@@ -143,7 +143,7 @@ public class SimulationResult {
 								addValue(arc, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW,
 										currentToken - lastToken);
 							} else {
-								addValue(arc, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, 0);
+								addValue(arc, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, 0d);
 							}
 							revisedTime = j;
 						}
@@ -152,7 +152,7 @@ public class SimulationResult {
 					}
 				}
 				for (int i = revisedTime; i < time.size(); i++) {
-					addValue(arc, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, 0);
+					addValue(arc, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, 0d);
 				}
 			}
 		}

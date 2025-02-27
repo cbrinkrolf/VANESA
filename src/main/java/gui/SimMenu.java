@@ -741,7 +741,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		} else if (e.getActionCommand().startsWith("export_")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(7));
 			String simId = pw.getPetriPropertiesNet().getSimResController().getAll().get(idx).getId();
-			new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.CSV_RESULT },
+			new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.VANESA_SIM_RESULT },
 					SaveDialog.DATA_TYPE_SIMULATION_RESULTS, null, this, simId);
 		} else if ("advancedOptions".equals(e.getActionCommand())) {
 			;

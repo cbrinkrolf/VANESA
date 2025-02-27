@@ -689,7 +689,7 @@ public class Pathway extends GraphicalElement implements Cloneable {
 	public void setIsPetriNet(boolean isPetriNet) {
 		this.isPetriNet = isPetriNet;
 		if (isPetriNet) {
-			petriNetProperties = new PetriNetProperties();
+			petriNetProperties = new PetriNetProperties(this);
 		}
 		updateTabIcon();
 	}
@@ -1271,9 +1271,8 @@ public class Pathway extends GraphicalElement implements Cloneable {
 				petriNetSimulation = new PetriNetSimulation(this);
 			}
 			return petriNetSimulation;
-		} else {
-			return transformationInformation.getPetriNet().getPetriNetSimulation();
 		}
+		return transformationInformation.getPetriNet().getPetriNetSimulation();
 	}
 
 	public int getPlaceCount() {

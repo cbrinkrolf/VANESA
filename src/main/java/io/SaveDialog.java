@@ -10,7 +10,7 @@ import gui.PopUpDialog;
 import io.graphML.GraphMLWriter;
 import io.image.ChartImageWriter;
 import io.image.ComponentImageWriter;
-import io.pnResult.PNResultWriter;
+import io.pnResult.PNSimulationResultCSVWriter;
 import io.sbml.JSBMLOutput;
 import org.knowm.xchart.internal.chartpart.Chart;
 import petriNet.SimulationResult;
@@ -23,7 +23,6 @@ import javax.swing.*;
 import javax.xml.stream.XMLStreamException;
 import java.awt.*;
 import java.io.*;
-import java.nio.file.Path;
 import java.util.List;
 
 public class SaveDialog {
@@ -149,8 +148,8 @@ public class SaveDialog {
 			writeMO(file);
 		} else if (fileFilter == SuffixAwareFilter.GRAPH_TEXT_FILE) {
 			write(new GraphTextWriter(file), GraphInstance.getPathway());
-		} else if (fileFilter == SuffixAwareFilter.CSV_RESULT) {
-			writeCSV(simId, file);
+		} else if (fileFilter == SuffixAwareFilter.VANESA_SIM_RESULT) {
+			writeSimulationResultCSV(simId, file);
 		} else if (fileFilter == SuffixAwareFilter.PNML) {
 			write(new PNMLOutput(file), GraphInstance.getPathway());
 		} else if (fileFilter == SuffixAwareFilter.CSML) {
@@ -172,11 +171,11 @@ public class SaveDialog {
 		}
 	}
 
-	private <T> boolean write(BaseWriter<T> writer, T value) {
+	private <T> boolean write(final BaseWriter<T> writer, final T value) {
 		return write(writer, value, true);
 	}
 
-	private <T> boolean write(BaseWriter<T> writer, T value, boolean printSuccess) {
+	private <T> boolean write(final BaseWriter<T> writer, final T value, final boolean printSuccess) {
 		if (writer == null) {
 			PopUpDialog.getInstance().show("Error", fileFilter + "\nAn error occurred, writer is null!");
 			return false;
@@ -191,8 +190,11 @@ public class SaveDialog {
 		return true;
 	}
 
-	private void writeCSV(String simId, File file) {
+	private void writeSimulationResultCSV(final String simId, final File file) {
 		Pathway pw = GraphInstance.getPathway();
+		if (pw == null) {
+			return;
+		}
 		// if BN holds PN
 		if (!pw.isPetriNet()) {
 			if (pw.getTransformationInformation() == null || pw.getTransformationInformation().getPetriNet() == null) {
@@ -200,23 +202,21 @@ public class SaveDialog {
 			}
 			pw = pw.getTransformationInformation().getPetriNet();
 		}
-		SimulationResult simRes;
+		final SimulationResult simRes;
 		if (simId == null) {
 			simRes = pw.getPetriPropertiesNet().getSimResController().getLastActive();
 		} else {
 			simRes = pw.getPetriPropertiesNet().getSimResController().get(simId);
 		}
 		if (simRes != null) {
-
-			PNResultWriter pWriter = new PNResultWriter(file, simRes, pw);
-
-			write(pWriter.getCSVWriter(), pw);
+			final PNSimulationResultCSVWriter pWriter = new PNSimulationResultCSVWriter(file, pw);
+			write(pWriter, simRes);
 		} else {
 			PopUpDialog.getInstance().show("Error", fileFilter + "\nNo Simulation results available to save!");
 		}
 	}
 
-	private void writeMO(File file) {
+	private void writeMO(final File file) {
 		if (!write(new MOoutput(file, false), GraphInstance.getPathway(), false)) {
 			return;
 		}
@@ -229,7 +229,7 @@ public class SaveDialog {
 		}
 	}
 
-	private void writeSBML(File file) {
+	private void writeSBML(final File file) {
 		// create a sbmlOutput object
 		// SBMLoutputNoWS sbmlOutput = new SBMLoutputNoWS(file, new
 		// GraphInstance().getPathway());

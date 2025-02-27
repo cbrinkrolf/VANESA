@@ -127,7 +127,7 @@ public class DetailedSimRes implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         final String event = e.getActionCommand();
         if (event.equals("exportSimResult")) {
-            new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.CSV_RESULT},
+            new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.VANESA_SIM_RESULT},
                     SaveDialog.DATA_TYPE_SIMULATION_RESULTS, null, dialog, simId);
         }
     }

@@ -16,11 +16,15 @@ import graph.GraphInstance;
 import gui.AsyncTaskExecutor;
 import gui.MainWindow;
 import gui.PopUpDialog;
+import gui.SimMenu;
 import io.graphML.GraphMLReader;
 import io.kgml.KGMLReader;
+import io.pnResult.PNSimulationResultCSVReader;
 import io.sbml.JSBMLInput;
 import io.vaml.VAMLInput;
 import petriNet.PetriNetProperties;
+import petriNet.SimulationResult;
+import petriNet.SimulationResultController;
 
 public final class OpenDialog {
 	private final JFileChooser chooser;
@@ -116,7 +120,7 @@ public final class OpenDialog {
 		}
 	}
 
-	private static void openGraphText(File file) {
+	private static void openGraphText(final File file) {
 		try {
 			new TxtInput(new FileInputStream(file), file);
 		} catch (Exception e) {
@@ -125,7 +129,7 @@ public final class OpenDialog {
 		}
 	}
 
-	private static void openGraphML(File file) {
+	private static void openGraphML(final File file) {
 		final GraphMLReader reader = new GraphMLReader(file);
 		final Pathway pw = reader.read();
 		if (reader.hasErrors() || pw == null) {
@@ -135,7 +139,7 @@ public final class OpenDialog {
 		}
 	}
 
-	private static void openKGML(File file) {
+	private static void openKGML(final File file) {
 		final KGMLReader reader = new KGMLReader(file);
 		final Pathway pw = reader.read();
 		if (reader.hasErrors() || pw == null) {
@@ -145,26 +149,34 @@ public final class OpenDialog {
 		}
 	}
 
-	private static void openSimulationResult(File file) {
-		try {
-			PetriNetProperties petrinet = GraphInstance.getPathway().getPetriPropertiesNet();
-			petrinet.loadVanesaSimulationResult(file);
-			GraphContainer con = GraphContainer.getInstance();
-			if (con.containsPathway()) {
-				if (GraphInstance.getPathway().hasGotAtLeastOneElement()) {
-					// if (petrinet.getSimResController().getAll().size() < 2) {
-					// MainWindow.getInstance().initSimResGraphs();
-					// } else {
-					//
-					MainWindow.getInstance().addSimulationResults();
-					// }
+	private static void openSimulationResult(final File file) {
+		final GraphContainer con = GraphContainer.getInstance();
+		if (con.containsPathway()) {
+			final Pathway pathway = GraphInstance.getPathway();
+			final PetriNetProperties petriNet = pathway.getPetriPropertiesNet();
+			final SimulationResultController simResController = petriNet.getSimResController();
+			String fileName = file.getName();
+			if (simResController.containsSimId(fileName)) {
+				int i = 1;
+				while (simResController.containsSimId(fileName + "(" + i + ")")) {
+					i++;
 				}
+				fileName += "(" + i + ")";
 			}
-			System.out.println("finished loading");
-		} catch (IOException e) {
-			e.printStackTrace();
-			PopUpDialog.getInstance().show("Error!", "Failed to load simulation results file.");
+			final SimulationResult simRes = simResController.get(fileName);
+			simRes.setName(fileName);
+			final PNSimulationResultCSVReader reader = new PNSimulationResultCSVReader(file, pathway, simRes);
+			reader.read();
+			if (reader.hasErrors()) {
+				PopUpDialog.getInstance().show("Error!", "Failed to load simulation result CSV file.");
+			}
+			pathway.setPlotColorPlacesTransitions(false);
+			petriNet.setPetriNetSimulation(true);
+			final SimMenu menu = pathway.getPetriNetSimulation().getMenu();
+			if (menu != null) {
+				menu.updateSimulationResults();
+			}
+			MainWindow.getInstance().addSimulationResults();
 		}
-
 	}
 }

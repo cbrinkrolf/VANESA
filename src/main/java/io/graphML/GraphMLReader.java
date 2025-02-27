@@ -268,8 +268,7 @@ public class GraphMLReader extends BaseReader<Pathway> {
 				if (!propertyTypes.containsKey(propertyKey)) {
 					final PropertyKey property = new PropertyKey(propertyKey, forType, propertyKey, "string", null);
 					propertyTypes.put(propertyKey, property);
-					if (logger.isInfoEnabled())
-						logger.warn("Property '" + propertyKey + "' wasn't defined, fallback to string property");
+					logger.warn("Property '" + propertyKey + "' wasn't defined, fallback to string property");
 				}
 				final PropertyKey property = propertyTypes.get(propertyKey);
 				final String propertyName = property.attributeName;

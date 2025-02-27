@@ -519,8 +519,7 @@ public class MenuListener implements ActionListener {
 			}
 			if (pw.isPetriNet() || pw.getTransformationInformation() != null
 					&& pw.getTransformationInformation().getPetriNet() != null) {
-				List<SuffixAwareFilter> filters;
-				filters = new ArrayList<>();
+				final List<SuffixAwareFilter> filters = new ArrayList<>();
 				filters.add(SuffixAwareFilter.VANESA_SIM_RESULT);
 				new OpenDialog(filters).show();
 			} else {

@@ -1,12 +1,15 @@
 package io;
 
+import org.apache.log4j.Logger;
+
 import java.io.*;
 
 public abstract class BaseReader<T> {
+    private final Logger logger = Logger.getRootLogger();
     private boolean hasErrors;
     private InputStream inputStream;
 
-    public BaseReader(File file) {
+    public BaseReader(final File file) {
         try {
             inputStream = new FileInputStream(file);
         } catch (FileNotFoundException e) {
@@ -14,7 +17,7 @@ public abstract class BaseReader<T> {
         }
     }
 
-    public BaseReader(InputStream inputStream) {
+    public BaseReader(final InputStream inputStream) {
         this.inputStream = inputStream;
     }
 
@@ -30,10 +33,11 @@ public abstract class BaseReader<T> {
         try {
             return internalRead(inputStream);
         } catch (IOException e) {
+            logger.error("Failed to read file", e);
             hasErrors = true;
             return null;
         }
     }
 
-    protected abstract T internalRead(InputStream inputStream) throws IOException;
+    protected abstract T internalRead(final InputStream inputStream) throws IOException;
 }
