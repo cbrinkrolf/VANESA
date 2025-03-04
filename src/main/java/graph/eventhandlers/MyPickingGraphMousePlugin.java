@@ -17,6 +17,8 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.lang3.StringUtils;
+
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -47,7 +49,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	private Point2D pressed = null;
 	private boolean moved = false;
 	private GraphSettings settings = GraphSettings.getInstance();
-	
+
 	public void mouseReleased(MouseEvent e) {
 		moved = false;
 		// vv.setFocusable(true);
@@ -182,9 +184,9 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				double dx = ip.getX();
 				double dy = ip.getY();
 				// System.out.println("start x: "+dx+" y:"+dy);
-				
+
 				int xyEdgeSelectionOffset = settings.getPixelOffset();
-				
+
 				while (edge == null && counter <= xyEdgeSelectionOffset) {
 					for (int i = -xyEdgeSelectionOffset; i < xyEdgeSelectionOffset; i++) {
 						counter++;
@@ -202,7 +204,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 			}
 
 			if (pw.getSelectedNodes().isEmpty() && pw.getSelectedEdges().isEmpty()
-				&& SwingUtilities.isLeftMouseButton(e)) {
+					&& SwingUtilities.isLeftMouseButton(e)) {
 				mousePressedAnnotation(e);
 			}
 		}
@@ -346,19 +348,14 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				return;
 			}
 			this.currentAnnotation = ma;
-			Annotation<?> a2;
 			RectangularShape s = new Rectangle();
 			RectangularShape shape = ma.getShape();
-			if (ma.getText().length() == 0) {
+			if (StringUtils.isEmpty(ma.getText())) {
 				int offset = 5;
 				s.setFrameFromDiagonal(shape.getMinX() - offset, shape.getMinY() - offset, shape.getMaxX() + offset,
 						shape.getMaxY() + offset);
-				a2 = new Annotation<>(s, Annotation.Layer.LOWER, Color.BLUE, true, new Point2D.Double(0, 0));
-				highlight = new MyAnnotation(a2, s, ma.getText());
-				highlight.setAnnotation(a2);
-
+				highlight = new MyAnnotation(s, ma.getText(), Color.BLUE, Color.BLUE, Color.BLUE);
 				am.add(Annotation.Layer.LOWER, highlight);
-
 				am.updateMyAnnotation(ma);
 			}
 		} else {

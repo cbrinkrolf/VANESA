@@ -43,7 +43,6 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.graph.util.EdgeType;
-import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.DefaultVisualizationModel;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.Layer;
@@ -1285,8 +1284,6 @@ public class MyGraph {
 		}
 	}
 
-	// following methods can probably outsourced
-
 	// This method summarizes several options for improving the painting
 	// performance. Enable or disable them depending on which visual features
 	// you want to sacrifice for the higher performance.
@@ -1355,28 +1352,26 @@ public class MyGraph {
 			public void paintEdge(RenderContext<V, E> rc, Layout<V, E> layout, E e) {
 				GraphicsDecorator g2d = rc.getGraphicsContext();
 				Graph<V, E> graph = layout.getGraph();
-				if (!rc.getEdgeIncludePredicate().apply(Context.getInstance(graph, e)))
+				if (!rc.getEdgeIncludePredicate().apply(Context.getInstance(graph, e))) {
 					return;
-
-				Pair<V> endpoints = graph.getEndpoints(e);
-				V v1 = endpoints.getFirst();
-				V v2 = endpoints.getSecond();
-				if (!rc.getVertexIncludePredicate().apply(Context.getInstance(graph, v1))
-						&& !rc.getVertexIncludePredicate().apply(Context.getInstance(graph, v2)))
+				}
+				if (!rc.getVertexIncludePredicate().apply(Context.getInstance(graph, graph.getEndpoints(e).getFirst()))
+						&& !rc.getVertexIncludePredicate()
+								.apply(Context.getInstance(graph, graph.getEndpoints(e).getSecond()))) {
 					return;
-
+				}
 				Stroke new_stroke = rc.getEdgeStrokeTransformer().apply(e);
 				Stroke old_stroke = g2d.getStroke();
-				if (new_stroke != null)
+				if (new_stroke != null) {
 					g2d.setStroke(new_stroke);
-
+				}
 				drawSimpleEdge(rc, layout, e);
 
 				// restore paint and stroke
-				if (new_stroke != null)
+				if (new_stroke != null) {
 					g2d.setStroke(old_stroke);
+				}
 			}
 		});
-		// vv.getRenderer().setEdgeLabelRenderer(null);
 	}
 }

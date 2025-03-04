@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import biologicalElements.Elementdeclerations;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import graph.GraphInstance;
@@ -77,11 +76,11 @@ public abstract class Place extends PNNode {
 			return;
 		}
 		this.tokenStart = tokenStart;
-		//Pathway pw = GraphInstance.getPathway();
-		
-		//if (pw.getPetriPropertiesNet() != null
-		//		&& !pw.getPetriPropertiesNet().isPetriNetSimulation())
-			token = tokenStart;
+		// Pathway pw = GraphInstance.getPathway();
+
+		// if (pw.getPetriPropertiesNet() != null
+		// && !pw.getPetriPropertiesNet().isPetriNetSimulation())
+		token = tokenStart;
 	}
 
 	public int getConflictStrategy() {
@@ -144,7 +143,7 @@ public abstract class Place extends PNNode {
 		for (PNArc bea : edges) {
 			if (bea.getProbability() < 0) {
 				PopUpDialog.getInstance().show("Probability error", "Negative probability detected: arc connecting "
-                                                                    + bea.getFrom().getName() + " -> " + bea.getTo().getName());
+						+ bea.getFrom().getName() + " -> " + bea.getTo().getName());
 				return true;
 			}
 			sum += bea.getProbability();

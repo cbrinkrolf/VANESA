@@ -26,7 +26,6 @@ import graph.layouts.gemLayout.GEMLayoutConfig;
 import graph.layouts.hctLayout.HCTLayoutConfig;
 import graph.layouts.hebLayout.HEBLayoutConfig;
 import gui.MainWindow;
-import gui.annotation.RangeSelector;
 
 public class LayoutConfig extends JPanel implements ActionListener {
 	private static final long serialVersionUID = -25474744959063431L;
@@ -66,7 +65,7 @@ public class LayoutConfig extends JPanel implements ActionListener {
 	}
 
 	public static void changeToLayout(Class<? extends Layout> layout) {
-		if (RangeSelector.getInstance().hasRange()) {
+		if (!GraphInstance.getMyGraph().getAnnotationManager().getAnnotations().isEmpty()) {
 			int option = JOptionPane
 					.showConfirmDialog(GraphInstance.getMyGraph().getVisualizationViewer(),
 							"this graph contains selected clusters,\nall selected "

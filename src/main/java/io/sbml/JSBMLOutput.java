@@ -237,7 +237,7 @@ public class JSBMLOutput {
 		}
 
 		// Do not write the SBML document if error occurred.
-		System.out.println("message lengths: " + message.length());
+		// System.out.println("message lengths: " + message.length());
 		if (message.length() > 0) {
 			try {
 				os.close();

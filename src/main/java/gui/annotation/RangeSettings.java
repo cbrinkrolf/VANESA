@@ -22,7 +22,7 @@ import util.MyColorChooser;
  */
 public class RangeSettings extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
-	private RangeInfo rangeInfo;
+	private MyAnnotation rangeInfo;
 	private JTextField jTitle = new JTextField();
 	private JButton fillColor = new JButton("...");
 	private JButton outlineColor = new JButton("...");
@@ -70,15 +70,15 @@ public class RangeSettings extends JPanel implements ActionListener {
 		return option;
 	}
 
-	public void loadSettings(RangeInfo info, int atLayer, int layerCount) {
+	public void loadSettings(MyAnnotation info, int atLayer, int layerCount) {
 		this.rangeInfo = info;
-		jTitle.setText(info.text);
-		alpha.setValue(info.alpha);
-		fillColor.setBackground(info.fillColor);
-		outlineColor.setBackground(info.outlineColor);
-		textColor.setBackground(info.textColor);
-		titlePos.setSelectedIndex(info.titlePos);
-		outlineType.setSelectedIndex(info.outlineType);
+		jTitle.setText(info.getText());
+		alpha.setValue(info.getAlpha());
+		fillColor.setBackground(info.getFillColor());
+		outlineColor.setBackground(info.getOutlineColor());
+		textColor.setBackground(info.getTextColor());
+		titlePos.setSelectedIndex(info.getTitlePos());
+		outlineType.setSelectedIndex(info.getOutlineType());
 		layerCombo.removeAllItems();
 		for (int i = 0; i < layerCount; i++) {
 			layerCombo.addItem(i);
@@ -87,13 +87,13 @@ public class RangeSettings extends JPanel implements ActionListener {
 	}
 
 	public void updateSettings() {
-		rangeInfo.text = jTitle.getText();
-		rangeInfo.fillColor = fillColor.getBackground();
-		rangeInfo.outlineColor = outlineColor.getBackground();
-		rangeInfo.textColor = textColor.getBackground();
-		rangeInfo.outlineType = outlineType.getSelectedIndex();
-		rangeInfo.titlePos = titlePos.getSelectedIndex();
-		rangeInfo.alpha = (Integer) alpha.getValue();
+		rangeInfo.setText(jTitle.getText());
+		rangeInfo.setFillColor(fillColor.getBackground());
+		rangeInfo.setOutlineColor(outlineColor.getBackground());
+		rangeInfo.setTextColor(textColor.getBackground());
+		rangeInfo.setOutlineType(outlineType.getSelectedIndex());
+		rangeInfo.setTitlePos(titlePos.getSelectedIndex());
+		rangeInfo.setAlpha((Integer) alpha.getValue());
 		this.layer = layerCombo.getSelectedIndex();
 	}
 
