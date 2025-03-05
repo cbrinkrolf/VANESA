@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import biologicalElements.GraphElementAbstract;
-import biologicalElements.GraphicalElement;
+import biologicalElements.GraphicalElementAbstract;
 import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -20,7 +20,7 @@ import configurations.GraphSettings;
 import graph.gui.Parameter;
 import org.apache.commons.lang3.StringUtils;
 
-public abstract class BiologicalEdgeAbstract extends GraphicalElement implements GraphElementAbstract, Cloneable {
+public abstract class BiologicalEdgeAbstract extends GraphicalElementAbstract implements GraphElementAbstract, Cloneable {
 	private boolean directed;
 	private boolean visible = true;
 	private String name;

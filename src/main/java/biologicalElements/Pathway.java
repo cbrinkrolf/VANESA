@@ -49,7 +49,7 @@ import transformation.TransformationInformation;
 import util.FormulaSafety;
 import util.VanesaUtility;
 
-public class Pathway extends GraphicalElement implements Cloneable {
+public class Pathway extends GraphicalElementAbstract implements Cloneable {
 	private File file = null;
 	private String name;
 	private String version = "";

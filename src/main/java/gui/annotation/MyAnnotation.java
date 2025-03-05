@@ -10,10 +10,10 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import biologicalElements.GraphicalElement;
+import biologicalElements.GraphicalElementAbstract;
 import edu.uci.ics.jung.visualization.annotations.Annotation;
 
-public class MyAnnotation extends GraphicalElement {
+public class MyAnnotation extends GraphicalElementAbstract {
 	private final RectangularShape shape;
 	private Annotation<?> a;
 	private String text;
