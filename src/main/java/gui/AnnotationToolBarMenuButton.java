@@ -5,6 +5,7 @@ import gui.annotation.AnnotationPainter;
 import java.awt.*;
 
 public class AnnotationToolBarMenuButton extends ToolBarMenuButton {
+	private static final long serialVersionUID = -4438951565087139192L;
 	private final ToolBarButton selectFillColor;
 	private final ToolBarButton selectTextColor;
 	private final ToolBarButton rectangleTool;

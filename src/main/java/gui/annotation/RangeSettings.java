@@ -115,4 +115,5 @@ public class RangeSettings extends JPanel implements ActionListener {
 
 		}
 	}
+
 }

@@ -12,10 +12,12 @@ import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,6 +51,7 @@ import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.annotations.Annotation;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.EditingPopupGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
@@ -88,8 +91,9 @@ import graph.layouts.hebLayout.HEBLayout;
 import gui.MainWindow;
 import gui.PopUpDialog;
 import gui.algorithms.ScreenSize;
+import gui.annotation.MyAnnotation;
 import gui.annotation.MyAnnotationManager;
-import gui.annotation.RangeSelector;
+import gui.annotation.MyAnnotationEditingGraphMouse;
 import gui.visualization.TokenRenderer;
 
 public class MyGraph {
@@ -251,18 +255,16 @@ public class MyGraph {
 
 		satellitePr = vv2.getRenderContext();
 		// viewGrid = (Paintable) new ViewGrid(vv2, vv);
-		// set the Ranges-Layer to be painted before the actual graph
-		vv.addPreRenderPaintable(RangeSelector.getInstance());
 
 		// set the heatmap-layer to be painted before the actual graph
 		// vv.addPreRenderPaintable(HeatgraphLayer.getInstance());
 
 		// set the Ranges-Layer to get notified of mouse movements and clicks
-		vv.addMouseListener(RangeSelector.getInstance());
-		vv.addMouseMotionListener(RangeSelector.getInstance());
+		// vv.addMouseListener(RangeSelector.getInstance());
+		// vv.addMouseMotionListener(RangeSelector.getInstance());
 
-		vv.addMouseListener(RangeSelector.getInstance().getRangeShapeEditor());
-		vv.addMouseMotionListener(RangeSelector.getInstance().getRangeShapeEditor());
+		vv.addMouseListener(MyAnnotationEditingGraphMouse.getInstance());
+		vv.addMouseMotionListener(MyAnnotationEditingGraphMouse.getInstance());
 
 		// set the inner nodes to be painted after the actual graph
 		// vv.addPostRenderPaintable(new InnerNodeRenderer(vv));
@@ -1234,7 +1236,6 @@ public class MyGraph {
 		esh.setGraphTheory(false);
 		edpf.setGraphTheory(false);
 		efpf.setGraphTheory(false);
-		RangeSelector.getInstance().setEnabled(false);
 	}
 
 	public Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> getJungGraph() {
@@ -1272,6 +1273,24 @@ public class MyGraph {
 
 	public MyEdgeDrawPaintFunction getEdgeDrawPaintFunction() {
 		return edpf;
+	}
+
+	public void addAnnotation(Map<String, String> attributes) {
+		annotationManager.add(Annotation.Layer.LOWER, new MyAnnotation(attributes));
+		getVisualizationViewer().addPreRenderPaintable(annotationManager.getLowerAnnotationPaintable());
+		getVisualizationViewer().addPostRenderPaintable(annotationManager.getUpperAnnotationPaintable());
+	}
+
+	public List<Map<String, String>> getAllAnnotations() {
+		List<Map<String, String>> allAnnotations = new ArrayList<Map<String, String>>();
+		for (MyAnnotation m : annotationManager.getAnnotations()) {
+			try {
+				allAnnotations.add(m.getAsPropertyMap());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return allAnnotations;
 	}
 
 	// Probably the most important step for the pure rendering performance:

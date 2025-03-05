@@ -30,7 +30,6 @@ import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
-import gui.annotation.RangeSelector;
 
 /**
  * @author sebastian and olga
@@ -177,7 +176,8 @@ public class VAMLOutput {
 		writer.writeStartElement("annotation");
 		writer.writeStartElement("NetworkEditorSettings");
 		writeProject();
-		// DefaultSettableVertexLocationFunction loc = pw.getGraph().getVertexLocations();
+		// DefaultSettableVertexLocationFunction loc =
+		// pw.getGraph().getVertexLocations();
 		for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 			writer.writeStartElement("element");
 			writer.writeAttribute("id", bna.getID() + "");
@@ -277,12 +277,12 @@ public class VAMLOutput {
 	}
 
 	private void writeRanges() throws XMLStreamException {
-		List<Map<String, String>> rangeInfos = RangeSelector.getInstance().getRangesInMyGraph(pw.getGraph());
-		if (rangeInfos != null) {
-			for (Map<String, String> range : rangeInfos) {
+		List<Map<String, String>> annotations = pw.getGraph().getAllAnnotations();
+		if (annotations != null) {
+			for (Map<String, String> annotation : annotations) {
 				writer.writeStartElement("rangeInfo");
-				for (String key : range.keySet()) {
-					String value = range.get(key);
+				for (String key : annotation.keySet()) {
+					String value = annotation.get(key);
 					writer.writeAttribute(key, value);
 				}
 				writer.writeEndElement();

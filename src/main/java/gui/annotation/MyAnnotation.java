@@ -21,6 +21,7 @@ public class MyAnnotation extends GraphicalElement {
 	private Color fillColor;
 	private Color outlineColor;
 	private Color textColor;
+	// TODO alpha values ov all colors are not yet exported/imported
 	private int alpha = 255;
 	/**
 	 * 0|1 2|3
@@ -54,7 +55,7 @@ public class MyAnnotation extends GraphicalElement {
 		fillColor = new Color(Integer.parseInt(properties.get("fillColor")));
 		outlineColor = new Color(Integer.parseInt(properties.get("outlineColor")));
 		textColor = new Color(Integer.parseInt(properties.get("textColor")));
-		alpha = Integer.parseInt(properties.get("fillColor"));
+		alpha = Integer.parseInt(properties.get("alpha"));
 		outlineType = Integer.parseInt(properties.get("outlineType"));
 		boolean ellipse = Boolean.parseBoolean(properties.get("isEllipse"));
 		double minX = Double.parseDouble(properties.get("minX"));

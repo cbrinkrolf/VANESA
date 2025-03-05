@@ -32,7 +32,6 @@ public class AnnotationPainter {
 
 	public void setCurrentRangeType(int currentRangeType) {
 		// this.currentRangeType = currentRangeType;
-		setEnabled(true);
 		// GraphInstance.getMyGraph().setMouseModeSelectRange();
 		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = GraphInstance.getPathway().getGraph()
 				.getVisualizationViewer();
@@ -73,15 +72,6 @@ public class AnnotationPainter {
 		 * annotationControlPanel.add(annotationControls.getAnnotationsToolBar()) ;
 		 * controls.add(annotationControlPanel);
 		 */
-	}
-
-	public void setEnabled(boolean enabled) {
-		// this.enabled = enabled;
-		// rangeShapeEditor.enabled = enabled;
-		try {
-			// GraphInstance.getMyGraph().getVisualizationViewer().getComponentPopupMenu().remove(dropRange);
-		} catch (Exception e) {
-		}
 	}
 
 	public Color chooseColor(final Color oldColor) {

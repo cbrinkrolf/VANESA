@@ -16,8 +16,6 @@ import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
-import biologicalObjects.edges.ReactionPairEdge;
-import biologicalObjects.edges.petriNet.PNArc;
 import org.apache.commons.lang3.StringUtils;
 import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.Compartment;
@@ -35,6 +33,8 @@ import org.sbml.jsbml.xml.XMLTriple;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.Inhibition;
+import biologicalObjects.edges.ReactionPairEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
@@ -46,7 +46,6 @@ import biologicalObjects.nodes.petriNet.Transition;
 import graph.groups.Group;
 import graph.gui.Parameter;
 import gui.MainWindow;
-import gui.annotation.RangeSelector;
 
 /**
  * This class represents a writer from graph data to a SBML file. The actual
@@ -271,16 +270,16 @@ public class JSBMLOutput {
 	private Annotation createAnnotation() {
 		Annotation a = new Annotation();
 		// Save Shape
-		List<Map<String, String>> rangeInfos = RangeSelector.getInstance().getRangesInMyGraph(pathway.getGraph());
+		List<Map<String, String>> annotations = pathway.getGraph().getAllAnnotations();
 		XMLNode el = new XMLNode(new XMLNode(new XMLTriple("model", "", ""), new XMLAttributes()));
-		if (rangeInfos != null) {
+		if (annotations != null) {
 			XMLNode elSub = new XMLNode(new XMLNode(new XMLTriple("listOfRanges", "", ""), new XMLAttributes()));
 			XMLNode elSubSub;
 			String value;
-			for (Map<String, String> range : rangeInfos) {
+			for (Map<String, String> annotation : annotations) {
 				elSubSub = new XMLNode(new XMLNode(new XMLTriple("Range", "", ""), new XMLAttributes()));
-				for (String key : range.keySet()) {
-					value = range.get(key);
+				for (String key : annotation.keySet()) {
+					value = annotation.get(key);
 					elSubSub.addChild(createElSub(value, key));
 				}
 				elSub.addChild(elSubSub);

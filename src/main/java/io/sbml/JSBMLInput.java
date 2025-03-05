@@ -1,34 +1,49 @@
 package io.sbml;
 
-import biologicalElements.Elementdeclerations;
-import biologicalElements.IDAlreadyExistException;
-import biologicalElements.Pathway;
-import biologicalObjects.edges.*;
-import biologicalObjects.edges.petriNet.PNArc;
-import biologicalObjects.nodes.*;
-import biologicalObjects.nodes.petriNet.ContinuousTransition;
-import biologicalObjects.nodes.petriNet.Place;
-import biologicalObjects.nodes.petriNet.StochasticTransition;
-import biologicalObjects.nodes.petriNet.Transition;
-import graph.compartment.Compartment;
-import graph.CreatePathway;
-import graph.groups.Group;
-import graph.gui.Parameter;
-import gui.MainWindow;
-import gui.annotation.RangeSelector;
+import java.awt.Color;
+import java.awt.geom.Point2D;
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
-import util.VanesaUtility;
 
-import java.awt.*;
-import java.awt.geom.Point2D;
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
-import java.util.*;
+import biologicalElements.Elementdeclerations;
+import biologicalElements.IDAlreadyExistException;
+import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.edges.BiologicalEdgeAbstractFactory;
+import biologicalObjects.edges.Inhibition;
+import biologicalObjects.edges.ReactionEdge;
+import biologicalObjects.edges.ReactionPair;
+import biologicalObjects.edges.ReactionPairEdge;
+import biologicalObjects.edges.petriNet.PNArc;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
+import biologicalObjects.nodes.DNA;
+import biologicalObjects.nodes.DynamicNode;
+import biologicalObjects.nodes.KEGGNode;
+import biologicalObjects.nodes.Other;
+import biologicalObjects.nodes.RNA;
+import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.StochasticTransition;
+import biologicalObjects.nodes.petriNet.Transition;
+import graph.CreatePathway;
+import graph.compartment.Compartment;
+import graph.groups.Group;
+import graph.gui.Parameter;
+import gui.MainWindow;
+import util.VanesaUtility;
 
 /**
  * To read a SBML file and put the results on the graph. A SBML which has been
@@ -148,12 +163,12 @@ public class JSBMLInput {
 			if (reverseEngineering) {
 				isPetri = false;
 			}
-			// get the ranges if present
-			Element rangeNode = modelNode.getChild("listOfRanges", null);
-			if (rangeNode != null) {
-				List<Element> rangeNodeChildren = rangeNode.getChildren();
-				for (Element range : rangeNodeChildren) {
-					addRange(range);
+			// get the annotations / ranges if present
+			Element anNode = modelNode.getChild("listOfRanges", null);
+			if (anNode != null) {
+				List<Element> anNodeChildren = anNode.getChildren();
+				for (Element annotation : anNodeChildren) {
+					addAnnotation(annotation);
 				}
 			}
 			Element groupNode = modelNode.getChild("listOfGroups", null);
@@ -1056,19 +1071,19 @@ public class JSBMLInput {
 	/**
 	 * adds ranges to the graph
 	 */
-	private void addRange(Element rangeElement) {
+	private void addAnnotation(Element annotationElement) {
 		Map<String, String> attrs = new HashMap<>();
 		attrs.put("title", "");
 		String[] keys = { "textColor", "outlineType", "fillColor", "alpha", "maxY", "outlineColor", "maxX", "isEllipse",
 				"minX", "minY", "titlePos", "title" };
 		for (String key : keys) {
-			Element tmp = rangeElement.getChild(key, null);
+			Element tmp = annotationElement.getChild(key, null);
 			if (tmp != null) {
 				String value = tmp.getAttributeValue(key);
 				attrs.put(key, value);
 			}
 		}
-		RangeSelector.getInstance().addRangesInMyGraph(pathway.getGraph(), attrs);
+		pathway.getGraph().addAnnotation(attrs);
 	}
 
 	private void handleReferences() {

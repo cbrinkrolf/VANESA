@@ -11,11 +11,12 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.jung.classes.MyVisualizationViewer;
+import gui.MainWindow;
 
-public class RangeShapeEditor extends MouseAdapter {
+public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 
-	public boolean enabled;
-	public MyAnnotation selected;
+	private boolean enabled = true;
+	private MyAnnotation selected;
 	private double oldX, oldY;
 	private Cursor oldCursor;
 	// private boolean resizing;
@@ -23,6 +24,19 @@ public class RangeShapeEditor extends MouseAdapter {
 	private boolean[] move = new boolean[4];// move lefttop x,y,rightbottom
 	// x,y
 	private double[] resizeOffset = new double[2];
+
+	private static MyAnnotationEditingGraphMouse instance = null;
+
+	public static MyAnnotationEditingGraphMouse getInstance() {
+		if (instance == null) {
+			instance = new MyAnnotationEditingGraphMouse();
+		}
+		return instance;
+	}
+
+	private MyAnnotationEditingGraphMouse() {
+
+	}
 
 	private int checkAnchor(Point2D p, RectangularShape shape) {
 		for (int i = 0; i < move.length; i++) {
@@ -88,6 +102,7 @@ public class RangeShapeEditor extends MouseAdapter {
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
+		System.out.println("dragged");
 		if (enabled && selected != null && e.getModifiersEx() == InputEvent.BUTTON1_DOWN_MASK
 				&& selected.getShape() instanceof RectangularShape) {
 			Point2D p = inverseTransform(e);
@@ -119,10 +134,16 @@ public class RangeShapeEditor extends MouseAdapter {
 				MyAnnotation info = am.get(i);
 				int cursor = this.checkAnchor(p, info.getShape());
 				// if (info.shape.contains(p)) {
+				System.out.println(cursor);
 				if (cursor > -1) {
 					selected = info;
 					oldCursor = vv.getCursor();
 					vv.setCursor(Cursor.getPredefinedCursor(cursor));
+					// vv.setCursor(cursor);
+					MainWindow.getInstance().getFrame().setCursor(Cursor.getPredefinedCursor(cursor));
+					// RangeSettings settings = new RangeSettings();
+					// settings.loadSettings(selected, 0, am.size());
+					// int option = settings.showDialog();
 					return;
 				}
 			}
@@ -131,6 +152,7 @@ public class RangeShapeEditor extends MouseAdapter {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		System.out.println("pressed");
 		if (enabled) {
 			Point2D p = inverseTransform(e);
 			// select(p);
@@ -161,5 +183,9 @@ public class RangeShapeEditor extends MouseAdapter {
 		return vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
 		// return e.getPoint();
 		// return vv.inverseTransform(e.getPoint());
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 }
