@@ -7,20 +7,22 @@ import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 
 /**
  * JTextField with additional validation and an error label. To implement a custom validation, the {@link #validateText}
  * method needs to be implemented by a subclass.
  */
 public class JValidatedTextField extends JPanel {
+	private static final Dimension HIDE_DIMENSION = new Dimension(0, 0);
 	private final JLabel errorLabel = new JLabel();
 	private final JTextField input = new JTextField();
 	private boolean errorVisible = false;
 	private final Border defaultBorder;
 	private final Border errorBorder;
 	private final boolean validateLazy;
+	private final Dimension errorLabelPreferredSize;
 
 	public JValidatedTextField() {
 		this(false);
@@ -31,18 +33,17 @@ public class JValidatedTextField extends JPanel {
 	 *                     Otherwise, all changes to the text field are directly validated.
 	 */
 	public JValidatedTextField(final boolean validateLazy) {
+		super(new MigLayout("ins 0, gap 0, fill, wrap"));
 		this.validateLazy = validateLazy;
-		setLayout(new MigLayout("ins 0, fill, wrap"));
+		errorLabelPreferredSize = errorLabel.getPreferredSize();
 		setBackground(null);
 		add(input, "growx");
+		add(errorLabel, "growx");
+		errorLabel.setSize(HIDE_DIMENSION);
 		errorLabel.setForeground(Color.RED);
 		defaultBorder = input.getBorder();
 		errorBorder = BorderFactory.createLineBorder(Color.RED);
-		input.addFocusListener(new FocusListener() {
-			@Override
-			public void focusGained(final FocusEvent e) {
-			}
-
+		input.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(final FocusEvent e) {
 				updateValidation(input.getText());
@@ -72,22 +73,21 @@ public class JValidatedTextField extends JPanel {
 		if (errorText != null) {
 			errorLabel.setText(errorText);
 			if (!errorVisible) {
-				add(errorLabel, "growx");
+				errorLabel.setSize(errorLabelPreferredSize);
+				input.setBorder(errorBorder);
 				revalidate();
 				repaint();
 			}
-			input.setBorder(errorBorder);
-			errorVisible = true;
 		} else {
 			errorLabel.setText("");
 			if (errorVisible) {
-				remove(errorLabel);
+				errorLabel.setSize(HIDE_DIMENSION);
+				input.setBorder(defaultBorder);
 				revalidate();
 				repaint();
 			}
-			input.setBorder(defaultBorder);
-			errorVisible = false;
 		}
+		errorVisible = errorText != null;
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class JValidatedTextField extends JPanel {
 		}
 	}
 
-	public boolean isValid() {
+	public boolean isTextValid() {
 		return validateLazy ? validateText(input.getText()) == null : !errorVisible;
 	}
 }
