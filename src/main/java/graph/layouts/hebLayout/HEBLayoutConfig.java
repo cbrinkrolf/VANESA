@@ -60,8 +60,6 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	public static ColorSlider edgeOutColorSlider;
 
 	public HEBLayoutConfig() {
-		super(HEBLayout.class);
-
 		GridLayout layout = new GridLayout(0, 2);
 		setLayout(layout);
 
@@ -244,5 +242,10 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 				edgeInColorSlider.setEnabled(false);
 			}
 		}
+	}
+
+	@Override
+	protected void applySettings() {
+		getMyGraph().changeToHEBLayout();
 	}
 }

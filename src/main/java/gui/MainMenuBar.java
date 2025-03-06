@@ -6,13 +6,12 @@ import java.awt.event.KeyEvent;
 import javax.swing.*;
 
 import biologicalElements.Pathway;
+import configurations.gui.LayoutConfigPanel;
 import configurations.gui.LayoutConfig;
-import edu.uci.ics.jung.algorithms.layout.*;
-import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import graph.GraphContainer;
-import graph.layouts.gemLayout.GEMLayout;
-import graph.layouts.hctLayout.HCTLayout;
-import graph.layouts.hebLayout.HEBLayout;
+import graph.layouts.gemLayout.GEMLayoutConfig;
+import graph.layouts.hctLayout.HCTLayoutConfig;
+import graph.layouts.hebLayout.HEBLayoutConfig;
 import org.simplericity.macify.eawt.Application;
 
 import configurations.SettingsManager;
@@ -49,7 +48,6 @@ public class MainMenuBar extends JMenuBar {
 	private final JMenuItem simulate;
 	private final JMenuItem createDoc;
 	private final JMenuItem devMode;
-	private final JMenuItem nodesEdgesTypes;
 
 	public MainMenuBar(Application application) {
 		JMenu file = new JMenu("File");
@@ -103,14 +101,12 @@ public class MainMenuBar extends JMenuBar {
 		// Help menu
 		JMenu helpMenu = new JMenu("Help");
 		JMenuItem allPopUps = createMenuItem("Show all previous PopUp messages", MenuActionCommands.allPopUps);
-		nodesEdgesTypes = createMenuItem("Show nodes / edges types", MenuActionCommands.nodesEdgesTypes);
 		final JMenuItem reportIssue = createMenuItem("Report Issue", this::onReportIssueClicked);
 		final String label = SettingsManager.getInstance().isDeveloperMode()
 				? "Next launch: normal mode"
 				: "Next launch: developer mode";
 		devMode = createMenuItem(label, MenuActionCommands.devMode);
 		helpMenu.add(allPopUps);
-		helpMenu.add(nodesEdgesTypes);
 		helpMenu.add(reportIssue);
 		helpMenu.add(devMode);
 		// about item is already present on mac osx
@@ -169,14 +165,21 @@ public class MainMenuBar extends JMenuBar {
 		// Layout menu
 		final JMenu layoutMenu = new JMenu("Layout");
 		layoutMenu.setMnemonic(KeyEvent.VK_L);
-		springLayout = createMenuItem("SpringLayout", () -> changeLayout(SpringLayout.class));
-		kkLayout = createMenuItem("KKLayout", () -> changeLayout(KKLayout.class));
-		frLayout = createMenuItem("FRLayout", () -> changeLayout(FRLayout.class));
-		circleLayout = createMenuItem("CircleLayout", () -> changeLayout(CircleLayout.class));
-		hebLayout = createMenuItem("Hierarchical Edge Bundling", () -> changeLayout(HEBLayout.class));
-		hctLayout = createMenuItem("Hierarchical Circle Tree", () -> changeLayout(HCTLayout.class));
-		isomLayout = createMenuItem("ISOMLayout", KeyEvent.VK_S, () -> changeLayout(ISOMLayout.class));
-		gemLayout = createMenuItem("GEMLayout", () -> changeLayout(GEMLayout.class));
+		springLayout = createMenuItem("Spring Layout",
+				() -> changeLayoutImmediately(() -> GraphInstance.getMyGraph().changeToSpringLayout()));
+		kkLayout = createMenuItem("KK Layout",
+				() -> changeLayoutImmediately(() -> GraphInstance.getMyGraph().changeToKKLayout()));
+		frLayout = createMenuItem("FR Layout",
+				() -> changeLayoutImmediately(() -> GraphInstance.getMyGraph().changeToFRLayout()));
+		circleLayout = createMenuItem("Circle Layout",
+				() -> changeLayoutImmediately(() -> GraphInstance.getMyGraph().changeToCircleLayout()));
+		hebLayout = createMenuItem("HEB Layout (Hierarchical Edge Bundling)...",
+				() -> changeLayout(HEBLayoutConfig.getInstance()));
+		hctLayout = createMenuItem("HCT Layout (Hierarchical Circle Tree)...",
+				() -> changeLayout(HCTLayoutConfig.getInstance()));
+		isomLayout = createMenuItem("ISOM Layout", KeyEvent.VK_S,
+				() -> changeLayoutImmediately(() -> GraphInstance.getMyGraph().changeToISOMLayout()));
+		gemLayout = createMenuItem("GEM Layout...", () -> changeLayout(GEMLayoutConfig.getInstance()));
 		layoutMenu.add(circleLayout);
 		layoutMenu.add(hebLayout);
 		layoutMenu.add(hctLayout);
@@ -259,15 +262,26 @@ public class MainMenuBar extends JMenuBar {
 		VanesaUtility.openURLInBrowser("https://github.com/cbrinkrolf/VANESA/issues");
 	}
 
-	@SuppressWarnings("rawtypes")
-	private static void changeLayout(final Class<? extends Layout> layoutClass) {
+	private static void changeLayout(final LayoutConfigPanel layoutConfigPanel) {
 		final GraphContainer con = GraphContainer.getInstance();
 		final Pathway pw = GraphInstance.getPathway();
 		if (con.containsPathway() && pw != null) {
 			if (pw.hasGotAtLeastOneElement()) {
-				LayoutConfig.changeToLayout(layoutClass);
+				LayoutConfig.show(layoutConfigPanel);
 			} else {
 				PopUpDialog.getInstance().show("Error", "Please create a network first.");
+			}
+		} else {
+			PopUpDialog.getInstance().show("Error", "Please create a network first.");
+		}
+	}
+
+	private static void changeLayoutImmediately(final Runnable callback) {
+		final GraphContainer con = GraphContainer.getInstance();
+		final Pathway pw = GraphInstance.getPathway();
+		if (con.containsPathway() && pw != null && pw.hasGotAtLeastOneElement()) {
+			if (LayoutConfig.askBeforeLayoutIfClustersPresent()) {
+				callback.run();
 			}
 		} else {
 			PopUpDialog.getInstance().show("Error", "Please create a network first.");
@@ -293,7 +307,6 @@ public class MainMenuBar extends JMenuBar {
 		transform.setEnabled(true);
 		showTransformResult.setEnabled(true);
 		showPN.setEnabled(true);
-		nodesEdgesTypes.setEnabled(true);
 		if (GraphInstance.getPathway().isPetriNet()) {
 			transform.setEnabled(false);
 			showTransformResult.setEnabled(false);
@@ -353,7 +366,6 @@ public class MainMenuBar extends JMenuBar {
 		modelicaResult.setEnabled(false);
 		editPNelements.setEnabled(false);
 		createDoc.setEnabled(false);
-		nodesEdgesTypes.setEnabled(false);
 	}
 
 	public void setDeveloperLabel(String label) {

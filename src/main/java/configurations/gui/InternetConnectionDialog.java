@@ -1,84 +1,70 @@
 package configurations.gui;
 
-import java.awt.Color;
-import java.net.URL;
+import java.awt.*;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 import configurations.SettingsManager;
 import configurations.XMLResourceBundle;
+import gui.ImagePath;
+import gui.JIntTextField;
+import gui.JValidatedURLTextField;
 import net.miginfocom.swing.MigLayout;
 
-public class InternetConnectionDialog {
-	private final JTextField apiUrl;
-	private final JTextField port;
-	private final JTextField host;
-	private final JLabel status = new JLabel(" ");
+public class InternetConnectionDialog extends JPanel {
+	private final ImageIcon infoImage = ImagePath.getInstance().getImageIcon("infoButton.png");
+	private final JValidatedURLTextField apiUrlTextField = new JValidatedURLTextField();
+	private final JIntTextField proxyPortTextField = new JIntTextField();
+	private final JTextField proxyHostTextField = new JTextField();
 
-	private JPanel panel = new JPanel();
+	private final JPanel contentPanel = new JPanel(new MigLayout("ins 0, fillx, wrap"));
 
 	public InternetConnectionDialog() {
-		MigLayout layout = new MigLayout("", "[left]");
-		apiUrl = new JTextField(20);
-		status.setForeground(Color.RED);
-		port = new JTextField(20);
-		host = new JTextField(20);
-		status.setForeground(Color.RED);
-		panel.setLayout(layout);
-		panel.add(new JLabel("Proxy Settings"), "span 4");
-		panel.add(new JSeparator(), "span, growx, wrap 15, gaptop 10, gap 5");
-		panel.add(new JLabel("Proxy Port"), "span 2, gap 10, gaptop 2 ");
-		panel.add(port, "span,wrap,growx ,gap 10, gaptop 2");
-		panel.add(new JLabel("Proxy Host"), "span 2, gap 10, gaptop 2 ");
-		panel.add(host, "span,wrap,growx ,gap 10, gaptop 2");
+		super(new MigLayout("ins 0, fill, wrap"));
+		final JScrollPane scrollPane = new JScrollPane(contentPanel);
+		add(scrollPane, "grow");
+		addHeader("Proxy Settings");
+		addSetting("Proxy Host", "Host address of the proxy", proxyHostTextField);
+		addSetting("Proxy Port", "Port of the proxy", proxyPortTextField);
+		addHeader("API Settings");
+		addSetting("API Url", "Base URL of the VANESA API used for database queries", apiUrlTextField);
 
-		panel.add(new JSeparator(), "span, growx, wrap 5, gaptop 2, gap 5");
-		panel.add(new JLabel("API Settings"), "span 4");
-		panel.add(new JSeparator(), "span, growx, wrap 15, gaptop 10, gap 5");
-		panel.add(new JLabel("API URL"), "span 2, gap 17, gaptop 2 ");
-		panel.add(apiUrl, "span,wrap 15 ,growx ,gap 10, gaptop 2");
+		apiUrlTextField.setText(SettingsManager.getInstance().getApiUrl());
+		proxyPortTextField.setText(SettingsManager.getInstance().getProxyPort());
+		proxyHostTextField.setText(SettingsManager.getInstance().getProxyHost());
+	}
 
-		panel.add(new JLabel(" "), "span,wrap,growx ,gap 10, gaptop 2");
-		panel.add(new JLabel(" "), "span,wrap,growx ,gap 10, gaptop 2");
-		panel.add(status, "span, growx, gap 10 ,gaptop 15,wrap 15");
+	private void addHeader(final String label) {
+		final JPanel header = new JPanel(new MigLayout("left"));
+		header.setBackground(new Color(164, 164, 164));
+		final JLabel headerLabel = new JLabel(label);
+		headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD));
+		header.add(headerLabel);
+		contentPanel.add(header, "growx");
+	}
 
-		apiUrl.setText(SettingsManager.getInstance().getApiUrl());
-		port.setText(SettingsManager.getInstance().getProxyPort());
-		host.setText(SettingsManager.getInstance().getProxyHost());
+	private void addSetting(final String label, final String help, final JComponent component) {
+		final JPanel row = new JPanel(new MigLayout("fill", "[200:200:200][grow][]"));
+		row.setBackground(new Color(200, 200, 200));
+		row.add(new JLabel(label), "growx, top");
+		row.add(component, "grow");
+		final JLabel helpLabel = new JLabel(infoImage);
+		helpLabel.setToolTipText(help);
+		row.add(helpLabel, "top");
+		contentPanel.add(row, "growx");
 	}
 
 	public boolean applyDefaults() {
-		apiUrl.setText(XMLResourceBundle.SETTINGS.getString("settings.default.api.url"));
-		port.setText(XMLResourceBundle.SETTINGS.getString("settings.default.proxy.port"));
-		host.setText(XMLResourceBundle.SETTINGS.getString("settings.default.proxy.host"));
+		apiUrlTextField.setText(XMLResourceBundle.SETTINGS.getString("settings.default.api.url"));
+		proxyPortTextField.setText(XMLResourceBundle.SETTINGS.getString("settings.default.proxy.port"));
+		proxyHostTextField.setText(XMLResourceBundle.SETTINGS.getString("settings.default.proxy.host"));
 		return applyNewSettings();
 	}
 
 	public boolean applyNewSettings() {
-		SettingsManager.getInstance().setApiUrl(apiUrl.getText());
-		SettingsManager.getInstance().setProxyHost(host.getText());
-		SettingsManager.getInstance().setProxyPort(port.getText());
-		return checkSettings();
-	}
-
-	private boolean checkSettings() {
-		try {
-			// Try parsing the api url to check if it's at least valid
-			new URL(apiUrl.getText());
-			status.setText("");
-			status.setToolTipText("");
-			return true;
-		} catch (Exception e) {
-			status.setText("Settings could not be validated!");
-			status.setToolTipText(e.toString());
-			return false;
-		}
-	}
-
-	public JPanel getPanel() {
-		return panel;
+		SettingsManager.getInstance().setApiUrl(apiUrlTextField.getText());
+		SettingsManager.getInstance().setProxyHost(proxyHostTextField.getText());
+		SettingsManager.getInstance().setProxyPort(proxyPortTextField.getText());
+		return apiUrlTextField.isValid();
 	}
 }

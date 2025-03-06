@@ -6,21 +6,17 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.PathwayMap;
 import configurations.SettingsManager;
-import configurations.gui.LayoutConfig;
 import copy.CopySelection;
 import copy.CopySelectionSingleton;
 import database.brenda.BRENDASearch;
 import database.brenda.BrendaConnector;
 import database.brenda.gui.BrendaSearchResultWindow;
 import database.kegg.KEGGConnector;
-import edu.uci.ics.jung.algorithms.layout.SpringLayout;
-import edu.uci.ics.jung.algorithms.layout.*;
 import edu.uci.ics.jung.visualization.VisualizationImageServer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyVisualizationViewer;
-import graph.layouts.gemLayout.GEMLayout;
 import gui.AsyncTaskExecutor;
 import gui.MainWindow;
 import gui.PopUpDialog;
@@ -55,8 +51,6 @@ public class GraphPopUp {
 		addMenuItem(popup, "cut", this::onCutClicked);
 		addMenuItem(popup, "paste", this::onPasteClicked);
 		addMenuItem(popup, "delete", this::onDeleteClicked);
-		// popup.add(new JSeparator());
-		// addLayoutMenu();
 		popup.add(new JSeparator());
 		addMenuItem(popup, "KEGG Search", this::onKEGGSearchClicked);
 		addMenuItem(popup, "BRENDA Search", this::onBRENDASearchClicked);
@@ -78,20 +72,6 @@ public class GraphPopUp {
 		JMenuItem item = new JMenuItem(label);
 		item.addActionListener(e -> listener.run());
 		parent.add(item);
-	}
-
-	private void addLayoutMenu() {
-		JMenu layoutMenu = new JMenu("Graph Layouts");
-		addMenuItem(layoutMenu, "Center Graph", () -> GraphInstance.getPathway().getGraph().animatedCentering());
-		addMenuItem(layoutMenu, "Spring Layout", () -> LayoutConfig.changeToLayout(SpringLayout.class));
-		addMenuItem(layoutMenu, "KK Layout", () -> LayoutConfig.changeToLayout(KKLayout.class));
-		addMenuItem(layoutMenu, "FR Layout", () -> LayoutConfig.changeToLayout(FRLayout.class));
-		addMenuItem(layoutMenu, "Circle Layout", () -> LayoutConfig.changeToLayout(CircleLayout.class));
-		addMenuItem(layoutMenu, "GEM Layout", () -> LayoutConfig.changeToLayout(GEMLayout.class));
-		addMenuItem(layoutMenu, "ISOM Layout", () -> LayoutConfig.changeToLayout(ISOMLayout.class));
-		// addMenuItem(layoutMenu, "MD Layout", () ->
-		// LayoutConfig.changeToLayout(MDForceLayout.class));
-		popup.add(layoutMenu);
 	}
 
 	public JPopupMenu getPopUp() {

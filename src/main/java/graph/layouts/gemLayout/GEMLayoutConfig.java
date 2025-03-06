@@ -15,9 +15,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import configurations.gui.ConfigPanel;
+import configurations.gui.LayoutConfigPanel;
 
-public class GEMLayoutConfig extends ConfigPanel implements ChangeListener {
+public class GEMLayoutConfig extends LayoutConfigPanel implements ChangeListener {
 	private static final long serialVersionUID = 1L;
 	private static GEMLayoutConfig config;
 
@@ -112,7 +112,7 @@ public class GEMLayoutConfig extends ConfigPanel implements ChangeListener {
 	public JSlider sliderFactorCutOffCheck = null;
 
 	private GEMLayoutConfig() {
-		super(GEMLayout.class);
+		super();
 		// BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
 		GridLayout layout = new GridLayout(0, 2);
 		setLayout(layout);
@@ -334,5 +334,10 @@ public class GEMLayoutConfig extends ConfigPanel implements ChangeListener {
 			((TitledBorder) sliderFactorCutOffCheck.getBorder())
 					.setTitle("Factor to evaluate cut-off: " + sliderFactorCutOffCheck.getValue());
 		}
+	}
+
+	@Override
+	protected void applySettings() {
+		getMyGraph().changeToGEMLayout();
 	}
 }

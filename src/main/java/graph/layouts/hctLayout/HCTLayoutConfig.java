@@ -44,8 +44,6 @@ public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	public static int INTERNAL_OPACITY = 255;
 
 	public HCTLayoutConfig() {
-		super(HCTLayout.class);
-
 		CIRCLE_SIZE = 0.25;
 		GridLayout layout = new GridLayout(0, 2);
 		setLayout(layout);
@@ -237,6 +235,11 @@ public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 				HCTLayoutConfig.SELECTION = GroupSelection.ROUGHESTGROUP;
 			}
 		}
+	}
+
+	@Override
+	protected void applySettings() {
+		getMyGraph().changeToHCTLayout();
 	}
 
 	public enum GroupSelection {

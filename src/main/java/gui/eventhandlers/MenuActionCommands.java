@@ -20,7 +20,6 @@ public enum MenuActionCommands {
     simulationSettings("simulationSettings"),
     exportSettings("exportSettings"),
     allPopUps("allPopUps"),
-    nodesEdgesTypes("nodesEdgesTypes"),
     internet("internet"),
     rendererSettings("rendererSettings"),
     mathGraph("mathGraph"),

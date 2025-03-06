@@ -49,7 +49,7 @@ public class ShortestPathsExperimentClustering {
 
 	private void setupPathsDistance() {
 		np = new NetworkProperties();
-		spdistance = np.AllPairShortestPaths(false);
+		spdistance = np.AllPairShortestPaths();
 
 //		for (int i = 0; i < spdistance.length; i++) {
 //			for (int j = 0; j < spdistance.length; j++) {
@@ -69,11 +69,11 @@ public class ShortestPathsExperimentClustering {
 			// into the array
 			// MARTIN: behavior of non existent experimental data?
 			try {
-				currentvalue = np.getNodeAssignmentbackwards(i).getNodeAttributeByName(experimentname).getDoublevalue();
+				currentvalue = np.getNodeAssignmentBackwards(i).getNodeAttributeByName(experimentname).getDoublevalue();
 
 			} catch (NullPointerException e) {
 				System.out.printf("node %d has no entry \'%s\' (%s) \n", i, experimentname,
-						np.getNodeAssignmentbackwards(i).getLabel());
+						np.getNodeAssignmentBackwards(i).getLabel());
 				currentvalue = 0.00001337d;
 			}
 
