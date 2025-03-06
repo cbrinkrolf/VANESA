@@ -48,7 +48,6 @@ public class MainMenuBar extends JMenuBar {
 	private final JMenuItem simulate;
 	private final JMenuItem createDoc;
 	private final JMenuItem devMode;
-	private final JMenuItem nodesEdgesTypes;
 
 	public MainMenuBar(Application application) {
 		JMenu file = new JMenu("File");
@@ -102,14 +101,12 @@ public class MainMenuBar extends JMenuBar {
 		// Help menu
 		JMenu helpMenu = new JMenu("Help");
 		JMenuItem allPopUps = createMenuItem("Show all previous PopUp messages", MenuActionCommands.allPopUps);
-		nodesEdgesTypes = createMenuItem("Show nodes / edges types", MenuActionCommands.nodesEdgesTypes);
 		final JMenuItem reportIssue = createMenuItem("Report Issue", this::onReportIssueClicked);
 		final String label = SettingsManager.getInstance().isDeveloperMode()
 				? "Next launch: normal mode"
 				: "Next launch: developer mode";
 		devMode = createMenuItem(label, MenuActionCommands.devMode);
 		helpMenu.add(allPopUps);
-		helpMenu.add(nodesEdgesTypes);
 		helpMenu.add(reportIssue);
 		helpMenu.add(devMode);
 		// about item is already present on mac osx
@@ -310,7 +307,6 @@ public class MainMenuBar extends JMenuBar {
 		transform.setEnabled(true);
 		showTransformResult.setEnabled(true);
 		showPN.setEnabled(true);
-		nodesEdgesTypes.setEnabled(true);
 		if (GraphInstance.getPathway().isPetriNet()) {
 			transform.setEnabled(false);
 			showTransformResult.setEnabled(false);
@@ -370,7 +366,6 @@ public class MainMenuBar extends JMenuBar {
 		modelicaResult.setEnabled(false);
 		editPNelements.setEnabled(false);
 		createDoc.setEnabled(false);
-		nodesEdgesTypes.setEnabled(false);
 	}
 
 	public void setDeveloperLabel(String label) {

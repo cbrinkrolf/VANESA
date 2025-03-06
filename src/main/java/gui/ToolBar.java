@@ -40,7 +40,6 @@ public class ToolBar {
 	private final JButton continuousTransition;
 	private final JButton stochasticTransition;
 	private final JButton info;
-	private final JButton infoExtended;
 	private final JButton parallelView;
 
 	private Pathway lastPathway;
@@ -74,8 +73,7 @@ public class ToolBar {
 		zoomOut = ToolBarButton.create("zoomMinus.png", "Zoom Out", this::onZoomOutClicked);
 		trash = ToolBarButton.create("Trash.png", "Delete Selected Items", this::onDelClicked);
 		// trash.setMnemonic(KeyEvent.VK_DELETE);
-		info = ToolBarButton.create("showInfoWindow.svg", "Info", this::onInfoClicked);
-		infoExtended = ToolBarButton.create("showInfoWindowExt.svg", "More Info", this::onInfoExtendedClicked);
+		info = ToolBarButton.create("showInfoWindow.svg", "Graph Metrics", this::onInfoClicked);
 		merge = ToolBarButton.create("compare.png", "Compare / Align Graphs", this::onMergeClicked);
 
 		JButton covGraph = new ToolBarButton("Cov/Reach Graph");
@@ -101,7 +99,6 @@ public class ToolBar {
 		bar.add(zoomOut);
 		bar.add(center);
 		bar.add(info);
-		bar.add(infoExtended);
 		bar.add(new ToolBarSeparator(), "growy");
 		bar.add(edit);
 		bar.add(pick);
@@ -172,7 +169,6 @@ public class ToolBar {
 		zoomOut.setEnabled(editButtonsEnabled);
 		center.setEnabled(editButtonsEnabled);
 		info.setEnabled(editButtonsEnabled);
-		infoExtended.setEnabled(editButtonsEnabled);
 		annotationToolBarMenuButton.setEnabled(editButtonsEnabled);
 		nodeGroupingMenuButton.setEnabled(editButtonsEnabled);
 		merge.setEnabled(editButtonsEnabled);
@@ -323,7 +319,7 @@ public class ToolBar {
 		GraphContainer con = GraphContainer.getInstance();
 		if (con.containsPathway()) {
 			if (GraphInstance.getPathway().hasGotAtLeastOneElement()) {
-				new InfoWindow(false);
+				new GraphInfoWindow();
 			}
 		}
 	}
@@ -332,7 +328,7 @@ public class ToolBar {
 		GraphContainer con = GraphContainer.getInstance();
 		if (con.containsPathway()) {
 			if (GraphInstance.getPathway().hasGotAtLeastOneElement()) {
-				new InfoWindow(true);
+				new GraphInfoWindow();
 			}
 		}
 	}

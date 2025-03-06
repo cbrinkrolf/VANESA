@@ -51,7 +51,6 @@ import gui.AllPopUpsWindow;
 import gui.LabelToDataMappingWindow;
 import gui.LabelToDataMappingWindow.InputFormatException;
 import gui.MainWindow;
-import gui.NodesEdgesTypesWindow;
 import gui.PopUpDialog;
 import gui.tables.MyTable;
 import gui.visualization.PreRenderManager;
@@ -247,9 +246,6 @@ public class MenuListener implements ActionListener {
 		case allPopUps:
 			new AllPopUpsWindow();
 			break;
-		case nodesEdgesTypes:
-			nodesEdgesTypes();
-			break;
 		}
 	}
 
@@ -289,12 +285,6 @@ public class MenuListener implements ActionListener {
 	private static void enrichMirna() {
 		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			MirnaSearch.enrichMirnas(GraphInstance.getPathway(), true, true, false);
-		}
-	}
-
-	private static void nodesEdgesTypes() {
-		if (ensurePathway()) {
-			new NodesEdgesTypesWindow(GraphInstance.getPathway());
 		}
 	}
 

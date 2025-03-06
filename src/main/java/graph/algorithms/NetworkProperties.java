@@ -1,58 +1,46 @@
 package graph.algorithms;
 
 import java.awt.Color;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.Protein;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 
 public class NetworkProperties {
-	private MainWindow w = MainWindow.getInstance();
-	private Pathway pw;
-	private  MyGraph mg;
+	private final MainWindow w = MainWindow.getInstance();
+	private final Pathway pw;
+	private final MyGraph mg;
 
-	private BiologicalNodeAbstract from, to;
+	private final int nodes;
+	private final int edges;
 
-	private int nodes = 0;
-	private int edges = 0;
+	private final int[] nodei;
+	private final int[] nodej;
 
-	private int nodei[];
-	private int nodej[];
-
-	private short adjacency[][];
-	private short distances[][];
-	private int nodedepths[];
+	private final short[][] adjacency;
+	private int[] nodedepths;
 	private int maxpath;
-	private boolean nodemarked[];
-	private int cutnodes[];
+	private boolean[] nodemarked;
 
-	// lists
-	private LinkedList<Integer> nodedegrees = new LinkedList<Integer>();
-	private LinkedList<Integer> nodedegreessingle = new LinkedList<Integer>();
-	private Hashtable<BiologicalNodeAbstract, Integer> nodeassings = new Hashtable<BiologicalNodeAbstract, Integer>();
-	private Hashtable<Integer, BiologicalNodeAbstract> nodeassignsback = new Hashtable<Integer, BiologicalNodeAbstract>();
-	private Hashtable<Integer, Integer> nodedegreetable = new Hashtable<Integer, Integer>();
-	private Hashtable<Integer, Double> neighbordegreetable = new Hashtable<Integer, Double>();
+	private List<Integer> nodedegrees = new ArrayList<>();
+	private List<Integer> nodedegreessingle = new ArrayList<>();
+	private final Hashtable<BiologicalNodeAbstract, Integer> nodeassings = new Hashtable<>();
+	private final Hashtable<Integer, BiologicalNodeAbstract> nodeassignsback = new Hashtable<>();
+	private final Hashtable<Integer, Integer> nodedegreetable = new Hashtable<>();
+	private final Hashtable<Integer, Double> neighbordegreetable = new Hashtable<>();
 
 	private int nodeincrement = 0;
 
 	public NetworkProperties() {
-		pw = GraphInstance.getPathway();
+		this(GraphInstance.getPathway());
+	}
+
+	public NetworkProperties(final Pathway pw) {
+		this.pw = pw;
 		mg = pw.getGraph();
 
 		nodes = mg.getAllVertices().size();
@@ -64,34 +52,7 @@ public class NetworkProperties {
 		adjacency = new short[nodes][nodes];
 
 		// Induce mapping to local adjacency matrix and data structures (BNA.ID)
-		Iterator<BiologicalNodeAbstract> it = mg.getAllVertices().iterator();
-		while (it.hasNext()) {
-			BiologicalNodeAbstract bna = it.next();
-			reassignNodeBNA(bna);
-		}
-
-		fillAdjacencyData();
-		countNodeDegrees();
-		averageNeighbourDegreeTable();
-
-	}
-
-	public NetworkProperties(String pathwayname) {
-		pw = GraphInstance.getPathway();
-		mg = pw.getGraph();
-
-		nodes = mg.getAllVertices().size();
-		edges = mg.getAllEdges().size();
-
-		nodei = new int[edges + 1];
-		nodej = new int[edges + 1];
-
-		adjacency = new short[nodes][nodes];
-
-		// Induce mapping to local adjacency matrix and data structures (BNA.ID)
-		Iterator<BiologicalNodeAbstract> it = mg.getAllVertices().iterator();
-		while (it.hasNext()) {
-			BiologicalNodeAbstract bna = it.next();
+		for (final BiologicalNodeAbstract bna : mg.getAllVertices()) {
 			reassignNodeBNA(bna);
 		}
 
@@ -100,17 +61,12 @@ public class NetworkProperties {
 		averageNeighbourDegreeTable();
 	}
 
-	public HashMap<Integer, Integer> getNodeDegreeDistribution() {
-		HashMap<Integer, Integer> occurrenceMap = new HashMap<Integer, Integer>();
-
+	public Map<Integer, Integer> getNodeDegreeDistribution() {
+		Map<Integer, Integer> occurrenceMap = new HashMap<>();
 		Set<BiologicalNodeAbstract> pickedbnas = mg.getVisualizationViewer().getPickedVertexState().getPicked();
-
-		if (pickedbnas.size() > 0) {
-			System.out.println(pickedbnas.size());
-			int degree = 0;
-			// Count occurrences, just picked nodes
-			for (BiologicalNodeAbstract bna : pickedbnas) {
-				degree = nodedegreetable.get(nodeassings.get(bna));
+		if (pickedbnas.isEmpty()) {
+			// Count occurrences, all nodes
+			for (int degree : nodedegrees) {
 				if (occurrenceMap.containsKey(degree)) {
 					// not first
 					occurrenceMap.put(degree, occurrenceMap.get(degree) + 1);
@@ -120,8 +76,10 @@ public class NetworkProperties {
 				}
 			}
 		} else {
-			// Count occurrences, all nodes
-			for (int degree : nodedegrees) {
+			System.out.println(pickedbnas.size());
+			// Count occurrences, just picked nodes
+			for (BiologicalNodeAbstract bna : pickedbnas) {
+				int degree = nodedegreetable.get(nodeassings.get(bna));
 				if (occurrenceMap.containsKey(degree)) {
 					// not first
 					occurrenceMap.put(degree, occurrenceMap.get(degree) + 1);
@@ -151,7 +109,7 @@ public class NetworkProperties {
 		return nodeassings.get(bna);
 	}
 
-	public BiologicalNodeAbstract getNodeAssignmentbackwards(int nodeid) {
+	public BiologicalNodeAbstract getNodeAssignmentBackwards(int nodeid) {
 		return nodeassignsback.get(nodeid);
 	}
 
@@ -163,28 +121,15 @@ public class NetworkProperties {
 		if (!nodeassings.containsKey(nodeBNA)) {
 			nodeassings.put(nodeBNA, nodeincrement);
 			nodeassignsback.put(nodeincrement, nodeBNA);
-			// debug
-			// System.out.println(nodeBNA.getID()+" "+nodeBNA.getLabel()+"
-			// assigned to "+nodeincrement);
 			nodeincrement++;
 		}
 	}
 
 	private void fillAdjacencyData() {
-
-		int fromid, toid;
-		Iterator<BiologicalEdgeAbstract> it = mg.getAllEdges().iterator();
-		while (it.hasNext()) {
-
-			// get Connected Nodes
-			BiologicalEdgeAbstract bne = (BiologicalEdgeAbstract) it.next();
-			from = ((BiologicalNodeAbstract) bne.getFrom());
-			to = ((BiologicalNodeAbstract) bne.getTo());
-
-			fromid = nodeassings.get(from);
-			toid = nodeassings.get(to);
-
-			// EDGES for analysis undirected
+		for (BiologicalEdgeAbstract bne : mg.getAllEdges()) {
+			int fromid = nodeassings.get(bne.getFrom());
+			int toid = nodeassings.get(bne.getTo());
+			// Adjacency matrix is constructed undirected for analysis
 			adjacency[fromid][toid] = 1;
 			adjacency[toid][fromid] = 1;
 		}
@@ -203,31 +148,23 @@ public class NetworkProperties {
 	}
 
 	public Integer connectedComponents() {
-
-		int component[] = new int[nodes + 1];
+		int[] component = new int[nodes + 1];
 		GraphTheoryAlgorithms.connectedComponents(nodes, edges, nodei, nodej, component);
 		return component[0];
 	}
 
 	public boolean isGraphConnected() {
-
-		if (GraphTheoryAlgorithms.connected(nodes, edges, nodei, nodej))
-			return true;
-		else
-			return false;
+		return GraphTheoryAlgorithms.connected(nodes, edges, nodei, nodej);
 	}
 
 	public boolean isGraphPlanar() {
-
 		return GraphTheoryAlgorithms.planarityTesting(nodes, edges, nodei, nodej);
-
 	}
 
 	public float averageShortestPathLength() {
 		// compute all shortest Path lengths
-		int weight[], mindistance[] = new int[nodes + 1];
-		;
-		boolean directed[] = new boolean[edges + 1];
+		int[] weight, mindistance = new int[nodes + 1];
+		boolean[] directed = new boolean[edges + 1];
 		weight = new int[edges + 1];
 		weight[0] = 0;
 		for (int i = 1; i < weight.length; i++) {
@@ -246,7 +183,7 @@ public class NetworkProperties {
 
 	public int countNodeDegrees() {
 		// Count of different Node degrees
-		nodedegrees = new LinkedList<Integer>();
+		nodedegrees = new LinkedList<>();
 		// count node degrees per node and save them
 		int degree = 0;
 		for (int i = 0; i < nodes; i++) {
@@ -295,11 +232,11 @@ public class NetworkProperties {
 	}
 
 	public Hashtable<BiologicalNodeAbstract, Double> averageNeighbourDegreeTable() {
-		Hashtable<BiologicalNodeAbstract, Double> ht = new Hashtable<BiologicalNodeAbstract, Double>(nodes);
-
+		Hashtable<BiologicalNodeAbstract, Double> ht = new Hashtable<>(nodes);
 		double oneavgdegree = 0.0f;
-		int verticedegrees[] = new int[nodes], degree = 0;
-		// Count Vertex Degrees and store them in an Array
+		int[] verticedegrees = new int[nodes];
+		int degree = 0;
+		// Count vertex degrees and store them in an Array
 		for (int i = 0; i < nodes; i++) {
 			for (int j = 0; j < nodes; j++) {
 				if (adjacency[i][j] == 1)
@@ -322,25 +259,16 @@ public class NetworkProperties {
 			nodeassignsback.get(i).addAttribute(NodeAttributeType.GRAPH_PROPERTY, NodeAttributeNames.NEIGHBOR_DEGREE, oneavgdegree);
 			oneavgdegree = 0f;
 		}
-
-		// debug
-		// Iterator<Double> iit = ht.values().iterator();
-		// while (iit.hasNext()) {
-		// double d = iit.next();
-		// System.out.println(d);
-		//
-		// }
-
 		return ht;
 	}
 
 	// Version for Filtering
 	public Hashtable<BiologicalNodeAbstract, Double> averageNeighbourDegreeTable(double min, double max) {
-		Hashtable<BiologicalNodeAbstract, Double> ht = new Hashtable<BiologicalNodeAbstract, Double>(nodes);
-
+		Hashtable<BiologicalNodeAbstract, Double> ht = new Hashtable<>(nodes);
 		double oneavgdegree = 0.0f;
-		int verticedegrees[] = new int[nodes], degree = 0;
-		// Count Vertice Degrees and store them in an Array
+		int[] verticedegrees = new int[nodes];
+		int degree = 0;
+		// Count vertex degrees and store them in an Array
 		for (int i = 0; i < nodes; i++) {
 			for (int j = 0; j < nodes; j++) {
 				if (adjacency[i][j] == 1)
@@ -361,7 +289,6 @@ public class NetworkProperties {
 				ht.put(nodeassignsback.get(i), oneavgdegree);
 			oneavgdegree = 0f;
 		}
-
 		return ht;
 	}
 
@@ -373,57 +300,50 @@ public class NetworkProperties {
 		// start at first node
 		for (int i = 1; i <= nodes; i++) {
 			deepfirst(i, 0);
-			for (int j = 0; j < nodedepths.length; j++) {
-				if (maxpath < nodedepths[j])
-					maxpath = nodedepths[j];
+			for (final int nodedepth : nodedepths) {
+				if (maxpath < nodedepth) {
+					maxpath = nodedepth;
+				}
 			}
 			// reset marking
 			nodemarked = new boolean[nodes + 1];
 			nodemarked[0] = true;
 		}
-
 		return maxpath;
 	}
 
 	public double getDensity() {
-		// Graph Density
-		return (2 * edges) / (1.0d * nodes * (nodes - 1));
+		return (2 * edges) / (nodes * (nodes - 1f));
 	}
 
 	public double getCentralization() {
-		// Centralization
 		// n/n-2 * ( max(k)/n-1 - density )
-		return ((nodes / (nodes - 2) * 1.0f)) * (((Collections.max(nodedegrees)) / ((nodes - 1) * 1.0f)) - getDensity());
+		return (nodes / (nodes - 2f)) * ((Collections.max(nodedegrees) / (nodes - 1f)) - getDensity());
 	}
 
 	public int getMinDegree() {
-		// Minimum Node degree
 		return Collections.min(nodedegrees);
 	}
 
 	public int getMaxDegree() {
-		// Maximum Node degree
 		return Collections.max(nodedegrees);
 	}
 
 	public double getAvgNodeDegree() {
-		// Average Node degree
 		double avgdegree = 0f;
-		for (int i = 0; i < nodedegrees.size(); i++) {
-			avgdegree += nodedegrees.get(i);
+		for (final Integer degree : nodedegrees) {
+			avgdegree += degree;
 		}
-		avgdegree /= (nodes * 1.0f);
-		return avgdegree;
+		return avgdegree / nodes;
 	}
 
 	public double getGlobalMatchingIndex() {
 		// global matching index
-		Set<Integer> nodeset1, nodeset2;
 		double matchingindex = 0.0f;
 
 		// make nodesets for each node
-		nodeset1 = new HashSet<Integer>();
-		nodeset2 = new HashSet<Integer>();
+		Set<Integer> nodeset1 = new HashSet<>();
+		Set<Integer> nodeset2 = new HashSet<>();
 		int similarnodes = 0, paircounter = 0;
 		float allnodes = 0f;
 
@@ -474,7 +394,6 @@ public class NetworkProperties {
 		// mark node
 		nodemarked[node] = true;
 		nodedepths[node] = depth;
-
 		// recursesive child call
 		for (int i = 0; i < nodei.length; i++) {
 			if (nodei[i] == node && !nodemarked[nodej[i]]) {
@@ -496,62 +415,32 @@ public class NetworkProperties {
 	// return all nodes that would disconnect the Network, works only with
 	// connected networks
 	public int[] getCutNodes() {
-
-		if (isGraphConnected()) {
-			cutnodes = new int[nodes + 1];
-
-			System.out.println(nodes + " " + edges);
-			System.out.println(Arrays.toString(nodei).replaceAll("\\[", "").replaceAll("\\]", ""));
-			System.out.println(Arrays.toString(nodej).replaceAll("\\[", "").replaceAll("\\]", ""));
-
-			GraphTheoryAlgorithms.cutNodes(nodes, edges, nodei, nodej, cutnodes);
-
-			// Visualization
-			// for (int i = 1; i < cutnodes.length; i++) {
-			//
-			// if(cutnodes[i]>0){
-			// BiologicalNodeAbstract tmpnode =
-			// nodeassignsback.get(cutnodes[i]-1);
-			// tmpnode.setColor(Color.yellow);
-			// tmpnode.setNodesize(2.0);
-			// }
-			//
-			// }
-			// GraphInstance.getMyGraph().getVisualizationViewer().repaint();
-
-			return cutnodes;
+		if (!isGraphConnected()) {
+			return new int[1];
 		}
-		return new int[1];
+		final int[] cutnodes = new int[nodes + 1];
+		GraphTheoryAlgorithms.cutNodes(nodes, edges, nodei, nodej, cutnodes);
+		return cutnodes;
 	}
 
 	// directed only
 	public int[] getStronglyConnectedComponents() {
 		int[] scc = new int[nodes + 1];
-
 		GraphTheoryAlgorithms.stronglyConnectedComponents(nodes, edges, nodei, nodej, scc);
-
-		// System.out.println("strongly connected components: "+scc[0]);
-
 		return scc;
-
 	}
 
 	// directed only
 	public void getMinimalEqGraph() {
-		boolean links[] = new boolean[edges + 1];
-
+		boolean[] links = new boolean[edges + 1];
 		GraphTheoryAlgorithms.minimalEquivalentGraph(nodes, edges, nodei, nodej, links);
-
 	}
 
-	// return the number of edges that would disconnect the Network, works only
-	// with connected networks
+	/**
+	 * Calculate the number of edges that would disconnect the network. Works only with connected networks.
+	 */
 	public int getEdgeConnectivity() {
-		int econ;
-
-		econ = GraphTheoryAlgorithms.edgeConnectivity(nodes, edges, nodei, nodej);
-
-		return econ;
+		return GraphTheoryAlgorithms.edgeConnectivity(nodes, edges, nodei, nodej);
 	}
 
 	public int getFundamentalCycles() {
@@ -565,116 +454,12 @@ public class NetworkProperties {
 		return fundcyc[0][0];
 	}
 
-	public void saveAdjMatrix(String filename) {
-		// adj matrix
-		try {
-			FileWriter fw = new FileWriter(filename);
-			BufferedWriter out = new BufferedWriter(fw);
-
-			String line = "";
-			for (int i = 0; i < nodes; i++) {
-				for (int j = 0; j < nodes; j++) {
-					line += adjacency[i][j];
-				}
-				out.write(line + "\n");
-				line = "";
-			}
-
-			out.close();
-			fw.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		// attributes
-		try {
-			FileWriter fw = new FileWriter(filename + ".atr");
-			BufferedWriter out = new BufferedWriter(fw);
-
-			BiologicalNodeAbstract bnb;
-
-			String line = "";
-			for (int i = 0; i < nodes; i++) {
-				line = i + "\t" + nodedegreetable.get(i) + "\t" + ((int) (Math.random() * 5));
-
-				bnb = nodeassignsback.get(i);
-				if (bnb instanceof Protein) {
-					Protein p = (Protein) bnb;
-					line += "\t" + p.getAaSequence().length();
-				}
-
-				line += "\t" + ((int) (Math.random() * 10)) + "\t" + ((int) (Math.random() * 20));
-				out.write(line + "\n");
-				line = "";
-			}
-
-			out.close();
-			fw.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void savePackedAdjList(String filename) {
-		// array of size(nodes): narray
-		// array of size(edges - 2*edges): earray
-		int narray[] = new int[nodes], earray[] = new int[2 * edges];
-		int arraypointer = 0;
-
-		// narray: each position of the array points to a position in earray
-		// (begin of the adjacency list of this node)
-		for (int i = 0; i < nodes; i++) {
-			narray[i] = arraypointer;
-			for (int j = 0; j < nodes; j++) {
-				if (adjacency[i][j] == 1) {
-					earray[arraypointer] = j;
-					arraypointer++;
-				}
-			}
-		}
-
-		// write to File
-		try {
-			FileWriter fw = new FileWriter(filename);
-			BufferedWriter out = new BufferedWriter(fw);
-
-			for (int i = 0; i < narray.length; i++) {// write node array
-				if (i == narray.length - 1)
-					out.write(narray[i] + "");
-				else
-					out.write(narray[i] + "\t");
-			}
-			out.write("\n");
-			for (int i = 0; i < arraypointer; i++) {// write edge array
-				if (i == arraypointer - 1)
-					out.write(earray[i] + "");
-				else
-					out.write(earray[i] + "\t");
-			}
-
-			out.close();
-			fw.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public short[][] AllPairShortestPaths(boolean writeToFile) {
-		// Time
-		// long start = System.currentTimeMillis();
-		// System.out.println("starting apsp");
-
-		distances = new short[nodes][nodes];
-		int i, j, k;
-
+	public short[][] AllPairShortestPaths() {
+		final short[][] distances = new short[nodes][nodes];
 		// FloydWarshall
 		// initialize distance matrix
-
-		for (i = 0; i < nodes; i++) {
-			for (j = 0; j < nodes; j++) {
+		for (int i = 0; i < nodes; i++) {
+			for (int j = 0; j < nodes; j++) {
 				if (i == j)
 					distances[i][j] = 0;
 				else if (adjacency[i][j] == 0)
@@ -683,63 +468,28 @@ public class NetworkProperties {
 					distances[i][j] = adjacency[i][j];
 			}
 		}
-
-		short dist;
 		// run the floyd warshall
-		for (k = 0; k < nodes; k++) {
-			for (i = 0; i < nodes; i++) {
-				for (j = 0; j < nodes; j++) {
-					dist = (short) (distances[i][k] + distances[k][j]);
+		for (int k = 0; k < nodes; k++) {
+			for (int i = 0; i < nodes; i++) {
+				for (int j = 0; j < nodes; j++) {
+					short dist = (short) (distances[i][k] + distances[k][j]);
 					if (distances[i][j] > dist) {
 						distances[i][j] = dist;
 					}
 				}
 			}
 		}
-
-		// write to File
-		if (writeToFile)
-			try {
-				FileWriter fw = new FileWriter("distance");
-				BufferedWriter out = new BufferedWriter(fw);
-
-				for (i = 0; i < nodes; i++) {
-					for (j = 0; j < nodes; j++) {
-						if (j == nodes - 1)
-							out.write(distances[i][j] + "");
-						else
-							out.write(distances[i][j] + "\t");
-					}
-					out.write("\n");
-				}
-
-				out.close();
-				fw.close();
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-		// Time
-		// System.out.println("apsp:"+
-		// (System.currentTimeMillis()-start)/1000.0);
-
 		return distances;
 	}
 
 	public void removeGreyNodes() {
-
-		HashSet<BiologicalNodeAbstract> removals = new HashSet<BiologicalNodeAbstract>();
-		Iterator<BiologicalNodeAbstract> itn = mg.getAllVertices().iterator();
-		while (itn.hasNext()) {
-			BiologicalNodeAbstract tmp = itn.next();
-			if (tmp.getColor().getRGB() == -4144960)
-				removals.add(tmp);
+		final Set<BiologicalNodeAbstract> removals = new HashSet<>();
+		for (final BiologicalNodeAbstract bna : mg.getAllVertices()) {
+			if (bna.getColor().getRGB() == -4144960)
+				removals.add(bna);
 		}
-
-		itn = removals.iterator();
-		while (itn.hasNext()) {
-			mg.removeVertex(itn.next());
+		for (final BiologicalNodeAbstract bna : removals) {
+			mg.removeVertex(bna);
 		}
 		w.updateElementTree();
 		w.updatePathwayTree();
@@ -747,9 +497,7 @@ public class NetworkProperties {
 	}
 
 	public void getSpanningTree() {
-
 		int[] weight = new int[edges + 1], treearc1 = new int[nodes], treearc2 = new int[nodes];
-
 		Arrays.fill(weight, 10);
 
 		GraphTheoryAlgorithms.minimumSpanningTreeKruskal(nodes, edges, nodei, nodej, weight, treearc1, treearc2);
@@ -764,7 +512,6 @@ public class NetworkProperties {
 			pw.getEdge(bnax, bnay).setColor(Color.red);
 			System.out.println(bnax.getLabel() + " - " + bnay.getLabel());
 		}
-
 	}
 
 	public int[] getNodeI() {

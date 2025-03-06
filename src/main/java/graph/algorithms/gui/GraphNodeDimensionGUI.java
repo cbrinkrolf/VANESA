@@ -183,7 +183,7 @@ public class GraphNodeDimensionGUI implements ActionListener {
 				if(v.timesWalkedOver.doubleValue() > maxvalue)
 					maxvalue=v.timesWalkedOver.doubleValue();
 				
-				ratings.put(c.getNodeAssignmentbackwards(v.id), v.timesWalkedOver.doubleValue());
+				ratings.put(c.getNodeAssignmentBackwards(v.id), v.timesWalkedOver.doubleValue());
 			}
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();

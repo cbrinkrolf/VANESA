@@ -32,7 +32,7 @@ public class ParallelChooseGraphsWindow extends ChooseGraphsWindow {
 		String name;
 		for (int i = 0; i < pathways.size(); i++) {
 			p = pathways.get(i);
-			c = new NetworkProperties(p.getName());
+			c = new NetworkProperties(p);
 			name = p.getName();
 			// format Name, no spaces, no brackets
 			name = name.replace('(', ' ');
