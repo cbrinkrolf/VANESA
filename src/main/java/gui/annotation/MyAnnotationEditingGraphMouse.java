@@ -15,7 +15,7 @@ import gui.MainWindow;
 
 public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 
-	private boolean enabled = true;
+	private boolean enabled = false;
 	private MyAnnotation selected;
 	private double oldX, oldY;
 	private Cursor oldCursor;
@@ -102,9 +102,10 @@ public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		System.out.println("dragged");
+
 		if (enabled && selected != null && e.getModifiersEx() == InputEvent.BUTTON1_DOWN_MASK
 				&& selected.getShape() instanceof RectangularShape) {
+			System.out.println("dragged");
 			Point2D p = inverseTransform(e);
 			// double dx = p.getX() - oldX, dy = p.getY() - oldY;
 			// RectangularShape shape = selected.shape;
@@ -134,7 +135,7 @@ public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 				MyAnnotation info = am.get(i);
 				int cursor = this.checkAnchor(p, info.getShape());
 				// if (info.shape.contains(p)) {
-				System.out.println(cursor);
+				// System.out.println(cursor);
 				if (cursor > -1) {
 					selected = info;
 					oldCursor = vv.getCursor();

@@ -11,16 +11,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
+import org.apache.commons.lang3.StringUtils;
+
 import biologicalElements.GraphElementAbstract;
-import biologicalElements.GraphicalElementAbstract;
 import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.GraphSettings;
 import graph.gui.Parameter;
-import org.apache.commons.lang3.StringUtils;
 
-public abstract class BiologicalEdgeAbstract extends GraphicalElementAbstract implements GraphElementAbstract, Cloneable {
+public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cloneable {
 	private boolean directed;
 	private boolean visible = true;
 	private String name;
@@ -212,7 +212,7 @@ public abstract class BiologicalEdgeAbstract extends GraphicalElementAbstract im
 			return "";
 		}
 		if (type == GraphSettings.SHOW_LABEL) {
-			if (label.equals("1")) { // always true:  && this instanceof BiologicalEdgeAbstract
+			if (label.equals("1")) { // always true: && this instanceof BiologicalEdgeAbstract
 				return "";
 			}
 			return labelEmpty ? name : label;

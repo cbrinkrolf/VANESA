@@ -7,7 +7,7 @@ import java.util.Set;
 
 import graph.gui.Parameter;
 
-public interface GraphElementAbstract {
+public interface GraphElementAbstract extends GraphicalElementAbstract {
 	int getID();
 
 	// should only be used when loading a file with a network

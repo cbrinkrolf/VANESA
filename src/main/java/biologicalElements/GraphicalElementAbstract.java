@@ -1,5 +1,5 @@
 package biologicalElements;
 
-public abstract class GraphicalElementAbstract {
+public interface GraphicalElementAbstract {
 
 }

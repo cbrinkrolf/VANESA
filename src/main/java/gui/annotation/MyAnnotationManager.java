@@ -96,6 +96,8 @@ public class MyAnnotationManager extends AnnotationManager {
 		}
 	}
 
+	// returns one annotation at a given point, even if multiple annotations cover
+	// that point
 	public MyAnnotation getMyAnnotations(Point2D p) {
 		Annotation<?> an = super.getAnnotation(p);
 		if (this.annotationMap.containsKey(an)) {

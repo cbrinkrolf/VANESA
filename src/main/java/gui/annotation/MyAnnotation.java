@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import biologicalElements.GraphicalElementAbstract;
 import edu.uci.ics.jung.visualization.annotations.Annotation;
 
-public class MyAnnotation extends GraphicalElementAbstract {
+public class MyAnnotation implements GraphicalElementAbstract {
 	private final RectangularShape shape;
 	private Annotation<?> a;
 	private String text;
