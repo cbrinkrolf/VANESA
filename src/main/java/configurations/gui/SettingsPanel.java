@@ -6,18 +6,14 @@ import javax.swing.*;
 
 public class SettingsPanel extends JDialog {
 	private static final long serialVersionUID = 1L;
-	private static final String INTERNET_LABEL = "Internet";
-	private static final String GRAPH_SETTINGS_LABEL = "Graph Settings";
-	private static final String VISUALIZATION_LABEL = "Node Visualization";
-	private static final String SIMULATION_LABEL = "Simulation";
-	private static final String EXPORT_LABEL = "Export";
+	private static final String GENERAL_TAB_LABEL = "General";
+	private static final String GRAPH_TAB_LABEL = "Graph";
+	private static final String VISUALIZATION_TAB_LABEL = "Node Visualization";
 
 	private final JTabbedPane tabbedPanel = new JTabbedPane();
-	private final InternetConnectionDialog internetSettings = new InternetConnectionDialog();
+	private final GeneralSettingsDialog internetSettings = new GeneralSettingsDialog();
 	private final GraphSettingsDialog graphSettings = new GraphSettingsDialog();
 	private final VisualizationDialog visualizationSettings = new VisualizationDialog();
-	private final SimulationSettingsDialog simulationSettings = new SimulationSettingsDialog();
-	private final ExportSettingsDialog exportSettings = new ExportSettingsDialog();
 
 	public SettingsPanel(int type) {
 		final JOptionPane optionPanel = new JOptionPane(tabbedPanel, JOptionPane.PLAIN_MESSAGE);
@@ -33,11 +29,9 @@ public class SettingsPanel extends JDialog {
 		cancel.addActionListener(e -> onCancelClicked());
 		defaultButton.addActionListener(e -> onDefaultClicked());
 		acceptButton.addActionListener(e -> onAcceptClicked());
-		tabbedPanel.addTab(INTERNET_LABEL, null, internetSettings, INTERNET_LABEL);
-		tabbedPanel.addTab(GRAPH_SETTINGS_LABEL, null, graphSettings.getPanel(), GRAPH_SETTINGS_LABEL);
-		tabbedPanel.addTab(VISUALIZATION_LABEL, null, visualizationSettings.getPanel(), VISUALIZATION_LABEL);
-		tabbedPanel.addTab(SIMULATION_LABEL, null, simulationSettings.getPanel(), SIMULATION_LABEL);
-		tabbedPanel.addTab(EXPORT_LABEL, null, exportSettings.getPanel(), EXPORT_LABEL);
+		tabbedPanel.addTab(GENERAL_TAB_LABEL, null, internetSettings, GENERAL_TAB_LABEL);
+		tabbedPanel.addTab(GRAPH_TAB_LABEL, null, graphSettings.getPanel(), GRAPH_TAB_LABEL);
+		tabbedPanel.addTab(VISUALIZATION_TAB_LABEL, null, visualizationSettings.getPanel(), VISUALIZATION_TAB_LABEL);
 		tabbedPanel.setSelectedIndex(type);
 		setSize(300, 300);
 		setLocationRelativeTo(MainWindow.getInstance().getFrame());
@@ -54,50 +48,38 @@ public class SettingsPanel extends JDialog {
 	private void onDefaultClicked() {
 		String tab_name = tabbedPanel.getTitleAt(tabbedPanel.getSelectedIndex());
 		switch (tab_name) {
-		case INTERNET_LABEL:
+		case GENERAL_TAB_LABEL:
 			internetSettings.applyDefaults();
 			break;
-		case GRAPH_SETTINGS_LABEL:
+		case GRAPH_TAB_LABEL:
 			graphSettings.applyDefaults();
 			break;
-		case VISUALIZATION_LABEL:
+		case VISUALIZATION_TAB_LABEL:
 			visualizationSettings.setDefaultYamlPath();
 			break;
-		case SIMULATION_LABEL:
-			simulationSettings.applyDefaults();
-			break;
-		case EXPORT_LABEL:
-			exportSettings.applyDefaults();
 		}
 	}
 
 	private void onAcceptClicked() {
 		String tabName = tabbedPanel.getTitleAt(tabbedPanel.getSelectedIndex());
 		switch (tabName) {
-		case INTERNET_LABEL:
+		case GENERAL_TAB_LABEL:
 			setVisible(!internetSettings.applyNewSettings());
 			break;
-		case GRAPH_SETTINGS_LABEL:
+		case GRAPH_TAB_LABEL:
 			setVisible(!graphSettings.applyNewSettings());
 			break;
-		case VISUALIZATION_LABEL:
+		case VISUALIZATION_TAB_LABEL:
 			visualizationSettings.acceptConfig();
 			dispose();
 			break;
-		case SIMULATION_LABEL:
-			setVisible(!simulationSettings.applyNewSettings());
-			break;
-		case EXPORT_LABEL:
-			setVisible(!exportSettings.applyNewSettings());
 		}
 	}
 
 	private void onCancelClicked() {
 		String tabName = tabbedPanel.getTitleAt(tabbedPanel.getSelectedIndex());
-		switch (tabName) {
-		case GRAPH_SETTINGS_LABEL:
+		if (tabName.equals(GRAPH_TAB_LABEL)) {
 			setVisible(!graphSettings.onCancelClick());
-			break;
 		}
 		setVisible(false);
 	}

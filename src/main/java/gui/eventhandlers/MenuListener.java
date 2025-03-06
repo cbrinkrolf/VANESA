@@ -150,7 +150,7 @@ public class MenuListener implements ActionListener {
 			ProgramFileLock.releaseLock();
 			System.exit(0);
 			break;
-		case internet:
+		case settings:
 			new SettingsPanel(0);
 			break;
 		case devMode:
@@ -164,12 +164,6 @@ public class MenuListener implements ActionListener {
 			break;
 		case visualizationSettings:
 			new SettingsPanel(2);
-			break;
-		case simulationSettings:
-			new SettingsPanel(3);
-			break;
-		case exportSettings:
-			new SettingsPanel(4);
 			break;
 		case openTestP:
 			openTestP();
