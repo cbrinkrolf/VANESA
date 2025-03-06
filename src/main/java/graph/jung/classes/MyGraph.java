@@ -892,9 +892,8 @@ public class MyGraph {
 	}
 
 	public void changeToCircleLayout() {
-
 		if (stateV.getPicked().isEmpty() || stateV.getPicked().isEmpty()) {
-			changeToLayout(new CircleLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
+			changeToLayout(new CircleLayout<>(g));
 		} else {
 			// this.clusteringLayout.addSubLayout(new CircularSubLayout(stateV.getPicked(),
 			// clusteringLayout));

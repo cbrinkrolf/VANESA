@@ -152,7 +152,6 @@ public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		System.out.println("pressed");
 		if (enabled) {
 			Point2D p = inverseTransform(e);
 			// select(p);
