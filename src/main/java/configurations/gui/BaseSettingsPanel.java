@@ -13,6 +13,7 @@ public abstract class BaseSettingsPanel extends JPanel {
 	public BaseSettingsPanel() {
 		super(new MigLayout("ins 0, fill, wrap"));
 		final JScrollPane scrollPane = new JScrollPane(contentPanel);
+		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		add(scrollPane, "grow");
 	}
 

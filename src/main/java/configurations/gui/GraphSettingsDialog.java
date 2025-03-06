@@ -2,7 +2,6 @@ package configurations.gui;
 
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.GridLayout;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -15,8 +14,6 @@ import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.WindowConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.drjekyll.fontchooser.FontDialog;
 
@@ -29,34 +26,26 @@ import net.miginfocom.swing.MigLayout;
 import util.MyJFormattedTextField;
 import util.MyNumberFormat;
 
-/**
- * @author Sebastian
- */
-public class GraphSettingsDialog {
-	private JPanel panel;
-	private JPanel panelLeft;
-	private JPanel panelRight;
-	private GraphSettings settings = GraphSettings.getInstance();
+public class GraphSettingsDialog extends BaseSettingsPanel {
+	private final GraphSettings settings = GraphSettings.getInstance();
 
-	private ButtonGroup groupNodes = new ButtonGroup();
-	private JRadioButton only_name = new JRadioButton("", true);
-	private JRadioButton only_label = new JRadioButton("", true);
-	private JRadioButton nothing = new JRadioButton("", true);
-	private JRadioButton name_label = new JRadioButton("", true);
+	private final ButtonGroup nodeLabelGroup = new ButtonGroup();
+	private final JRadioButton only_name = new JRadioButton("Name", true);
+	private final JRadioButton only_label = new JRadioButton("Label", true);
+	private final JRadioButton nothing = new JRadioButton("Nothing", true);
+	private final JRadioButton name_label = new JRadioButton("Both", true);
 
-	private ButtonGroup groupEdges = new ButtonGroup();
-	private JRadioButton only_name_e = new JRadioButton("", true);
-	private JRadioButton only_label_e = new JRadioButton("", true);
-	private JRadioButton nothing_e = new JRadioButton("", true);
-	private JRadioButton name_label_e = new JRadioButton("", true);
+	private final ButtonGroup edgeLabelGroup = new ButtonGroup();
+	private final JRadioButton only_name_e = new JRadioButton("Name", true);
+	private final JRadioButton only_label_e = new JRadioButton("Label", true);
+	private final JRadioButton nothing_e = new JRadioButton("Nothing", true);
+	private final JRadioButton name_label_e = new JRadioButton("Both", true);
 
-	private ButtonGroup groupBackground = new ButtonGroup();
-	private JRadioButton black = new JRadioButton("", true);
-	private JRadioButton white = new JRadioButton("", true);
+	private final ButtonGroup graphBackgroundGroup = new ButtonGroup();
+	private final JRadioButton black = new JRadioButton("Black", true);
+	private final JRadioButton white = new JRadioButton("White", true);
 
-	private ButtonGroup groupShowEdges = new ButtonGroup();
-	private JRadioButton yes = new JRadioButton("", true);
-	private JRadioButton no = new JRadioButton("", true);
+	private JCheckBox showEdgesCheckBox = new JCheckBox();
 
 	private JSlider opacityslider = new JSlider(JSlider.HORIZONTAL, 0, 255, 255);
 	private int edgeOpacityOld = settings.getEdgeOpacity();
@@ -69,8 +58,8 @@ public class GraphSettingsDialog {
 	private JButton vertexFontChooser;
 	private JButton edgeFontChooser;
 
-	private JCheckBox defaultVertexFont;
-	private JCheckBox defaultEdgeFont;
+	private JCheckBox overrideVertexFontCheckBox;
+	private JCheckBox overrideEdgeFontCheckBox;
 
 	private Font vertexFontOld = settings.getVertexFont();
 	private Font edgeFontOld = settings.getEdgeFont();
@@ -87,16 +76,11 @@ public class GraphSettingsDialog {
 	private int minVertexLabelFontSizeOld = settings.getMinVertexFontSize();
 	private int minEdgeLabelFontSizeOld = settings.getMinEdgeFontSize();
 
-	private MainWindow w = MainWindow.getInstance();
-	private GraphContainer con = GraphContainer.getInstance();
+	private final MainWindow w = MainWindow.getInstance();
+	private final GraphContainer con = GraphContainer.getInstance();
 
 	public GraphSettingsDialog() {
-
-		groupNodes.add(only_label);
-		groupNodes.add(only_name);
-		groupNodes.add(name_label);
-		groupNodes.add(nothing);
-
+		super();
 		if (settings.getNodeLabel() == GraphSettings.SHOW_LABEL) {
 			only_label.setSelected(true);
 		} else if (settings.getNodeLabel() == GraphSettings.SHOW_NAME) {
@@ -106,11 +90,6 @@ public class GraphSettingsDialog {
 		} else if (settings.getNodeLabel() == GraphSettings.SHOW_NONE) {
 			nothing.setSelected(true);
 		}
-
-		groupEdges.add(only_label_e);
-		groupEdges.add(only_name_e);
-		groupEdges.add(name_label_e);
-		groupEdges.add(nothing_e);
 
 		if (settings.getEdgeLabel() == GraphSettings.SHOW_LABEL) {
 			only_label_e.setSelected(true);
@@ -122,286 +101,181 @@ public class GraphSettingsDialog {
 			nothing_e.setSelected(true);
 		}
 
-		groupBackground.add(white);
-		groupBackground.add(black);
-
 		if (settings.isBackgroundColor()) {
 			black.setSelected(true);
 		} else {
-			white.setSelected(false);
+			white.setSelected(true);
 		}
 
-		groupShowEdges.add(yes);
-		groupShowEdges.add(no);
-
-		if (settings.getDrawEdges())
-			yes.setSelected(true);
-		else
-			no.setSelected(true);
-
+		showEdgesCheckBox.setSelected(settings.getDrawEdges());
 		opacityslider.setValue(settings.getEdgeOpacity());
 
-		// Container contentPane = getContentPane();
-		MigLayout layout = new MigLayout("", "[left]");
+		addHeader("Visual Style");
+		final JPanel nodeLabelPanel = new JPanel(new MigLayout("ins 0, left, fill"));
+		nodeLabelPanel.setBackground(null);
+		nodeLabelGroup.add(only_label);
+		nodeLabelGroup.add(only_name);
+		nodeLabelGroup.add(name_label);
+		nodeLabelGroup.add(nothing);
+		nodeLabelPanel.add(only_label);
+		only_label.setBackground(null);
+		nodeLabelPanel.add(only_name);
+		only_name.setBackground(null);
+		nodeLabelPanel.add(name_label);
+		name_label.setBackground(null);
+		nodeLabelPanel.add(nothing);
+		nothing.setBackground(null);
+		addSetting("Displayed node label", "Which node label should be displayed?", nodeLabelPanel);
 
-		panelLeft = new JPanel(layout);
+		final JPanel edgeLabelPanel = new JPanel(new MigLayout("ins 0, left, fill"));
+		edgeLabelPanel.setBackground(null);
+		edgeLabelGroup.add(only_label_e);
+		edgeLabelGroup.add(only_name_e);
+		edgeLabelGroup.add(name_label_e);
+		edgeLabelGroup.add(nothing_e);
+		edgeLabelPanel.add(only_label_e);
+		only_label_e.setBackground(null);
+		edgeLabelPanel.add(only_name_e);
+		only_name_e.setBackground(null);
+		edgeLabelPanel.add(name_label_e);
+		name_label_e.setBackground(null);
+		edgeLabelPanel.add(nothing_e);
+		nothing_e.setBackground(null);
+		addSetting("Displayed edge label", "Which edge label should be displayed?", edgeLabelPanel);
 
-		panelLeft.add(new JLabel("Which node label should be displayed?"), "span 4");
-		panelLeft.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
+		final JPanel graphBackgroundPanel = new JPanel(new MigLayout("ins 0, left, fill"));
+		graphBackgroundPanel.setBackground(null);
+		graphBackgroundGroup.add(white);
+		graphBackgroundGroup.add(black);
+		graphBackgroundPanel.add(white);
+		white.setBackground(null);
+		graphBackgroundPanel.add(black);
+		black.setBackground(null);
+		addSetting("Graph Background", "What kind of background do you prefer?", graphBackgroundPanel);
 
-		JPanel connectionPanel = new JPanel();
-
-		connectionPanel.add(only_label);
-		connectionPanel.add(new JLabel("label  |"));
-		connectionPanel.add(only_name);
-
-		connectionPanel.add(new JLabel("name  |"));
-		connectionPanel.add(name_label);
-
-		connectionPanel.add(new JLabel("both  |"));
-		connectionPanel.add(nothing);
-
-		connectionPanel.add(new JLabel("nothing  |"));
-
-		panelLeft.add(connectionPanel, "span,wrap ,growx ,gap 10, gaptop 2");
-
-		panelLeft.add(new JLabel("Which edge label should be displayed?"), "span 4");
-		panelLeft.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
-
-		JPanel connectionPanel2 = new JPanel();
-
-		connectionPanel2.add(only_label_e);
-		connectionPanel2.add(new JLabel("label  |"));
-		connectionPanel2.add(only_name_e);
-
-		connectionPanel2.add(new JLabel("name  |"));
-		connectionPanel2.add(name_label_e);
-
-		connectionPanel2.add(new JLabel("both  |"));
-		connectionPanel2.add(nothing_e);
-
-		connectionPanel2.add(new JLabel("nothing  |"));
-
-		panelLeft.add(connectionPanel2, "span,wrap ,growx ,gap 10, gaptop 2");
-
-		panelLeft.add(new JLabel("What kind of background do you prefer?"), "span 4");
-		panelLeft.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
-
-		JPanel connectionPanel3 = new JPanel();
-
-		connectionPanel3.add(white);
-		connectionPanel3.add(new JLabel("white  |"));
-
-		connectionPanel3.add(black);
-		connectionPanel3.add(new JLabel("black"));
-
-		panelLeft.add(connectionPanel3, "wrap,align left, gap 10, gaptop 2");
-
-		// Edge drawing
-		panelLeft.add(new JLabel("Should the graph edges be displayed?"), "span 4");
-		panelLeft.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
-
-		JPanel edgedrawpanel = new JPanel();
-
-		edgedrawpanel.add(yes);
-		edgedrawpanel.add(new JLabel("yes   |"));
-		edgedrawpanel.add(no);
-		edgedrawpanel.add(new JLabel("no"));
-
-		panelLeft.add(edgedrawpanel, "wrap,align left, gap 10, gaptop 2");
-
-		// Edge opacity
-		panelLeft.add(new JLabel("Opacity of the edges?"), "span 3");
-		panelLeft.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
-
-		JPanel edgeopacitypanel = new JPanel();
+		showEdgesCheckBox.setBackground(null);
+		addSetting("Show Edges", "Whether edges should be rendered or not", showEdgesCheckBox);
 
 		opacityslider.setMajorTickSpacing(50);
-		opacityslider.setToolTipText(
-				"Opacity of edges, value between 0 and 255. A value of 0 draws the edges fully transparent.");
-//		opacityslider.setMinorTickSpacing();
 		opacityslider.setPaintTicks(true);
 		opacityslider.setPaintLabels(true);
-		opacityslider.setEnabled(true);
-		opacityslider.addChangeListener(new ChangeListener() {
-
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				settings.setEdgeOpacity(opacityslider.getValue());
-				if (con.containsPathway()) {
-					GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
-				}
-
+		opacityslider.addChangeListener(e -> {
+			settings.setEdgeOpacity(opacityslider.getValue());
+			if (con.containsPathway()) {
+				GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 			}
 		});
-		panelLeft.add(opacityslider);
+		addSetting("Edge Opacity",
+				"Opacity of edges, value between 0 and 255. A value of 0 draws the edges fully transparent.",
+				opacityslider);
 
-		panelLeft.add(edgeopacitypanel, "wrap,align left, gap 10, gaptop 2");
-
-		// pixel offset for edge selecting
-		panelLeft.add(new JLabel("Pixel offset for edge picking?"), "span 3");
-		panelLeft.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
-
-		// panel.add(new JLabel("Pixel offset:"));
-		pixelOffset.setColumns(3);
 		pixelOffset.setText(String.valueOf(settings.getPixelOffset()));
 		pixelOffset.setValue(settings.getPixelOffset());
-		panelLeft.add(pixelOffset, "wrap");
+		addSetting("Pixel offset for edge picking", "How close the mouse needs to click in order to select edges",
+				pixelOffset);
 
-		vertexFontLabel = new JLabel("default font");
-		panelLeft.add(new JLabel("Font for vertex label?"), "span 3");
-		panelLeft.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
-
-		this.evaluateVertexFontLabel();
-
-		panelLeft.add(vertexFontLabel, "");
-		vertexFontChooser = new JButton("choose font");
+		final JPanel vertexFontPanel = new JPanel(new MigLayout("ins 0, left, fill", "[][][]"));
+		vertexFontPanel.setBackground(null);
+		overrideVertexFontCheckBox = new JCheckBox();
+		overrideVertexFontCheckBox.setBackground(null);
+		overrideVertexFontCheckBox.addChangeListener(e -> {
+			vertexFontChooser.setEnabled(overrideVertexFontCheckBox.isSelected());
+			if (!overrideVertexFontCheckBox.isSelected()) {
+				settings.setVertexFont(null);
+			}
+			if (con.containsPathway()) {
+				GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
+			}
+		});
+		overrideVertexFontCheckBox.setSelected(settings.getVertexFont() != null);
+		vertexFontPanel.add(overrideVertexFontCheckBox);
+		vertexFontChooser = new JButton("Choose");
+		vertexFontChooser.setEnabled(overrideVertexFontCheckBox.isSelected());
 		vertexFontChooser.addActionListener(e -> onChooseVertexFontClick());
+		vertexFontPanel.add(vertexFontChooser);
+		vertexFontLabel = new JLabel("default font");
+		evaluateVertexFontLabel();
+		vertexFontPanel.add(vertexFontLabel);
+		addSetting("Node label font", "Which font should be used for node label rendering", vertexFontPanel);
 
-		panelLeft.add(vertexFontChooser, "");
-
-		defaultVertexFont = new JCheckBox();
-		defaultVertexFont.addChangeListener(new ChangeListener() {
-
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				vertexFontChooser.setEnabled(!defaultVertexFont.isSelected());
-				if (defaultVertexFont.isSelected()) {
-					settings.setVertexFont(null);
-				}
-				if (con.containsPathway()) {
-					GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
-				}
+		final JPanel edgeFontPanel = new JPanel(new MigLayout("ins 0, left, fill", "[][][]"));
+		edgeFontPanel.setBackground(null);
+		overrideEdgeFontCheckBox = new JCheckBox();
+		overrideEdgeFontCheckBox.setBackground(null);
+		overrideEdgeFontCheckBox.addChangeListener(e -> {
+			edgeFontChooser.setEnabled(overrideEdgeFontCheckBox.isSelected());
+			if (!overrideEdgeFontCheckBox.isSelected()) {
+				settings.setEdgeFont(null);
+			}
+			if (con.containsPathway()) {
+				GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 			}
 		});
-		if (settings.getVertexFont() == null) {
-			defaultVertexFont.setSelected(true);
-		}
-		panelLeft.add(defaultVertexFont, "wrap");
-
-		edgeFontLabel = new JLabel("default font");
-		panelLeft.add(new JLabel("Font for edge label?"), "span 3");
-		panelLeft.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
-
-		this.evaluateEdgeFontLabel();
-
-		panelLeft.add(edgeFontLabel, "");
-		edgeFontChooser = new JButton("choose font");
+		overrideEdgeFontCheckBox.setSelected(settings.getEdgeFont() != null);
+		edgeFontPanel.add(overrideEdgeFontCheckBox);
+		edgeFontChooser = new JButton("Choose");
+		edgeFontChooser.setEnabled(overrideEdgeFontCheckBox.isSelected());
 		edgeFontChooser.addActionListener(e -> onChooseEdgeFontClick());
+		edgeFontPanel.add(edgeFontChooser);
+		edgeFontLabel = new JLabel("default font");
+		evaluateEdgeFontLabel();
+		edgeFontPanel.add(edgeFontLabel);
+		addSetting("Edge label font", "Which font should be used for edge label rendering", edgeFontPanel);
 
-		panelLeft.add(edgeFontChooser, "");
-
-		defaultEdgeFont = new JCheckBox();
-		defaultEdgeFont.addChangeListener(new ChangeListener() {
-
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				edgeFontChooser.setEnabled(!defaultEdgeFont.isSelected());
-				if (defaultEdgeFont.isSelected()) {
-					settings.setEdgeFont(null);
-				}
-				if (con.containsPathway()) {
-					GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
-				}
-			}
-		});
-		if (settings.getEdgeFont() == null) {
-			defaultEdgeFont.setSelected(true);
-		}
-		panelLeft.add(defaultEdgeFont, "wrap");
-
-		panelRight = new JPanel(new MigLayout("", "[left]"));
-
+		// Performance settings
+		addHeader("Performance");
 		omitInvisibleNodes = new JCheckBox();
-		omitInvisibleNodes.setText("omit invisible nodes");
-		omitInvisibleNodes
-				.setToolTipText("Omit drawing of invisible nodes. Pathway needs to be re-opened to be effective!");
+		omitInvisibleNodes.setBackground(null);
 		omitInvisibleNodes.setSelected(SettingsManager.getInstance().isOmitPaintInvisibleNodes());
-
-		panelRight.add(omitInvisibleNodes, "wrap");
+		addSetting("Omit invisible nodes", "Omit drawing of invisible nodes. Pathway needs to be re-opened to be effective!", omitInvisibleNodes);
 
 		disabledAntiAliasing = new JCheckBox();
-		disabledAntiAliasing.setText("disable anti-aliasing");
-		disabledAntiAliasing
-				.setToolTipText("Increases graph drawing performance. Exported graph images are not affected!");
+		disabledAntiAliasing.setBackground(null);
 		disabledAntiAliasing.setSelected(SettingsManager.getInstance().isDisabledAntiAliasing());
 		disabledAntiAliasing.addChangeListener(e -> onDeactiveAntiAliasingClicked());
-
-		panelRight.add(disabledAntiAliasing, "wrap");
+		addSetting("disable anti-aliasing", "Increases graph drawing performance. Exported graph images are not affected!", disabledAntiAliasing);
 
 		useDefaultTransformators = new JCheckBox();
-		useDefaultTransformators.setText("default transformators");
-		useDefaultTransformators.setToolTipText("use default transformators to visualize the graph (faster)");
+		useDefaultTransformators.setBackground(null);
 		useDefaultTransformators.setSelected(settings.isDefaultTransformators());
 		useDefaultTransformators.addChangeListener(e -> onUseDefaultTransformatorsClicked());
-
-		panelRight.add(useDefaultTransformators, "wrap");
+		addSetting("Use default style for graph", "Use default transformers to visualize the graph (faster)", useDefaultTransformators);
 
 		useDefaultTransformatorsSatellite = new JCheckBox();
-		useDefaultTransformatorsSatellite.setText("default transformators (satellite view)");
-		useDefaultTransformatorsSatellite
-				.setToolTipText("use default transformators to visualize the satellite view of the graph (faster)");
+		useDefaultTransformatorsSatellite.setBackground(null);
 		useDefaultTransformatorsSatellite.setSelected(settings.isDefaultTransformatorsSatellite());
 		useDefaultTransformatorsSatellite.addChangeListener(e -> onUseDefaultTransformatorsSatelliteClicked());
-
-		panelRight.add(useDefaultTransformatorsSatellite, "wrap");
+		addSetting("Use default style for satellite graph", "Use default transformers to visualize the satellite view of the graph (faster)", useDefaultTransformatorsSatellite);
 
 		minVertexLabelFontSize = new JSpinner(new SpinnerNumberModel(settings.getMinVertexFontSize(), 0, 100, 1));
-		minVertexLabelFontSize
-				.setToolTipText("Minimal font size of vertex labels that define if vertex labels are drawn or hidden");
 		minVertexLabelFontSize.addChangeListener(e -> vertexFontSpinnerChangedEvent());
-
-		panelRight.add(new JLabel("Minimal font size of vertex labels: "));
-		panelRight.add(minVertexLabelFontSize, "wrap");
+		addSetting("Minimal font size of node labels", "Minimal font size of node labels that define if node labels are drawn or not", minVertexLabelFontSize);
 
 		minEdgeLabelFontSize = new JSpinner(new SpinnerNumberModel(settings.getMinVertexFontSize(), 0, 100, 1));
-		minEdgeLabelFontSize
-				.setToolTipText("Minimal font size of edge labels that define if edge labels are drawn or hidden");
 		minEdgeLabelFontSize.addChangeListener(e -> edgeFontSpinnerChangedEvent());
-
-		panelRight.add(new JLabel("Minimal font size of edge labels: "));
-		panelRight.add(minEdgeLabelFontSize, "wrap");
-
-		panel = new JPanel(new GridLayout(0, 2));
-		panel.add(panelLeft);
-		panel.add(panelRight);
-
+		addSetting("Minimal font size of edge labels", "Minimal font size of edge labels that define if edge labels are drawn or not", minEdgeLabelFontSize);
 	}
 
-	public JPanel getPanel() {
-		return panel;
-	}
-
+	@Override
 	public boolean applyDefaults() {
-		// if (con.containsPathway() &&
-		// GraphInstance.getPathway().hasGotAtLeastOneElement()) {
 		only_label.setSelected(true);
-		// settings.setNodeLabel(1);
 		only_label_e.setSelected(true);
-		// settings.setEdgeLabel(1);
 		white.setSelected(true);
 		if (con.containsPathway()) {
 			GraphInstance.getPathway().changeBackground("white");
 		}
 		settings.setBackgroundColor(false);
-		yes.setSelected(true);
+		showEdgesCheckBox.setSelected(true);
 		opacityslider.setValue(255);
-		// pixelOffset.setText(String.valueOf(3));
 		settings.setPixelOffset(3);
-		// System.out.println(pixelOffset.getText());
-		// System.out.println(pixelOffset.getValue());
 		pixelOffset.setText(String.valueOf(settings.getPixelOffset()));
 		pixelOffset.setValue(String.valueOf(settings.getPixelOffset()));
-		defaultVertexFont.setSelected(true);
-		defaultEdgeFont.setSelected(true);
+		overrideVertexFontCheckBox.setSelected(true);
+		overrideEdgeFontCheckBox.setSelected(true);
 		omitInvisibleNodes.setSelected(true);
 		disabledAntiAliasing.setSelected(false);
 		useDefaultTransformators.setSelected(false);
 		useDefaultTransformatorsSatellite.setSelected(false);
-		// } else {
-		// PopUpDialog.getInstance().show("Error", "Please create a network before.");
-		// return false;
-		// }
 		minVertexLabelFontSize.getModel().setValue(6);
 		minEdgeLabelFontSize.getModel().setValue(6);
 		if (con.containsPathway()) {
@@ -411,8 +285,8 @@ public class GraphSettingsDialog {
 		return true;
 	}
 
+	@Override
 	public boolean applyNewSettings() {
-
 		if (only_label.isSelected()) {
 			settings.setNodeLabel(GraphSettings.SHOW_LABEL);
 		} else if (only_name.isSelected()) {
@@ -425,7 +299,6 @@ public class GraphSettingsDialog {
 		if (only_label_e.isSelected()) {
 			settings.setEdgeLabel(GraphSettings.SHOW_LABEL);
 		} else if (only_name_e.isSelected()) {
-			// System.out.println("selected");
 			settings.setEdgeLabel(GraphSettings.SHOW_NAME);
 		} else if (name_label_e.isSelected()) {
 			settings.setEdgeLabel(GraphSettings.SHOW_LABEL_AND_NAME);
@@ -443,12 +316,7 @@ public class GraphSettingsDialog {
 				GraphInstance.getPathway().changeBackground("white");
 			}
 		}
-		if (yes.isSelected()) {
-			settings.setDrawEdges(true);
-		} else {
-			settings.setDrawEdges(false);
-			no.setSelected(true);
-		}
+		settings.setDrawEdges(showEdgesCheckBox.isSelected());
 		settings.setEdgeOpacity(opacityslider.getValue());
 		settings.setPixelOffset(Integer.parseInt(pixelOffset.getText()));
 		if (con.containsPathway() && GraphInstance.getPathway().hasGotAtLeastOneElement()) {
@@ -491,15 +359,14 @@ public class GraphSettingsDialog {
 		if (settings.getVertexFont() == null && con.containsPathway()) {
 			dialog.setSelectedFont(GraphInstance.getPathway().getGraph().getVisualizationViewer().getFont());
 		}
-		dialog.setLocationRelativeTo(panelLeft);
+		dialog.setLocationRelativeTo(this);
 		dialog.setAlwaysOnTop(true);
 		dialog.requestFocus();
 		dialog.setVisible(true);
 		if (!dialog.isCancelSelected()) {
-			// System.out.printf("Selected font is: %s%n", dialog.getSelectedFont());
 			settings.setVertexFont(dialog.getSelectedFont());
 			evaluateVertexFontLabel();
-			panelLeft.repaint();
+			contentPanel.repaint();
 			if (con.containsPathway()) {
 				GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 			}
@@ -513,15 +380,14 @@ public class GraphSettingsDialog {
 		if (settings.getEdgeFont() == null && con.containsPathway()) {
 			dialog.setSelectedFont(GraphInstance.getPathway().getGraph().getVisualizationViewer().getFont());
 		}
-		dialog.setLocationRelativeTo(panelLeft);
+		dialog.setLocationRelativeTo(this);
 		dialog.setAlwaysOnTop(true);
 		dialog.requestFocus();
 		dialog.setVisible(true);
 		if (!dialog.isCancelSelected()) {
-			// System.out.printf("Selected font is: %s%n", dialog.getSelectedFont());
 			settings.setEdgeFont(dialog.getSelectedFont());
 			evaluateEdgeFontLabel();
-			panelLeft.repaint();
+			contentPanel.repaint();
 			if (con.containsPathway()) {
 				GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 			}
@@ -558,18 +424,18 @@ public class GraphSettingsDialog {
 	private void evaluateVertexFontLabel() {
 		if (settings.getVertexFont() != null) {
 			Font f = settings.getVertexFont();
-			vertexFontLabel.setText("Font: " + f.getFontName() + ", " + f.getSize());
+			vertexFontLabel.setText(f.getFontName() + ", " + f.getSize());
 		} else {
-			vertexFontLabel.setText("Font: default");
+			vertexFontLabel.setText("default");
 		}
 	}
 
 	private void evaluateEdgeFontLabel() {
 		if (settings.getEdgeFont() != null) {
 			Font f = settings.getEdgeFont();
-			edgeFontLabel.setText("Font: " + f.getFontName() + ", " + f.getSize());
+			edgeFontLabel.setText(f.getFontName() + ", " + f.getSize());
 		} else {
-			edgeFontLabel.setText("Font: default");
+			edgeFontLabel.setText("default");
 		}
 	}
 

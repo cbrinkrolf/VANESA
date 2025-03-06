@@ -30,7 +30,7 @@ public class SettingsPanel extends JDialog {
 		defaultButton.addActionListener(e -> onDefaultClicked());
 		acceptButton.addActionListener(e -> onAcceptClicked());
 		tabbedPanel.addTab(GENERAL_TAB_LABEL, null, internetSettings, GENERAL_TAB_LABEL);
-		tabbedPanel.addTab(GRAPH_TAB_LABEL, null, graphSettings.getPanel(), GRAPH_TAB_LABEL);
+		tabbedPanel.addTab(GRAPH_TAB_LABEL, null, graphSettings, GRAPH_TAB_LABEL);
 		tabbedPanel.addTab(VISUALIZATION_TAB_LABEL, null, visualizationSettings.getPanel(), VISUALIZATION_TAB_LABEL);
 		tabbedPanel.setSelectedIndex(type);
 		setSize(300, 300);
