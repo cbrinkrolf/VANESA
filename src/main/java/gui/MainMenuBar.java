@@ -87,9 +87,7 @@ public class MainMenuBar extends JMenuBar {
 
 		JMenuItem visualizationSettings = createMenuItem("Visualization Settings",
 				MenuActionCommands.visualizationSettings);
-		JMenuItem simulationSettings = createMenuItem("Simulation Settings", MenuActionCommands.simulationSettings);
-		JMenuItem exportSettings = createMenuItem("Export Settings", MenuActionCommands.exportSettings);
-		JMenuItem internetSettings = createMenuItem("Internet Connection", MenuActionCommands.internet);
+		JMenuItem settingsMenuItem = createMenuItem("Settings", MenuActionCommands.settings);
 		JMenuItem rendererSettings = createMenuItem("Renderer Settings", MenuActionCommands.rendererSettings);
 		JMenuItem mathLaw = createMenuItem("Generate Random Graph", MenuActionCommands.mathGraph);
 		JMenuItem biGraph = createMenuItem("Generate Bipartite Graph", MenuActionCommands.biGraph);
@@ -141,11 +139,9 @@ public class MainMenuBar extends JMenuBar {
 			file.add(exit);
 		}
 
-		settings.add(internetSettings);
+		settings.add(settingsMenuItem);
 		settings.add(graphSettings);
 		settings.add(visualizationSettings);
-		settings.add(simulationSettings);
-		settings.add(exportSettings);
 		settings.add(rendererSettings);
 
 		graph.add(generateGraph);
