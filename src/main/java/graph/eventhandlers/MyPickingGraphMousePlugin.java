@@ -36,6 +36,7 @@ import graph.layouts.Circle;
 import graph.layouts.HierarchicalCircleLayout;
 import gui.MainWindow;
 import gui.annotation.MyAnnotation;
+import gui.annotation.MyAnnotationEditingGraphMouse;
 import gui.annotation.MyAnnotationManager;
 
 public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
@@ -219,6 +220,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				mousePressedAnnotation(e);
 			} else {
 				this.removeHighlight();
+				setModifyShape(false);
 			}
 		}
 
@@ -252,7 +254,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		if (inWindow) {
+		if (inWindow && !modifyShape) {
 			this.setPathway(e);
 			vv.setMousePoint(vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint()));
 			if (this.currentAnnotation != null && SwingUtilities.isLeftMouseButton(e)) {
@@ -346,69 +348,56 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		if (inWindow) {
-			this.setPathway(e);
+			setPathway(e);
 			vv.setMousePoint(vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint()));
-
-			Point2D p = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
-
-			@SuppressWarnings("unchecked")
-			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-					.getSource();
-			if (modifyShape && currentAnnotation != null) {
-				if (oldCursor != null) {
-					vv.setCursor(oldCursor);
-				}
-				int cursor = this.checkAnchor(p, currentAnnotation.getShape());
-				// if (info.shape.contains(p)) {
-				// System.out.println(cursor);
-				if (cursor > -1) {
-					// selected = info;
-					oldCursor = vv.getCursor();
-					vv.setCursor(Cursor.getPredefinedCursor(cursor));
-					// vv.setCursor(cursor);
-					MainWindow.getInstance().getFrame().setCursor(Cursor.getPredefinedCursor(cursor));
-					// RangeSettings settings = new RangeSettings();
-					// settings.loadSettings(selected, 0, am.size());
-					// int option = settings.showDialog();
-					return;
-				}
-			}
 		}
 	}
 
 	private void mousePressedAnnotation(MouseEvent e) {
+
 		pressed = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
 		MyAnnotationManager am = pw.getGraph().getAnnotationManager();
 		MyAnnotation ma = am.getMyAnnotations(e.getPoint());
-		if (ma != null) {
-			if (ma == currentAnnotation || ma == highlight) {
-				this.removeHighlight();
-				modifyShape = false;
-				return;
-			}
-			this.removeHighlight();
-			GraphInstance.setSelectedObject(ma);
-			MainWindow.getInstance().updateElementProperties();
-			this.currentAnnotation = ma;
-			RectangularShape s = new Rectangle();
-			RectangularShape shape = ma.getShape();
-			if (StringUtils.isEmpty(ma.getText())) {
-				System.out.println("created -----------------------");
-				int offset = 5;
-				s.setFrameFromDiagonal(shape.getMinX() - offset, shape.getMinY() - offset, shape.getMaxX() + offset,
-						shape.getMaxY() + offset);
-				highlight = new MyAnnotation(s, ma.getText(), Color.BLUE, Color.BLUE, Color.BLUE);
-				am.add(Annotation.Layer.LOWER, highlight);
-				am.updateMyAnnotation(ma);
-			}
-		} else {
-			removeHighlight();
+		if (ma == null && !MyAnnotationEditingGraphMouse.getInstance().isHovering()) {
+			setModifyShape(false);
+			this.currentAnnotation = null;
+			return;
 		}
-		vv.repaint();
+		if (ma != currentAnnotation && !MyAnnotationEditingGraphMouse.getInstance().isHovering()) {
+			setModifyShape(false);
+		}
+		if (!modifyShape) {
+			if (ma != null) {
+				if (ma == currentAnnotation || ma == highlight) {
+					this.removeHighlight();
+					setModifyShape(false);
+					return;
+				}
+				this.removeHighlight();
+				GraphInstance.setSelectedObject(ma);
+				MainWindow.getInstance().updateElementProperties();
+				this.currentAnnotation = ma;
+				RectangularShape s = new Rectangle();
+				RectangularShape shape = ma.getShape();
+				if (StringUtils.isEmpty(ma.getText())) {
+					// System.out.println("created -----------------------");
+					int offset = 5;
+					s.setFrameFromDiagonal(shape.getMinX() - offset, shape.getMinY() - offset, shape.getMaxX() + offset,
+							shape.getMaxY() + offset);
+					highlight = new MyAnnotation(s, ma.getText(), Color.BLUE, Color.BLUE, Color.BLUE);
+					am.add(Annotation.Layer.LOWER, highlight);
+					am.updateMyAnnotation(ma);
+				}
+			} else {
+				removeHighlight();
+			}
+			vv.repaint();
+		}
 	}
 
 	private void mouseDraggedAnnotation(MouseEvent e) {
-		if (currentAnnotation != null) {
+		if (currentAnnotation != null && !modifyShape) {
+			// System.out.println("dragging");
 			MyAnnotationManager am = pw.getGraph().getAnnotationManager();
 			Point2D p = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
 			double xOffset = p.getX() - pressed.getX();
@@ -423,12 +412,15 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	}
 
 	private void mouseReleasedAnnotation(MouseEvent e) {
-		Point2D released = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
-		if (currentAnnotation != null) {
-			if (pressed.getX() != released.getX() || pressed.getY() != released.getY()) {
-				double xOffset = released.getX() - pressed.getX();
-				double yOffset = released.getY() - pressed.getY();
-				pw.getGraph().getAnnotationManager().moveAnnotation(currentAnnotation, xOffset, yOffset);
+		if (!modifyShape) {
+			Point2D released = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
+			if (currentAnnotation != null && StringUtils.isEmpty(currentAnnotation.getText())) {
+				setModifyShape(true);
+				if (pressed.getX() != released.getX() || pressed.getY() != released.getY()) {
+					double xOffset = released.getX() - pressed.getX();
+					double yOffset = released.getY() - pressed.getY();
+					pw.getGraph().getAnnotationManager().moveAnnotation(currentAnnotation, xOffset, yOffset);
+				}
 			}
 		}
 		// this.currentAnnotation = null;
@@ -438,7 +430,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 
 	private void removeHighlight() {
 		if (this.highlight != null) {
-			System.out.println("--------------------------------deleted");
+			// System.out.println("--------------------------------deleted");
 			pw.getGraph().getAnnotationManager().remove(highlight);
 			highlight = null;
 			currentAnnotation = null;
@@ -532,5 +524,16 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 		return vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
 		// return e.getPoint();
 		// return vv.inverseTransform(e.getPoint());
+	}
+
+	private void setModifyShape(boolean modify) {
+		System.out.println("enabled: " + modify);
+		this.modifyShape = modify;
+		MyAnnotationEditingGraphMouse.getInstance().setEnabled(modify);
+		if (modify && this.highlight != null) {
+			// System.out.println("--------------------------------deleted");
+			pw.getGraph().getAnnotationManager().remove(highlight);
+			highlight = null;
+		}
 	}
 }

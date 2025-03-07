@@ -1,6 +1,8 @@
 package gui.annotation;
 
+import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -9,15 +11,18 @@ import java.awt.geom.RectangularShape;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.annotations.Annotation;
+import graph.GraphInstance;
 import graph.jung.classes.MyVisualizationViewer;
 import gui.MainWindow;
 
 public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 
 	private boolean enabled = false;
+	private boolean hovering = false;
 	private MyAnnotation selected;
-	private double oldX, oldY;
+	private double oldX;
+	private double oldY;
 	private Cursor oldCursor;
 	// private boolean resizing;
 	private double[] coords = new double[4];// lefttop x,y,rightbottom x,y
@@ -26,6 +31,8 @@ public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 	private double[] resizeOffset = new double[2];
 
 	private static MyAnnotationEditingGraphMouse instance = null;
+	private MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
+	private MyAnnotation highlight = null;
 
 	public static MyAnnotationEditingGraphMouse getInstance() {
 		if (instance == null) {
@@ -36,6 +43,10 @@ public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 
 	private MyAnnotationEditingGraphMouse() {
 
+	}
+
+	public boolean isHovering() {
+		return hovering;
 	}
 
 	private int checkAnchor(Point2D p, RectangularShape shape) {
@@ -102,10 +113,9 @@ public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-
+		// System.out.println(selected);
 		if (enabled && selected != null && e.getModifiersEx() == InputEvent.BUTTON1_DOWN_MASK
 				&& selected.getShape() instanceof RectangularShape) {
-			System.out.println("dragged");
 			Point2D p = inverseTransform(e);
 			// double dx = p.getX() - oldX, dy = p.getY() - oldY;
 			// RectangularShape shape = selected.shape;
@@ -114,38 +124,41 @@ public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 			modifyShape(p, selected.getShape());
 			oldX = p.getX();
 			oldY = p.getY();
+			vv.repaint();
 		}
-
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		Point2D p = inverseTransform(e);
-
-		@SuppressWarnings("unchecked")
-		final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-				.getSource();
 		if (enabled) {
-			this.selected = null;
+			Point2D p = inverseTransform(e);
+
+			vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e.getSource();
+
 			if (oldCursor != null) {
 				vv.setCursor(oldCursor);
 			}
-			MyAnnotationManager am = vv.getPathway().getGraph().getAnnotationManager();
-			for (int i = am.size() - 1; i > -1; i--) {
-				MyAnnotation info = am.get(i);
-				int cursor = this.checkAnchor(p, info.getShape());
-				// if (info.shape.contains(p)) {
-				// System.out.println(cursor);
-				if (cursor > -1) {
-					selected = info;
-					oldCursor = vv.getCursor();
-					vv.setCursor(Cursor.getPredefinedCursor(cursor));
-					// vv.setCursor(cursor);
-					MainWindow.getInstance().getFrame().setCursor(Cursor.getPredefinedCursor(cursor));
-					// RangeSettings settings = new RangeSettings();
-					// settings.loadSettings(selected, 0, am.size());
-					// int option = settings.showDialog();
-					return;
+			// MyAnnotationManager am = vv.getPathway().getGraph().getAnnotationManager();
+			// for (int i = am.size() - 1; i > -1; i--) {
+			// MyAnnotation info = am.get(i);
+			int cursor = this.checkAnchor(p, selected.getShape());
+			// if (info.shape.contains(p)) {
+			// System.out.println(cursor);
+			if (cursor > -1) {
+				hovering = true;
+				// selected = info;
+				oldCursor = vv.getCursor();
+				vv.setCursor(Cursor.getPredefinedCursor(cursor));
+				// vv.setCursor(cursor);
+				MainWindow.getInstance().getFrame().setCursor(Cursor.getPredefinedCursor(cursor));
+				// RangeSettings settings = new RangeSettings();
+				// settings.loadSettings(selected, 0, am.size());
+				// int option = settings.showDialog();
+			} else {
+				hovering = false;
+				if (oldCursor != null) {
+					vv.setCursor(oldCursor);
+					MainWindow.getInstance().getFrame().setCursor(oldCursor);
 				}
 			}
 		}
@@ -153,27 +166,28 @@ public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (enabled) {
-			Point2D p = inverseTransform(e);
-			// select(p);
-			if (selected != null) {
-				coords[0] = selected.getShape().getMinX();
-				coords[1] = selected.getShape().getMinY();
-				coords[2] = selected.getShape().getMaxX();
-				coords[3] = selected.getShape().getMaxY();
-			}
-			if (e.getButton() == MouseEvent.BUTTON1) {
-				oldX = p.getX();
-				oldY = p.getY();
-			}
+		if (GraphInstance.getSelectedObject() instanceof MyAnnotation) {
+			selected = (MyAnnotation) GraphInstance.getSelectedObject();
 		}
+		// if (enabled) {
+		Point2D p = inverseTransform(e);
+		// select(p);
+		if (selected != null) {
+			coords[0] = selected.getShape().getMinX();
+			coords[1] = selected.getShape().getMinY();
+			coords[2] = selected.getShape().getMaxX();
+			coords[3] = selected.getShape().getMaxY();
+		}
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			oldX = p.getX();
+			oldY = p.getY();
+		}
+		// }
 	}
 
 	private Point2D inverseTransform(MouseEvent e) {
 
-		@SuppressWarnings("unchecked")
-		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-				.getSource();
+		vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e.getSource();
 		// System.out.println(e.getPoint());
 		// System.out.println(vv.getLocation(e.getPoint()));
 		// System.out.println(vv.getLocationOnScreen());
@@ -186,6 +200,34 @@ public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 	}
 
 	public void setEnabled(boolean enabled) {
+		if (GraphInstance.getSelectedObject() instanceof MyAnnotation) {
+			selected = (MyAnnotation) GraphInstance.getSelectedObject();
+		} else {
+			selected = null;
+		}
 		this.enabled = enabled;
+		MyAnnotationManager am = vv.getPathway().getGraph().getAnnotationManager();
+		if (enabled) {
+			if (selected != null && vv != null) {
+				int offset = 5;
+				RectangularShape s = new Rectangle();
+				RectangularShape shape = selected.getShape();
+
+				s.setFrameFromDiagonal(shape.getMinX() - offset, shape.getMinY() - offset, shape.getMaxX() + offset,
+						shape.getMaxY() + offset);
+				highlight = new MyAnnotation(s, selected.getText(), Color.BLUE, Color.BLUE, Color.BLUE);
+				am.add(Annotation.Layer.LOWER, highlight);
+				am.updateMyAnnotation(selected);
+			}
+		} else {
+
+			if (oldCursor != null && vv != null) {
+				vv.setCursor(oldCursor);
+				MainWindow.getInstance().getFrame().setCursor(oldCursor);
+			}
+			if (highlight != null) {
+				am.remove(highlight);
+			}
+		}
 	}
 }
