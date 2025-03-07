@@ -1,11 +1,14 @@
 package gui;
 
-import java.awt.*;
+import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Set;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
@@ -186,7 +189,7 @@ public class ToolBar {
 			edit.setEnabled(!petriNetView);
 			merge.setEnabled(!petriNetView);
 			// heatmap.setEnabled(!petriNetView);
-			//parallelView.setEnabled(!petriNetView);
+			// parallelView.setEnabled(!petriNetView);
 
 			final MyGraph graph = pathway.getGraph(false);
 			if (graph != null) {

@@ -23,6 +23,8 @@ import java.util.Set;
 
 import javax.swing.Icon;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
@@ -227,6 +229,15 @@ public class MyGraph {
 				// del-key
 				if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 					pathway.removeSelection();
+
+					if (GraphInstance.getSelectedObject() instanceof MyAnnotation) {
+						MyAnnotation annotation = (MyAnnotation) GraphInstance.getSelectedObject();
+						if (MyAnnotationEditingGraphMouse.getInstance().getHighlight() != null
+								|| StringUtils.isNotEmpty(annotation.getText()))
+							getAnnotationManager().remove(annotation);
+						GraphInstance.setSelectedObject(null);
+						MyAnnotationEditingGraphMouse.getInstance().setEnabled(false);
+					}
 				}
 			}
 

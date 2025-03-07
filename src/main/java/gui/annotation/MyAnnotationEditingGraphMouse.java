@@ -136,7 +136,7 @@ public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		if (enabled) {
+		if (enabled && selected != null) {
 			Point2D p = inverseTransform(e);
 
 			vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e.getSource();
@@ -223,6 +223,7 @@ public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 				vv.setCursor(oldCursor);
 				MainWindow.getInstance().getFrame().setCursor(oldCursor);
 			}
+			selected = null;
 			if (highlight != null) {
 				am.remove(highlight);
 				highlight = null;

@@ -197,7 +197,6 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 					&& SwingUtilities.isLeftMouseButton(e)) {
 				mousePressedAnnotation(e);
 			} else {
-				this.removeHighlight();
 				setModifyShape(false);
 			}
 		}
@@ -334,15 +333,18 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 		pressed = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
 		MyAnnotationManager am = pw.getGraph().getAnnotationManager();
 		MyAnnotation ma = am.getMyAnnotations(e.getPoint());
+		// System.out.println(ma);
+		if (GraphInstance.getSelectedObject() == null) {
+			setModifyShape(false);
+		}
 		if (ma == null && !MyAnnotationEditingGraphMouse.getInstance().isHovering()) {
 			setModifyShape(false);
-			this.currentAnnotation = null;
+			removeHighlight();
 			return;
 		}
 		if (ma != currentAnnotation && !MyAnnotationEditingGraphMouse.getInstance().isHovering()) {
 			if (ma == MyAnnotationEditingGraphMouse.getInstance().getHighlight()) {
 				setModifyShape(false);
-				this.currentAnnotation = null;
 				return;
 			}
 			setModifyShape(false);
@@ -350,10 +352,10 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 		if (!modifyShape) {
 			if (ma != null) {
 				if (ma == currentAnnotation || ma == highlight) {
-					this.removeHighlight();
 					setModifyShape(false);
 					return;
 				}
+
 				this.removeHighlight();
 				GraphInstance.setSelectedObject(ma);
 				MainWindow.getInstance().updateElementProperties();
@@ -367,6 +369,9 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 					highlight = new MyAnnotation(s, ma.getText(), Color.BLUE, Color.BLUE, Color.BLUE);
 					am.add(Annotation.Layer.LOWER, highlight);
 					am.updateMyAnnotation(ma);
+				} else {
+					// TODO highlighting for text annotations
+					// ma.setFillColor(Color.BLUE);
 				}
 			} else {
 				removeHighlight();
@@ -408,9 +413,9 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 		if (this.highlight != null) {
 			pw.getGraph().getAnnotationManager().remove(highlight);
 			highlight = null;
-			currentAnnotation = null;
-			vv.repaint();
 		}
+		currentAnnotation = null;
+		vv.repaint();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -429,8 +434,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 		this.modifyShape = modify;
 		MyAnnotationEditingGraphMouse.getInstance().setEnabled(modify);
 		if (modify && this.highlight != null) {
-			pw.getGraph().getAnnotationManager().remove(highlight);
-			highlight = null;
+			removeHighlight();
 		}
 	}
 }

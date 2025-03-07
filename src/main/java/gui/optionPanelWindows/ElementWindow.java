@@ -843,7 +843,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 			}
 			p.add(fillColorButton, "wrap");
 		} else if (element instanceof GraphicalElementAbstract) {
-			// TODO show menu System.out.println("annotation selected");
+			// TODO show menu
+			// System.out.println("annotation selected");
 		}
 	}
 
