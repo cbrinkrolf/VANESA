@@ -42,7 +42,6 @@ public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 	}
 
 	private MyAnnotationEditingGraphMouse() {
-
 	}
 
 	public boolean isHovering() {
@@ -113,7 +112,6 @@ public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		// System.out.println(selected);
 		if (enabled && selected != null && e.getModifiersEx() == InputEvent.BUTTON1_DOWN_MASK
 				&& selected.getShape() instanceof RectangularShape) {
 			Point2D p = inverseTransform(e);
@@ -122,12 +120,20 @@ public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 			// shape.setFrame(shape.getX() + dx, shape.getY() + dy,
 			// shape.getWidth(), shape.getHeight());
 			modifyShape(p, selected.getShape());
+			if (highlight != null) {
+				int offset = 5;
+				RectangularShape shape = selected.getShape();
+				// modifyShape(p, highlight.getShape());
+				highlight.getShape().setFrameFromDiagonal(shape.getMinX() - offset, shape.getMinY() - offset,
+						shape.getMaxX() + offset, shape.getMaxY() + offset);
+			}
 			oldX = p.getX();
 			oldY = p.getY();
 			vv.repaint();
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		if (enabled) {
@@ -185,18 +191,10 @@ public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 		// }
 	}
 
+	@SuppressWarnings("unchecked")
 	private Point2D inverseTransform(MouseEvent e) {
-
 		vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e.getSource();
-		// System.out.println(e.getPoint());
-		// System.out.println(vv.getLocation(e.getPoint()));
-		// System.out.println(vv.getLocationOnScreen());
-		// return
-		// vv.getRenderContext().getMultiLayerTransformer().transform(e.getPoint());
-		// System.out.println("ende");
 		return vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
-		// return e.getPoint();
-		// return vv.inverseTransform(e.getPoint());
 	}
 
 	public void setEnabled(boolean enabled) {
@@ -227,7 +225,13 @@ public class MyAnnotationEditingGraphMouse extends MouseAdapter {
 			}
 			if (highlight != null) {
 				am.remove(highlight);
+				highlight = null;
+				vv.repaint();
 			}
 		}
+	}
+
+	public MyAnnotation getHighlight() {
+		return highlight;
 	}
 }

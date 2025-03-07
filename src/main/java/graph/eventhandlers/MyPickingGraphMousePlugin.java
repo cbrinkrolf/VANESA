@@ -25,7 +25,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.GraphSettings;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.annotations.Annotation;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
@@ -52,14 +51,6 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	private Point2D pressed = null;
 	private boolean moved = false;
 	private GraphSettings settings = GraphSettings.getInstance();
-	// private boolean resizing;
-	private double[] coords = new double[4];// lefttop x,y,rightbottom x,y
-	private boolean[] move = new boolean[4];// move lefttop x,y,rightbottom
-	// x,y
-	private double[] resizeOffset = new double[2];
-	private double oldX;
-	private double oldY;
-	private Cursor oldCursor;
 	private boolean modifyShape = false;
 
 	public void mouseReleased(MouseEvent e) {
@@ -163,19 +154,6 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 
 			originalSelection.clear();
 			originalSelection.addAll(pw.getSelectedNodes());
-			// for (BiologicalNodeAbstract bna : originalSelection) {
-			// if (bna.isLogical()) {
-			// // g.getVisualizationViewer().getPickedVertexState().pick(bna.getRef(),
-			// true);
-			// for (BiologicalNodeAbstract pick : bna.getLogicalReference().getRefs()) {
-			// // g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
-			// }
-			// } else {
-			// for (BiologicalNodeAbstract pick : bna.getRefs()) {
-			// // g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
-			// }
-			// }
-			// }
 			if (pw.getGraph().getLayout() instanceof HierarchicalCircleLayout) {
 				HierarchicalCircleLayout hcLayout = (HierarchicalCircleLayout) pw.getGraph().getLayout();
 				if (hcLayout.getConfig().getMoveInGroups()) {
@@ -223,7 +201,6 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				setModifyShape(false);
 			}
 		}
-
 	}
 
 	private void saveOldVertexPositions() {
@@ -328,7 +305,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 
 	public void mouseEntered(MouseEvent e) {
 		this.setPathway(e);
-		if (e.getComponent().toString().contains("MyVisualizationViewer")) {
+		if (e.getComponent() instanceof MyVisualizationViewer) {
 			inWindow = true;
 			// this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
 			vv.setCursor(cursor);
@@ -339,7 +316,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	}
 
 	public void mouseExited(MouseEvent e) {
-		if (e.getComponent().toString().contains("MyVisualizationViewer")) {
+		if (e.getComponent() instanceof MyVisualizationViewer) {
 			inWindow = false;
 			MainWindow.getInstance().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
@@ -354,7 +331,6 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	}
 
 	private void mousePressedAnnotation(MouseEvent e) {
-
 		pressed = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
 		MyAnnotationManager am = pw.getGraph().getAnnotationManager();
 		MyAnnotation ma = am.getMyAnnotations(e.getPoint());
@@ -364,6 +340,11 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 			return;
 		}
 		if (ma != currentAnnotation && !MyAnnotationEditingGraphMouse.getInstance().isHovering()) {
+			if (ma == MyAnnotationEditingGraphMouse.getInstance().getHighlight()) {
+				setModifyShape(false);
+				this.currentAnnotation = null;
+				return;
+			}
 			setModifyShape(false);
 		}
 		if (!modifyShape) {
@@ -380,7 +361,6 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				RectangularShape s = new Rectangle();
 				RectangularShape shape = ma.getShape();
 				if (StringUtils.isEmpty(ma.getText())) {
-					// System.out.println("created -----------------------");
 					int offset = 5;
 					s.setFrameFromDiagonal(shape.getMinX() - offset, shape.getMinY() - offset, shape.getMaxX() + offset,
 							shape.getMaxY() + offset);
@@ -397,7 +377,6 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 
 	private void mouseDraggedAnnotation(MouseEvent e) {
 		if (currentAnnotation != null && !modifyShape) {
-			// System.out.println("dragging");
 			MyAnnotationManager am = pw.getGraph().getAnnotationManager();
 			Point2D p = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
 			double xOffset = p.getX() - pressed.getX();
@@ -423,14 +402,10 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				}
 			}
 		}
-		// this.currentAnnotation = null;
-		// this.removeHighlight();
-		// vv.repaint();
 	}
 
 	private void removeHighlight() {
 		if (this.highlight != null) {
-			// System.out.println("--------------------------------deleted");
 			pw.getGraph().getAnnotationManager().remove(highlight);
 			highlight = null;
 			currentAnnotation = null;
@@ -443,95 +418,17 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 		// do not use GraphInstance.getPathway because graphs for transformation rules
 		// also need mouse control
 		if (this.pw == null) {
-			vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e.getSource();
-			pw = vv.getPathway();
-		}
-	}
-
-	private int checkAnchor(Point2D p, RectangularShape shape) {
-		for (int i = 0; i < move.length; i++) {
-			move[i] = false;
-		}
-		int cursor = -1;
-		int tol = 3;
-		if (shape.contains(p)) {
-			cursor = Cursor.MOVE_CURSOR;
-
-			double minX = shape.getMinX(), minY = shape.getMinY(), maxX = shape.getMaxX(), maxY = shape.getMaxY();
-			double px = p.getX(), py = p.getY();
-			if (Math.abs(py - minY) < tol) {
-				move[1] = true;
-				if (Math.abs(px - minX) < tol) {
-					cursor = Cursor.NW_RESIZE_CURSOR;
-					move[0] = true;
-				} else if (Math.abs(px - maxX) < tol) {
-					cursor = Cursor.NE_RESIZE_CURSOR;
-					move[2] = true;
-				} else {
-					cursor = Cursor.N_RESIZE_CURSOR;
-				}
-			} else if (Math.abs(py - maxY) < tol) {
-				move[3] = true;
-				if (Math.abs(px - minX) < tol) {
-					move[0] = true;
-					cursor = Cursor.SW_RESIZE_CURSOR;
-				} else if (Math.abs(px - maxX) < tol) {
-					cursor = Cursor.SE_RESIZE_CURSOR;
-					move[2] = true;
-				} else {
-					cursor = Cursor.S_RESIZE_CURSOR;
-				}
-			} else if (Math.abs(px - minX) < tol) {
-				move[0] = true;
-				cursor = Cursor.W_RESIZE_CURSOR;
-			} else if (Math.abs(px - maxX) < tol) {
-				move[2] = true;
-				cursor = Cursor.E_RESIZE_CURSOR;
+			if (e.getSource() instanceof MyVisualizationViewer) {
+				vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e.getSource();
+				pw = vv.getPathway();
 			}
 		}
-		return cursor;
-	}
-
-	private void modifyShape(Point2D p, RectangularShape shape) {
-		this.resizeOffset[0] = p.getX() - oldX;
-		this.resizeOffset[1] = p.getY() - oldY;
-		boolean resize = false;
-		for (int i = 0; i < coords.length; i++) {
-			if (move[i]) {
-				coords[i] += resizeOffset[i & 1];
-				resize = true;
-			}
-		}
-		if (resize) {
-			shape.setFrameFromDiagonal(coords[0], coords[1], coords[2], coords[3]);
-		} else {
-			shape.setFrame(shape.getX() + resizeOffset[0], shape.getY() + resizeOffset[1], shape.getWidth(),
-					shape.getHeight());
-		}
-	}
-
-	private Point2D inverseTransform(MouseEvent e) {
-
-		@SuppressWarnings("unchecked")
-		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-				.getSource();
-		// System.out.println(e.getPoint());
-		// System.out.println(vv.getLocation(e.getPoint()));
-		// System.out.println(vv.getLocationOnScreen());
-		// return
-		// vv.getRenderContext().getMultiLayerTransformer().transform(e.getPoint());
-		// System.out.println("ende");
-		return vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
-		// return e.getPoint();
-		// return vv.inverseTransform(e.getPoint());
 	}
 
 	private void setModifyShape(boolean modify) {
-		System.out.println("enabled: " + modify);
 		this.modifyShape = modify;
 		MyAnnotationEditingGraphMouse.getInstance().setEnabled(modify);
 		if (modify && this.highlight != null) {
-			// System.out.println("--------------------------------deleted");
 			pw.getGraph().getAnnotationManager().remove(highlight);
 			highlight = null;
 		}
