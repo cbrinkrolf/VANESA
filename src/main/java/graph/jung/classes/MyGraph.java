@@ -1,14 +1,6 @@
 package graph.jung.classes;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Paint;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Stroke;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Point2D;
@@ -97,6 +89,7 @@ import gui.annotation.MyAnnotation;
 import gui.annotation.MyAnnotationManager;
 import gui.annotation.MyAnnotationEditingGraphMouse;
 import gui.visualization.TokenRenderer;
+import util.VanesaUtility;
 
 public class MyGraph {
 	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g = new SparseMultigraph<>();
@@ -189,9 +182,9 @@ public class MyGraph {
 		/*
 		 * Transformer<BiologicalNodeAbstract, Point2D> locationTransformer = new
 		 * Transformer<BiologicalNodeAbstract, Point2D>() {
-		 * 
+		 *
 		 * @Override public Point2D transform(BiologicalNodeAbstract vertex) {
-		 * 
+		 *
 		 * // System.out.println(vertex); // System.out.println("pos: " +
 		 * nodePositions.get(vertex)); Point2D p =
 		 * vv.getRenderContext().getMultiLayerTransformer()
@@ -199,7 +192,7 @@ public class MyGraph {
 		 * "trans: "+p); // return layout.transform(vertex); return p; // return
 		 * nodePositions.get(vertex); // return null; // int value = (vertex.intValue()
 		 * * 40) + 20;
-		 * 
+		 *
 		 * } };
 		 */
 
@@ -566,7 +559,7 @@ public class MyGraph {
 	public boolean addVertex(BiologicalNodeAbstract bna, Point2D p) {
 		/*
 		 * Point2D p = this.nodePositions.get(bna);
-		 * 
+		 *
 		 * if (bna == null){ System.out.println("bna null"); } if(p == null){
 		 * System.out.println("p null"); }
 		 */
@@ -1347,20 +1340,29 @@ public class MyGraph {
 	// NOTE: See notes at the end of this method!
 	private static <V, E> void doNotPaintInvisibleVertices(VisualizationViewer<V, E> vv) {
 		Predicate<Context<Graph<V, E>, V>> vertexIncludePredicate = new Predicate<>() {
-			Dimension size = new Dimension();
+			final Dimension size = new Dimension();
 
 			@Override
 			public boolean apply(Context<Graph<V, E>, V> c) {
+				if (c == null) {
+					return true;
+				}
 				vv.getSize(size);
-				Point2D point = vv.getGraphLayout().apply(c.element);
-				Point2D transformed = vv.getRenderContext().getMultiLayerTransformer().transform(point);
-				if (transformed.getX() < 0 || transformed.getX() > size.width) {
-					return false;
+				Rectangle bounds = new Rectangle();
+				if (c.element instanceof BiologicalNodeAbstract) {
+					final BiologicalNodeAbstract bna = (BiologicalNodeAbstract) c.element;
+					final Shape shape = bna.getShape();
+					if (shape != null) {
+						bounds = VanesaUtility.scaleRectangle(shape.getBounds(), bna.getNodesize());
+					}
 				}
-				if (transformed.getY() < 0 || transformed.getY() > size.height) {
-					return false;
-				}
-				return true;
+				Point2D pos = vv.getGraphLayout().apply(c.element);
+				pos = vv.getRenderContext().getMultiLayerTransformer().transform(pos);
+				final Point2D topLeft = new Point((int) (pos.getX() + bounds.x), (int) (pos.getY() + bounds.y));
+				final Point2D bottomRight = new Point((int) (pos.getX() + bounds.x + bounds.width),
+						(int) (pos.getY() + bounds.y + bounds.height));
+				return bottomRight.getX() >= 0 && topLeft.getX() <= size.width && bottomRight.getY() >= 0
+						&& topLeft.getY() <= size.height;
 			}
 		};
 		vv.getRenderContext().setVertexIncludePredicate(vertexIncludePredicate);
@@ -1385,8 +1387,8 @@ public class MyGraph {
 					return;
 				}
 				if (!rc.getVertexIncludePredicate().apply(Context.getInstance(graph, graph.getEndpoints(e).getFirst()))
-						&& !rc.getVertexIncludePredicate()
-								.apply(Context.getInstance(graph, graph.getEndpoints(e).getSecond()))) {
+						&& !rc.getVertexIncludePredicate().apply(
+						Context.getInstance(graph, graph.getEndpoints(e).getSecond()))) {
 					return;
 				}
 				Stroke new_stroke = rc.getEdgeStrokeTransformer().apply(e);

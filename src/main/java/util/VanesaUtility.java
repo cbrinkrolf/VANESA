@@ -1,7 +1,6 @@
 package util;
 
-import java.awt.Color;
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -188,5 +187,15 @@ public class VanesaUtility {
 			sortedList.add(map.get(id));
 		}
 		return sortedList;
+	}
+
+	public static Rectangle offsetRectangle(final Rectangle r, final double offset) {
+		return new Rectangle((int) (r.x - offset), (int) (r.y - offset), (int) (r.width + offset * 2),
+				(int) (r.height + offset * 2));
+	}
+
+	public static Rectangle scaleRectangle(final Rectangle r, final double factor) {
+		return new Rectangle((int) (r.x * factor), (int) (r.y * factor), (int) (r.width * factor),
+				(int) (r.height * factor));
 	}
 }
