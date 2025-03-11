@@ -24,9 +24,9 @@ import gui.MainWindow;
 import org.apache.log4j.Logger;
 
 public class Server {
-	private static final Logger logger = Logger.getRootLogger();
 	private static final String NAME_SEPARATOR = "\u0000";
 
+	private final Logger logger = Logger.getRootLogger();
 	private Thread serverThread;
 	private java.net.ServerSocket serverSocket;
 	private final Map<BiologicalEdgeAbstract, String> bea2key;

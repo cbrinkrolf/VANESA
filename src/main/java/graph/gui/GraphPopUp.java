@@ -5,7 +5,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.PathwayMap;
-import configurations.SettingsManager;
+import configurations.Workspace;
 import copy.CopySelection;
 import copy.CopySelectionSingleton;
 import database.brenda.BRENDASearch;
@@ -134,11 +134,11 @@ public class GraphPopUp {
 		if (GraphContainer.getInstance().containsPathway()) {
 			if (vvPw.hasGotAtLeastOneElement()) {
 				SuffixAwareFilter[] filters;
-				if (SettingsManager.getInstance().getDefaultImageExportFormat()
+				if (Workspace.getCurrentSettings().getDefaultImageExportFormat()
 						.equals(ComponentImageWriter.IMAGE_TYPE_SVG)) {
 					filters = new SuffixAwareFilter[] { SuffixAwareFilter.SVG, SuffixAwareFilter.PNG,
 							SuffixAwareFilter.PDF };
-				} else if (SettingsManager.getInstance().getDefaultImageExportFormat()
+				} else if (Workspace.getCurrentSettings().getDefaultImageExportFormat()
 						.equals(ComponentImageWriter.IMAGE_TYPE_PDF)) {
 					filters = new SuffixAwareFilter[] { SuffixAwareFilter.PDF, SuffixAwareFilter.PNG,
 							SuffixAwareFilter.SVG };

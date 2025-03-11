@@ -8,7 +8,7 @@ import biologicalObjects.edges.Inhibition;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.*;
 import biologicalObjects.nodes.petriNet.*;
-import configurations.SettingsManager;
+import configurations.Workspace;
 import graph.ChangedFlags;
 import graph.GraphInstance;
 import graph.compartment.Compartment;
@@ -121,7 +121,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			} else {
 				p.add(new JLabel(ab.getBiologicalElement()), "wrap,span 1");
 			}
-			if (SettingsManager.getInstance().isDeveloperMode()) {
+			if (Workspace.getCurrentSettings().isDeveloperMode()) {
 				p.add(new JLabel("ID"), "gap 5 ");
 				JLabel id = new JLabel(String.valueOf(ab.getID()));
 				if (ref != null) {

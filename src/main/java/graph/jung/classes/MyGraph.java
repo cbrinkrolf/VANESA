@@ -33,7 +33,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.GraphSettings;
-import configurations.SettingsManager;
+import configurations.Workspace;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.algorithms.layout.AggregateLayout;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
@@ -373,7 +373,7 @@ public class MyGraph {
 			}
 		});
 		setMouseModePick();
-		disableAntliasing(SettingsManager.getInstance().isDisabledAntiAliasing());
+		disableAntliasing(Workspace.getCurrentSettings().isDisabledAntiAliasing());
 		improvePerformance(vv);
 		improvePerformance(vv2);
 
@@ -395,11 +395,11 @@ public class MyGraph {
 	}
 
 	public void makeDefaultObjectVisualization() {
-		if (!GraphSettings.getInstance().isDefaultTransformators()) {
-			addTransformatorsToVV(false);
+		if (!GraphSettings.getInstance().isDefaultTransformers()) {
+			addTransformersToVV(false);
 		}
-		if (!GraphSettings.getInstance().isDefaultTransformatorsSatellite()) {
-			addTransformatorsToSatellite(false);
+		if (!GraphSettings.getInstance().isDefaultTransformersSatellite()) {
+			addTransformersToSatellite(false);
 		}
 	}
 
@@ -427,7 +427,7 @@ public class MyGraph {
 		arrowFillPaintTransformerDefault = rc.getArrowFillPaintTransformer();
 	}
 
-	public void addTransformatorsToVV(boolean repaint) {
+	public void addTransformersToVV(boolean repaint) {
 		// vertices
 		pr.setVertexDrawPaintTransformer(vdpf);
 		pr.setVertexFillPaintTransformer(vfpf);
@@ -457,7 +457,7 @@ public class MyGraph {
 		}
 	}
 
-	public void addTransformatorsToSatellite(boolean repaint) {
+	public void addTransformersToSatellite(boolean repaint) {
 		// vertices
 		satellitePr.setVertexStrokeTransformer(vsh);
 		satellitePr.setVertexLabelTransformer(vertexStringer);
@@ -486,7 +486,7 @@ public class MyGraph {
 		}
 	}
 
-	public void dropTransformatorsOfVV(boolean repaint) {
+	public void dropTransformersOfVV(boolean repaint) {
 		// vertices
 		pr.setVertexLabelRenderer(vertexLabelRendererDefault);
 		pr.setVertexStrokeTransformer(vertexStrokeTransformerDefault);
@@ -514,7 +514,7 @@ public class MyGraph {
 		}
 	}
 
-	public void dropTransformatorsOfSatellite(boolean repaint) {
+	public void dropTransformersOfSatellite(boolean repaint) {
 		// vertices
 		satellitePr.setVertexStrokeTransformer(vertexStrokeTransformerDefault);
 		satellitePr.setVertexLabelTransformer(vertexLabelTransformerDefault);
@@ -1319,7 +1319,7 @@ public class MyGraph {
 	private static <V, E> void improvePerformance(VisualizationViewer<V, E> vv) {
 
 		// Skip vertices that are not inside the visible area.
-		if (SettingsManager.getInstance().isOmitPaintInvisibleNodes()) {
+		if (Workspace.getCurrentSettings().isOmitPaintInvisibleNodes()) {
 			doNotPaintInvisibleVertices(vv);
 		}
 

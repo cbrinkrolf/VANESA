@@ -24,7 +24,7 @@ import biologicalObjects.nodes.petriNet.PNNode;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
-import configurations.SettingsManager;
+import configurations.Workspace;
 import graph.GraphInstance;
 import graph.gui.Parameter;
 import util.StochasticDistribution;
@@ -139,10 +139,10 @@ public class MOoutput extends BaseWriter<Pathway> {
 
 	@Override
 	protected void internalWrite(OutputStream outputStream, Pathway pathway) throws Exception {
-		if (SettingsManager.getInstance().isDeveloperMode()) {
+		if (Workspace.getCurrentSettings().isDeveloperMode()) {
 			System.out.println("MOoutput(File " + pathway.getName() + " Pathway " + pathway + ")");
 		}
-		if (SettingsManager.getInstance().isDeveloperMode())
+		if (Workspace.getCurrentSettings().isDeveloperMode())
 			System.out.println("Model Name = " + modelName);
 		prepare(pathway);
 		buildConnections(pathway);

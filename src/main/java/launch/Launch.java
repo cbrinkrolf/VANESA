@@ -2,26 +2,20 @@ package launch;
 
 import biologicalElements.EnzymeNames;
 import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
-import configurations.SettingsManager;
-import configurations.ProgramFileLock;
-import configurations.XMLResourceBundle;
+import configurations.Workspace;
 import database.brenda.MostWantedMolecules;
 import gui.IntroScreen;
 import gui.MainWindow;
 import org.apache.log4j.Logger;
-import util.LogConfig;
 
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Launch {
 	public static void main(String[] args) {
-		LogConfig.configure(Paths.get("."));
-
 		// set app name for mac osx
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "VANESA");
@@ -34,10 +28,12 @@ public class Launch {
 		} catch (InterruptedException | InvocationTargetException ignored) {
 		}
 
+		final Workspace workspace = Workspace.switchToDefaultWorkspace();
+
 		final IntroScreen intro = new IntroScreen();
 		intro.openWindow();
 
-		if (!ProgramFileLock.writeLock()) {
+		if (!workspace.hasLock()) {
 			JOptionPane.showMessageDialog(null, "Another instance of the program is already running!\nExit program.",
 					"Exit", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
@@ -72,7 +68,6 @@ public class Launch {
 		} catch (Exception e) {
 			Logger.getRootLogger().error("Failed to setup UI", e);
 		}
-		SettingsManager.getInstance().setApiUrl(XMLResourceBundle.SETTINGS.getString("settings.default.api.url"));
 		Logger.getRootLogger().info("VANESA started by " + System.getProperty("user.name"));
 		final ExecutorService executorService = Executors.newFixedThreadPool(4);
 		executorService.execute(() -> SwingUtilities.invokeLater(() -> {

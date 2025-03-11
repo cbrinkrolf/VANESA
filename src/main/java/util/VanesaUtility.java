@@ -17,11 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.configuration2.XMLConfiguration;
-import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
-import org.apache.commons.configuration2.builder.fluent.Parameters;
-import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.apache.commons.configuration2.io.FileHandler;
 import org.apache.commons.lang3.SystemUtils;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
@@ -81,18 +76,16 @@ public class VanesaUtility {
 		return workingDirectory;
 	}
 
-	public static XMLConfiguration getFileBasedXMLConfiguration(final Path filePath) throws ConfigurationException {
-		File file = filePath.toFile();
-		if (!file.exists()) {
-			XMLConfiguration configuration = new XMLConfiguration();
-			FileHandler handler = new FileHandler(configuration);
-			handler.save(file);
+	public static void openFolderInExplorer(final Path path) {
+		if (Desktop.isDesktopSupported()) {
+			Desktop desktop = Desktop.getDesktop();
+			try {
+				desktop.open(path.toFile());
+			} catch (IOException e) {
+				e.printStackTrace();
+				PopUpDialog.getInstance().show("Path Error", e.getMessage());
+			}
 		}
-		Parameters params = new Parameters();
-		FileBasedConfigurationBuilder<XMLConfiguration> builder = new FileBasedConfigurationBuilder<>(
-				XMLConfiguration.class).configure(params.fileBased().setFile(file));
-		builder.setAutoSave(true);
-		return builder.getConfiguration();
 	}
 
 	public static void openURLInBrowser(String url) {

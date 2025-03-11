@@ -1,7 +1,7 @@
 package io;
 
 import biologicalElements.Pathway;
-import configurations.SettingsManager;
+import configurations.Workspace;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.AsyncTaskExecutor;
@@ -52,7 +52,7 @@ public class SaveDialog {
 		int option = chooser.showSaveDialog(relativeTo);
 		if (option == JFileChooser.APPROVE_OPTION) {
 			// Save path to settings.xml
-			SettingsManager.getInstance().setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
+			Workspace.getCurrentSettings().setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
 			fileFilter = (SuffixAwareFilter) chooser.getFileFilter();
 			File file = chooser.getSelectedFile();
 			if (file.exists()) {
@@ -83,7 +83,7 @@ public class SaveDialog {
 			return;
 		}
 		// Save path to settings.xml
-		SettingsManager.getInstance().setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
+		Workspace.getCurrentSettings().setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
 		fileFilter = (SuffixAwareFilter) chooser.getFileFilter();
 		final File pathSim = chooser.getSelectedFile().getAbsoluteFile();
 		if (!pathSim.exists()) {
@@ -122,7 +122,7 @@ public class SaveDialog {
 	}
 
 	private JFileChooser prepare(SuffixAwareFilter[] formats) {
-		JFileChooser chooser = new JFileChooser(SettingsManager.getInstance().getFileSaveDirectory());
+		JFileChooser chooser = new JFileChooser(Workspace.getCurrentSettings().getFileSaveDirectory());
 		chooser.setAcceptAllFileFilterUsed(false);
 		for (final SuffixAwareFilter format : formats) {
 			chooser.addChoosableFileFilter(format);

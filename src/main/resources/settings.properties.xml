@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-	<entry key="settings.file">/config/settings.xml</entry>
-
 	<entry key="settings.default.api.url">https://vanesa-api.kalis-amts.de</entry>
 	<entry key="settings.default.proxy.host"/>
 	<entry key="settings.default.proxy.port"/>

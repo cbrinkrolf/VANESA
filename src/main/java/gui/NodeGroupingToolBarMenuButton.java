@@ -2,7 +2,7 @@ package gui;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import configurations.SettingsManager;
+import configurations.Workspace;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphContainer;
 import graph.GraphInstance;
@@ -45,7 +45,7 @@ public class NodeGroupingToolBarMenuButton extends ToolBarMenuButton {
 		addMenuButton(coarseSelectedNodes);
 		addMenuButton(flatSelectedNodes);
 		addMenuButton(enterSelectedNode);
-		if (SettingsManager.getInstance().isDeveloperMode()) {
+		if (Workspace.getCurrentSettings().isDeveloperMode()) {
 			addMenuButton(autoCoarse);
 		}
 		addMenuButton(groupSelectedNodes);

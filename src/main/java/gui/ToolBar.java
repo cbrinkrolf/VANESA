@@ -13,7 +13,7 @@ import javax.swing.SwingConstants;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import configurations.SettingsManager;
+import configurations.Workspace;
 import graph.CreatePathway;
 import graph.GraphContainer;
 import graph.GraphInstance;
@@ -116,7 +116,7 @@ public class ToolBar {
 		bar.add(stochasticTransition);
 		bar.add(new ToolBarSeparator(), "growy");
 		bar.add(merge);
-		if (SettingsManager.getInstance().isDeveloperMode()) {
+		if (Workspace.getCurrentSettings().isDeveloperMode()) {
 			bar.add(parallelView);
 		}
 		bar.add(annotationToolBarMenuButton);

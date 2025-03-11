@@ -1,17 +1,22 @@
 package configurations.gui;
 
+import configurations.Settings;
+import configurations.SettingsChangedListener;
+import configurations.Workspace;
 import gui.MainWindow;
 
 import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-public class SettingsPanel extends JDialog {
-	private static final long serialVersionUID = 1L;
+public class SettingsPanel extends JDialog implements SettingsChangedListener {
+	private static final long serialVersionUID = -1788847745595402505L;
 	private static final String GENERAL_TAB_LABEL = "General";
 	private static final String GRAPH_TAB_LABEL = "Graph";
 	private static final String VISUALIZATION_TAB_LABEL = "Node Visualization";
 
 	private final JTabbedPane tabbedPanel = new JTabbedPane();
-	private final GeneralSettingsDialog internetSettings = new GeneralSettingsDialog();
+	private final GeneralSettingsDialog generalSettings = new GeneralSettingsDialog();
 	private final GraphSettingsDialog graphSettings = new GraphSettingsDialog();
 	private final VisualizationDialog visualizationSettings = new VisualizationDialog();
 
@@ -19,19 +24,17 @@ public class SettingsPanel extends JDialog {
 		final JOptionPane optionPanel = new JOptionPane(tabbedPanel, JOptionPane.PLAIN_MESSAGE);
 		final JButton cancel = new JButton("cancel");
 		final JButton acceptButton = new JButton("accept");
-		final JButton defaultButton = new JButton("default");
-		final JButton[] buttons = { acceptButton, defaultButton, cancel };
+		final JButton[] buttons = { acceptButton, cancel };
 		optionPanel.setOptions(buttons);
 		setTitle("Settings");
 		setModal(true);
 		setContentPane(optionPanel);
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		cancel.addActionListener(e -> onCancelClicked());
-		defaultButton.addActionListener(e -> onDefaultClicked());
 		acceptButton.addActionListener(e -> onAcceptClicked());
-		tabbedPanel.addTab(GENERAL_TAB_LABEL, null, internetSettings, GENERAL_TAB_LABEL);
+		tabbedPanel.addTab(GENERAL_TAB_LABEL, null, generalSettings, GENERAL_TAB_LABEL);
 		tabbedPanel.addTab(GRAPH_TAB_LABEL, null, graphSettings, GRAPH_TAB_LABEL);
-		tabbedPanel.addTab(VISUALIZATION_TAB_LABEL, null, visualizationSettings.getPanel(), VISUALIZATION_TAB_LABEL);
+		tabbedPanel.addTab(VISUALIZATION_TAB_LABEL, null, visualizationSettings, VISUALIZATION_TAB_LABEL);
 		tabbedPanel.setSelectedIndex(type);
 		setSize(300, 300);
 		setLocationRelativeTo(MainWindow.getInstance().getFrame());
@@ -43,44 +46,52 @@ public class SettingsPanel extends JDialog {
 		requestFocus();
 		setResizable(false);
 		setVisible(true);
-	}
-
-	private void onDefaultClicked() {
-		String tab_name = tabbedPanel.getTitleAt(tabbedPanel.getSelectedIndex());
-		switch (tab_name) {
-		case GENERAL_TAB_LABEL:
-			internetSettings.applyDefaults();
-			break;
-		case GRAPH_TAB_LABEL:
-			graphSettings.applyDefaults();
-			break;
-		case VISUALIZATION_TAB_LABEL:
-			visualizationSettings.setDefaultYamlPath();
-			break;
-		}
+		Workspace.addSettingsChangedListener(this);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(final WindowEvent e) {
+				onCancelClicked();
+			}
+		});
 	}
 
 	private void onAcceptClicked() {
 		String tabName = tabbedPanel.getTitleAt(tabbedPanel.getSelectedIndex());
+		boolean allowedToClose = true;
 		switch (tabName) {
 		case GENERAL_TAB_LABEL:
-			setVisible(!internetSettings.applyNewSettings());
+			allowedToClose = generalSettings.applySettings();
 			break;
 		case GRAPH_TAB_LABEL:
-			setVisible(!graphSettings.applyNewSettings());
+			allowedToClose = graphSettings.applySettings();
 			break;
 		case VISUALIZATION_TAB_LABEL:
-			visualizationSettings.acceptConfig();
-			dispose();
+			allowedToClose = visualizationSettings.applySettings();
 			break;
+		}
+		if (allowedToClose) {
+			setVisible(false);
+			onClose();
 		}
 	}
 
 	private void onCancelClicked() {
 		String tabName = tabbedPanel.getTitleAt(tabbedPanel.getSelectedIndex());
 		if (tabName.equals(GRAPH_TAB_LABEL)) {
-			setVisible(!graphSettings.onCancelClick());
+			graphSettings.onCancelClick();
+			setVisible(false);
 		}
 		setVisible(false);
+		onClose();
+	}
+
+	private void onClose() {
+		Workspace.removeSettingsChangedListener(this);
+	}
+
+	@Override
+	public void onSettingsChanged(final Settings settings) {
+		generalSettings.updateSettings(settings);
+		graphSettings.updateSettings(settings);
 	}
 }

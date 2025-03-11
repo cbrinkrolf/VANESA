@@ -7,7 +7,8 @@ import java.util.List;
 
 import javax.swing.*;
 
-import configurations.SettingsManager;
+import configurations.Settings;
+import configurations.Workspace;
 import configurations.XMLResourceBundle;
 import gui.JIntTextField;
 import gui.JValidatedURLTextField;
@@ -43,25 +44,22 @@ public class GeneralSettingsDialog extends BaseSettingsPanel {
 		addExportSettings();
 		addSimulationSettings();
 		addInternetSettings();
+		updateSettings(Workspace.getCurrentSettings());
 	}
 
 	private void addExportSettings() {
 		addHeader("Export Settings");
 		addSetting("Remove SVG clip paths", "Specify deletion of clip paths during image export",
-				removeSVGClipPathsCheckBox);
+				removeSVGClipPathsCheckBox, () -> removeSVGClipPathsCheckBox.setSelected(false));
 		addSetting("Remove PDF clip paths", "Specify deletion of clip paths during image export",
-				removePDFClipPathsCheckBox);
+				removePDFClipPathsCheckBox, () -> removePDFClipPathsCheckBox.setSelected(false));
 		addSetting("Default image file format", "Specify the default file format used during image export",
-				defaultImageFormatComboBox);
+				defaultImageFormatComboBox, () -> defaultImageFormatComboBox.setSelectedIndex(0));
 		removeSVGClipPathsCheckBox.setBackground(null);
-		removeSVGClipPathsCheckBox.setSelected(SettingsManager.getInstance().isSVGClipPaths());
 		removePDFClipPathsCheckBox.setBackground(null);
-		removePDFClipPathsCheckBox.setSelected(SettingsManager.getInstance().isPDFClipPaths());
 		for (String s : formatList) {
 			defaultImageFormatComboBox.addItem(s);
 		}
-		defaultImageFormatComboBox.setSelectedIndex(
-				formatList.indexOf(SettingsManager.getInstance().getDefaultImageExportFormat()));
 	}
 
 	private void addSimulationSettings() {
@@ -78,14 +76,22 @@ public class GeneralSettingsDialog extends BaseSettingsPanel {
 		addHeader("Simulation Settings");
 		addSetting("Override system OpenModelica path",
 				"Override the automatically detected OpenModelica path. Root folder of OpenModelica that contains folders: bin, lib, tools, among others.",
-				overrideOMPathPanel);
+				overrideOMPathPanel, () -> {
+					overrideOMPathCheckBox.setSelected(false);
+					overrideOMPath = "";
+					overrideOMPathLabel.setText("");
+				});
 		addSetting("Override PNlib path",
 				"Override automatically installed PNlib. Root folder that contains one or multiple folders / versions of PNlib. Each folder of a PNlib version must contain a folder named 'PNlib' containing a 'package.mo' file.",
-				overridePNLibPathPanel);
+				overridePNLibPathPanel, () -> {
+					overridePNlibPathCheckBox.setSelected(false);
+					overridePNlibPath = "";
+					overridePNlibPathLabel.setText("");
+				});
 		addSetting("Clean working directory after compiling",
 				"Deletes all unnecessary files for simulation generated during compilation",
-				cleanWorkingDirAfterCompilationCheckBox);
-		overrideOMPathCheckBox.setSelected(SettingsManager.getInstance().isOverrideOMPath());
+				cleanWorkingDirAfterCompilationCheckBox,
+				() -> cleanWorkingDirAfterCompilationCheckBox.setSelected(true));
 		overrideOMPathCheckBox.setBackground(null);
 		overrideOMPathCheckBox.addActionListener(new AbstractAction() {
 			@Override
@@ -94,10 +100,6 @@ public class GeneralSettingsDialog extends BaseSettingsPanel {
 			}
 		});
 		overrideOMPathButton.addActionListener(e -> onChooseOMPathClicked());
-		overrideOMPathButton.setEnabled(overrideOMPathCheckBox.isSelected());
-		overrideOMPath = SettingsManager.getInstance().getOMPath();
-		overrideOMPathLabel.setText(StringUtils.abbreviate(overrideOMPath, ABBREVIATE_WIDTH));
-		overridePNlibPathCheckBox.setSelected(SettingsManager.getInstance().isOverridePNlibPath());
 		overridePNlibPathCheckBox.setBackground(null);
 		overridePNlibPathCheckBox.addActionListener(new AbstractAction() {
 			@Override
@@ -106,65 +108,62 @@ public class GeneralSettingsDialog extends BaseSettingsPanel {
 			}
 		});
 		overridePNlibPathButton.addActionListener(e -> onChoosePNlibPathClicked());
-		overridePNlibPathButton.setEnabled(overridePNlibPathCheckBox.isSelected());
-		overridePNlibPath = SettingsManager.getInstance().getPNlibPath();
-		overridePNlibPathLabel.setText(StringUtils.abbreviate(overridePNlibPath, ABBREVIATE_WIDTH));
 		cleanWorkingDirAfterCompilationCheckBox.setBackground(null);
-		cleanWorkingDirAfterCompilationCheckBox.setSelected(
-				SettingsManager.getInstance().isCleanWorkingDirAfterCompilation());
 	}
 
 	private void addInternetSettings() {
 		addHeader("Proxy Settings");
-		addSetting("Proxy Host", "Host address of the proxy", proxyHostTextField);
-		addSetting("Proxy Port", "Port of the proxy", proxyPortTextField);
+		addSetting("Proxy Host", "Host address of the proxy", proxyHostTextField,
+				() -> proxyHostTextField.setText(XMLResourceBundle.SETTINGS.getString("settings.default.proxy.host")));
+		addSetting("Proxy Port", "Port of the proxy", proxyPortTextField,
+				() -> proxyHostTextField.setText(XMLResourceBundle.SETTINGS.getString("settings.default.proxy.port")));
 		addHeader("API Settings");
-		addSetting("API Url", "Base URL of the VANESA API used for database queries", apiUrlTextField);
-		apiUrlTextField.setText(SettingsManager.getInstance().getApiUrl());
-		proxyPortTextField.setText(SettingsManager.getInstance().getProxyPort());
-		proxyHostTextField.setText(SettingsManager.getInstance().getProxyHost());
+		addSetting("API Url", "Base URL of the VANESA API used for database queries", apiUrlTextField,
+				() -> apiUrlTextField.setText(XMLResourceBundle.SETTINGS.getString("settings.default.api.url")));
 	}
 
 	@Override
-	public boolean applyDefaults() {
+	public void updateSettings(final Settings settings) {
 		// Export settings
-		removeSVGClipPathsCheckBox.setSelected(false);
-		removePDFClipPathsCheckBox.setSelected(false);
-		defaultImageFormatComboBox.setSelectedIndex(0);
+		removeSVGClipPathsCheckBox.setSelected(settings.isSVGClipPaths());
+		removePDFClipPathsCheckBox.setSelected(settings.isPDFClipPaths());
+		defaultImageFormatComboBox.setSelectedIndex(formatList.indexOf(settings.getDefaultImageExportFormat()));
 		// Simulation settings
-		overrideOMPathCheckBox.setSelected(false);
-		overrideOMPath = "";
-		overrideOMPathLabel.setText("");
-		overridePNlibPathCheckBox.setSelected(false);
-		overridePNlibPath = "";
-		overridePNlibPathLabel.setText("");
-		cleanWorkingDirAfterCompilationCheckBox.setSelected(true);
+		overrideOMPath = settings.getOMPath();
+		overrideOMPathLabel.setText(StringUtils.abbreviate(overrideOMPath, ABBREVIATE_WIDTH));
+		overridePNlibPath = settings.getPNlibPath();
+		overridePNlibPathLabel.setText(StringUtils.abbreviate(overridePNlibPath, ABBREVIATE_WIDTH));
+		overrideOMPathCheckBox.setSelected(settings.isOverrideOMPath());
+		overrideOMPathButton.setEnabled(overrideOMPathCheckBox.isSelected());
+		overridePNlibPathCheckBox.setSelected(settings.isOverridePNlibPath());
+		overridePNlibPathButton.setEnabled(overridePNlibPathCheckBox.isSelected());
+		cleanWorkingDirAfterCompilationCheckBox.setSelected(settings.isCleanWorkingDirAfterCompilation());
 		// Internet settings
-		apiUrlTextField.setText(XMLResourceBundle.SETTINGS.getString("settings.default.api.url"));
-		proxyPortTextField.setText(XMLResourceBundle.SETTINGS.getString("settings.default.proxy.port"));
-		proxyHostTextField.setText(XMLResourceBundle.SETTINGS.getString("settings.default.proxy.host"));
-		return applyNewSettings();
+		apiUrlTextField.setText(settings.getApiUrl());
+		proxyPortTextField.setText(settings.getProxyPort());
+		proxyHostTextField.setText(settings.getProxyHost());
 	}
 
 	@Override
-	public boolean applyNewSettings() {
-		final SettingsManager settings = SettingsManager.getInstance();
-		// Export settings
-		settings.setSVGClipPaths(removeSVGClipPathsCheckBox.isSelected());
-		settings.setPDFClipPaths(removePDFClipPathsCheckBox.isSelected());
-		settings.setDefaultImageExportFormat(formatList.get(defaultImageFormatComboBox.getSelectedIndex()));
-		// Simulation settings
-		settings.setOMPath(overrideOMPath, overrideOMPathCheckBox.isSelected());
-		settings.setPNlibPath(overridePNlibPath, overridePNlibPathCheckBox.isSelected());
-		settings.setOverrideOMPath(overrideOMPathCheckBox.isSelected());
-		settings.setOverridePNlibPath(overridePNlibPathCheckBox.isSelected());
-		settings.setCleanWorkingDirAfterCompilation(cleanWorkingDirAfterCompilationCheckBox.isSelected());
-		// Internet settings
-		settings.setApiUrl(apiUrlTextField.getText());
-		settings.setProxyHost(proxyHostTextField.getText());
-		settings.setProxyPort(proxyPortTextField.getText());
+	public boolean applySettings() {
+		Workspace.getCurrentSettings().batchEdit((settings) -> {
+			// Export settings
+			settings.setSVGClipPaths(removeSVGClipPathsCheckBox.isSelected());
+			settings.setPDFClipPaths(removePDFClipPathsCheckBox.isSelected());
+			settings.setDefaultImageExportFormat(formatList.get(defaultImageFormatComboBox.getSelectedIndex()));
+			// Simulation settings
+			settings.setOMPath(overrideOMPath, overrideOMPathCheckBox.isSelected());
+			settings.setPNlibPath(overridePNlibPath, overridePNlibPathCheckBox.isSelected());
+			settings.setOverrideOMPath(overrideOMPathCheckBox.isSelected());
+			settings.setOverridePNlibPath(overridePNlibPathCheckBox.isSelected());
+			settings.setCleanWorkingDirAfterCompilation(cleanWorkingDirAfterCompilationCheckBox.isSelected());
+			// Internet settings
+			settings.setApiUrl(apiUrlTextField.getText());
+			settings.setProxyHost(proxyHostTextField.getText());
+			settings.setProxyPort(proxyPortTextField.getText());
+		});
 		// Validation
-		return apiUrlTextField.isValid();
+		return apiUrlTextField.isTextValid();
 	}
 
 	private void onChooseOMPathClicked() {

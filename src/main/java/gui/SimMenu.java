@@ -31,6 +31,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import configurations.Workspace;
 import io.SuffixAwareFilter;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
@@ -38,7 +39,6 @@ import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
-import configurations.SettingsManager;
 import graph.gui.Parameter;
 import io.SaveDialog;
 import net.miginfocom.swing.MigLayout;
@@ -202,7 +202,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		advancedOptions.setToolTipText("Show advanced simulation options");
 		advancedOptions.addActionListener(e -> revalidateAdvancedPanel());
 
-		if (SettingsManager.getInstance().isDeveloperMode()) {
+		if (Workspace.getCurrentSettings().isDeveloperMode()) {
 			advancedOptions.setSelected(true);
 		}
 
@@ -555,7 +555,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 	private void fillLibsComboBox() {
 		simLibs.removeAllItems();
-		if (!SettingsManager.getInstance().isOverridePNlibPath()) {
+		if (!Workspace.getCurrentSettings().isOverridePNlibPath()) {
 			String item;
 			for (int i = 0; i < pnLibVersions.size(); i++) {
 				if (i == 0) {
@@ -580,25 +580,25 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 	public boolean isBuiltInPNlibSelected() {
 		return simLibs.getSelectedIndex() < pnLibVersions.size()
-				&& !SettingsManager.getInstance().isOverridePNlibPath();
+				&& !Workspace.getCurrentSettings().isOverridePNlibPath();
 	}
 
 	public String getSelectedBuiltInPNLibVersion() {
-		if (simLibs.getSelectedIndex() < pnLibVersions.size() && !SettingsManager.getInstance().isOverridePNlibPath()) {
+		if (simLibs.getSelectedIndex() < pnLibVersions.size() && !Workspace.getCurrentSettings().isOverridePNlibPath()) {
 			return pnLibVersions.get(simLibs.getSelectedIndex());
 		}
 		return null;
 	}
 
 	public File getCustomPNLib() {
-		if (simLibs.getSelectedIndex() < pnLibVersions.size() && !SettingsManager.getInstance().isOverridePNlibPath()) {
+		if (simLibs.getSelectedIndex() < pnLibVersions.size() && !Workspace.getCurrentSettings().isOverridePNlibPath()) {
 			return null;
 		}
 		// System.out.println(libs.size());
 		// System.out.println(simLibs.);
 		// System.out.println("lib index: "+simLibs.getSelectedIndex());
 		lastLibsIdx = simLibs.getSelectedIndex();
-		if (SettingsManager.getInstance().isOverridePNlibPath()) {
+		if (Workspace.getCurrentSettings().isOverridePNlibPath()) {
 			return this.customLibs.get(this.simLibs.getSelectedIndex());
 		} else {
 			return this.customLibs.get(this.simLibs.getSelectedIndex() - pnLibVersions.size());

@@ -27,6 +27,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.JOptionPane;
 
+import configurations.Workspace;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -42,7 +43,6 @@ import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
-import configurations.SettingsManager;
 import graph.ChangedFlags;
 import graph.gui.Boundary;
 import graph.gui.Parameter;
@@ -123,13 +123,13 @@ public class PetriNetSimulation implements ActionListener {
 
 	public void showMenu() {
 		if (menu == null) {
-			if (SettingsManager.getInstance().getPNlibPath().length() > 0) {
-				customSimLibs = getLibs(new File(SettingsManager.getInstance().getPNlibPath()));
+			if (Workspace.getCurrentSettings().getPNlibPath().length() > 0) {
+				customSimLibs = getLibs(new File(Workspace.getCurrentSettings().getPNlibPath()));
 			}
 			menu = new SimMenu(pw, this, pnLibVersions, customSimLibs);
 		} else {
-			if (SettingsManager.getInstance().getPNlibPath().length() > 0) {
-				customSimLibs = getLibs(new File(SettingsManager.getInstance().getPNlibPath()));
+			if (Workspace.getCurrentSettings().getPNlibPath().length() > 0) {
+				customSimLibs = getLibs(new File(Workspace.getCurrentSettings().getPNlibPath()));
 			}
 			menu.setCustomLibs(customSimLibs);
 			menu.updateSimulationResults();
@@ -544,7 +544,7 @@ public class PetriNetSimulation implements ActionListener {
 		if (!checkInstallationOM()) {
 			return false;
 		}
-		if (SettingsManager.getInstance().isOverridePNlibPath()) {
+		if (Workspace.getCurrentSettings().isOverridePNlibPath()) {
 			return true;
 		}
 		// CHRIS put those checks in threads for example, so the messages will be shown
@@ -589,8 +589,8 @@ public class PetriNetSimulation implements ActionListener {
 
 	private boolean checkInstallationOM() {
 		final String envPath = System.getenv("OPENMODELICAHOME");
-		final String overridePath = SettingsManager.getInstance().isOverrideOMPath()
-				? SettingsManager.getInstance().getOMPath().trim()
+		final String overridePath = Workspace.getCurrentSettings().isOverrideOMPath()
+				? Workspace.getCurrentSettings().getOMPath().trim()
 				: null;
 		if (overridePath != null || envPath == null) {
 			if (validateOMPath(overridePath)) {
@@ -909,7 +909,7 @@ public class PetriNetSimulation implements ActionListener {
 					stopAction();
 				}
 				compiling = false;
-				if (SettingsManager.getInstance().isCleanWorkingDirAfterCompilation() && buildSuccess) {
+				if (Workspace.getCurrentSettings().isCleanWorkingDirAfterCompilation() && buildSuccess) {
 					// could be threaded maybe
 					System.out.println("cleaning up working directory");
 					cleanUpWorkingDirectory();
@@ -1195,7 +1195,7 @@ public class PetriNetSimulation implements ActionListener {
 							deletedFileCount++;
 						} catch (IOException e) {
 							e.printStackTrace();
-							if (SettingsManager.getInstance().isDeveloperMode()) {
+							if (Workspace.getCurrentSettings().isDeveloperMode()) {
 								PopUpDialog.getInstance().show("Error deleting file: " + f.getName(), e.getMessage());
 							}
 						}

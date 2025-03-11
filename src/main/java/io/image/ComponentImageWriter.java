@@ -25,6 +25,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageOutputStream;
 
+import configurations.Workspace;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGGraphics2DIOException;
@@ -41,7 +42,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.svg.SVGSVGElement;
 
-import configurations.SettingsManager;
 import io.BaseWriter;
 
 public class ComponentImageWriter extends BaseWriter<Component> {
@@ -72,7 +72,7 @@ public class ComponentImageWriter extends BaseWriter<Component> {
 
 		SVGGraphics2D svgGraphics2D = generateSVGGraphics(component);
 		SVGSVGElement root = (SVGSVGElement) svgGraphics2D.getRoot();
-		if(SettingsManager.getInstance().isSVGClipPaths()){
+		if(Workspace.getCurrentSettings().isSVGClipPaths()){
 			removeClipPaths(root);
 		}
 		
@@ -138,7 +138,7 @@ public class ComponentImageWriter extends BaseWriter<Component> {
 		SVGGraphics2D svgGraphics2D = generateSVGGraphics(component);
 		SVGSVGElement root = (SVGSVGElement) svgGraphics2D.getRoot();
 		
-		if(SettingsManager.getInstance().isPDFClipPaths()){
+		if(Workspace.getCurrentSettings().isPDFClipPaths()){
 			removeClipPaths(root);
 		}
 		

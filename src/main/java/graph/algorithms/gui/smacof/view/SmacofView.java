@@ -22,11 +22,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 
+import configurations.Workspace;
 import org.jdesktop.swingx.JXTable;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
-import configurations.SettingsManager;
 import graph.GraphInstance;
 import graph.algorithms.NodeAttributeType;
 import graph.algorithms.gui.smacof.DoSmacof;
@@ -228,7 +228,7 @@ public class SmacofView extends JFrame implements ActionListener {
 		panelparam.add(sliderresultdim, "wrap");
 
 		// enable remote computation only on dev mode
-		if (SettingsManager.getInstance().isDeveloperMode()) {
+		if (Workspace.getCurrentSettings().isDeveloperMode()) {
 			panelparam.add(startcomputationbutton, "");
 			panelparam.add(stopcomputationbutton, "");
 		} else {

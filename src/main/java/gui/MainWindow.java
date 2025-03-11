@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.swing.*;
 
+import configurations.Workspace;
 import io.OpenDialog;
 import io.SuffixAwareFilter;
 import net.miginfocom.swing.MigLayout;
@@ -32,7 +33,6 @@ import org.simplericity.macify.eawt.DefaultApplication;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import configurations.SettingsManager;
 import configurations.gui.SettingsPanel;
 import configurations.gui.VisualizationDialog;
 import graph.GraphContainer;
@@ -70,7 +70,7 @@ public class MainWindow implements ApplicationListener {
 	private MainWindow() {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		String title = "VANESA 2.0 - Visualization and Analysis of Networks in Systems Biology Applications";
-		if (SettingsManager.getInstance().isDeveloperMode()) {
+		if (Workspace.getCurrentSettings().isDeveloperMode()) {
 			title += " (developer mode)";
 		}
 		frame.setTitle(title);
@@ -115,6 +115,7 @@ public class MainWindow implements ApplicationListener {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
+				Workspace.getCurrent().close();
 				System.exit(0);
 			}
 		});

@@ -4,16 +4,13 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.File;
-import java.nio.file.Path;
 import java.util.*;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import configurations.SettingsManager;
-import org.apache.commons.configuration2.XMLConfiguration;
-import org.apache.commons.configuration2.ex.ConfigurationException;
+import configurations.Workspace;
 import org.apache.commons.lang3.StringUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
@@ -50,7 +47,6 @@ import net.miginfocom.swing.MigLayout;
 import petriNet.SimulationResult;
 import petriNet.SimulationResultController;
 import util.TripleHashMap;
-import util.VanesaUtility;
 
 import static petriNet.SimulationResultController.SIM_TOKEN;
 import static petriNet.SimulationResultController.SIM_ACTUAL_FIRING_SPEED;
@@ -788,15 +784,7 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 		// add chart to pane and refresh GUI
 		pane = new ChartPanel(chart);
 
-		Path settingsFilePath = SettingsManager.getSettingsFilePath();
-		String path = null;
-		try {
-			XMLConfiguration xmlSettings = VanesaUtility.getFileBasedXMLConfiguration(settingsFilePath);
-			path = xmlSettings.getString("SaveDialog-Path");
-		} catch (ConfigurationException e) {
-			System.out.println("There is probably no \"" + settingsFilePath + "\" yet.");
-			e.printStackTrace();
-		}
+		String path = Workspace.getCurrentSettings().getSaveDialogPath();
 		if (StringUtils.isNotEmpty(path)) {
 			File dir = new File(path);
 			if (dir.exists() && dir.isDirectory()) {

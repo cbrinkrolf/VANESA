@@ -29,8 +29,7 @@ import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.Enzyme;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
-import configurations.ProgramFileLock;
-import configurations.SettingsManager;
+import configurations.Workspace;
 import configurations.gui.SettingsPanel;
 import dataMapping.DataMappingColorMVC;
 import database.mirna.MirnaSearch;
@@ -147,7 +146,7 @@ public class MenuListener implements ActionListener {
 			save();
 			break;
 		case exit:
-			ProgramFileLock.releaseLock();
+			Workspace.getCurrent().close();
 			System.exit(0);
 			break;
 		case settings:
@@ -376,11 +375,11 @@ public class MenuListener implements ActionListener {
 		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			Pathway pw = GraphInstance.getPathway();
 			SuffixAwareFilter[] filters;
-			if (SettingsManager.getInstance().getDefaultImageExportFormat()
+			if (Workspace.getCurrentSettings().getDefaultImageExportFormat()
 					.equals(ComponentImageWriter.IMAGE_TYPE_SVG)) {
 				filters = new SuffixAwareFilter[] { SuffixAwareFilter.SVG, SuffixAwareFilter.PNG,
 						SuffixAwareFilter.PDF };
-			} else if (SettingsManager.getInstance().getDefaultImageExportFormat()
+			} else if (Workspace.getCurrentSettings().getDefaultImageExportFormat()
 					.equals(ComponentImageWriter.IMAGE_TYPE_PDF)) {
 				filters = new SuffixAwareFilter[] { SuffixAwareFilter.PDF, SuffixAwareFilter.PNG,
 						SuffixAwareFilter.SVG };
@@ -684,14 +683,14 @@ public class MenuListener implements ActionListener {
 	}
 
 	private static void devMode() {
-		if (SettingsManager.getInstance().isDeveloperMode()) {
+		if (Workspace.getCurrentSettings().isDeveloperMode()) {
 			MainWindow.getInstance().getMenu().setDeveloperLabel("Next launch: developer mode");
 			PopUpDialog.getInstance().show("Mode changed", "Next time, VANESA will be started in normal mode!");
 		} else {
 			MainWindow.getInstance().getMenu().setDeveloperLabel("Next launch: normal mode");
 			PopUpDialog.getInstance().show("Mode changed", "Next time, VANESA will be started in developer mode!");
 		}
-		SettingsManager.getInstance().setDeveloperMode(!SettingsManager.getInstance().isDeveloperMode());
+		Workspace.getCurrentSettings().setDeveloperMode(!Workspace.getCurrentSettings().isDeveloperMode());
 	}
 
 	private static void save() {

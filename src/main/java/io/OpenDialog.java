@@ -10,7 +10,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import biologicalElements.Pathway;
-import configurations.SettingsManager;
+import configurations.Workspace;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.AsyncTaskExecutor;
@@ -30,7 +30,7 @@ public final class OpenDialog {
 	private final JFileChooser chooser;
 
 	public OpenDialog(SuffixAwareFilter... filters) {
-		chooser = new JFileChooser(SettingsManager.getInstance().getFileOpenDirectory());
+		chooser = new JFileChooser(Workspace.getCurrentSettings().getFileOpenDirectory());
 		chooser.setAcceptAllFileFilterUsed(false);
 		for (SuffixAwareFilter filter : filters) {
 			chooser.addChoosableFileFilter(filter);
@@ -38,7 +38,7 @@ public final class OpenDialog {
 	}
 
 	public OpenDialog(List<SuffixAwareFilter> filters) {
-		chooser = new JFileChooser(SettingsManager.getInstance().getFileOpenDirectory());
+		chooser = new JFileChooser(Workspace.getCurrentSettings().getFileOpenDirectory());
 		chooser.setAcceptAllFileFilterUsed(false);
 		for (SuffixAwareFilter filter : filters) {
 			chooser.addChoosableFileFilter(filter);
@@ -48,7 +48,7 @@ public final class OpenDialog {
 	public void show() {
 		int option = chooser.showOpenDialog(MainWindow.getInstance().getFrame());
 		if (option == JFileChooser.APPROVE_OPTION) {
-			SettingsManager.getInstance().setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
+			Workspace.getCurrentSettings().setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
 			openUIBlocking(chooser.getFileFilter(), chooser.getSelectedFile());
 		}
 	}

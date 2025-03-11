@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
+import configurations.Workspace;
 import org.mediavirus.parvis.gui.MainFrame;
 
 import biologicalElements.Pathway;
@@ -49,7 +50,7 @@ public class ParallelChooseGraphsWindow extends ChooseGraphsWindow {
 
 		// WRITE TO LOCAL FILE
 		String filename = "paralleldata.stf";
-		File file = VanesaUtility.getWorkingDirectoryPath().resolve(filename).toFile();
+		File file = Workspace.getCurrent().resolve(filename).toFile();
 		try {
 			// Create file
 			FileWriter fstream = new FileWriter(file);

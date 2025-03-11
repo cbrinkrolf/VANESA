@@ -14,7 +14,7 @@ import graph.layouts.hctLayout.HCTLayoutConfig;
 import graph.layouts.hebLayout.HEBLayoutConfig;
 import org.simplericity.macify.eawt.Application;
 
-import configurations.SettingsManager;
+import configurations.Workspace;
 import graph.GraphInstance;
 import gui.eventhandlers.MenuActionCommands;
 import gui.eventhandlers.MenuListener;
@@ -85,22 +85,23 @@ public class MainMenuBar extends JMenuBar {
 		saveNetworkAs = createMenuItem("Save As", MenuActionCommands.saveAs);
 		savePicture = createMenuItem("Save A Graph-Picture", KeyEvent.VK_G, MenuActionCommands.graphPicture);
 
-		JMenuItem visualizationSettings = createMenuItem("Visualization Settings",
+		JMenuItem visualizationSettingsMenuItem = createMenuItem("Visualization Settings",
 				MenuActionCommands.visualizationSettings);
-		JMenuItem settingsMenuItem = createMenuItem("Settings", MenuActionCommands.settings);
-		JMenuItem rendererSettings = createMenuItem("Renderer Settings", MenuActionCommands.rendererSettings);
-		JMenuItem mathLaw = createMenuItem("Generate Random Graph", MenuActionCommands.mathGraph);
-		JMenuItem biGraph = createMenuItem("Generate Bipartite Graph", MenuActionCommands.biGraph);
+		JMenuItem generalSettingsMenuItem = createMenuItem("General Settings", MenuActionCommands.settings);
+		JMenuItem rendererSettingsMenuItem = createMenuItem("Renderer Settings", MenuActionCommands.rendererSettings);
+		JMenuItem graphSettingsMenuItem = createMenuItem("Graph Settings", MenuActionCommands.graphSettings);
+
+		JMenuItem generateRandomGraphMenuItem = createMenuItem("Generate Random Graph", MenuActionCommands.mathGraph);
+		JMenuItem generateBiGraphMenuItem = createMenuItem("Generate Bipartite Graph", MenuActionCommands.biGraph);
 		JMenuItem regularGraph = createMenuItem("Generate Regular Graph", MenuActionCommands.regularGraph);
 		JMenuItem connectedGraph = createMenuItem("Generate Connected Graph", MenuActionCommands.connectedGraph);
 		JMenuItem hamiltonGraph = createMenuItem("Generate Hamilton Graph", MenuActionCommands.hamiltonGraph);
-		JMenuItem graphSettings = createMenuItem("Graph Settings", MenuActionCommands.graphSettings);
 
 		// Help menu
 		JMenu helpMenu = new JMenu("Help");
 		JMenuItem allPopUps = createMenuItem("Show all previous PopUp messages", MenuActionCommands.allPopUps);
 		final JMenuItem reportIssue = createMenuItem("Report Issue", this::onReportIssueClicked);
-		final String label = SettingsManager.getInstance().isDeveloperMode()
+		final String label = Workspace.getCurrentSettings().isDeveloperMode()
 				? "Next launch: normal mode"
 				: "Next launch: developer mode";
 		devMode = createMenuItem(label, MenuActionCommands.devMode);
@@ -139,21 +140,24 @@ public class MainMenuBar extends JMenuBar {
 			file.add(exit);
 		}
 
-		settings.add(settingsMenuItem);
-		settings.add(graphSettings);
-		settings.add(visualizationSettings);
-		settings.add(rendererSettings);
+		settings.add(generalSettingsMenuItem);
+		settings.add(graphSettingsMenuItem);
+		settings.add(visualizationSettingsMenuItem);
+		settings.add(rendererSettingsMenuItem);
+		settings.add(new JSeparator());
+		settings.add(createMenuItem("Open Workspace Folder...",
+				() -> VanesaUtility.openFolderInExplorer(Workspace.getCurrent().getPath())));
 
 		graph.add(generateGraph);
-		if (SettingsManager.getInstance().isDeveloperMode()) {
+		if (Workspace.getCurrentSettings().isDeveloperMode()) {
 			graph.add(enrichGene);
 			graph.add(enrichMirna);
 			graph.add(shake);
 			graph.add(wuff);
 		}
 
-		generateGraph.add(mathLaw);
-		generateGraph.add(biGraph);
+		generateGraph.add(generateRandomGraphMenuItem);
+		generateGraph.add(generateBiGraphMenuItem);
 		generateGraph.add(regularGraph);
 		generateGraph.add(connectedGraph);
 		generateGraph.add(hamiltonGraph);

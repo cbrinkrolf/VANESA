@@ -9,7 +9,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import biologicalElements.Pathway;
-import configurations.SettingsManager;
+import configurations.Workspace;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationServer;
@@ -114,7 +114,7 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	}
 
 	private void drawFPS(final Graphics2D g2d) {
-		if (SettingsManager.getInstance().isDeveloperMode()) {
+		if (Workspace.getCurrentSettings().isDeveloperMode()) {
 			g2d.drawString("FPS: " + fpsCounter, getWidth() - 75, 33);
 			fpsCounter++;
 			long stop = System.currentTimeMillis();

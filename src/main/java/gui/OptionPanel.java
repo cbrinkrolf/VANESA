@@ -5,7 +5,7 @@ import javax.swing.*;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
-import configurations.SettingsManager;
+import configurations.Workspace;
 import database.gui.DatabaseWindow;
 import gui.optionPanelWindows.BuildingBlocks;
 import gui.optionPanelWindows.ElementTree;
@@ -108,7 +108,7 @@ public class OptionPanel {
 		taskPaneContainer.add(bbProperties, "growx");
 		taskPaneContainer.add(pathways, "growx");
 		// taskPaneContainer.add(dbProperties);
-		if (SettingsManager.getInstance().isDeveloperMode()) {
+		if (Workspace.getCurrentSettings().isDeveloperMode()) {
 			// taskPaneContainer.add(heatgraphProperties, "growx");
 			taskPaneContainer.add(project, "growx");
 			// taskPaneContainer.add(alignment);
