@@ -753,6 +753,12 @@ public class ElementWindow implements ActionListener, ItemListener {
 					}
 
 				} else {
+					isDirected.setSelected(((BiologicalEdgeAbstract) ab).isDirected());
+					isDirected.setToolTipText("Is directed");
+					isDirected.setActionCommand("isDirected");
+					isDirected.addActionListener(this);
+					p.add(new JLabel("Is directed"), "gap 5, split 2 ");
+					p.add(isDirected, "wrap");
 
 					if (ab instanceof Inhibition) {
 						Inhibition inhib = (Inhibition) ab;
@@ -776,15 +782,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 						p.add(absolute, "flowx, split 2, gap 5");
 						p.add(relative, "gap 5, wrap");
 					}
-
-					isDirected.setSelected(((BiologicalEdgeAbstract) ab).isDirected());
-					isDirected.setToolTipText("Is directed");
-					isDirected.setActionCommand("isDirected");
-					isDirected.addActionListener(this);
-					p.add(new JLabel("Is directed"), "gap 5, split 2 ");
-					p.add(isDirected, "wrap");
 				}
-
 			}
 
 			if (ab instanceof DynamicNode) {
