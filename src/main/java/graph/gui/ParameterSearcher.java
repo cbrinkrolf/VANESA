@@ -556,7 +556,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			if (name.startsWith("km_")) {
 				name = name.substring(3);
 			}
-			for (BiologicalNodeAbstract tmp : GraphInstance.getMyGraph().getJungGraph().getNeighbors(bna)) {
+			for (BiologicalNodeAbstract tmp : GraphInstance.getVanesaGraph().getNeighbors(bna)) {
 				String lbl = tmp.getLabel();
 				if (FormulaSafety.replace(lbl).equals(name)) {
 					name = lbl;

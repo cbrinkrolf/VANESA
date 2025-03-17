@@ -125,7 +125,7 @@ public class MirnaSearch {
                     bnas.put(mature.name, tmp);
                     counterNodes++;
                 }
-                if (!pw.existEdge(tmp, bna)) {
+                if (!pw.containsEdge(tmp, bna)) {
                     PhysicalInteraction exp = new PhysicalInteraction("", "", tmp, bna);
                     exp.setDirected(true);
                     pw.addEdge(exp);
@@ -177,7 +177,7 @@ public class MirnaSearch {
                     bnas.put(mature.name, tmp);
                     counterNodes++;
                 }
-                if (!pw.existEdge(bna, tmp)) {
+                if (!pw.containsEdge(bna, tmp)) {
                     Expression exp = new Expression("", "", bna, tmp);
                     exp.setDirected(true);
                     pw.addEdge(exp);
@@ -224,7 +224,7 @@ public class MirnaSearch {
                     bnas.put(label, tmp);
                     counterNodes++;
                 }
-                if (!pw.existEdge(tmp, bna)) {
+                if (!pw.containsEdge(tmp, bna)) {
                     Expression exp = new Expression("", "", tmp, bna);
                     exp.setDirected(true);
                     pw.addEdge(exp);
@@ -271,7 +271,7 @@ public class MirnaSearch {
                     bnas.put(label, tmp);
                     counterNodes++;
                 }
-                if (!pw.existEdge(bna, tmp)) {
+                if (!pw.containsEdge(bna, tmp)) {
                     PhysicalInteraction exp = new PhysicalInteraction("", "", bna, tmp);
                     exp.setDirected(true);
                     pw.addEdge(exp);

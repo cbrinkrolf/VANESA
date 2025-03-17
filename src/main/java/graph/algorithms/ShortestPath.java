@@ -62,7 +62,7 @@ public class ShortestPath {
 			if (p.getName().equals(endNode)) {
 				return reconstructShortestPath();
 			}
-			for (BiologicalNodeAbstract node : pw.getGraph().getJungGraph().getNeighbors(p.getName())) {
+			for (BiologicalNodeAbstract node : pw.getGraph2().getNeighbors(p.getName())) {
 				if (mindMaps) {
 					if (node.getBiologicalElement().equals(Elementdeclerations.pathwayMap)) {
 						relax(p.getName(), node, 10);

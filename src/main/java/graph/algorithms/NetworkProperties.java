@@ -43,8 +43,8 @@ public class NetworkProperties {
 		this.pw = pw;
 		mg = pw.getGraph();
 
-		nodes = mg.getAllVertices().size();
-		edges = mg.getAllEdges().size();
+		nodes = pw.getNodeCount();
+		edges = pw.getEdgeCount();
 
 		nodei = new int[edges + 1];
 		nodej = new int[edges + 1];

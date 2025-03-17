@@ -238,7 +238,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			Transition t = (Transition) geb;
 			Transition newT = null;
 			Object selectedItem = ((JComboBox<?>) event.getSource()).getSelectedItem();
-			for (BiologicalNodeAbstract neighbour : pw.getGraph().getJungGraph().getNeighbors(t)) {
+			for (BiologicalNodeAbstract neighbour : pw.getGraph2().getNeighbors(t)) {
 				for (BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
 					if (node.equals(neighbour) &&
 						(ContinuousTransition.class.getName().equals(selectedItem) &&
@@ -262,7 +262,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			}
 		} else if (source.equals("placeList")) {
 			Place p = (Place) geb;
-			for (BiologicalNodeAbstract neighbour : pw.getGraph().getJungGraph().getNeighbors(p)) {
+			for (BiologicalNodeAbstract neighbour : pw.getGraph2().getNeighbors(p)) {
 				for (BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
 					if (node.equals(neighbour) &&
 						("discrete".equals(((JComboBox<?>) event.getSource()).getSelectedItem()) &&

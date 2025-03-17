@@ -1,49 +1,43 @@
 package graph;
 
 import biologicalElements.Pathway;
+import biologicalElements.PathwayType;
 import gui.MainWindow;
 
 import java.awt.*;
 
 public class CreatePathway {
-    private final String name;
-    private final Pathway pathway;
+	public static Pathway create() {
+		return create("Untitled", PathwayType.BiologicalNetwork);
+	}
 
-    public CreatePathway() {
-        this("Untitled");
-    }
+	public static Pathway create(final PathwayType type) {
+		return create("Untitled", type);
+	}
 
-    public CreatePathway(final String title) {
-        name = title;
-        pathway = buildPathway();
-    }
+	public static Pathway create(final String title) {
+		return create(title, PathwayType.BiologicalNetwork);
+	}
 
-    private Pathway buildPathway() {
-        final MainWindow window = MainWindow.getInstance();
-        final GraphContainer con = GraphContainer.getInstance();
-        window.setCursor(Cursor.WAIT_CURSOR);
-        final String newPathwayName = con.addPathway(name, new Pathway(name));
-        final Pathway pw = con.getPathway(newPathwayName);
-        window.addTab(pw.getTab());
-        window.setCursor(Cursor.DEFAULT_CURSOR);
-        return pw;
-    }
+	public static Pathway create(final String title, final PathwayType type) {
+		final MainWindow window = MainWindow.getInstance();
+		final GraphContainer con = GraphContainer.getInstance();
+		window.setCursor(Cursor.WAIT_CURSOR);
+		final Pathway pathway = con.addPathway(title, new Pathway(title, type));
+		window.addTab(pathway.getTab());
+		window.setCursor(Cursor.DEFAULT_CURSOR);
+		return pathway;
+	}
 
-    public Pathway getPathway() {
-        return pathway;
-    }
-
-    public static void showPathway(Pathway pw) {
-        final MainWindow window = MainWindow.getInstance();
-        final GraphContainer con = GraphContainer.getInstance();
-        if (con.getAllPathways().contains(pw)) {
-            window.setSelectedTab(pw.getTab());
-            return;
-        }
-        final String newPathwayName = con.addPathway(pw.getName(), pw);
-        pw = con.getPathway(newPathwayName);
-        window.addTab(pw.getTab());
-        window.setCursor(Cursor.DEFAULT_CURSOR);
-        //pw.updateMyGraph();
-    }
+	public static void showPathway(final Pathway pw) {
+		final MainWindow window = MainWindow.getInstance();
+		final GraphContainer con = GraphContainer.getInstance();
+		if (con.getAllPathways().contains(pw)) {
+			window.setSelectedTab(pw.getTab());
+			return;
+		}
+		con.addPathway(pw.getName(), pw);
+		window.addTab(pw.getTab());
+		window.setCursor(Cursor.DEFAULT_CURSOR);
+	}
 }

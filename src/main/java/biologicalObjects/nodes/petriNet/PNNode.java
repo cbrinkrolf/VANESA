@@ -5,26 +5,26 @@ import java.util.List;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import graph.GraphInstance;
 import gui.PopUpDialog;
 import util.FormulaSafety;
 
 public abstract class PNNode extends BiologicalNodeAbstract {
-	public PNNode(String label, String name) {
+	public PNNode(final String label, final String name) {
 		super(label, name);
-		this.setLabel(label);
-		this.setName(name);
+		setLabel(label);
+		setName(name);
+	}
+
+	public PNNode(final String label, final String name, final Pathway pathway) {
+		super(label, name, pathway);
+		setLabel(label);
+		setName(name);
 	}
 
 	@Override
 	public void setName(String name) {
-		/*
-		 * if(name == null || name.trim().length() < 1){
-		 * PopUpDialog.getInstance().show("Empty name!", "Name must not be empty!");
-		 * return; }
-		 */
-		Pathway pw = GraphInstance.getPathway();
-		if (pw != null && pw.containsVertex(this) && pw.getAllNodeNames().contains(name)) {
+		final Pathway pw = getParent();
+		if (pw != null && pw.contains(this) && pw.getAllNodeNames().contains(name)) {
 			if (pw.getNodeByName(name).getClass().equals(this.getClass())) {
 				BiologicalNodeAbstract node = pw.getNodeByName(name);
 				this.setLogicalReference(node);
@@ -46,9 +46,10 @@ public abstract class PNNode extends BiologicalNodeAbstract {
 		super.setLabel(FormulaSafety.replace(label));
 	}
 
+	@Override
 	// defines parameters which are available in during transformation
 	public List<String> getTransformationParameters() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.add("name");
 		// set.add("label");
 		// set.add("ID");

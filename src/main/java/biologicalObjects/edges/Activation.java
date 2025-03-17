@@ -6,7 +6,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class Activation extends BiologicalEdgeAbstract {
 	public Activation(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
-		super(label, name, from, to);
-		setBiologicalElement(Elementdeclerations.activationEdge);
+		super(label, name, from, to, Elementdeclerations.activationEdge);
 	}
 }

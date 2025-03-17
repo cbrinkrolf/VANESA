@@ -55,7 +55,7 @@ public class MyVertexFillPaintFunction implements Function<BiologicalNodeAbstrac
             if (psV.isPicked(v))
                 return v.getColor();
             else {
-                for (BiologicalNodeAbstract w : pw.getGraph().getJungGraph().getNeighbors(v)) {
+                for (BiologicalNodeAbstract w : pw.getGraph2().getNeighbors(v)) {
                     if (psV.isPicked(w))
                         return v.getColor().brighter().brighter();
                 }

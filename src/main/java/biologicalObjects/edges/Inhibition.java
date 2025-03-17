@@ -7,8 +7,7 @@ public class Inhibition extends BiologicalEdgeAbstract {
     private boolean absoluteInhibition = true;
 
     public Inhibition(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
-        super(label, name, from, to);
-        setBiologicalElement(Elementdeclerations.inhibitionEdge);
+        super(label, name, from, to, Elementdeclerations.inhibitionEdge);
     }
 
     public boolean isAbsoluteInhibition() {

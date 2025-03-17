@@ -19,7 +19,7 @@ public class KineticBuilder {
 		if (pw == null) {
 			pw = GraphInstance.getPathway();
 		}
-		if (!pw.containsVertex(bna)) {
+		if (!pw.contains(bna)) {
 			return "";
 		}
 		Collection<BiologicalEdgeAbstract> inEdges = getDirectedInEdges(bna, pw, true);
@@ -192,7 +192,7 @@ public class KineticBuilder {
 		if (pw == null) {
 			pw = GraphInstance.getPathway();
 		}
-		if (!pw.containsVertex(bna)) {
+		if (!pw.contains(bna)) {
 			return "";
 		}
 		Collection<BiologicalEdgeAbstract> inEdges = getDirectedInEdges(bna, pw, true);
@@ -301,7 +301,7 @@ public class KineticBuilder {
 		if (pw == null) {
 			pw = GraphInstance.getPathway();
 		}
-		if (!pw.containsVertex(bna)) {
+		if (!pw.contains(bna)) {
 			return "";
 		}
 		Collection<BiologicalEdgeAbstract> substrateEdges = getDirectedInEdges(bna, pw, true);
@@ -353,7 +353,7 @@ public class KineticBuilder {
 		if (pw == null) {
 			pw = GraphInstance.getPathway();
 		}
-		if (!pw.containsVertex(bna)) {
+		if (!pw.contains(bna)) {
 			return "";
 		}
 		Collection<BiologicalEdgeAbstract> substrateEdges = getDirectedInEdges(bna, pw, true);

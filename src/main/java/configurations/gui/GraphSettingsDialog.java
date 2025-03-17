@@ -58,7 +58,6 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 	private JCheckBox disabledAntiAliasing;
 
 	private JCheckBox useDefaultTransformers;
-	private JCheckBox useDefaultTransformersSatellite;
 
 	private JSpinner minVertexLabelFontSize;
 	private JSpinner minEdgeLabelFontSize;
@@ -186,12 +185,6 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 		addSetting("Use default style for graph", "Use default transformers to visualize the graph (faster)",
 				useDefaultTransformers, () -> useDefaultTransformers.setSelected(false));
 
-		useDefaultTransformersSatellite = new JCheckBox();
-		useDefaultTransformersSatellite.setBackground(null);
-		addSetting("Use default style for satellite graph",
-				"Use default transformers to visualize the satellite view of the graph (faster)",
-				useDefaultTransformersSatellite, () -> useDefaultTransformersSatellite.setSelected(false));
-
 		minVertexLabelFontSize = new JSpinner(new SpinnerNumberModel(6, 0, 100, 1));
 		addSetting("Minimal font size of node labels",
 				"Minimal font size of node labels that define if node labels are drawn or not", minVertexLabelFontSize,
@@ -234,7 +227,6 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 		opacitySlider.setValue(graphSettings.getEdgeOpacity());
 		pixelOffset.setText(String.valueOf(graphSettings.getPixelOffset()));
 		useDefaultTransformers.setSelected(graphSettings.isDefaultTransformers());
-		useDefaultTransformersSatellite.setSelected(graphSettings.isDefaultTransformersSatellite());
 		// Performance settings
 		omitInvisibleNodes.setSelected(settings.isOmitPaintInvisibleNodes());
 		disabledAntiAliasing.setSelected(settings.isDisabledAntiAliasing());
@@ -305,7 +297,6 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 			graphSettings.setEdgeOpacity(opacitySlider.getValue());
 			graphSettings.setPixelOffset(Integer.parseInt(pixelOffset.getText()));
 			graphSettings.setDefaultTransformers(useDefaultTransformers.isSelected());
-			graphSettings.setDefaultTransformersSatellite(useDefaultTransformersSatellite.isSelected());
 			settings.setOmitPaintInvisibleNodes(omitInvisibleNodes.isSelected());
 			settings.setDisabledAntiAliasing(disabledAntiAliasing.isSelected());
 		}));
@@ -314,7 +305,7 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 		if (pathway != null) {
 			pathway.changeBackground(black.isSelected() ? "black" : "white");
 			pathway.getGraph().getEdgeDrawPaintFunction().updateEdgeAlphaValue();
-			pathway.getGraph().disableAntliasing(disabledAntiAliasing.isSelected());
+			pathway.getGraph().disableAntiAliasing(disabledAntiAliasing.isSelected());
 			pathway.getGraph().updateLabelVisibilityOnZoom();
 			pathway.getGraph().getVisualizationViewer().repaint();
 		}
@@ -323,10 +314,9 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 
 	public void onCancelClick() {
 		useDefaultTransformers.setSelected(graphSettings.isDefaultTransformers());
-		useDefaultTransformersSatellite.setSelected(graphSettings.isDefaultTransformersSatellite());
 		final Pathway pathway = GraphInstance.getPathway();
 		if (pathway != null) {
-			pathway.getGraph().disableAntliasing(graphSettings.isDisabledAntiAliasing());
+			pathway.getGraph().disableAntiAliasing(graphSettings.isDisabledAntiAliasing());
 			pathway.getGraph().updateLabelVisibilityOnZoom();
 			pathway.getGraph().getVisualizationViewer().repaint();
 		}

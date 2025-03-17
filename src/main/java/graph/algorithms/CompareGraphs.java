@@ -14,7 +14,7 @@ import gui.MainWindow;
  */
 public class CompareGraphs {
     private static void createEdges(Pathway pw, BiologicalNodeAbstract one, BiologicalNodeAbstract two) {
-        for (BiologicalNodeAbstract bna : pw.getGraph().getJungGraph().getNeighbors(one)) {
+        for (BiologicalNodeAbstract bna : pw.getGraph2().getNeighbors(one)) {
             if (pw.getGraph().getJungGraph().findEdge(bna, two) == null) {
                 if (pw.getGraph().getJungGraph().findEdge(two, one) == null) {
                     ReactionEdge e = new ReactionEdge("", "", two, bna);

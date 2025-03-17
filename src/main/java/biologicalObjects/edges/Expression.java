@@ -6,7 +6,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class Expression extends BiologicalEdgeAbstract {
 	public Expression(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
-		super(label, name, from, to);
-		setBiologicalElement(Elementdeclerations.expressionEdge);
+		super(label, name, from, to, Elementdeclerations.expressionEdge);
 	}
 }

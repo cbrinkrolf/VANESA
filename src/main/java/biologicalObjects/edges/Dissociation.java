@@ -6,7 +6,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class Dissociation extends BiologicalEdgeAbstract {
 	public Dissociation(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
-		super(label, name, from, to);
-		setBiologicalElement(Elementdeclerations.dissociationEdge);
+		super(label, name, from, to, Elementdeclerations.dissociationEdge);
 	}
 }

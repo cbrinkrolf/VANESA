@@ -12,197 +12,137 @@ import transformation.graphElements.ANYPlace;
 import transformation.graphElements.ANYTransition;
 
 public class BiologicalNodeAbstractFactory {
-
 	// creating new object with attributes of given bna (could be null)
-	public static BiologicalNodeAbstract create(String elementDeclaration, BiologicalNodeAbstract bna) {
-		BiologicalNodeAbstract newBNA;
-
-		String name = "";
-		String label = "";
-		if (bna != null) {
-			name = bna.getName();
-			label = bna.getLabel();
-		}
-
-		switch (elementDeclaration) {
-		case Elementdeclerations.collector:
-			newBNA = new Collector(name, label);
-			break;
-		case Elementdeclerations.complex:
-			newBNA = new Complex(label, name);
-			break;
-		case Elementdeclerations.compound:
-			newBNA = new CompoundNode(label, name);
-			break;
-		case Elementdeclerations.degraded:
-			newBNA = new Degraded(label, name);
-			break;
-		case Elementdeclerations.disease:
-			newBNA = new Disease(label, name);
-			break;
-		case Elementdeclerations.dna:
-			newBNA = new DNA(label, name);
-			fillDNA(newBNA, bna);
-			break;
-		case Elementdeclerations.domain:
-			newBNA = new Domain(label, name);
-			break;
-		case Elementdeclerations.drug:
-			newBNA = new Drug(label, name);
-			break;
-		case Elementdeclerations.enzyme:
-			newBNA = new Enzyme(label, name);
-			break;
-		case Elementdeclerations.exon:
-			newBNA = new Exon(label, name);
-			break;
-		case Elementdeclerations.factor:
-			newBNA = new Factor(label, name);
-			break;
-		case Elementdeclerations.fragment:
-			newBNA = new Fragment(label, name);
-			break;
-		case Elementdeclerations.gene:
-			newBNA = new Gene(label, name);
-			break;
-		case Elementdeclerations.glycan:
-			newBNA = new Glycan(label, name);
-			break;
-		case Elementdeclerations.homodimerFormation:
-			newBNA = new HomodimerFormation(label, name);
-			break;
-		case Elementdeclerations.inhibitor:
-			newBNA = new Inhibitor(label, name);
-			break;
-		case Elementdeclerations.ligandBinding:
-			newBNA = new LigandBinding(label, name);
-			break;
-		case Elementdeclerations.matrix:
-			newBNA = new Matrix(label, name);
-			break;
-		case Elementdeclerations.membraneChannel:
-			newBNA = new MembraneChannel(label, name);
-			break;
-		case Elementdeclerations.membraneReceptor:
-			newBNA = new MembraneReceptor(label, name);
-			break;
-		case Elementdeclerations.mRNA:
-			newBNA = new MRNA(label, name);
-			fillRNA(newBNA, bna);
-			break;
-		case Elementdeclerations.miRNA:
-			newBNA = new MIRNA(label, name);
-			fillRNA(newBNA, bna);
-			break;
-		case Elementdeclerations.lncRNA:
-			newBNA = new LNCRNA(label, name);
-			fillRNA(newBNA, bna);
-			break;
-		case Elementdeclerations.orthologGroup:
-			newBNA = new OrthologGroup(label, name);
-			break;
-		case Elementdeclerations.others:
-			newBNA = new Other(label, name);
-			break;
-		case Elementdeclerations.pathwayMap:
-			newBNA = new PathwayMap(label, name);
-			fillPathwayMap(newBNA, bna);
-			break;
-		case Elementdeclerations.protein:
-			newBNA = new Protein(label, name);
-			break;
-		case Elementdeclerations.reaction:
-			newBNA = new Reaction(label, name);
-			break;
-		case Elementdeclerations.receptor:
-			newBNA = new Receptor(label, name);
-			break;
-		case Elementdeclerations.rna:
-			newBNA = new RNA(label, name);
-			break;
-		case Elementdeclerations.site:
-			newBNA = new Site(label, name);
-			break;
-		// kept for legacy
-		case Elementdeclerations.smallMolecule:
-			newBNA = new Metabolite(label, name);
-			break;
-		case Elementdeclerations.metabolite:
-			newBNA = new Metabolite(label, name);
-			break;
-		case Elementdeclerations.solubleReceptor:
-			newBNA = new SolubleReceptor(label, name);
-			break;
-		case Elementdeclerations.sRNA:
-			newBNA = new SRNA(label, name);
-			fillRNA(newBNA, bna);
-			break;
-		case Elementdeclerations.transcriptionFactor:
-			newBNA = new TranscriptionFactor(label, name);
-			break;
-
-		case Elementdeclerations.discretePlace:
-			newBNA = new DiscretePlace(label, name);
-			fillPlace(newBNA, bna);
-			break;
-		case Elementdeclerations.continuousPlace:
-			newBNA = new ContinuousPlace(label, name);
-			fillPlace(newBNA, bna);
-			break;
-		case Elementdeclerations.discreteTransition:
-			newBNA = new DiscreteTransition(label, name);
-			fillDiscreteTransition(newBNA, bna);
-			break;
-		case Elementdeclerations.continuousTransition:
-			newBNA = new ContinuousTransition(label, name);
-			fillContinuousTransition(newBNA, bna);
-			break;
-		case Elementdeclerations.stochasticTransition:
-			newBNA = new StochasticTransition(label, name);
-			fillStochasticTransition(newBNA, bna);
-			break;
-		case Elementdeclerations.anyBNA:
-			newBNA = new ANYBiologicalNode(label, name);
-			break;
-		case Elementdeclerations.place:
-			newBNA = new ANYPlace(label, name);
-			break;
-		case Elementdeclerations.transition:
-			newBNA = new ANYTransition(label, name);
-			break;
-		default:
-			newBNA = new Other(label, name);
-		}
-		return newBNA;
+	public static BiologicalNodeAbstract create(final String type, final BiologicalNodeAbstract bna) {
+		return create(type, bna, bna != null ? bna.getLabel() : "", bna != null ? bna.getName() : "");
 	}
 
-	private static void fillRNA(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
+	public static BiologicalNodeAbstract create(final String type, final BiologicalNodeAbstract bna, final String label,
+			final String name) {
+		switch (type) {
+		case Elementdeclerations.collector:
+			return new Collector(name, label);
+		case Elementdeclerations.complex:
+			return new Complex(label, name);
+		case Elementdeclerations.compound:
+			return new CompoundNode(label, name);
+		case Elementdeclerations.degraded:
+			return new Degraded(label, name);
+		case Elementdeclerations.disease:
+			return new Disease(label, name);
+		case Elementdeclerations.dna:
+			return fillDNA(new DNA(label, name), bna);
+		case Elementdeclerations.domain:
+			return new Domain(label, name);
+		case Elementdeclerations.drug:
+			return new Drug(label, name);
+		case Elementdeclerations.enzyme:
+			return new Enzyme(label, name);
+		case Elementdeclerations.exon:
+			return new Exon(label, name);
+		case Elementdeclerations.factor:
+			return new Factor(label, name);
+		case Elementdeclerations.fragment:
+			return new Fragment(label, name);
+		case Elementdeclerations.gene:
+			return new Gene(label, name);
+		case Elementdeclerations.glycan:
+			return new Glycan(label, name);
+		case Elementdeclerations.homodimerFormation:
+			return new HomodimerFormation(label, name);
+		case Elementdeclerations.inhibitor:
+			return new Inhibitor(label, name);
+		case Elementdeclerations.ligandBinding:
+			return new LigandBinding(label, name);
+		case Elementdeclerations.matrix:
+			return new Matrix(label, name);
+		case Elementdeclerations.membraneChannel:
+			return new MembraneChannel(label, name);
+		case Elementdeclerations.membraneReceptor:
+			return new MembraneReceptor(label, name);
+		case Elementdeclerations.mRNA:
+			return fillRNA(new MRNA(label, name), bna);
+		case Elementdeclerations.miRNA:
+			return fillRNA(new MIRNA(label, name), bna);
+		case Elementdeclerations.lncRNA:
+			return fillRNA(new LNCRNA(label, name), bna);
+		case Elementdeclerations.orthologGroup:
+			return new OrthologGroup(label, name);
+		case Elementdeclerations.pathwayMap:
+			return fillPathwayMap(new PathwayMap(label, name), bna);
+		case Elementdeclerations.protein:
+			return new Protein(label, name);
+		case Elementdeclerations.reaction:
+			return new Reaction(label, name);
+		case Elementdeclerations.receptor:
+			return new Receptor(label, name);
+		case Elementdeclerations.rna:
+			return new RNA(label, name);
+		case Elementdeclerations.site:
+			return new Site(label, name);
+		// kept for legacy
+		case Elementdeclerations.smallMolecule:
+			return new Metabolite(label, name);
+		case Elementdeclerations.metabolite:
+			return new Metabolite(label, name);
+		case Elementdeclerations.solubleReceptor:
+			return new SolubleReceptor(label, name);
+		case Elementdeclerations.sRNA:
+			return fillRNA(new SRNA(label, name), bna);
+		case Elementdeclerations.transcriptionFactor:
+			return new TranscriptionFactor(label, name);
+		case Elementdeclerations.discretePlace:
+			fillPlace(new DiscretePlace(label, name), bna);
+		case Elementdeclerations.continuousPlace:
+			return fillPlace(new ContinuousPlace(label, name), bna);
+		case Elementdeclerations.discreteTransition:
+			return fillDiscreteTransition(new DiscreteTransition(label, name), bna);
+		case Elementdeclerations.continuousTransition:
+			return fillContinuousTransition(new ContinuousTransition(label, name), bna);
+		case Elementdeclerations.stochasticTransition:
+			return fillStochasticTransition(new StochasticTransition(label, name), bna);
+		case Elementdeclerations.anyBNA:
+			return new ANYBiologicalNode(label, name);
+		case Elementdeclerations.place:
+			return new ANYPlace(label, name);
+		case Elementdeclerations.transition:
+			return new ANYTransition(label, name);
+		case Elementdeclerations.others:
+		default:
+			return new Other(label, name);
+		}
+	}
+
+	private static BiologicalNodeAbstract fillRNA(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
 		if (bna != null) {
 			if (newBNA instanceof RNA && bna instanceof RNA) {
 				((RNA) newBNA).setNtSequence(((RNA) bna).getNtSequence());
 				((RNA) newBNA).setLogFC(((RNA) bna).getLogFC());
 			}
 		}
+		return newBNA;
 	}
 
-	private static void fillDNA(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
+	private static BiologicalNodeAbstract fillDNA(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
 		if (bna != null) {
 			if (newBNA instanceof DNA && bna instanceof DNA) {
 				((DNA) newBNA).setNtSequence(((DNA) bna).getNtSequence());
 				((DNA) newBNA).setLogFC(((DNA) bna).getLogFC());
 			}
 		}
+		return newBNA;
 	}
 
-	private static void fillPathwayMap(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
+	private static BiologicalNodeAbstract fillPathwayMap(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
 		if (bna != null) {
 			if (newBNA instanceof PathwayMap && bna instanceof PathwayMap) {
 				((PathwayMap) newBNA).setPathwayLink(((PathwayMap) bna).getPathwayLink());
 			}
 		}
+		return newBNA;
 	}
 
-	private static void fillPlace(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
+	private static BiologicalNodeAbstract fillPlace(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
 		if (bna != null) {
 			if (newBNA instanceof Place && bna instanceof Place) {
 				((Place) newBNA).setToken(((Place) bna).getToken());
@@ -211,32 +151,39 @@ public class BiologicalNodeAbstractFactory {
 				((Place) newBNA).setTokenStart(((Place) bna).getTokenStart());
 			}
 		}
+		return newBNA;
 	}
 
-	private static void fillDiscreteTransition(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
+	private static BiologicalNodeAbstract fillDiscreteTransition(BiologicalNodeAbstract newBNA,
+			BiologicalNodeAbstract bna) {
 		if (bna != null) {
 			if (newBNA instanceof DiscreteTransition && bna instanceof DiscreteTransition) {
 				((DiscreteTransition) newBNA).setDelay(((DiscreteTransition) bna).getDelay());
 				((DiscreteTransition) newBNA).setKnockedOut(((DiscreteTransition) bna).isKnockedOut());
 			}
 		}
+		return newBNA;
 	}
 
-	private static void fillContinuousTransition(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
+	private static BiologicalNodeAbstract fillContinuousTransition(BiologicalNodeAbstract newBNA,
+			BiologicalNodeAbstract bna) {
 		if (bna != null) {
 			if (newBNA instanceof ContinuousTransition && bna instanceof ContinuousTransition) {
 				((ContinuousTransition) newBNA).setMaximalSpeed(((ContinuousTransition) bna).getMaximalSpeed());
 				((ContinuousTransition) newBNA).setKnockedOut(((ContinuousTransition) bna).isKnockedOut());
 			}
 		}
+		return newBNA;
 	}
 
-	private static void fillStochasticTransition(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
+	private static BiologicalNodeAbstract fillStochasticTransition(BiologicalNodeAbstract newBNA,
+			BiologicalNodeAbstract bna) {
 		if (bna != null) {
 			if (newBNA instanceof StochasticTransition && bna instanceof StochasticTransition) {
 				((StochasticTransition) newBNA).setDistribution(((StochasticTransition) bna).getDistribution());
 				((StochasticTransition) newBNA).setKnockedOut(((StochasticTransition) bna).isKnockedOut());
 			}
 		}
+		return newBNA;
 	}
 }

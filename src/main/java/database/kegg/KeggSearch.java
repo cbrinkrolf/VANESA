@@ -77,7 +77,7 @@ public class KeggSearch {
                 }
             }
         } else if (answer == JOptionPane.NO_OPTION) {
-            Pathway newPW = new CreatePathway("Overview Pathway").getPathway();
+            Pathway newPW = CreatePathway.create("Overview Pathway");
             List<BiologicalNodeAbstract> bnas = new ArrayList<>();
             if (StringUtils.isNotBlank(enzyme))
                 bnas.add(new Enzyme(enzyme, enzyme));

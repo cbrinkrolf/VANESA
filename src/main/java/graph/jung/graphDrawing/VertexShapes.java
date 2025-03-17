@@ -155,43 +155,41 @@ public class VertexShapes {
 	 * @param num_sides the number of sides of the polygon; must be >= 3.
 	 */
 	public static Shape getRegularPolygon(int num_sides) {
-		if (!polygons.containsKey(num_sides)) {
-			GeneralPath polygon = new GeneralPath();
-			if (num_sides < 3)
-				throw new IllegalArgumentException("Number of sides must be >= 3");
-			// Rectangle2D frame = getRectangle(v);
-			float width = VertexShapes.vertexSize;// (float)frame.getWidth();
-			float height = 20;// (float)frame.getHeight();
-
-			// generate coordinates
-			double angle = 0;
-			polygon.reset();
-			polygon.moveTo(0, 0);
-			polygon.lineTo(width, 0);
-			double theta = (2 * Math.PI) / num_sides;
-			for (int i = 2; i < num_sides; i++) {
-				angle -= theta;
-				float delta_x = (float) (width * Math.cos(angle));
-				float delta_y = (float) (width * Math.sin(angle));
-				Point2D prev = polygon.getCurrentPoint();
-				polygon.lineTo((float) prev.getX() + delta_x, (float) prev.getY() + delta_y);
-			}
-			polygon.closePath();
-
-			// scale polygon to be right size, translate to center at (0,0)
-			Rectangle2D r = polygon.getBounds2D();
-			double scale_x = width / r.getWidth();
-			double scale_y = height / r.getHeight();
-			float translationX = (float) (r.getMinX() + r.getWidth() / 2);
-			float translationY = (float) (r.getMinY() + r.getHeight() / 2);
-
-			AffineTransform at = AffineTransform.getScaleInstance(scale_x, scale_y);
-			at.translate(-translationX, -translationY);
-			Shape shape = at.createTransformedShape(polygon);
-			polygons.put(num_sides, shape);
-			return shape;
+		if (polygons.containsKey(num_sides)) {
+			return polygons.get(num_sides);
 		}
-		return polygons.get(num_sides);
+		GeneralPath polygon = new GeneralPath();
+		if (num_sides < 3)
+			throw new IllegalArgumentException("Number of sides must be >= 3");
+		float width = VertexShapes.vertexSize;
+		float height = 20;
+		// generate coordinates
+		double angle = 0;
+		polygon.reset();
+		polygon.moveTo(0, 0);
+		polygon.lineTo(width, 0);
+		double theta = (2 * Math.PI) / num_sides;
+		for (int i = 2; i < num_sides; i++) {
+			angle -= theta;
+			float delta_x = (float) (width * Math.cos(angle));
+			float delta_y = (float) (width * Math.sin(angle));
+			Point2D prev = polygon.getCurrentPoint();
+			polygon.lineTo((float) prev.getX() + delta_x, (float) prev.getY() + delta_y);
+		}
+		polygon.closePath();
+
+		// scale polygon to be right size, translate to center at (0,0)
+		Rectangle2D r = polygon.getBounds2D();
+		double scale_x = width / r.getWidth();
+		double scale_y = height / r.getHeight();
+		float translationX = (float) (r.getMinX() + r.getWidth() / 2);
+		float translationY = (float) (r.getMinY() + r.getHeight() / 2);
+
+		AffineTransform at = AffineTransform.getScaleInstance(scale_x, scale_y);
+		at.translate(-translationX, -translationY);
+		Shape shape = at.createTransformedShape(polygon);
+		polygons.put(num_sides, shape);
+		return shape;
 	}
 
 	/**

@@ -15,7 +15,7 @@ public interface GraphElementAbstract extends GraphicalElementAbstract {
 
 	void setID(Pathway pw);
 
-	String getNetworklabel();
+	String getNetworkLabel();
 
 	boolean hasKEGGNode();
 
@@ -46,10 +46,6 @@ public interface GraphElementAbstract extends GraphicalElementAbstract {
 	void setColor(Color color);
 
 	String getBiologicalElement();
-
-	Shape getShape();
-
-	void setShape(Shape shape);
 
 	boolean isVisible();
 

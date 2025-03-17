@@ -37,7 +37,7 @@ public class Cov {
 	public Cov() {
 		sourcePathway = GraphInstance.getPathway();
 		createMatrices();
-		targetPathway = new CreatePathway().getPathway();
+		targetPathway = CreatePathway.create();
 		root = new CovNode("label", "name", numberPlaces);
 		double[] tmp = new double[start.size()];
 		for (int i = 0; i < start.size(); i++) {

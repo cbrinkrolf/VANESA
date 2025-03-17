@@ -14,65 +14,38 @@ import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 
 public class RandomBipartiteGraph {
-
-	public RandomBipartiteGraph() {
-	}
-
-	public static void generateRandomGraph(int numberOfNodesfirstSet,
-			int numberOfNodesSecondSet, int numberOfEdges) {
-
-		int n1 = numberOfNodesfirstSet;
-		int n2 = numberOfNodesSecondSet;
-		int m = numberOfEdges;
+	public static void generateRandomGraph(int numberOfNodesfirstSet, int numberOfNodesSecondSet, int numberOfEdges) {
 		long seed = 1;
-		int nodei[] = new int[m + 1];
-		int nodej[] = new int[m + 1];
-		Map<Integer, BiologicalNodeAbstract> nodes = new HashMap<Integer, BiologicalNodeAbstract>();
-
-		GraphTheoryAlgorithms.randomBipartiteGraph(n1, n2, m, seed, nodei,
-				nodej);
-
-		Pathway pw = new CreatePathway("Random Bipartite Graph").getPathway();
+		int[] nodei = new int[numberOfEdges + 1];
+		int[] nodej = new int[numberOfEdges + 1];
+		Map<Integer, BiologicalNodeAbstract> nodes = new HashMap<>();
+		GraphTheoryAlgorithms.randomBipartiteGraph(numberOfNodesfirstSet, numberOfNodesSecondSet, numberOfEdges, seed,
+				nodei, nodej);
+		Pathway pw = CreatePathway.create("Random Bipartite Graph");
 		MyGraph myGraph = pw.getGraph();
-
-		HashSet<Integer> set = new HashSet<Integer>();
-
+		HashSet<Integer> set = new HashSet<>();
 		for (int k = 1; k <= nodei[0]; k++) {
-
 			if (!set.contains(nodei[k])) {
 				set.add(nodei[k]);
 				Other node = new Other(nodei[k] + "", nodei[k] + "");
 				pw.addVertex(node, new Point(150, 100));
 				nodes.put(nodei[k], node);
-				// myGraph.moveVertex(node.getVertex(), 150, 100);
 			}
-
 			if (!set.contains(nodej[k])) {
 				set.add(nodej[k]);
 				Other node = new Other(nodej[k] + "", nodej[k] + "");
 				pw.addVertex(node, new Point(150, 100));
 				nodes.put(nodej[k], node);
-				// myGraph.moveVertex(node.getVertex(), 150, 100);
-
 			}
-
-			ReactionEdge r = new ReactionEdge("", "", nodes.get(nodei[k]),
-					nodes.get(nodej[k]));
-			// System.out.println(nodes.get(nodei[k]).getID());
-			// System.out.println(r.getID());
+			ReactionEdge r = new ReactionEdge("", "", nodes.get(nodei[k]), nodes.get(nodej[k]));
 			r.setDirected(false);
 			r.setVisible(true);
 			pw.addEdge(r);
-
 		}
-
 		myGraph.restartVisualizationModel();
 		pw.getGraph().normalCentering();
-
-		 MainWindow window = MainWindow.getInstance();
-		 window.updateOptionPanel();
-		// window.enable(true);
+		MainWindow window = MainWindow.getInstance();
+		window.updateOptionPanel();
 		pw.getGraph().changeToGEMLayout();
-
 	}
 }

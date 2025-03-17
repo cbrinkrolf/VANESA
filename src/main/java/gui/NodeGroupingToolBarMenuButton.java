@@ -9,6 +9,7 @@ import graph.GraphInstance;
 import graph.hierarchies.AutoCoarse;
 
 import java.awt.*;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -64,7 +65,7 @@ public class NodeGroupingToolBarMenuButton extends ToolBarMenuButton {
 		if (con.containsPathway()) {
 			GraphInstance.getPathway().groupSelectedNodes();
 			GraphInstance.getPathway().updateMyGraph();
-			final Set<BiologicalNodeAbstract> selection = GraphInstance.getPathway().getSelectedNodes();
+			final Collection<BiologicalNodeAbstract> selection = GraphInstance.getPathway().getSelectedNodes();
 			updateEnabledStateForSelectionDependentButtons(selection);
 		}
 	}
@@ -120,9 +121,8 @@ public class NodeGroupingToolBarMenuButton extends ToolBarMenuButton {
 				for (BiologicalNodeAbstract n : node.getVertices().keySet()) {
 					node.getVertices().put(n, GraphInstance.getPathway().getVertices().get(n));
 				}
-				String newPathwayName = con.addPathway(node.getLabel(), node);
-				Pathway pw = con.getPathway(newPathwayName);
-				w.addTab(pw.getTab());
+				con.addPathway(node.getLabel(), node);
+				w.addTab(node.getTab());
 				w.setCursor(Cursor.DEFAULT_CURSOR);
 				GraphInstance.getPathway().setIsPetriNet(node.isPetriNet());
 				w.getBar().updateVisibility();
@@ -147,7 +147,7 @@ public class NodeGroupingToolBarMenuButton extends ToolBarMenuButton {
 		}
 	}
 
-	public void updateEnabledStateForSelectionDependentButtons(final Set<BiologicalNodeAbstract> selection) {
+	public void updateEnabledStateForSelectionDependentButtons(final Collection<BiologicalNodeAbstract> selection) {
 		final int selectedNodeCount = selection.size();
 		mergeSelectedNodes.setEnabled(selectedNodeCount > 1);
 		splitNode.setEnabled(selectedNodeCount > 0);

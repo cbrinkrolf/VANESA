@@ -16,134 +16,79 @@ import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 
 public class RandomGraph {
-
-	public RandomGraph() {
-	}
-
-	public static void generateRandomGraph(int numberOfNodes,
-			int numberOfEdges, boolean simpleGraph, boolean directedGraph,
-			boolean acyclicGraph, boolean weightedGraph, int minimumWeight,
-			int maximumWeigth) {
-
-		int k;
-		int n = numberOfNodes;
-		int m = numberOfEdges;
+	public static void generateRandomGraph(int numberOfNodes, int numberOfEdges, boolean simpleGraph,
+			boolean directedGraph, boolean acyclicGraph, boolean weightedGraph, int minimumWeight, int maximumWeigth) {
 		long seed = 1;
-		boolean simple = simpleGraph, directed = directedGraph, acyclic = acyclicGraph, weighted = weightedGraph;
-		if (acyclic)
+		boolean directed = directedGraph;
+		if (acyclicGraph) {
 			directed = true;
-		int minweight = minimumWeight;
-		int maxweight = maximumWeigth;
-		int nodei[] = new int[m + 1];
-		int nodej[] = new int[m + 1];
-		int weight[] = new int[m + 1];
-		Map<Integer, BiologicalNodeAbstract> nodes = new HashMap<Integer, BiologicalNodeAbstract>();
-
-		k = GraphTheoryAlgorithms.randomGraph(n, m, seed, simple, directed,
-				acyclic, weighted, minweight, maxweight, nodei, nodej, weight);
+		}
+		int[] nodei = new int[numberOfEdges + 1];
+		int[] nodej = new int[numberOfEdges + 1];
+		int[] weight = new int[numberOfEdges + 1];
+		Map<Integer, BiologicalNodeAbstract> nodes = new HashMap<>();
+		int k = GraphTheoryAlgorithms.randomGraph(numberOfNodes, numberOfEdges, seed, simpleGraph, directed,
+				acyclicGraph, weightedGraph, minimumWeight, maximumWeigth, nodei, nodej, weight);
 		if (k != 0)
-			JOptionPane
-					.showMessageDialog(
-							null,
-							"Error during initialising random graph. Parameters are wrong!",
-							"Error Message", 1);
+			JOptionPane.showMessageDialog(null, "Error during initialising random graph. Parameters are wrong!",
+					"Error Message", JOptionPane.INFORMATION_MESSAGE);
 		else {
-			Pathway pw = new CreatePathway("Random Graph").getPathway();
+			Pathway pw = CreatePathway.create("Random Graph");
 			MyGraph myGraph = pw.getGraph();
-
-			HashSet<Integer> set = new HashSet<Integer>();
-
+			HashSet<Integer> set = new HashSet<>();
 			int nodeNumberCounter = 0;
-
 			Other node;
-			
-			for (k = 1; k <= m; k++) {
-
+			for (k = 1; k <= numberOfEdges; k++) {
 				if (!set.contains(nodei[k])) {
 					set.add(nodei[k]);
 					node = new Other(nodei[k] + "", nodei[k] + "");
 					pw.addVertex(node, new Point(150, 100));
 					nodes.put(nodei[k], node);
-					// myGraph.moveVertex(node, 150, 100);
 					nodeNumberCounter++;
-
 				}
-
 				if (!set.contains(nodej[k])) {
 					set.add(nodej[k]);
 					node = new Other(nodej[k] + "", nodej[k] + "");
 					pw.addVertex(node, new Point(150, 100));
 					nodes.put(nodej[k], node);
-					// myGraph.moveVertex(node.getVertex(), 150, 100);
 					nodeNumberCounter++;
 				}
-
 			}
-			for (k = 0; k < n; k++) {
-				if (nodeNumberCounter < n) {
+			for (k = 0; k < numberOfNodes; k++) {
+				if (nodeNumberCounter < numberOfNodes) {
 					if (!set.contains(k)) {
 						set.add(k);
 						node = new Other(k + "", k + "");
 						pw.addVertex(node, new Point(150, 100));
 						nodes.put(k, node);
-						// myGraph.moveVertex(node.getVertex(), 150, 100);
 						nodeNumberCounter++;
 					}
 				}
 			}
-			for (k = 1; k <= m; k++) {
-
+			for (k = 1; k <= numberOfEdges; k++) {
 				if (directed) {
-					ReactionEdge r = new ReactionEdge("", "",
-							nodes.get(nodei[k]), nodes.get(nodej[k]));// myGraph.createEdge(pw
-					// .getNodeByName(nodei[k] + "").getVertex(), pw
-					// .getNodeByName(nodej[k] + "").getVertex(), true),
-					// "", "");
-
+					ReactionEdge r = new ReactionEdge("", "", nodes.get(nodei[k]), nodes.get(nodej[k]));
 					r.setDirected(true);
 					r.setVisible(true);
-
 					if (weightedGraph) {
-						//r.setWeighted(true);
-						r.setFunction(weight[k]+"");
+						r.setFunction(weight[k] + "");
 					}
-
 					pw.addEdge(r);
-
 				} else {
-					//System.out.println("test");
-					ReactionEdge r = new ReactionEdge("", "",
-							nodes.get(nodei[k]), nodes.get(nodej[k]));
-					// ReactionEdge r = new ReactionEdge(myGraph.createEdge(pw
-					// .getNodeByName(nodei[k] + "").getVertex(), pw
-					// .getNodeByName(nodej[k] + "").getVertex(), false),
-					// "", "");
-
+					ReactionEdge r = new ReactionEdge("", "", nodes.get(nodei[k]), nodes.get(nodej[k]));
 					r.setDirected(false);
 					r.setVisible(true);
-
 					if (weightedGraph) {
-						//r.setWeighted(true);
-						r.setFunction(weight[k]+"");
+						r.setFunction(weight[k] + "");
 					}
-
 					pw.addEdge(r);
 				}
 			}
-
-			 myGraph.restartVisualizationModel();
-
-			//MainWindow window = MainWindowSingelton.getInstance();
-			//window.updateOptionPanel();
-			//window.enable(true);
-			 
+			myGraph.restartVisualizationModel();
 			pw.getGraph().changeToGEMLayout();
-			//System.out.println("drin");
 			pw.getGraph().normalCentering();
-			
 			MainWindow.getInstance().updateAllGuiElements();
 			MainWindow.getInstance().getFrame().setEnabled(true);
-			//myGraph.getVisualizationViewer().repaint();
 		}
 	}
 }

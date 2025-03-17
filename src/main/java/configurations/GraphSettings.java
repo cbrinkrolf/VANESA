@@ -15,7 +15,6 @@ public class GraphSettings {
 	private Font edgeFont = null;
 	private boolean disabledAntiAliasing;
 	private boolean defaultTransformers = false;
-	private boolean defaultTransformersSatellite = false;
 	private int minVertexFontSize = 6;
 	private int minEdgeFontSize = 6;
 
@@ -118,14 +117,6 @@ public class GraphSettings {
 
 	public void setDefaultTransformers(boolean defaultTransformers) {
 		this.defaultTransformers = defaultTransformers;
-	}
-
-	public boolean isDefaultTransformersSatellite() {
-		return defaultTransformersSatellite;
-	}
-
-	public void setDefaultTransformersSatellite(boolean defaultTransformersSatellite) {
-		this.defaultTransformersSatellite = defaultTransformersSatellite;
 	}
 
 	public int getMinVertexFontSize() {

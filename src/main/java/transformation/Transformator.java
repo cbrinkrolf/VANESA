@@ -16,6 +16,7 @@ import java.util.Set;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
+import biologicalElements.PathwayType;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -120,8 +121,7 @@ public class Transformator {
 		// multigraph is Necessary for loops
 		tmpGraph = new UndirectedSparseMultigraph<>();
 
-		petriNet = new Pathway("PN_" + pw.getName());
-		petriNet.setIsPetriNet(true);
+		petriNet = new Pathway("PN_" + pw.getName(), PathwayType.PetriNet);
 
 		matches = new ArrayList<>();
 		for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {

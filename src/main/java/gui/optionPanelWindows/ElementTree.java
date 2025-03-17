@@ -1,7 +1,5 @@
 package gui.optionPanelWindows;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.*;
 
@@ -215,9 +213,9 @@ public class ElementTree extends JPanel implements TreeSelectionListener {
 				// }
 			} else {
 				Runnable animator = () -> {
-					double nodesize = bna.getNodesize();
+					double nodesize = bna.getSize();
 					for (int i = 0; i < 10; i++) {
-						bna.setNodesize(bna.getNodesize() + (0.1 / vv.getScale()));
+						bna.setSize(bna.getSize() + (0.1 / vv.getScale()));
 						vv.repaint();
 						try {
 							Thread.sleep(50);
@@ -225,7 +223,7 @@ public class ElementTree extends JPanel implements TreeSelectionListener {
 						}
 					}
 					for (int i = 0; i < 10; i++) {
-						bna.setNodesize(bna.getNodesize() - (0.1 / vv.getScale()));
+						bna.setSize(bna.getSize() - (0.1 / vv.getScale()));
 						vv.repaint();
 						try {
 							Thread.sleep(50);
@@ -233,7 +231,7 @@ public class ElementTree extends JPanel implements TreeSelectionListener {
 						}
 					}
 					// if zoom level changes during animation: reset nodesize
-					bna.setNodesize(nodesize);
+					bna.setSize(nodesize);
 					vv.repaint();
 				};
 				Thread thread = new Thread(animator);

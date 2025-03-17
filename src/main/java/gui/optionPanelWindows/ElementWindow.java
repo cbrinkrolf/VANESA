@@ -967,7 +967,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				bea.setVisible(!hide);
 				// bea.setLabel(!hide+"");
 			}
-			for (BiologicalNodeAbstract node : pw.getGraph().getJungGraph().getNeighbors(bna)) {
+			for (BiologicalNodeAbstract node : pw.getGraph2().getNeighbors(bna)) {
 				node.setVisible(!hide);
 			}
 

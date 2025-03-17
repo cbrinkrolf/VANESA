@@ -71,7 +71,7 @@ public class JSBMLInput {
 			return "An error occurred";
 		}
 		if (pathway == null) {
-			pathway = new CreatePathway(file.getName()).getPathway();
+			pathway = CreatePathway.create(file.getName());
 		} else {
 			coarsePathway = true;
 		}
@@ -242,10 +242,6 @@ public class JSBMLInput {
 				String label = name;
 				BiologicalEdgeAbstract bea = new ReactionEdge(label, name, from, to);
 				bea.setDirected(true);
-				bea.setFrom(from);
-				bea.setTo(to);
-				bea.setLabel(label);
-				bea.setName(name);
 				Element annotation = reaction.getChild("annotation", null);
 				if (annotation != null) {
 					Element reacAnnotation = annotation.getChild("reac", null);
@@ -257,12 +253,8 @@ public class JSBMLInput {
 						if (elSub != null) {
 							label = elSub.getAttributeValue("label");
 						}
-						bea = BiologicalEdgeAbstractFactory.create(biologicalElement, null);
+						bea = BiologicalEdgeAbstractFactory.create(biologicalElement, label, name, from, to);
 						bea.setDirected(true);
-						bea.setFrom(from);
-						bea.setTo(to);
-						bea.setLabel(label);
-						bea.setName(name);
 
 						elSub = reacAnnotation.getChild("Parameters", null);
 						// elSubSub = elSub.getChild("x_Coordinate", null);
@@ -636,7 +628,7 @@ public class JSBMLInput {
 				while (!openedCoarseNodes.isEmpty()) {
 					Set<Integer> ocn = new HashSet<>(openedCoarseNodes);
 					for (Integer id : ocn) {
-						if (pathway.containsVertex(nodes.get(id))) {
+						if (pathway.contains(nodes.get(id))) {
 							pathway.openSubPathway(nodes.get(id));
 							openedCoarseNodes.remove(id);
 						}
@@ -731,7 +723,7 @@ public class JSBMLInput {
 			if (reverseEngineering) {
 				break;
 			}
-			bna.setNodesize(Double.parseDouble(value));
+			bna.setSize(Double.parseDouble(value));
 			break;
 		case "Comments":
 			bna.setComments(value);

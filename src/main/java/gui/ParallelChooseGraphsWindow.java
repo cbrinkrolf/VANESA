@@ -10,7 +10,6 @@ import org.mediavirus.parvis.gui.MainFrame;
 
 import biologicalElements.Pathway;
 import graph.algorithms.NetworkProperties;
-import util.VanesaUtility;
 
 public class ParallelChooseGraphsWindow extends ChooseGraphsWindow {
 
@@ -41,7 +40,7 @@ public class ParallelChooseGraphsWindow extends ChooseGraphsWindow {
 			name = name.replace(" ", "");
 			// System.out.println(name);
 
-			data += p.countNodes() + "\t" + p.countEdges() + "\t" + c.countNodeDegrees() + "\t" + c.getMinDegree()
+			data += p.getNodeCount() + "\t" + p.getEdgeCount() + "\t" + c.countNodeDegrees() + "\t" + c.getMinDegree()
 					+ "\t" + c.getMaxDegree() + "\t" + c.getAvgNodeDegree() + "\t" + c.averageNeighbourDegree() + "\t"
 					+ c.averageShortestPathLength() + "\t" + c.maxPathLength() + "\t" + c.getDensity() + "\t"
 					+ c.getCentralization() + "\t" + c.getGlobalMatchingIndex() + "\t" + name + "\n";

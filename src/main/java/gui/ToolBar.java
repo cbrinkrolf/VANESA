@@ -1,9 +1,7 @@
 package gui;
 
 import java.awt.Dimension;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.Set;
+import java.util.Collection;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -12,11 +10,10 @@ import javax.swing.SwingConstants;
 
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
+import biologicalElements.PathwayType;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.Workspace;
-import graph.CreatePathway;
-import graph.GraphContainer;
-import graph.GraphInstance;
+import graph.*;
 import graph.algorithms.gui.CompareGraphsGUI;
 import graph.jung.classes.MyGraph;
 import net.miginfocom.swing.MigLayout;
@@ -46,7 +43,7 @@ public class ToolBar {
 	private final JButton parallelView;
 
 	private Pathway lastPathway;
-	private ItemListener lastPathwayItemListener;
+	private GraphSelectionChangedListener lastPathwayItemListener;
 
 	public ToolBar() {
 		bar.setOrientation(SwingConstants.HORIZONTAL);
@@ -140,19 +137,17 @@ public class ToolBar {
 		final GraphContainer con = GraphContainer.getInstance();
 		final Pathway pathway = con.containsPathway() ? GraphInstance.getPathway() : null;
 		if (lastPathway != null && lastPathway != pathway) {
-			final MyGraph graph = lastPathway.getGraph(false);
-			if (graph != null) {
-				graph.getVisualizationViewer().getPickedVertexState().removeItemListener(lastPathwayItemListener);
-			}
+			final VanesaGraph graph = lastPathway.getGraph2();
+			graph.removeSelectionChangedListener(lastPathwayItemListener);
 			lastPathwayItemListener = null;
 			lastPathway = null;
 		}
 		if (lastPathway == null && pathway != null) {
-			final MyGraph graph = pathway.getGraph(false);
+			final VanesaGraph graph = pathway.getGraph2();
 			if (graph != null) {
 				lastPathway = pathway;
 				lastPathwayItemListener = this::onPathwaySelectedNodesChanged;
-				graph.getVisualizationViewer().getPickedVertexState().addItemListener(lastPathwayItemListener);
+				graph.addSelectionChangedListener(lastPathwayItemListener);
 			}
 		}
 		final boolean petriNetView = pathway != null && pathway.isPetriNet();
@@ -191,26 +186,26 @@ public class ToolBar {
 			// heatmap.setEnabled(!petriNetView);
 			// parallelView.setEnabled(!petriNetView);
 
-			final MyGraph graph = pathway.getGraph(false);
+			final VanesaGraph graph = lastPathway.getGraph2();
 			if (graph != null) {
-				final Set<BiologicalNodeAbstract> selection = lastPathway.getSelectedNodes();
+				final Collection<BiologicalNodeAbstract> selection = lastPathway.getSelectedNodes();
 				updateEnabledStateForSelectionDependentButtons(selection);
 			}
 		}
 	}
 
-	private void onPathwaySelectedNodesChanged(ItemEvent e) {
+	private void onPathwaySelectedNodesChanged() {
 		if (lastPathway == null) {
 			return;
 		}
-		final MyGraph graph = lastPathway.getGraph(false);
+		final VanesaGraph graph = lastPathway.getGraph2();
 		if (graph != null) {
-			final Set<BiologicalNodeAbstract> selection = lastPathway.getSelectedNodes();
+			final Collection<BiologicalNodeAbstract> selection = lastPathway.getSelectedNodes();
 			updateEnabledStateForSelectionDependentButtons(selection);
 		}
 	}
 
-	private void updateEnabledStateForSelectionDependentButtons(final Set<BiologicalNodeAbstract> selection) {
+	private void updateEnabledStateForSelectionDependentButtons(final Collection<BiologicalNodeAbstract> selection) {
 		final int selectedNodeCount = selection.size();
 		nodeAdjustmentMenuButton.updateEnabledStateForSelectionDependentButtons(selection);
 		nodeGroupingMenuButton.updateEnabledStateForSelectionDependentButtons(selection);
@@ -218,15 +213,13 @@ public class ToolBar {
 	}
 
 	private void onNewBiologicalNetwork() {
-		new CreatePathway();
-		GraphInstance.getPathway().setIsPetriNet(false);
+		CreatePathway.create(PathwayType.BiologicalNetwork);
 		MainWindow.getInstance().getBar().updateVisibility();
 		MainWindow.getInstance().updateAllGuiElements();
 	}
 
 	private void onNewPetriNet() {
-		new CreatePathway();
-		GraphInstance.getPathway().setIsPetriNet(true);
+		CreatePathway.create(PathwayType.PetriNet);
 		MainWindow.getInstance().getBar().updateVisibility();
 		MainWindow.getInstance().updateAllGuiElements();
 	}
@@ -262,10 +255,7 @@ public class ToolBar {
 	private void onCenterClicked() {
 		GraphContainer con = GraphContainer.getInstance();
 		if (con.containsPathway()) {
-			// CENTERING WITH SCALING
-			GraphInstance.getPathway().getGraph().normalCentering();
-			// ONLY FOR CENTERING, NOT SCALING
-			// graphInstance.getPathway().getGraph().animatedCentering();
+			GraphInstance.getPathway().getGraphRenderer().zoomAndCenterGraph(100);
 		}
 	}
 

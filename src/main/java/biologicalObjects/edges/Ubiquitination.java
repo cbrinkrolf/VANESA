@@ -6,7 +6,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class Ubiquitination extends BiologicalEdgeAbstract {
 	public Ubiquitination(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
-		super(label, name, from, to);
-		setBiologicalElement(Elementdeclerations.ubiquitinationEdge);
+		super(label, name, from, to, Elementdeclerations.ubiquitinationEdge);
 	}
 }

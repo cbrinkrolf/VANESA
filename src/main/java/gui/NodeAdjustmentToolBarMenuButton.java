@@ -5,6 +5,7 @@ import graph.GraphContainer;
 import graph.GraphInstance;
 
 import java.awt.*;
+import java.util.Collection;
 import java.util.Set;
 
 public class NodeAdjustmentToolBarMenuButton extends ToolBarMenuButton {
@@ -56,33 +57,33 @@ public class NodeAdjustmentToolBarMenuButton extends ToolBarMenuButton {
 
 	private void onAdjustDownClicked() {
 		if (GraphInstance.getMyGraph() != null) {
-			Set<BiologicalNodeAbstract> nodes = GraphInstance.getPathway().getSelectedNodes();
+			Collection<BiologicalNodeAbstract> nodes = GraphInstance.getPathway().getSelectedNodes();
 			GraphInstance.getPathway().adjustDown(nodes);
 		}
 	}
 
 	private void onAdjustLeftClicked() {
 		if (GraphInstance.getMyGraph() != null) {
-			Set<BiologicalNodeAbstract> nodes = GraphInstance.getPathway().getSelectedNodes();
+			Collection<BiologicalNodeAbstract> nodes = GraphInstance.getPathway().getSelectedNodes();
 			GraphInstance.getPathway().adjustLeft(nodes);
 		}
 	}
 
 	private void onAdjustHorizontalSpaceClicked() {
 		if (GraphInstance.getMyGraph() != null) {
-			Set<BiologicalNodeAbstract> nodes = GraphInstance.getPathway().getSelectedNodes();
+			Collection<BiologicalNodeAbstract> nodes = GraphInstance.getPathway().getSelectedNodes();
 			GraphInstance.getPathway().adjustHorizontalSpace(nodes);
 		}
 	}
 
 	private void onAdjustVerticalSpaceClicked() {
 		if (GraphInstance.getMyGraph() != null) {
-			Set<BiologicalNodeAbstract> nodes = GraphInstance.getPathway().getSelectedNodes();
+			Collection<BiologicalNodeAbstract> nodes = GraphInstance.getPathway().getSelectedNodes();
 			GraphInstance.getPathway().adjustVerticalSpace(nodes);
 		}
 	}
 
-	public void updateEnabledStateForSelectionDependentButtons(final Set<BiologicalNodeAbstract> selection) {
+	public void updateEnabledStateForSelectionDependentButtons(final Collection<BiologicalNodeAbstract> selection) {
 		final int selectedNodeCount = selection.size();
 		adjustDown.setEnabled(selectedNodeCount > 1);
 		adjustLeft.setEnabled(selectedNodeCount > 1);

@@ -125,7 +125,7 @@ public class MirnaQueryMask extends QueryMask {
 		}
 		int count = 0;
 		for (DBMirnaMature mature : results) {
-			Pathway pw = new CreatePathway("miRNA network for " + mature.name).getPathway();
+			Pathway pw = CreatePathway.create("miRNA network for " + mature.name);
 			MIRNA root = new MIRNA(mature.name, mature.name);
 			if (mature.sequence != null) {
 				root.setNtSequence(mature.sequence);
@@ -171,7 +171,6 @@ public class MirnaQueryMask extends QueryMask {
 			MyGraph myGraph = pw.getGraph();
 			myGraph.restartVisualizationModel();
 			myGraph.changeToGEMLayout();
-			myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
 			myGraph.normalCentering();
 			MainWindow.getInstance().closeProgressBar();
 			MainWindow window = MainWindow.getInstance();
@@ -206,7 +205,7 @@ public class MirnaQueryMask extends QueryMask {
 					targetGene.name);
 			if (response.payload != null && response.payload.results != null && response.payload.results.length > 0) {
 				count += response.payload.results.length;
-				Pathway pw = new CreatePathway("miRNA network for " + targetGene.name).getPathway();
+				Pathway pw = CreatePathway.create("miRNA network for " + targetGene.name);
 				MyGraph myGraph = pw.getGraph();
 				String label = targetGene.getAccession();
 				DNA root = new DNA(label, targetGene.name != null ? targetGene.name : label);
@@ -223,7 +222,6 @@ public class MirnaQueryMask extends QueryMask {
 				}
 				myGraph.restartVisualizationModel();
 				myGraph.changeToGEMLayout();
-				myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
 				myGraph.normalCentering();
 				MainWindow.getInstance().closeProgressBar();
 				MainWindow window = MainWindow.getInstance();

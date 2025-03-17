@@ -31,6 +31,7 @@ import javax.swing.event.DocumentListener;
 
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
+import biologicalElements.PathwayType;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.BiologicalEdgeAbstractFactory;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -660,27 +661,21 @@ public class RuleEditingWindow implements ActionListener {
 	}
 
 	private void createGraphs() {
-
-		bn = new Pathway("bn", true);
+		bn = new Pathway("bn", true, PathwayType.BiologicalNetwork);
 		if (rule.isBNEmpty()) {
 			bn.getGraph().setMouseModeEditing();
 			lblSetEdges.setText("[all edges]");
 		} else {
 			bn.getGraph().setMouseModePick();
 		}
-		String newPathwayName = GraphContainer.getInstance().addPathway(bn.getName(), bn);
-		bn = GraphContainer.getInstance().getPathway(newPathwayName);
-
-		pn = new Pathway("petriNet", true);
-		pn.setIsPetriNet(true);
+		GraphContainer.getInstance().addPathway(bn.getName(), bn);
+		pn = new Pathway("petriNet", true, PathwayType.PetriNet);
 		if (rule.isPNEmpty()) {
 			pn.getGraph().setMouseModeEditing();
 		} else {
 			pn.getGraph().setMouseModePick();
 		}
-		newPathwayName = GraphContainer.getInstance().addPathway(pn.getName(), pn);
-		pn = GraphContainer.getInstance().getPathway(newPathwayName);
-
+		GraphContainer.getInstance().addPathway(pn.getName(), pn);
 		PickedState<BiologicalNodeAbstract> vertexStateBN = bn.getGraph().getVisualizationViewer()
 				.getPickedVertexState();
 		PickedState<BiologicalEdgeAbstract> edgeStateBN = bn.getGraph().getVisualizationViewer().getPickedEdgeState();
@@ -688,44 +683,37 @@ public class RuleEditingWindow implements ActionListener {
 				.getPickedVertexState();
 		PickedState<BiologicalEdgeAbstract> edgeStatePN = pn.getGraph().getVisualizationViewer().getPickedEdgeState();
 
-		vertexStateBN.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-
-				if (vertexStateBN.getPicked().size() == 1 && vertexStatePN.getPicked().size() == 1) {
-					if (!bnToPn.containsKey(vertexStateBN.getPicked().iterator().next())
-							&& !bnToPn.containsValue(vertexStatePN.getPicked().iterator().next())) {
-						btnAddMapping.setEnabled(true);
-					} else {
-						btnAddMapping.setEnabled(false);
+		vertexStateBN.addItemListener(e -> {
+			if (vertexStateBN.getPicked().size() == 1 && vertexStatePN.getPicked().size() == 1) {
+				btnAddMapping.setEnabled(
+						!bnToPn.containsKey(vertexStateBN.getPicked().iterator().next()) && !bnToPn.containsValue(
+								vertexStatePN.getPicked().iterator().next()));
+			} else {
+				btnAddMapping.setEnabled(false);
+			}
+			if (!pickLock) {
+				if (vertexStateBN.getPicked().size() == 1) {
+					pickLock = true;
+					exactIncidenceChk.setEnabled(true);
+					BiologicalNodeAbstract bna = vertexStateBN.getPicked().iterator().next();
+					if (bnToPn.containsKey(bna)) {
+						vertexStatePN.clear();
+						vertexStatePN.pick(bnToPn.get(bna), true);
+						gaPN = bnToPn.get(bna);
+						elementTypePN.setText(bnToPn.get(bna).getBiologicalElement());
+						elementNamePN.setText(bnToPn.get(bna).getName());
 					}
+					pickLock = false;
+					gaBN = bna;
+					elementTypeBN.setText(bna.getBiologicalElement());
+					elementNameBN.setText(bna.getName());
+					exactIncidenceChk.setSelected(exactIncidence.contains(bna));
 				} else {
-					btnAddMapping.setEnabled(false);
-				}
-				if (!pickLock) {
-					if (vertexStateBN.getPicked().size() == 1) {
-						pickLock = true;
-						exactIncidenceChk.setEnabled(true);
-						BiologicalNodeAbstract bna = vertexStateBN.getPicked().iterator().next();
-						if (bnToPn.containsKey(bna)) {
-							vertexStatePN.clear();
-							vertexStatePN.pick(bnToPn.get(bna), true);
-							gaPN = bnToPn.get(bna);
-							elementTypePN.setText(bnToPn.get(bna).getBiologicalElement());
-							elementNamePN.setText(bnToPn.get(bna).getName());
-						}
-						pickLock = false;
-						gaBN = bna;
-						elementTypeBN.setText(bna.getBiologicalElement());
-						elementNameBN.setText(bna.getName());
-						exactIncidenceChk.setSelected(exactIncidence.contains(bna));
-					} else {
-						gaBN = null;
-						elementTypeBN.setText("");
-						elementNameBN.setText("");
-						exactIncidenceChk.setSelected(false);
-						exactIncidenceChk.setEnabled(false);
-					}
+					gaBN = null;
+					elementTypeBN.setText("");
+					elementNameBN.setText("");
+					exactIncidenceChk.setSelected(false);
+					exactIncidenceChk.setEnabled(false);
 				}
 			}
 		});
@@ -869,14 +857,11 @@ public class RuleEditingWindow implements ActionListener {
 		// put edges
 		BiologicalEdgeAbstract bea;
 		RuleEdge re;
-		Map<RuleEdge, BiologicalEdgeAbstract> edgesMap = new HashMap<RuleEdge, BiologicalEdgeAbstract>();
+		Map<RuleEdge, BiologicalEdgeAbstract> edgesMap = new HashMap<>();
 		for (int i = 0; i < rule.getBiologicalEdges().size(); i++) {
 			re = rule.getBiologicalEdges().get(i);
-			bea = BiologicalEdgeAbstractFactory.create(re.getType(), null);
-			bea.setFrom(nameToBN.get(re.getFrom().getName()));
-			bea.setTo(nameToBN.get(re.getTo().getName()));
-			bea.setLabel(re.getName());
-			bea.setName(re.getName());
+			bea = BiologicalEdgeAbstractFactory.create(re.getType(), re.getName(), re.getName(),
+					nameToBN.get(re.getFrom().getName()), nameToBN.get(re.getTo().getName()));
 			bea.setDirected(re.isDirected());
 			bn.addEdge(bea);
 			edgesMap.put(re, bea);
@@ -884,7 +869,7 @@ public class RuleEditingWindow implements ActionListener {
 		bn.updateMyGraph();
 
 		// for PN
-		Map<String, BiologicalNodeAbstract> nameToPN = new HashMap<String, BiologicalNodeAbstract>();
+		Map<String, BiologicalNodeAbstract> nameToPN = new HashMap<>();
 		for (int i = 0; i < rule.getPetriNodes().size(); i++) {
 			rn = rule.getPetriNodes().get(i);
 			bna = BiologicalNodeAbstractFactory.create(rn.getType(), null);
@@ -901,11 +886,8 @@ public class RuleEditingWindow implements ActionListener {
 		// put edges
 		for (int i = 0; i < rule.getPetriEdges().size(); i++) {
 			re = rule.getPetriEdges().get(i);
-			bea = BiologicalEdgeAbstractFactory.create(re.getType(), null);
-			bea.setFrom(nameToPN.get(re.getFrom().getName()));
-			bea.setTo(nameToPN.get(re.getTo().getName()));
-			bea.setLabel(re.getName());
-			bea.setName(re.getName());
+			bea = BiologicalEdgeAbstractFactory.create(re.getType(), re.getName(), re.getName(),
+					nameToPN.get(re.getFrom().getName()), nameToPN.get(re.getTo().getName()));
 			bea.setDirected(true);
 			pn.addEdge(bea);
 			// parameterMapping.put(bea, new HashMap<String, String>());
@@ -947,7 +929,7 @@ public class RuleEditingWindow implements ActionListener {
 		JButton btnDelete;
 		while (it.hasNext()) {
 			bna = it.next();
-			if (bn.containsVertex(bna) && pn.containsVertex(bnToPn.get(bna))) {
+			if (bn.contains(bna) && pn.contains(bnToPn.get(bna))) {
 				nodeMappingPanel.add(new JLabel(bna.getName()));
 				nodeMappingPanel.add(new JLabel(bnToPn.get(bna).getName()));
 				btnDelete = new JButton("delete");

@@ -1,6 +1,7 @@
 package util;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -197,5 +198,17 @@ public class VanesaUtility {
 	public static Rectangle scaleRectangle(final Rectangle r, final double factor) {
 		return new Rectangle((int) (r.x * factor), (int) (r.y * factor), (int) (r.width * factor),
 				(int) (r.height * factor));
+	}
+
+	public static Rectangle2D scaleRectangle(final Rectangle2D r, final double factor) {
+		return new Rectangle2D.Double(r.getX() * factor, r.getY() * factor, r.getWidth() * factor,
+				r.getHeight() * factor);
+	}
+
+	public static void trySleep(long milliseconds) {
+		try {
+			Thread.sleep(milliseconds);
+		} catch (InterruptedException ignored) {
+		}
 	}
 }

@@ -20,113 +20,63 @@ public class RandomHamiltonGraph {
 	public RandomHamiltonGraph() {
 	}
 
-	public static void generateRandomGraph(int numberOfNodes,
-			int numberOfEdges, boolean directedGraph, boolean weightedGraph,
-			int minimumWeight, int maximumWeigth) {
-
-		int k;
-		int n = numberOfNodes;
-		int m = numberOfEdges;
+	public static void generateRandomGraph(int numberOfNodes, int numberOfEdges, boolean directedGraph,
+			boolean weightedGraph, int minimumWeight, int maximumWeight) {
 		long seed = 1;
-		boolean directed = directedGraph, weighted = weightedGraph;
-		int minweight = minimumWeight;
-		int maxweight = maximumWeigth;
-		int nodei[] = new int[m + 1];
-		int nodej[] = new int[m + 1];
-		int weight[] = new int[m + 1];
-
-		k = GraphTheoryAlgorithms.randomHamiltonGraph(n, m, seed, directed,
-				weighted, minweight, maxweight, nodei, nodej, weight);
+		int[] nodei = new int[numberOfEdges + 1];
+		int[] nodej = new int[numberOfEdges + 1];
+		int[] weight = new int[numberOfEdges + 1];
+		int k = GraphTheoryAlgorithms.randomHamiltonGraph(numberOfNodes, numberOfEdges, seed, directedGraph,
+				weightedGraph, minimumWeight, maximumWeight, nodei, nodej, weight);
 		if (k != 0)
-			JOptionPane
-					.showMessageDialog(
-							null,
-							"Error during initialising random graph. Parameters are wrong!",
-							"Error Message", 1);
+			JOptionPane.showMessageDialog(null, "Error during initialising random graph. Parameters are wrong!",
+					"Error Message", JOptionPane.INFORMATION_MESSAGE);
 		else {
-
-			Pathway pw = new CreatePathway("Random Hamilton Graph")
-					.getPathway();
+			Pathway pw = CreatePathway.create("Random Hamilton Graph");
 			MyGraph myGraph = pw.getGraph();
-
-			HashSet<Integer> set = new HashSet<Integer>();
-			Map<Integer, BiologicalNodeAbstract> nodes = new HashMap<Integer, BiologicalNodeAbstract>();
-
+			HashSet<Integer> set = new HashSet<>();
+			Map<Integer, BiologicalNodeAbstract> nodes = new HashMap<>();
 			int nodeNumberCounter = 0;
-
-			for (k = 1; k <= m; k++) {
-
+			for (k = 1; k <= numberOfEdges; k++) {
 				if (!set.contains(nodei[k])) {
 					set.add(nodei[k]);
 					Other node = new Other(nodei[k] + "", nodei[k] + "");
 					pw.addVertex(node, new Point(150, 100));
-					// myGraph.moveVertex(node.getVertex(), 150, 100);
 					nodes.put(nodei[k], node);
 					nodeNumberCounter++;
-
 				}
-
 				if (!set.contains(nodej[k])) {
 					set.add(nodej[k]);
 					Other node = new Other(nodej[k] + "", nodej[k] + "");
 					pw.addVertex(node, new Point(150, 100));
-					// myGraph.moveVertex(node.getVertex(), 150, 100);
 					nodes.put(nodej[k], node);
 					nodeNumberCounter++;
 				}
-
 			}
-			for (k = 0; k < n; k++) {
-				if (nodeNumberCounter < n) {
+			for (k = 0; k < numberOfNodes; k++) {
+				if (nodeNumberCounter < numberOfNodes) {
 					if (!set.contains(k)) {
 						set.add(k);
 						Other node = new Other(k + "", k + "");
 						pw.addVertex(node, new Point(150, 100));
-						// myGraph.moveVertex(node.getVertex(), 150, 100);
 						nodes.put(k, node);
 						nodeNumberCounter++;
 					}
 				}
 			}
-			for (k = 1; k <= m; k++) {
-
-				if (directed) {
-					ReactionEdge r = new ReactionEdge("", "",
-							nodes.get(nodei[k]), nodes.get(nodej[k]));
-
-					r.setDirected(true);
-					r.setVisible(true);
-
-					if (weightedGraph) {
-						//r.setWeighted(true);
-						r.setFunction(weight[k]+"");
-					}
-
-					pw.addEdge(r);
-
-				} else {
-					ReactionEdge r = new ReactionEdge("", "",
-							nodes.get(nodei[k]), nodes.get(nodej[k]));
-
-					r.setDirected(false);
-					r.setVisible(true);
-
-					if (weightedGraph) {
-						//r.setWeighted(true);
-						r.setFunction(weight[k]+"");
-					}
-
-					pw.addEdge(r);
+			for (k = 1; k <= numberOfEdges; k++) {
+				ReactionEdge r = new ReactionEdge("", "", nodes.get(nodei[k]), nodes.get(nodej[k]));
+				r.setDirected(directedGraph);
+				r.setVisible(true);
+				if (weightedGraph) {
+					r.setFunction(weight[k] + "");
 				}
+				pw.addEdge(r);
 			}
-
 			myGraph.restartVisualizationModel();
-
 			myGraph.normalCentering();
-
 			MainWindow window = MainWindow.getInstance();
 			window.updateOptionPanel();
-			// window.enable(true);
 			pw.getGraph().changeToGEMLayout();
 		}
 	}

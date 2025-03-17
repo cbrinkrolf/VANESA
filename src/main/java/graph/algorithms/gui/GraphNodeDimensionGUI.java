@@ -208,7 +208,7 @@ public class GraphNodeDimensionGUI implements ActionListener {
 			weightings.put(bna, currentvalue);
 			
 			//set Node Size directly
-			bna.setNodesize(currentvalue);
+			bna.setSize(currentvalue);
 						
 		}	
 		
@@ -228,7 +228,7 @@ public class GraphNodeDimensionGUI implements ActionListener {
 			case 0:
 				//Standard Nodesize to 1
 				GraphInstance.getMyGraph().getAllVertices().stream().
-					forEach(bna -> bna.setNodesize(1.0d));
+					forEach(bna -> bna.setSize(1.0d));
 				nodesizefromspinner.setEnabled(false);
 				nodesizetospinner.setEnabled(false);
 				resizebutton.setEnabled(false);

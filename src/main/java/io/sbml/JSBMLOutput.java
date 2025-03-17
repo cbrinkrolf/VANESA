@@ -341,7 +341,7 @@ public class JSBMLOutput {
 		// Save attributes that every node has
 		XMLNode el = new XMLNode(new XMLNode(new XMLTriple("spec", "", ""), new XMLAttributes()));
 		el.addChild(createElSub(oneNode.getLabel(), "label"));
-		el.addChild(createElSub(String.valueOf(oneNode.getNodesize()), "Nodesize"));
+		el.addChild(createElSub(String.valueOf(oneNode.getSize()), "Nodesize"));
 		el.addChild(createElSub(oneNode.getBiologicalElement(), "BiologicalElement"));
 		// Point2D p = pathway.getGraph().getVertexLocation(oneNode);
 		// if(oneNode.getParentNode()!=null){
@@ -369,7 +369,7 @@ public class JSBMLOutput {
 		el.addChild(elParameters);
 		el.addChild(createElSub(oneNode.getComments(), "Comments"));
 		el.addChild(createElSub(oneNode.getDescription(), "Description"));
-		el.addChild(createElSub(oneNode.getNetworklabel(), "Networklabel"));
+		el.addChild(createElSub(oneNode.getNetworkLabel(), "Networklabel"));
 		el.addChild(createElSub(oneNode.getOrganism(), "Organism"));
 		el.addChild(createElSub(String.valueOf(oneNode.hasKEGGNode()), "HasKEGGNode"));
 

@@ -25,79 +25,50 @@ import graph.layouts.Circle;
 import graph.layouts.HierarchicalCircleLayout;
 
 public class HCTLayout extends HierarchicalCircleLayout {
+	private HashMap<Integer, List<BiologicalNodeAbstract>> bnaGroups;
+	private List<Integer> groupKeys;
+	private final Set<BiologicalNodeAbstract> outerNodes = new HashSet<>();
 
-	HashMap<BiologicalNodeAbstract, HashMap<Integer, List<BiologicalNodeAbstract>>> groups = new HashMap<BiologicalNodeAbstract, HashMap<Integer, List<BiologicalNodeAbstract>>>();
-
-	protected HashMap<Integer, List<BiologicalNodeAbstract>> bnaGroups;
-	protected List<Integer> groupKeys;
-	protected Set<BiologicalNodeAbstract> outterNodes = new HashSet<BiologicalNodeAbstract>();
-
-	public HCTLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g) {
-		this(g, null);
-	}
-
-	public HCTLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g, BiologicalNodeAbstract root) {
+	public HCTLayout(final Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g, BiologicalNodeAbstract root) {
 		super(g);
-		if (root != null) {
-			rootNode = root;
-		} else {
-			rootNode = computeRootNode();
-		}
+		rootNode = root != null ? root : computeRootNode();
 	}
 
-	public HCTLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g, List<BiologicalNodeAbstract> order,
-			BiologicalNodeAbstract root) {
-		super(g, order);
-		if (root != null) {
-			rootNode = root;
-		} else {
-			rootNode = computeRootNode();
-		}
-	}
-
+	@Override
 	public HCTLayoutConfig getConfig() {
 		return HCTLayoutConfig.getInstance();
 	}
 
 	@Override
 	public void initialize() {
-		Dimension d = getSize();
-
+		final Dimension d = getSize();
 		if (d != null) {
 			if (bnaGroups == null) {
 				computeCircleNumbers();
 				groupNodes();
 			}
-
 			computeCircleData(d);
-
 			int group_no = 0;
 			int vertex_no = 0;
-
-			// larger circle for a larger number of nodes on the outter circle.
+			// larger circle for a larger number of nodes on the outer circle.
 			setRadius(getRadius() * Math.log10(graphNodes.size()));
-
-			// distance between two ndoes of the same group
-			final double nodeDistance = HCTLayoutConfig.nodeDistance(bnaGroups.size() - 1, outterNodes.size());
-			// System.out.println(outterNodes.size());
-
+			// distance between two nodes of the same group
+			final double nodeDistance = HCTLayoutConfig.nodeDistance(bnaGroups.size() - 1, outerNodes.size());
 			// distance between two groups (added to small distance between two nodes)
 			final double groupDistance = HCTLayoutConfig.groupDistance(nodeDistance);
 
-			Set<BiologicalNodeAbstract> rootNodes = new HashSet<BiologicalNodeAbstract>();
-			CircleVertexData data;
-			for (Integer i : groupKeys) {
+			final Set<BiologicalNodeAbstract> rootNodes = new HashSet<>();
+			for (final Integer i : groupKeys) {
 				if (bnaGroups.get(i).get(0) == rootNode) {
 					GraphInstance.getMyGraph().moveVertex(rootNode, centerPoint.getX(), centerPoint.getY());
-
 					addCircleData(rootNode);
-					data = circleVertexDataMap.get(rootNode);
+					final CircleVertexData data = circleVertexDataMap.get(rootNode);
 					data.setCircleNumber(circles.get(rootNode));
 					data.setVertexAngle(0);
 					vertex_no++;
 					continue;
 				}
-				for (BiologicalNodeAbstract v : bnaGroups.get(i)) {
+				for (final BiologicalNodeAbstract v : bnaGroups.get(i)) {
 					if (circles.get(v) == null) {
 						continue;
 					}
@@ -105,13 +76,13 @@ public class HCTLayout extends HierarchicalCircleLayout {
 						rootNodes.add(v);
 						continue;
 					}
-					double angle = group_no * groupDistance + vertex_no * nodeDistance;
+					final double angle = group_no * groupDistance + vertex_no * nodeDistance;
 					GraphInstance.getMyGraph().moveVertex(v,
 							Math.cos(angle) * getRadius() * circles.get(v) + centerPoint.getX(),
 							Math.sin(angle) * getRadius() * circles.get(v) + centerPoint.getY());
 
 					addCircleData(v);
-					data = circleVertexDataMap.get(v);
+					final CircleVertexData data = circleVertexDataMap.get(v);
 					data.setCircleNumber(circles.get(v));
 					data.setVertexAngle(angle);
 					vertex_no++;
@@ -119,30 +90,26 @@ public class HCTLayout extends HierarchicalCircleLayout {
 				group_no++;
 			}
 			int currentCircle = maxCircle - 1;
-			Set<BiologicalNodeAbstract> children;
-			Set<Point2D> childrenLocations;
-			double angle;
 			while (currentCircle > 0) {
-				for (BiologicalNodeAbstract v : rootNodes) {
+				for (final BiologicalNodeAbstract v : rootNodes) {
 					if (circles.get(v) != currentCircle) {
 						continue;
 					}
-					children = new HashSet<BiologicalNodeAbstract>();
-					children.addAll(v.getParentNode().getCurrentShownChildrenNodes(myGraph));
+					final Set<BiologicalNodeAbstract> children = new HashSet<>(
+							v.getParentNode().getCurrentShownChildrenNodes(myGraph));
 					children.remove(v);
-					childrenLocations = new HashSet<Point2D>();
-					for (BiologicalNodeAbstract child : children) {
+					final Set<Point2D> childrenLocations = new HashSet<>();
+					for (final BiologicalNodeAbstract child : children) {
 						childrenLocations.add(Circle.getPointOnCircle(centerPoint, getRadius() * circles.get(child),
 								circleVertexDataMap.get(child).getVertexAngle()));
 					}
-					angle = Circle.getAngle(centerPoint, Circle.averagePoint(childrenLocations));
-//    		System.out.println(v.getLabel() + ": " + circles.get(v));
+					final double angle = Circle.getAngle(centerPoint, Circle.averagePoint(childrenLocations));
 					GraphInstance.getMyGraph().moveVertex(v,
 							Math.cos(angle) * getRadius() * circles.get(v) + centerPoint.getX(),
 							Math.sin(angle) * getRadius() * circles.get(v) + centerPoint.getY());
 
 					addCircleData(v);
-					data = circleVertexDataMap.get(v);
+					final CircleVertexData data = circleVertexDataMap.get(v);
 					data.setCircleNumber(circles.get(v));
 					data.setVertexAngle(angle);
 				}
@@ -154,22 +121,16 @@ public class HCTLayout extends HierarchicalCircleLayout {
 
 	/**
 	 * Computes for all graph nodes and their parents the circle they are part of.
-	 * 
+	 *
 	 * @author tloka
 	 */
 	public void computeCircleNumbers() {
-		circles = new HashMap<BiologicalNodeAbstract, Integer>();
+		circles = new HashMap<>();
 		maxCircle = 0;
-		List<BiologicalNodeAbstract> parents;
-		int circle;
-		boolean isRootNode;
-		for (BiologicalNodeAbstract node : myGraph.getAllVertices()) {
-			parents = node.getAllParentNodesSorted();
-			circle = parents.size() + 1;
-			isRootNode = false;
-			if (node.getParentNode() != null && node.getParentNode().getRootNode() == node) {
-				isRootNode = true;
-			}
+		for (BiologicalNodeAbstract node : myGraph.getNodes()) {
+			List<BiologicalNodeAbstract> parents = node.getAllParentNodesSorted();
+			int circle = parents.size() + 1;
+			boolean isRootNode = node.getParentNode() != null && node.getParentNode().getRootNode() == node;
 			if (node == rootNode) {
 				circle = 0;
 			}
@@ -193,74 +154,48 @@ public class HCTLayout extends HierarchicalCircleLayout {
 
 	@Override
 	public void groupNodes() {
-		graphNodes = new HashSet<BiologicalNodeAbstract>();
+		graphNodes = new HashSet<>();
 		graphNodes.addAll(graph.getVertices());
-
 		if (graphNodes.size() < 2) {
 			return;
 		}
-
 		order = computeOrder();
-
-		bnaGroups = new HashMap<Integer, List<BiologicalNodeAbstract>>();
-		Set<BiologicalNodeAbstract> addedNodes = new HashSet<BiologicalNodeAbstract>();
-		groupKeys = new ArrayList<Integer>();
-		BiologicalNodeAbstract currentNode;
-		BiologicalNodeAbstract referenceParent;
-
+		bnaGroups = new HashMap<>();
+		Set<BiologicalNodeAbstract> addedNodes = new HashSet<>();
+		groupKeys = new ArrayList<>();
 		for (BiologicalNodeAbstract node : order) {
-			currentNode = node.getCurrentShownParentNode(myGraph);
+			BiologicalNodeAbstract currentNode = node.getCurrentShownParentNode(myGraph);
 			if (addedNodes.contains(currentNode)) {
 				continue;
 			}
-//			if(circles.get(currentNode)==maxCircle){
-//				graphNodes.remove(currentNode);
-//				continue;
-//			}
 			if (currentNode.getParentNode() != null && currentNode.getParentNode().getRootNode() != currentNode) {
-				outterNodes.add(currentNode);
+				outerNodes.add(currentNode);
 			} else if (currentNode.getParentNode() == null && currentNode != rootNode) {
-				outterNodes.add(currentNode);
+				outerNodes.add(currentNode);
 			}
-
-			referenceParent = currentNode.getLastParentNode();
+			BiologicalNodeAbstract referenceParent = currentNode.getLastParentNode();
 			if (referenceParent == null) {
 				groupKeys.add(currentNode.getID());
-				bnaGroups.put(currentNode.getID(), new ArrayList<BiologicalNodeAbstract>());
+				bnaGroups.put(currentNode.getID(), new ArrayList<>());
 				bnaGroups.get(currentNode.getID()).add(currentNode);
 				addedNodes.add(currentNode);
 				continue;
 			}
-
 			if (!groupKeys.contains(referenceParent.getID())) {
 				groupKeys.add(referenceParent.getID());
-				bnaGroups.put(referenceParent.getID(), new ArrayList<BiologicalNodeAbstract>());
+				bnaGroups.put(referenceParent.getID(), new ArrayList<>());
 			}
 			bnaGroups.get(referenceParent.getID()).add(currentNode);
 			addedNodes.add(currentNode);
 		}
 	}
 
-	public BiologicalNodeAbstract getGroupParent(BiologicalNodeAbstract n) {
-		if (n == rootNode) {
-			return n;
-		}
-		if (n.getLastParentNode() == null) {
-			return n;
-		}
-		return n.getLastParentNode();
-	}
-
 	@Override
-	public List<BiologicalNodeAbstract> getNodesGroup(BiologicalNodeAbstract n) {
-		List<BiologicalNodeAbstract> selection = new ArrayList<BiologicalNodeAbstract>();
-		BiologicalNodeAbstract parent;
+	public List<BiologicalNodeAbstract> getNodesGroup(final BiologicalNodeAbstract n) {
+		final List<BiologicalNodeAbstract> selection = new ArrayList<>();
 		switch (HCTLayoutConfig.SELECTION) {
-		case SINGLE:
-			selection.add(n);
-			break;
-		case SUBPATH:
-			parent = n.getParentNode();
+		case SUBPATH: {
+			final BiologicalNodeAbstract parent = n.getParentNode();
 			if (parent != null && parent.getRootNode() == n) {
 				for (BiologicalNodeAbstract child : parent.getCurrentShownChildrenNodes(myGraph)) {
 					if (!selection.contains(child)) {
@@ -274,9 +209,10 @@ public class HCTLayout extends HierarchicalCircleLayout {
 					}
 				}
 			}
-			break;
-		case PATH:
-			parent = n.getParentNode();
+		}
+		break;
+		case PATH: {
+			final BiologicalNodeAbstract parent = n.getParentNode();
 			if (parent != null && parent.getRootNode() == n) {
 				for (BiologicalNodeAbstract child : parent.getCurrentShownChildrenNodes(myGraph)) {
 					if (!selection.contains(child)) {
@@ -295,15 +231,18 @@ public class HCTLayout extends HierarchicalCircleLayout {
 					selection.add(p.getRootNode());
 				}
 			}
-			break;
-		case ROUGHESTGROUP:
-			parent = n.getLastParentNode();
+		}
+		break;
+		case ROUGHESTGROUP: {
+			final BiologicalNodeAbstract parent = n.getLastParentNode();
 			for (BiologicalNodeAbstract child : parent.getCurrentShownChildrenNodes(myGraph)) {
 				if (!selection.contains(child)) {
 					selection.add(child);
 				}
 			}
-			break;
+		}
+		break;
+		case SINGLE:
 		default:
 			selection.add(n);
 			break;
@@ -313,7 +252,7 @@ public class HCTLayout extends HierarchicalCircleLayout {
 
 	/**
 	 * Computes the necessary root node for the HCT Layout.
-	 * 
+	 *
 	 * @return The root node.
 	 */
 	public BiologicalNodeAbstract computeRootNode() {
@@ -336,8 +275,8 @@ public class HCTLayout extends HierarchicalCircleLayout {
 
 	@Override
 	public void setEdgeShapes() {
-		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext()
-				.setEdgeShapeTransformer(new HctEdgeShape());
+		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeShapeTransformer(
+				new HctEdgeShape());
 		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeDrawPaintTransformer(
 				new HCTEdgePaintTransformer(GraphInstance.getMyGraph().getVisualizationViewer()));
 
@@ -357,8 +296,8 @@ public class HCTLayout extends HierarchicalCircleLayout {
 			super.apply(e);
 			BiologicalNodeAbstract first = e.getFrom();
 			BiologicalNodeAbstract second = e.getTo();
-			List<BiologicalNodeAbstract> firstParentRootNodes = new ArrayList<BiologicalNodeAbstract>();
-			List<BiologicalNodeAbstract> secondParentRootNodes = new ArrayList<BiologicalNodeAbstract>();
+			List<BiologicalNodeAbstract> firstParentRootNodes = new ArrayList<>();
+			List<BiologicalNodeAbstract> secondParentRootNodes = new ArrayList<>();
 			for (BiologicalNodeAbstract n : first.getAllParentNodesSorted()) {
 				if (n.getRootNode() != null) {
 					firstParentRootNodes.add(n.getRootNode());
@@ -381,16 +320,15 @@ public class HCTLayout extends HierarchicalCircleLayout {
 
 	protected class HctEdgeShape extends EdgeShape<BiologicalNodeAbstract, BiologicalEdgeAbstract>.Line {
 		public HctEdgeShape() {
-			new EdgeShape<BiologicalNodeAbstract, BiologicalEdgeAbstract>(graph).super();
+			new EdgeShape<>(graph).super();
 		}
 
-		public Shape apply(BiologicalEdgeAbstract context) {
-			BiologicalEdgeAbstract edge = context;
+		public Shape apply(final BiologicalEdgeAbstract edge) {
 			Pair<BiologicalNodeAbstract> endpoints = graph.getEndpoints(edge);
 			BiologicalNodeAbstract first = endpoints.getFirst();
 			BiologicalNodeAbstract second = endpoints.getSecond();
-			List<BiologicalNodeAbstract> firstParentRootNodes = new ArrayList<BiologicalNodeAbstract>();
-			List<BiologicalNodeAbstract> secondParentRootNodes = new ArrayList<BiologicalNodeAbstract>();
+			List<BiologicalNodeAbstract> firstParentRootNodes = new ArrayList<>();
+			List<BiologicalNodeAbstract> secondParentRootNodes = new ArrayList<>();
 			for (BiologicalNodeAbstract n : first.getAllParentNodesSorted()) {
 				if (n.getRootNode() != null) {
 					firstParentRootNodes.add(n.getRootNode());
@@ -401,64 +339,50 @@ public class HCTLayout extends HierarchicalCircleLayout {
 					secondParentRootNodes.add(n.getRootNode());
 				}
 			}
-
 			if (first.getParentNode() != null && first.getParentNode().getRootNode() == second) {
-				return new Line2D.Double(0.0, 0.0, 1.0, 0.0);
+				return new Line2D.Double(0, 0, 1, 0);
 			}
 			if (second.getParentNode() != null && second.getParentNode().getRootNode() == first) {
-				return new Line2D.Double(0.0, 0.0, 1.0, 0.0);
+				return new Line2D.Double(0, 0, 1, 0);
 			}
-//			if(first==rootNode || second==rootNode){
-//				return new Line2D.Double(0.0,0.0,1.0,0.0);
-//			}
-
 			if (!(firstParentRootNodes.contains(second) || secondParentRootNodes.contains(first))) {
 				if (!(first == rootNode || second == rootNode)) {
 					if (getConfig().getShowExternalEdges()) {
-						return new Line2D.Double(0.0, 0.0, 1.0, 0.0);
+						return new Line2D.Double(0, 0, 1, 0);
 					}
-					return new Line2D.Double(0.0, 0.0, 0.0, 0.0);
+					return new Line2D.Double();
 				}
 			}
-
 			if (Math.abs(circles.get(first) - circles.get(second)) == 1) {
-				return new Line2D.Double(0.0, 0.0, 1.0, 0.0);
+				return new Line2D.Double(0, 0, 1, 0);
 			}
-
 			Path2D path = new Path2D.Double();
-			Point2D lastPoint = new Point2D.Double(0.0, 0.0);
+			Point2D lastPoint = new Point2D.Double();
 			BiologicalNodeAbstract startNode = first;
 			BiologicalNodeAbstract endNode = second;
 			if (circles.get(first) < circles.get(second)) {
 				startNode = second;
 				endNode = first;
-				lastPoint = new Point2D.Double(1.0, 0.0);
+				lastPoint = new Point2D.Double(1, 0);
 			}
 			BiologicalNodeAbstract parentNode = startNode.getParentNode();
-			Set<Point2D> childNodePoints;
-			double angle;
-			Point2D location;
 			Line2D line;
 			while (parentNode != null && parentNode.getRootNode() != endNode) {
-				childNodePoints = new HashSet<Point2D>();
+				Set<Point2D> childNodePoints = new HashSet<>();
 				for (BiologicalNodeAbstract child : parentNode.getCurrentShownChildrenNodes(myGraph)) {
-					childNodePoints.add(myGraph.getVertexLocation(child));
+					childNodePoints.add(myGraph.getNodePosition(child));
 				}
-				angle = Circle.getAngle(getCenterPoint(), Circle.averagePoint(childNodePoints));
-				location = Circle.getPointOnCircle(getCenterPoint(), getRadius() * (circles.get(parentNode)), angle);
-				location = Circle.computeControlPoint(location, getCenterPoint(), myGraph.getVertexLocation(first),
-						myGraph.getVertexLocation(second));
+				double angle = Circle.getAngle(getCenterPoint(), Circle.averagePoint(childNodePoints));
+				Point2D location = Circle.getPointOnCircle(getCenterPoint(), getRadius() * (circles.get(parentNode)),
+						angle);
+				location = Circle.computeControlPoint(location, getCenterPoint(), myGraph.getNodePosition(first),
+						myGraph.getNodePosition(second));
 				line = new Line2D.Double(lastPoint, location);
 				path.append(line, true);
 				lastPoint = location;
 				parentNode = parentNode.getParentNode();
 			}
-			if (endNode == first) {
-				line = new Line2D.Double(lastPoint, new Point2D.Double(0.0, 0.0));
-
-			} else {
-				line = new Line2D.Double(lastPoint, new Point2D.Double(1.0, 0.0));
-			}
+			line = new Line2D.Double(lastPoint, new Point2D.Double(endNode == first ? 0 : 1, 0));
 			path.append(line, true);
 			return path;
 		}

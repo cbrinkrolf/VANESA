@@ -94,8 +94,7 @@ public class ProjectWindow implements FocusListener {
     }
 
     public void updateWindowTab(String name) {
-        String newName = GraphContainer.getInstance().renamePathway(pw, name);
-        pw.setName(newName);
+        GraphContainer.getInstance().renamePathway(pw, name);
         MainWindow.getInstance().renameSelectedTab(pw.getName());
         GraphContainer.getInstance().setPetriView(pw.isPetriNet());
         Component[] c = MainWindow.getInstance().getFrame().getContentPane().getComponents();
@@ -122,10 +121,10 @@ public class ProjectWindow implements FocusListener {
         String value = ((JTextField) event.getSource()).getText();
         switch (source) {
             case "pathway":
-                String newName = GraphContainer.getInstance().renamePathway(pw, value);
-                pw.setTitle(newName);
+                GraphContainer.getInstance().renamePathway(pw, value);
+                pw.setTitle(pw.getName());
                 MainWindow.getInstance().renameSelectedTab(pw.getName());
-                ((JTextField) event.getSource()).setText(newName);
+                ((JTextField) event.getSource()).setText(pw.getName());
                 break;
             case "author":
                 pw.setAuthor(value);

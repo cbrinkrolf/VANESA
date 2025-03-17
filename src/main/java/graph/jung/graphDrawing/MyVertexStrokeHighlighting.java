@@ -94,7 +94,7 @@ public class MyVertexStrokeHighlighting implements Function<BiologicalNodeAbstra
 				}
 				return heavy;
 			} else {
-				for (BiologicalNodeAbstract w : pw.getGraph().getJungGraph().getNeighbors(bna)) {
+				for (BiologicalNodeAbstract w : pw.getGraph2().getNeighbors(bna)) {
 					if (psV.isPicked(w)) {
 						if (petriNet && !isContPlace) {
 							return pn_medium;

@@ -605,7 +605,7 @@ public class VAMLInput {
 			throw new IOException("Failed to load XML");
 		}
 		if (pw == null) {
-			pw = new CreatePathway(file.getName()).getPathway();
+			pw = CreatePathway.create(file.getName());
 		}
 		pw.setFile(file);
 		Element docEl = doc.getRootElement();

@@ -6,7 +6,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class IndirectEffect extends BiologicalEdgeAbstract {
 	public IndirectEffect(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
-		super(label, name, from, to);
-		setBiologicalElement(Elementdeclerations.indirectEffectEdge);
+		super(label, name, from, to, Elementdeclerations.indirectEffectEdge);
 	}
 }

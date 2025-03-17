@@ -8,7 +8,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 public class CopySelectionSingleton extends CopySelection {
     private static CopySelection instance = null;
 
-    public CopySelectionSingleton(HashSet<BiologicalNodeAbstract> vertices, HashSet<BiologicalEdgeAbstract> edges) {
+    private CopySelectionSingleton(HashSet<BiologicalNodeAbstract> vertices, HashSet<BiologicalEdgeAbstract> edges) {
         super(vertices, edges);
     }
 

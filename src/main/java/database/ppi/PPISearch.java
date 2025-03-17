@@ -76,15 +76,13 @@ public final class PPISearch {
             return;
         }
         MainWindow.getInstance().showProgressBar("Drawing Network");
-        Pathway pw = new CreatePathway("HPRD network for " + root.name + " (depth=" + depth + ")").getPathway();
+        Pathway pw = CreatePathway.create("HPRD network for " + root.name + " (depth=" + depth + ")");
         Map<Integer, Protein> idProteinMap = drawNodes(pw, root.id, response.payload);
         drawEdges(pw, response.payload, idProteinMap);
         MyGraph graph = pw.getGraph();
         graph.restartVisualizationModel();
         graph.changeToGEMLayout();
-        graph.fitScaleOfViewer(graph.getSatelliteView());
         graph.normalCentering();
-        pw.saveVertexLocations();
         if (autoCoarse) {
             autoCoarse(graph);
         }
@@ -176,15 +174,13 @@ public final class PPISearch {
             return;
         }
         MainWindow.getInstance().showProgressBar("Drawing Network");
-        Pathway pw = new CreatePathway("Mint network for " + root.name + " (depth=" + depth + ")").getPathway();
+        Pathway pw = CreatePathway.create("Mint network for " + root.name + " (depth=" + depth + ")");
         Map<Integer, Protein> idProteinMap = drawNodes(pw, root.id, response.payload);
         drawEdges(pw, response.payload, idProteinMap);
         MyGraph graph = pw.getGraph();
         graph.restartVisualizationModel();
         graph.changeToGEMLayout();
-        graph.fitScaleOfViewer(graph.getSatelliteView());
         graph.normalCentering();
-        pw.saveVertexLocations();
         if (autoCoarse) {
             autoCoarse(graph);
         }
@@ -284,15 +280,13 @@ public final class PPISearch {
             return;
         }
         MainWindow.getInstance().showProgressBar("Drawing Network");
-        Pathway pw = new CreatePathway("IntAct network for " + root.name + " (depth=" + depth + ")").getPathway();
+        Pathway pw = CreatePathway.create("IntAct network for " + root.name + " (depth=" + depth + ")");
         Map<Integer, Protein> idProteinMap = drawNodes(pw, root.id, response.payload);
         drawEdges(pw, response.payload, idProteinMap);
         MyGraph graph = pw.getGraph();
         graph.restartVisualizationModel();
         graph.changeToGEMLayout();
-        graph.fitScaleOfViewer(graph.getSatelliteView());
         graph.normalCentering();
-        pw.saveVertexLocations();
         if (autoCoarse) {
             autoCoarse(graph);
         }

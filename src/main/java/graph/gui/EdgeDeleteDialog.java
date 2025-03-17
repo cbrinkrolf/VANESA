@@ -59,8 +59,8 @@ public class EdgeDeleteDialog {
     private void addAllConnectingEdges(BiologicalEdgeAbstract edge, JComboBox<String> edgeBox,
                                        HashMap<Integer, BiologicalEdgeAbstract> map) {
         for (BiologicalEdgeAbstract childEdge : edge.getTo().getConnectingEdges()) {
-            if (childEdge.getFrom().getCurrentShownParentNode(GraphInstance.getPathway().getGraph()) == edge.getFrom() |
-                childEdge.getTo().getCurrentShownParentNode(GraphInstance.getPathway().getGraph()) == edge.getFrom()) {
+            if (childEdge.getFrom().getCurrentShownParentNode(GraphInstance.getPathway().getGraph2()) == edge.getFrom() |
+                childEdge.getTo().getCurrentShownParentNode(GraphInstance.getPathway().getGraph2()) == edge.getFrom()) {
                 if (childEdge.isDirected()) {
                     edgeBox.addItem(childEdge.getFrom().getLabel() + " --> " + childEdge.getTo().getLabel());
                 } else {

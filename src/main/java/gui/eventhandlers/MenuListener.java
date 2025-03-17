@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.xml.stream.XMLStreamException;
 
 import biologicalElements.Pathway;
+import biologicalElements.PathwayType;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -309,7 +310,7 @@ public class MenuListener implements ActionListener {
 
 	private static void showPN() {
 		if (ensurePathway()) {
-			Pathway pw = GraphInstance.getPathway();
+			final Pathway pw = GraphInstance.getPathway();
 			if (pw != null && pw.getTransformationInformation() != null
 					&& pw.getTransformationInformation().getPetriNet() != null && !pw.isPetriNet()) {
 				Pathway petriNet = pw.getTransformationInformation().getPetriNet();
@@ -741,8 +742,8 @@ public class MenuListener implements ActionListener {
 				"Choose Network Type...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 				new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
 		if (answer != -1) {
-			new CreatePathway();
-			GraphInstance.getPathway().setIsPetriNet(answer == JOptionPane.NO_OPTION);
+			CreatePathway.create(
+					answer == JOptionPane.NO_OPTION ? PathwayType.PetriNet : PathwayType.BiologicalNetwork);
 			w.getBar().updateVisibility();
 			w.updateAllGuiElements();
 		}

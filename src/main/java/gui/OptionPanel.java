@@ -14,7 +14,6 @@ import gui.optionPanelWindows.GraphAlgorithmsWindow;
 import gui.optionPanelWindows.PathwayPropertiesWindow;
 import gui.optionPanelWindows.PathwayTree;
 import gui.optionPanelWindows.ProjectWindow;
-import gui.optionPanelWindows.SatelliteWindow;
 import gui.optionPanelWindows.SimulationResultsPlot;
 import net.miginfocom.swing.MigLayout;
 
@@ -24,7 +23,6 @@ public class OptionPanel {
 	private final ElementTree tree;
 	private final SimulationResultsPlot simResWindow;
 	private final BuildingBlocks bb;
-	private final SatelliteWindow satelliteWindow;
 	private final ElementWindow elementWindow;
 	private final ProjectWindow projectWindow;
 	private final PathwayTree pathwayTree;
@@ -67,9 +65,6 @@ public class OptionPanel {
 		graphAlgorithms = new GraphAlgorithmsWindow();
 		final JXTaskPane theory = createCollapsiblePane("Graph Analysis", null, true, graphAlgorithms.getTheoryPane());
 
-		satelliteWindow = new SatelliteWindow();
-		final JXTaskPane satellite = createCollapsiblePane("Satellite View", null, true, satelliteWindow);
-
 		simResWindow = new SimulationResultsPlot();
 		simResView = createCollapsiblePane("Petri Net Simulation", null, true, simResWindow);
 
@@ -103,7 +98,6 @@ public class OptionPanel {
 		taskPaneContainer.add(generalProperties, "growx");
 		taskPaneContainer.add(pathwayProperties, "growx");
 		taskPaneContainer.add(theory, "growx");
-		taskPaneContainer.add(satellite, "growx");
 		taskPaneContainer.add(elements, "growx");
 		taskPaneContainer.add(bbProperties, "growx");
 		taskPaneContainer.add(pathways, "growx");
@@ -148,7 +142,6 @@ public class OptionPanel {
 		tree.removeTree();
 		bb.removeTree();
 		pathwayTree.removeTree();
-		satelliteWindow.removeAllElements();
 		simResWindow.removeAllElements();
 		elementWindow.removeAllElements();
 		pathwayPropertiesWindow.removeAllElements();
@@ -161,15 +154,11 @@ public class OptionPanel {
 	}
 
 	public void updatePanel(String element) {
-		// System.out.println("element: " + element);
 		if (!updatePanels)
 			return;
 		switch (element) {
 		case "GraphTree":
 			tree.revalidateTree();
-			break;
-		case "Satellite":
-			satelliteWindow.revalidateSatelliteView();
 			break;
 		case "simulation":
 			// PCPWindow.initGraphs();

@@ -28,6 +28,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -178,8 +179,7 @@ public class GraphPopUp {
 								w.removeTab(false);
 								w.setCursor(Cursor.WAIT_CURSOR);
 								GraphContainer con = GraphContainer.getInstance();
-								String newPathwayName = con.addPathway(pwName, newPW);
-								newPW = con.getPathway(newPathwayName);
+								con.addPathway(pwName, newPW);
 								w.addTab(newPW.getTab());
 								w.setCursor(Cursor.DEFAULT_CURSOR);
 								map.setPathwayLink(newPW);
@@ -193,8 +193,7 @@ public class GraphPopUp {
 						w.removeTab(false);
 						w.setCursor(Cursor.WAIT_CURSOR);
 						GraphContainer con = GraphContainer.getInstance();
-						String newPathwayName = con.addPathway(pwName, pwLink);
-						pwLink = con.getPathway(newPathwayName);
+						con.addPathway(pwName, pwLink);
 						w.addTab(pwLink.getTab());
 						w.setCursor(Cursor.DEFAULT_CURSOR);
 					}
@@ -225,15 +224,14 @@ public class GraphPopUp {
 	}
 
 	private void onReturnToParentClicked() {
-		Pathway pw = GraphInstance.getPathway();
+		final Pathway pw = GraphInstance.getPathway();
 		if (pw != null && pw.getParent() != null) {
-			MainWindow w = MainWindow.getInstance();
-			String pwName = w.getCurrentPathway();
+			final MainWindow w = MainWindow.getInstance();
+			final String pwName = w.getCurrentPathway();
 			w.removeTab(false);
 			w.setCursor(Cursor.WAIT_CURSOR);
 			GraphContainer con = GraphContainer.getInstance();
-			String newPathwayName = con.addPathway(pwName, pw.getParent());
-			Pathway newPW = con.getPathway(newPathwayName);
+			final Pathway newPW = con.addPathway(pwName, pw.getParent());
 			w.addTab(newPW.getTab());
 			w.setCursor(Cursor.DEFAULT_CURSOR);
 			w.updateAllGuiElements();
@@ -274,7 +272,7 @@ public class GraphPopUp {
 		Pathway pw = GraphInstance.getPathway();
 		if (pw != null) {
 			MainWindow w = MainWindow.getInstance();
-			Set<BiologicalNodeAbstract> vertices = pw.getSelectedNodes();
+			Collection<BiologicalNodeAbstract> vertices = pw.getSelectedNodes();
 			if (pw.getSelectedNodes().isEmpty()) {
 				JOptionPane.showMessageDialog(w.getFrame(), "Please select a node to search after it in a database!",
 						"Operation not possible...", JOptionPane.ERROR_MESSAGE);

@@ -11,8 +11,8 @@ public class MyVertexStringer implements Function<BiologicalNodeAbstract, String
         //	return ((Place)bna).getToken() + " | " +bna.getNetworklabel();
         //}
         if (bna.isLogical()) {
-            return bna.getLogicalReference().getNetworklabel();
+            return bna.getLogicalReference().getNetworkLabel();
         }
-        return bna.getNetworklabel();
+        return bna.getNetworkLabel();
     }
 }

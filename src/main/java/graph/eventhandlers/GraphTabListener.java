@@ -52,11 +52,11 @@ public class GraphTabListener extends TabAdapter {
 	public void tabSelected(TabStateChangedEvent event) {
 		if (!tabAdded && window.getTabCount() > 0) {
 			window.updateAllGuiElements();
-			/*
-			 * window.updateElementTree(); window.updateSatelliteView();
-			 * window.updatePathwayTree(); window.updateProjectProperties();
-			 * window.updateTheoryProperties(); window.initSimResGraphs();
-			 */
+			// window.updateElementTree();
+			// window.updatePathwayTree();
+			// window.updateProjectProperties();
+			// window.updateTheoryProperties();
+			// window.initSimResGraphs();
 		}
 		tabAdded = false;
 	}

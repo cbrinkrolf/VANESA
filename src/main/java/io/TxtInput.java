@@ -25,7 +25,7 @@ public class TxtInput {
     }
 
     private final Hashtable<String, BiologicalNodeAbstract> mapping = new Hashtable<>();
-    private final Pathway pw = new CreatePathway().getPathway();
+    private final Pathway pw = CreatePathway.create();
 
     public TxtInput(InputStream is, File file) throws IOException {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(is))) {

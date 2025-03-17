@@ -89,8 +89,7 @@ public class PathwayTree extends JPanel implements TreeSelectionListener {
 			String pwName = w.getCurrentPathway();
 			w.removeTab(false);
 			w.setCursor(Cursor.WAIT_CURSOR);
-			String newPathwayName = con.addPathway(pwName, newPW);
-			newPW = con.getPathway(newPathwayName);
+			con.addPathway(pwName, newPW);
 			w.addTab(newPW.getTab());
 			w.setCursor(Cursor.DEFAULT_CURSOR);
 			w.updateAllGuiElements();

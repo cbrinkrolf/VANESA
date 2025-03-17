@@ -1,5 +1,7 @@
 package biologicalObjects.nodes.petriNet;
 
+import biologicalElements.Pathway;
+
 import java.util.List;
 
 public abstract class Transition extends PNNode {
@@ -8,12 +10,12 @@ public abstract class Transition extends PNNode {
 	private String firingCondition = "true";// "time>9.8";
 	private boolean knockedOut = false;
 
-	public Transition(String label, String name) {
+	public Transition(final String label, final String name) {
 		super(label, name);
-		if (label.equals(""))
-			setLabel(name);
-		if (name.equals(""))
-			setName(label);
+	}
+
+	public Transition(final String label, final String name, final Pathway pathway) {
+		super(label, name, pathway);
 	}
 
 	public boolean isSimulationActive() {

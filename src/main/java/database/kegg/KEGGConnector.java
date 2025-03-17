@@ -111,18 +111,17 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
     @Override
     public void done() {
-        if (dontCreatePathway)
+        if (dontCreatePathway) {
             pw = new Pathway(title);
-        else if (title != null)
-            pw = new CreatePathway(title).getPathway();
-        else
-            pw = new CreatePathway().getPathway();
-
+        } else if (title != null) {
+            pw = CreatePathway.create(title);
+        } else {
+            pw = CreatePathway.create();
+        }
         pw.setOrganism(organism);
         pw.setLink("https://www.genome.jp/pathway/" + pathwayId);
 
         MyGraph myGraph = pw.getGraph();
-
         drawNodes(allOrgElements);
         drawNodes(allEcElements);
         drawNodes(allRnElements);
@@ -140,7 +139,6 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
         myGraph.restartVisualizationModel();
         myGraph.normalCentering();
-        pw.saveVertexLocations();
         MainWindow window = MainWindow.getInstance();
         window.updateOptionPanel();
         firePropertyChange("finished", null, "finished");
@@ -292,31 +290,31 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                     subtype = bna;
             }
 
-            if (!pw.containsVertex(bna1))
+            if (!pw.contains(bna1))
                 bna1 = nodeLowToHighPriorityMap.get(new KeggNodeDescription(keggPathway, entry1));
-            if (!pw.containsVertex(bna2))
+            if (!pw.contains(bna2))
                 bna2 = nodeLowToHighPriorityMap.get(new KeggNodeDescription(keggPathway, entry2));
-            if (!pw.containsVertex(subtype))
+            if (!pw.contains(subtype))
                 subtype = nodeLowToHighPriorityMap.get(new KeggNodeDescription(keggPathway, subtypeValue));
 
             if (bna1 != null && bna2 != null) {
                 if (subtype != null) {
                     // Vertex subVertex = subtype.getVertex();
-                    if (!pw.existEdge(bna1, subtype) && !pw.existEdge(subtype, bna1)) {
+                    if (!pw.containsEdge(bna1, subtype) && !pw.containsEdge(subtype, bna1)) {
                         Compound c = new Compound("", "", bna1, subtype);
                         c.setDirected(true);
                         pw.addEdge(c);
                         pw.updateMyGraph();
                     }
 
-                    if (!pw.existEdge(subtype, bna2) && !pw.existEdge(bna2, subtype)) {
+                    if (!pw.containsEdge(subtype, bna2) && !pw.containsEdge(bna2, subtype)) {
                         Compound c2 = new Compound("", "", subtype, bna2);
                         c2.setDirected(true);
                         pw.addEdge(c2);
                         pw.updateMyGraph();
                     }
                 } else {
-                    if (!pw.existEdge(bna1, bna2) && !pw.existEdge(bna2, bna1)) {
+                    if (!pw.containsEdge(bna1, bna2) && !pw.containsEdge(bna2, bna1)) {
                         BiologicalEdgeAbstract bea;
                         switch (edgeType) {
                             case Elementdeclerations.dephosphorylationEdge:
@@ -335,9 +333,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                                 bea = new Glycosylation("+g", "", bna1, bna2);
                                 break;
                             default:
-                                bea = BiologicalEdgeAbstractFactory.create(edgeType, null);
-                                bea.setFrom(bna1);
-                                bea.setTo(bna2);
+                                bea = BiologicalEdgeAbstractFactory.create(edgeType, "", "", bna1, bna2);
                                 break;
                         }
                         bea.setDirected(true);
@@ -378,15 +374,15 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                         enzyme = bna;
                 }
             }
-            if (!pw.containsVertex(substrate))
+            if (!pw.contains(substrate))
                 substrate = nodeLowToHighPriorityMap.get(new KeggNodeDescription(keggPathway, substrateId));
-            if (!pw.containsVertex(product))
+            if (!pw.contains(product))
                 product = nodeLowToHighPriorityMap.get(new KeggNodeDescription(keggPathway, productId));
-            if (!pw.containsVertex(enzyme))
+            if (!pw.contains(enzyme))
                 enzyme = nodeLowToHighPriorityMap.get(new KeggNodeDescription(keggPathway, enzymeId));
 
             if (substrate != null && product != null && enzyme != null) {
-                if (!pw.existEdge(substrate, enzyme) && !pw.existEdge(enzyme, substrate)) {
+                if (!pw.containsEdge(substrate, enzyme) && !pw.containsEdge(enzyme, substrate)) {
                     Compound c;
                     if (reversible) {
                         c = new Compound("", "", enzyme, substrate);
@@ -397,7 +393,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                     c.setDirected(true);
                     pw.updateMyGraph();
                 }
-                if (!pw.existEdge(enzyme, product) && !pw.existEdge(product, enzyme)) {
+                if (!pw.containsEdge(enzyme, product) && !pw.containsEdge(product, enzyme)) {
                     Compound c2 = new Compound("", "", enzyme, product);
                     pw.addEdge(c2);
                     c2.setDirected(true);

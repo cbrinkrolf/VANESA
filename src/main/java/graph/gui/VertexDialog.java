@@ -79,7 +79,7 @@ public class VertexDialog {
         }
         if (pw.isHeadless()) {
             panel.add(new JLabel("Name"), "span 2, gaptop 2 ");
-            name.setText("N" + (pw.countNodes() + 1));
+            name.setText("N" + (pw.getNodeCount() + 1));
             panel.add(name, "span,wrap,growx ,gap 10, gaptop 2");
         } else {
             panel.add(new JLabel("Label"), "span 2, gaptop 2 ");

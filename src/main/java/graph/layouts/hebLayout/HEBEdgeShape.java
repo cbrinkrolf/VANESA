@@ -20,14 +20,14 @@ import edu.uci.ics.jung.graph.util.EdgeIndexFunction;
 import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import graph.GraphInstance;
-import graph.jung.classes.MyGraph;
+import graph.VanesaGraph;
 import graph.layouts.Circle;
 
 /**
  * All edge shapes must be defined so that their endpoints are at (0,0) and
  * (1,0). They will be scaled, rotated and translated into position by the
  * PluggableRenderer.
- * 
+ *
  * @author tloka
  */
 public class HEBEdgeShape<V, E> extends EdgeShape<V, E> {
@@ -41,16 +41,10 @@ public class HEBEdgeShape<V, E> extends EdgeShape<V, E> {
 	 * giving a 'spiral' effect.
 	 */
 	public static class HEBCurve<V, E> extends EdgeShape<V, E> implements Function<E, Shape> {
-		// {extends AbstractEdgeShapeTransformer<V,E> {//implements
-		// IndexedRendering<V,E> {
-
 		protected EdgeIndexFunction<V, E> parallelEdgeIndexFunction;
-
 		private static Point2D centerPoint;
-
 		private final HashMap<BiologicalNodeAbstract, Integer> layer;
 		private Integer maxLayer;
-
 		private final Graph<V, E> graph;
 
 		public Point2D getCenterPoint() {
@@ -86,18 +80,15 @@ public class HEBEdgeShape<V, E> extends EdgeShape<V, E> {
 		 * case of self-loop edges, the Loop shared instance.
 		 */
 		public Shape apply(E e) {
-			// Graph<V,E> graph = context.graph;
 			if (!(e instanceof BiologicalEdgeAbstract)) {
 				return EdgeShape.quadCurve(graph).apply(e);
 				// return new EdgeShape.CubicCurve<V, E>().apply(context);
 			}
 			Pair<V> endpoints = graph.getEndpoints(e);
-			Pair<BiologicalNodeAbstract> endpointNodes = new Pair<BiologicalNodeAbstract>(
-					(BiologicalNodeAbstract) endpoints.getFirst(), (BiologicalNodeAbstract) endpoints.getSecond());
-
+			Pair<BiologicalNodeAbstract> endpointNodes = new Pair<>((BiologicalNodeAbstract) endpoints.getFirst(),
+					(BiologicalNodeAbstract) endpoints.getSecond());
 			// current MyGraph
-			MyGraph myGraph = GraphInstance.getMyGraph();
-
+			VanesaGraph myGraph = GraphInstance.getVanesaGraph();
 			// If Loop, draw loop.
 			if (endpoints != null) {
 				boolean isLoop = endpoints.getFirst().equals(endpoints.getSecond());
@@ -105,28 +96,25 @@ public class HEBEdgeShape<V, E> extends EdgeShape<V, E> {
 					return loop.apply(e);
 				}
 			}
-
-			// Dont draw if selected group parameters fit.
+			// Don't draw if selected group parameters fit.
 			if (!HEBLayoutConfig.getInstance().getShowInternalEdges()
 					&& endpointNodes.getFirst().getParentNode() != null) {
-				if (HEBLayoutConfig.GROUP_DEPTH == HEBLayoutConfig.ROUGHEST_LEVEL && endpointNodes.getFirst()
-						.getLastParentNode() == endpointNodes.getSecond().getLastParentNode()) {
-					return new Line2D.Double(0.0, 0.0, 0.0, 0.0);
+				if (HEBLayoutConfig.GROUP_DEPTH == HEBLayoutConfig.ROUGHEST_LEVEL
+						&& endpointNodes.getFirst().getLastParentNode() == endpointNodes.getSecond()
+						.getLastParentNode()) {
+					return new Line2D.Double();
 				}
 				if (HEBLayoutConfig.GROUP_DEPTH == HEBLayoutConfig.FINEST_LEVEL
 						&& endpointNodes.getFirst().getParentNode() == endpointNodes.getSecond().getParentNode()) {
-					return new Line2D.Double(0.0, 0.0, 0.0, 0.0);
+					return new Line2D.Double();
 				}
 			}
-
 			// location of the startNode.
-			Point2D startPoint = new Point2D.Double(myGraph.getVertexLocation(endpointNodes.getFirst()).getX(),
-					myGraph.getVertexLocation(endpointNodes.getFirst()).getY());
-
+			Point2D startPoint = new Point2D.Double(myGraph.getNodePosition(endpointNodes.getFirst()).getX(),
+					myGraph.getNodePosition(endpointNodes.getFirst()).getY());
 			// location of the endNode.
-			Point2D endPoint = new Point2D.Double(myGraph.getVertexLocation(endpointNodes.getSecond()).getX(),
-					myGraph.getVertexLocation(endpointNodes.getSecond()).getY());
-
+			Point2D endPoint = new Point2D.Double(myGraph.getNodePosition(endpointNodes.getSecond()).getX(),
+					myGraph.getNodePosition(endpointNodes.getSecond()).getY());
 			// The circle's attributes.
 			Point2D center = getCenterPoint();
 			double circleRadius = Point2D.distance(centerPoint.getX(), centerPoint.getY(), startPoint.getX(),
@@ -137,21 +125,18 @@ public class HEBEdgeShape<V, E> extends EdgeShape<V, E> {
 			double bundling_error = (100 - HEBLayoutConfig.EDGE_BUNDLING_PERCENTAGE) * 0.01;
 
 			// Computation of control points
-			double angle;
 			BiologicalNodeAbstract lcp = endpointNodes.getFirst().getLastCommonParentNode(endpointNodes.getSecond());
-			List<Point2D> controlPoints = new ArrayList<Point2D>();
+			List<Point2D> controlPoints = new ArrayList<>();
 			// Go through all parent nodes (bottom-up) of the start node until lcp
 			// (included).
-			Set<Point2D> childNodePoints;
-			Point2D nP;
 			for (BiologicalNodeAbstract node : endpointNodes.getFirst().getAllParentNodesSorted()) {
 				// Compute parent node coordinates
-				childNodePoints = new HashSet<Point2D>();
+				Set<Point2D> childNodePoints = new HashSet<>();
 				for (BiologicalNodeAbstract n : node.getCurrentShownChildrenNodes(myGraph)) {
-					childNodePoints.add(myGraph.getVertexLocation(n));
+					childNodePoints.add(myGraph.getNodePosition(n));
 				}
-				angle = Circle.getAngle(center, Circle.averagePoint(childNodePoints));
-				nP = Circle.getPointOnCircle(center, circleRadius, angle);
+				double angle = Circle.getAngle(center, Circle.averagePoint(childNodePoints));
+				Point2D nP = Circle.getPointOnCircle(center, circleRadius, angle);
 				nP = Circle.moveInCenterDirection(nP, center, 100 * layer.get(node) / (maxLayer + 1));
 				// Influence of bundling error
 				if (node != lcp)
@@ -177,12 +162,12 @@ public class HEBEdgeShape<V, E> extends EdgeShape<V, E> {
 				if (lcp == null || lcpreachedflag) {
 					// compute parent node coordinates
 					node = parents.get(i);
-					childNodePoints = new HashSet<Point2D>();
+					Set<Point2D> childNodePoints = new HashSet<>();
 					for (BiologicalNodeAbstract n : node.getCurrentShownChildrenNodes(myGraph)) {
-						childNodePoints.add(myGraph.getVertexLocation(n));
+						childNodePoints.add(myGraph.getNodePosition(n));
 					}
-					angle = Circle.getAngle(center, Circle.averagePoint(childNodePoints));
-					nP = Circle.getPointOnCircle(center, circleRadius, angle);
+					double angle = Circle.getAngle(center, Circle.averagePoint(childNodePoints));
+					Point2D nP = Circle.getPointOnCircle(center, circleRadius, angle);
 					nP = Circle.moveInCenterDirection(nP, center, 100 * layer.get(node) / (maxLayer + 1));
 					// Influence of bundling error
 					nP = Circle.moveInCenterDirection(nP, endPoint, bundling_error * 100);
@@ -202,13 +187,13 @@ public class HEBEdgeShape<V, E> extends EdgeShape<V, E> {
 
 			// build piecewise quadratic bezier curve
 			List<QuadCurve2D> lines = new ArrayList<>();
-			// startPoint of the next bezier curve
+			// startPoint of the next Bézier curve
 			Point2D lastPoint = new Point2D.Double(0.0f, 0.0f);
 			Point2D nP2;
 			for (int i = 0; i < controlPoints.size(); i++) {
-				// control point of the next bezier curve
-				nP = controlPoints.get(i);
-				// end point of the next bezier curve
+				// control point of the next Bézier curve
+				Point2D nP = controlPoints.get(i);
+				// end point of the next Bézier curve
 				nP2 = new Point2D.Double(1.0f, 0.0f);
 				if (i + 1 < controlPoints.size()) {
 					nP2 = controlPoints.get(i + 1);
@@ -216,7 +201,7 @@ public class HEBEdgeShape<V, E> extends EdgeShape<V, E> {
 				}
 				lines.add(new QuadCurve2D.Double(lastPoint.getX(), lastPoint.getY(), nP.getX(), nP.getY(), nP2.getX(),
 						nP2.getY()));
-				// endpoint is the next startpoint
+				// end point is the next start point
 				lastPoint = nP2;
 			}
 			Path2D path = new Path2D.Double();

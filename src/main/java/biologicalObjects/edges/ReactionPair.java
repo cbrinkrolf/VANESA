@@ -8,8 +8,7 @@ public class ReactionPair extends BiologicalEdgeAbstract {
     private boolean hasReactionPairEdge = false;
 
     public ReactionPair(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
-        super(label, name, from, to);
-        setBiologicalElement(Elementdeclerations.reactionPairEdge);
+        super(label, name, from, to, Elementdeclerations.reactionPairEdge);
     }
 
     public ReactionPairEdge getReactionPairEdge() {

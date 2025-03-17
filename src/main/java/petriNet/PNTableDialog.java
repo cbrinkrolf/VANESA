@@ -331,7 +331,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 
 					Transition t = (Transition) bnas[i];
 
-					Iterator<BiologicalNodeAbstract> k = pw.getGraph().getJungGraph().getNeighbors(t).iterator();
+					Iterator<BiologicalNodeAbstract> k = pw.getGraph2().getNeighbors(t).iterator();
 					Iterator<BiologicalNodeAbstract> j;
 					boolean stateChanged = true;
 					while (k.hasNext()) {

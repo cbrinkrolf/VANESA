@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import graph.GraphInstance;
@@ -26,11 +27,16 @@ public abstract class Place extends PNNode {
 		super(label, name);
 		setBiologicalElement(biologicalElement);
 		setDiscrete(isDiscrete);
-		if (label.isEmpty())
-			setLabel(name);
-		if (name.isEmpty())
-			setName(label);
-		setDefaultNodesize(2);
+		setDefaultSize(2);
+		setDefaultColor(Color.WHITE);
+	}
+
+	protected Place(final String label, final String name, final String biologicalElement, final boolean isDiscrete,
+			final Pathway pathway) {
+		super(label, name, pathway);
+		setBiologicalElement(biologicalElement);
+		setDiscrete(isDiscrete);
+		setDefaultSize(2);
 		setDefaultColor(Color.WHITE);
 	}
 

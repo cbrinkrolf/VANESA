@@ -23,94 +23,90 @@ import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.decorators.DirectionalEdgeArrowTransformer;
 import graph.GraphInstance;
-import graph.jung.classes.MyGraph;
+import graph.VanesaGraph;
 
-public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>{
-	
+public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
 	protected Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph;
-	protected MyGraph myGraph;
-	protected List<BiologicalNodeAbstract> order = new ArrayList<BiologicalNodeAbstract>();
+	protected VanesaGraph myGraph;
+	protected List<BiologicalNodeAbstract> order = new ArrayList<>();
 	protected Set<BiologicalNodeAbstract> graphNodes;
 	protected Point2D centerPoint;
-	protected Map<BiologicalNodeAbstract, CircleVertexData> circleVertexDataMap =
-           new HashMap<BiologicalNodeAbstract, CircleVertexData>();
+	protected Map<BiologicalNodeAbstract, CircleVertexData> circleVertexDataMap = new HashMap<>();
 	protected BiologicalNodeAbstract rootNode;
-	protected HashMap<BiologicalNodeAbstract,Integer> circles;
+	protected HashMap<BiologicalNodeAbstract, Integer> circles;
 	protected Integer maxCircle;
 
 	public HierarchicalCircleLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g) {
 		super(g);
 		graph = g;
-		myGraph = GraphInstance.getMyGraph();
+		myGraph = GraphInstance.getVanesaGraph();
 	}
-	
-	public HierarchicalCircleLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g, List<BiologicalNodeAbstract> order){
+
+	public HierarchicalCircleLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g,
+			List<BiologicalNodeAbstract> order) {
 		super(g);
 		graph = g;
 		this.order = order;
 	}
-		
+
 	@Override
 	public abstract void initialize();
-	
+
 	public abstract void groupNodes();
-	
+
 	public abstract List<BiologicalNodeAbstract> getNodesGroup(BiologicalNodeAbstract n);
-	
+
 	public abstract HierarchicalCircleLayoutConfig getConfig();
-	
+
 	public abstract void setEdgeShapes();
-	
+
 	@Override
-    protected CircleVertexData getCircleData(BiologicalNodeAbstract v) {
-        return circleVertexDataMap.get(v);
+	protected CircleVertexData getCircleData(BiologicalNodeAbstract v) {
+		return circleVertexDataMap.get(v);
 	}
-	
-	public List<BiologicalNodeAbstract> computeOrder(){
+
+	public List<BiologicalNodeAbstract> computeOrder() {
 		List<BiologicalNodeAbstract> newOrder = new ArrayList<BiologicalNodeAbstract>();
-		for(BiologicalNodeAbstract node : graph.getVertices()){
+		for (BiologicalNodeAbstract node : graph.getVertices()) {
 			newOrder.addAll(node.getLeafNodes());
 		}
 		HierarchicalOrderComparator comp = new HierarchicalOrderComparator(order);
 		newOrder.sort(comp);
 		return newOrder;
 	}
-	
-	public void computeCircleData(Dimension d){
-		double height = d.getHeight();
-        double width = d.getWidth();
 
-        setRadius(HierarchicalCircleLayoutConfig.CIRCLE_SIZE * (height < width ? height : width));
-        
-        centerPoint = new Point2D.Double(width/2, height/2);
+	public void computeCircleData(Dimension d) {
+		double height = d.getHeight();
+		double width = d.getWidth();
+		setRadius(HierarchicalCircleLayoutConfig.CIRCLE_SIZE * Math.min(height, width));
+		centerPoint = new Point2D.Double(width / 2, height / 2);
 	}
-	
+
 	/**
 	 * Includes a node to the current order.
 	 * @param node Node to be added to the order.
 	 * @author tloka
 	 */
-	public void addToOrder(BiologicalNodeAbstract node){
-		if(!node.isCoarseNode()){
+	public void addToOrder(BiologicalNodeAbstract node) {
+		if (!node.isCoarseNode()) {
 			return;
 		}
-		Set<BiologicalNodeAbstract> rootNodes = new HashSet<BiologicalNodeAbstract>();
-		rootNodes.addAll(node.getLeafNodes());
+		Set<BiologicalNodeAbstract> rootNodes = new HashSet<>(node.getLeafNodes());
 		order.sort(new OrderFusionComparator(order, rootNodes));
 	}
-	
+
 	/**
 	 * Computes the point on the layout circle based on the input angle.
 	 * @param angle Input angle
 	 * @return Point on the circle.
 	 * @author tloka
 	 */
-	public Point2D getPointOnCircle(double angle, int circle){
-		double x = (float)Math.cos(angle) * circle* getRadius() + getCenterPoint().getX();
-		double y = (float)Math.sin(angle)* circle * getRadius() + getCenterPoint().getY();
-		return new Point2D.Double(x,y);
+	public Point2D getPointOnCircle(double angle, int circle) {
+		double x = (float) Math.cos(angle) * circle * getRadius() + getCenterPoint().getX();
+		double y = (float) Math.sin(angle) * circle * getRadius() + getCenterPoint().getY();
+		return new Point2D.Double(x, y);
 	}
-	
+
 	/**
 	 * Moves the nodes on the circle based on the movement of a point.
 	 * @param p New position of the basis point (e.g. old mouse position)
@@ -118,80 +114,76 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	 * @param vv Visualization Viewer.
 	 * @author tloka
 	 */
-	public void moveOnCircle(Point p, Point down, VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv){
-        
-		Layout<BiologicalNodeAbstract,BiologicalEdgeAbstract> layout = vv.getGraphLayout();
-        
+	public void moveOnCircle(Point p, Point down,
+			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv) {
+		Layout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout = vv.getGraphLayout();
 		//compute movement angle
 		Point2D graphPoint = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
-        Point2D graphDown = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
-        Point2D centerPointTransform = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(getCenterPoint());
-    	double oldMousePositionAngle = Circle.getAngle(centerPointTransform, graphDown);
-    	double newMousePositionAngle = Circle.getAngle(centerPointTransform,graphPoint);
-        double movementAngle = newMousePositionAngle-oldMousePositionAngle;
-        
-        //move all selected nodes on the circle
+		Point2D graphDown = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
+		Point2D centerPointTransform = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(
+				getCenterPoint());
+		double oldMousePositionAngle = Circle.getAngle(centerPointTransform, graphDown);
+		double newMousePositionAngle = Circle.getAngle(centerPointTransform, graphPoint);
+		double movementAngle = newMousePositionAngle - oldMousePositionAngle;
+
+		//move all selected nodes on the circle
 		Point2D nodePoint;
-        double nodeAngle;
-        double finalAngle;
-        for(BiologicalNodeAbstract v : vv.getPickedVertexState().getPicked()) {
-        	
-        	if(v == rootNode){
-        		continue;
-        	}
-        	if(circleVertexDataMap.get(v) == null){
-        		continue;
-        	}
-
-        	nodePoint = GraphInstance.getMyGraph().getVertexLocation(v);
-        	nodeAngle = Circle.getAngle(getCenterPoint(),nodePoint);
-        	finalAngle = nodeAngle+(movementAngle);
-        	
-        	Point2D vp = layout.apply(v);
-
-        	vp.setLocation(getPointOnCircle(finalAngle, circleVertexDataMap.get(v).getCircleNumber()));
-        	GraphInstance.getMyGraph().moveVertex(v, vp.getX(), vp.getY());
-        	layout.setLocation(v, vp);     	
-        }
+		double nodeAngle;
+		double finalAngle;
+		for (BiologicalNodeAbstract v : vv.getPickedVertexState().getPicked()) {
+			if (v == rootNode) {
+				continue;
+			}
+			if (circleVertexDataMap.get(v) == null) {
+				continue;
+			}
+			nodePoint = GraphInstance.getVanesaGraph().getNodePosition(v);
+			nodeAngle = Circle.getAngle(getCenterPoint(), nodePoint);
+			finalAngle = nodeAngle + (movementAngle);
+			Point2D vp = layout.apply(v);
+			vp.setLocation(getPointOnCircle(finalAngle, circleVertexDataMap.get(v).getCircleNumber()));
+			GraphInstance.getVanesaGraph().setNodePosition(v, vp.getX(), vp.getY());
+			layout.setLocation(v, vp);
+		}
 	}
-	
+
 	/**
 	 * Saves the current node order + optional relayouting.
 	 */
-	public void saveCurrentOrder(){
+	public void saveCurrentOrder() {
 		order.sort(new AngleComparator());
-		if(getConfig().getRelayout()){
+		if (getConfig().getRelayout()) {
 			groupNodes();
 			initialize();
 		} else {
-			MyGraph g = GraphInstance.getMyGraph();
-			HashSet<BiologicalNodeAbstract> orderNodes = new HashSet<BiologicalNodeAbstract>();
-			orderNodes.addAll(g.getAllVertices());
+			VanesaGraph g = GraphInstance.getVanesaGraph();
+			HashSet<BiologicalNodeAbstract> orderNodes = new HashSet<>(g.getNodes());
 			orderNodes.removeAll(circleVertexDataMap.keySet());
-			if(!orderNodes.isEmpty()){
+			if (!orderNodes.isEmpty()) {
 				getConfig().setRelayout(true);
 				saveCurrentOrder();
 				return;
 			}
-			
-        	Point2D vp;
-			for(BiologicalNodeAbstract n : g.getAllVertices()){
-				vp = getPointOnCircle(Circle.getAngle(getCenterPoint(),g.getVertexLocation(n)), circleVertexDataMap.get(n).getCircleNumber());
-				g.moveVertex(n, vp.getX(), vp.getY());
+
+			Point2D vp;
+			for (BiologicalNodeAbstract n : g.getNodes()) {
+				vp = getPointOnCircle(Circle.getAngle(getCenterPoint(), g.getNodePosition(n)),
+						circleVertexDataMap.get(n).getCircleNumber());
+				g.setNodePosition(n, vp.getX(), vp.getY());
 			}
 			setEdgeShapes();
 		}
 		getConfig().setRelayout(false);
 		getConfig().setResetLayout(false);
 	}
-	
+
 	/**
 	 * Adds circle data of a vertex.
 	 * @param v vertex
 	 * @return The circle data of the vertex.
 	 * @author tloka
 	 */
-	protected CircleVertexData addCircleData(BiologicalNodeAbstract v){
+	protected CircleVertexData addCircleData(BiologicalNodeAbstract v) {
 		CircleVertexData cvData = new CircleVertexData();
 		circleVertexDataMap.put(v, cvData);
 		return cvData;
@@ -201,96 +193,98 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	 * Data structure to save the circle data of a node.
 	 * @author tobias
 	 */
-	public static class CircleVertexData extends CircleLayout.CircleVertexData{
-		
-        private double angle;
+	public static class CircleVertexData extends CircleLayout.CircleVertexData {
+
+		private double angle;
 		private int circleNumber = 1;
-        
-        public int getCircleNumber(){
-        	return circleNumber;
-        }
-        
-        public void setCircleNumber(int no){
+
+		public int getCircleNumber() {
+			return circleNumber;
+		}
+
+		public void setCircleNumber(int no) {
 			circleNumber = no;
 		}
-        
-        public double getVertexAngle(){
-        	return getAngle();
-        }
 
-        @Override
-        protected double getAngle() {
-                return angle;
-        }
+		public double getVertexAngle() {
+			return getAngle();
+		}
 
-        @Override
-        protected void setAngle(double angle) {
-                this.angle = angle;
-        }
-        
-        public void setVertexAngle(double angle) {
-        	this.setAngle(angle);
-        }
+		@Override
+		protected double getAngle() {
+			return angle;
+		}
 
-        @Override
-        public String toString() {
-                return "CircleVertexData: angle=" + angle;
-        }
+		@Override
+		protected void setAngle(double angle) {
+			this.angle = angle;
+		}
+
+		public void setVertexAngle(double angle) {
+			this.setAngle(angle);
+		}
+
+		@Override
+		public String toString() {
+			return "CircleVertexData: angle=" + angle;
+		}
 	}
-	
+
 	/**
 	 * Comparator to save the current shown node order with respect to their groups.
 	 * @author tobias
 	 *
 	 */
-	protected class AngleComparator implements Comparator<BiologicalNodeAbstract>{
-				
-		public AngleComparator(){
-		}
-		
-		public int compare (BiologicalNodeAbstract n1, BiologicalNodeAbstract n2){
-			MyGraph myGraph = GraphInstance.getMyGraph();
+	protected class AngleComparator implements Comparator<BiologicalNodeAbstract> {
+		public int compare(BiologicalNodeAbstract n1, BiologicalNodeAbstract n2) {
+			VanesaGraph myGraph = GraphInstance.getVanesaGraph();
 			BiologicalNodeAbstract n1P = n1.getCurrentShownParentNode(myGraph).getParentNode();
 			BiologicalNodeAbstract n2P = n2.getCurrentShownParentNode(myGraph).getParentNode();
-			Set<BiologicalNodeAbstract> n1G = new HashSet<BiologicalNodeAbstract>();
-			Set<BiologicalNodeAbstract> n2G = new HashSet<BiologicalNodeAbstract>();
-			
-			if(n1P != null){n1G.addAll(n1P.getCurrentShownChildrenNodes(myGraph));}
-			else{n1G.add(n1.getCurrentShownParentNode(myGraph));}
-			
-			if(n2P != null){n2G.addAll(n2P.getCurrentShownChildrenNodes(myGraph));}
-			else{n2G.add(n2.getCurrentShownParentNode(myGraph));}
-			
+			Set<BiologicalNodeAbstract> n1G = new HashSet<>();
+			Set<BiologicalNodeAbstract> n2G = new HashSet<>();
+
+			if (n1P != null) {
+				n1G.addAll(n1P.getCurrentShownChildrenNodes(myGraph));
+			} else {
+				n1G.add(n1.getCurrentShownParentNode(myGraph));
+			}
+
+			if (n2P != null) {
+				n2G.addAll(n2P.getCurrentShownChildrenNodes(myGraph));
+			} else {
+				n2G.add(n2.getCurrentShownParentNode(myGraph));
+			}
+
 			double n1GAngle = 360;
 			double n2GAngle = 360;
 
-			for(BiologicalNodeAbstract n : n1G){
-				double angle = Circle.getAngle(centerPoint,  myGraph.getVertexLocation(n));
-				if(angle<0){
-					angle += 2*Math.PI;
+			for (BiologicalNodeAbstract n : n1G) {
+				double angle = Circle.getAngle(centerPoint, myGraph.getNodePosition(n));
+				if (angle < 0) {
+					angle += 2 * Math.PI;
 				}
-				if(angle<n1GAngle){
+				if (angle < n1GAngle) {
 					n1GAngle = angle;
 				}
 			}
-			for(BiologicalNodeAbstract n : n2G){
-				double angle = Circle.getAngle(centerPoint,  myGraph.getVertexLocation(n));
-				if(angle<0){
-					angle += 2*Math.PI;
+			for (BiologicalNodeAbstract n : n2G) {
+				double angle = Circle.getAngle(centerPoint, myGraph.getNodePosition(n));
+				if (angle < 0) {
+					angle += 2 * Math.PI;
 				}
-				if(angle<n2GAngle){
+				if (angle < n2GAngle) {
 					n2GAngle = angle;
 				}
 			}
-			if(n1GAngle == n2GAngle){
-				n1GAngle = Circle.getAngle(centerPoint, myGraph.getVertexLocation(n1));
-				n2GAngle = Circle.getAngle(centerPoint, myGraph.getVertexLocation(n2));
-				if(n1GAngle<0)
-					n1GAngle += 2*Math.PI;
-				if(n2GAngle<0)
-					n2GAngle += 2*Math.PI;
+			if (n1GAngle == n2GAngle) {
+				n1GAngle = Circle.getAngle(centerPoint, myGraph.getNodePosition(n1));
+				n2GAngle = Circle.getAngle(centerPoint, myGraph.getNodePosition(n2));
+				if (n1GAngle < 0)
+					n1GAngle += 2 * Math.PI;
+				if (n2GAngle < 0)
+					n2GAngle += 2 * Math.PI;
 			}
-			return n1GAngle>n2GAngle ? 1 : -1;
+			return n1GAngle > n2GAngle ? 1 : -1;
 		}
 	}
 
@@ -299,107 +293,108 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	 * the hierarchical structure of the network.
 	 * @author tobias
 	 */
-	protected class HierarchicalOrderComparator implements Comparator<BiologicalNodeAbstract>{
-		
-	List<BiologicalNodeAbstract> order;
-	
-	public HierarchicalOrderComparator(List<BiologicalNodeAbstract> order){
-		this.order = order;
-	}
-	
-	public int compare(BiologicalNodeAbstract n1, BiologicalNodeAbstract n2){
-		
-		//If both nodes already exist in the order, keep the order of these nodes.
-		if(order.contains(n1) && order.contains(n2)){
-			return order.indexOf(n1)-order.indexOf(n2);
-		} 
-		
-		//Else: compute the order of both nodes.
-		Set<BiologicalNodeAbstract> n1parents = n1.getAllParentNodes();
-		Set<BiologicalNodeAbstract> n2parents = n2.getAllParentNodes();
-				
-		if(n1parents.isEmpty() && n2parents.isEmpty()){
-			return n1.getID()-n2.getID();
+	protected class HierarchicalOrderComparator implements Comparator<BiologicalNodeAbstract> {
+
+		List<BiologicalNodeAbstract> order;
+
+		public HierarchicalOrderComparator(List<BiologicalNodeAbstract> order) {
+			this.order = order;
 		}
-		if(n1parents.isEmpty() && !n2parents.isEmpty()){
-			return compare(n1,n2.getLastParentNode());
-		}
-		if(!n1parents.isEmpty() && n2parents.isEmpty()){
-			return compare(n1.getLastParentNode(),n2);
-		}
-		if(n1.getParentNode()==n2.getParentNode()){
-			return 0;
-		}
-		Set<BiologicalNodeAbstract> intersect = new HashSet<BiologicalNodeAbstract>();
-		intersect.addAll(n1parents);
-		intersect.retainAll(n2parents);
-		if(intersect.isEmpty()){
-			return n1.getLastParentNode().getID()-n2.getLastParentNode().getID();
-		} else {
-			BiologicalNodeAbstract comp1 = n1;
-			BiologicalNodeAbstract comp2 = n2;
-			for(BiologicalNodeAbstract child : n1.getLastCommonParentNode(n2).getChildrenNodes()){
-				if(n1.getAllParentNodes().contains(child) || n1==child){
-					comp1 = child;
-				}
-				if(n2.getAllParentNodes().contains(child) || n2==child){
-					comp2 = child;
-				}
+
+		public int compare(BiologicalNodeAbstract n1, BiologicalNodeAbstract n2) {
+
+			//If both nodes already exist in the order, keep the order of these nodes.
+			if (order.contains(n1) && order.contains(n2)) {
+				return order.indexOf(n1) - order.indexOf(n2);
 			}
-			return comp1.getID()-comp2.getID();
+
+			//Else: compute the order of both nodes.
+			Set<BiologicalNodeAbstract> n1parents = n1.getAllParentNodes();
+			Set<BiologicalNodeAbstract> n2parents = n2.getAllParentNodes();
+
+			if (n1parents.isEmpty() && n2parents.isEmpty()) {
+				return n1.getID() - n2.getID();
+			}
+			if (n1parents.isEmpty() && !n2parents.isEmpty()) {
+				return compare(n1, n2.getLastParentNode());
+			}
+			if (!n1parents.isEmpty() && n2parents.isEmpty()) {
+				return compare(n1.getLastParentNode(), n2);
+			}
+			if (n1.getParentNode() == n2.getParentNode()) {
+				return 0;
+			}
+			Set<BiologicalNodeAbstract> intersect = new HashSet<BiologicalNodeAbstract>();
+			intersect.addAll(n1parents);
+			intersect.retainAll(n2parents);
+			if (intersect.isEmpty()) {
+				return n1.getLastParentNode().getID() - n2.getLastParentNode().getID();
+			} else {
+				BiologicalNodeAbstract comp1 = n1;
+				BiologicalNodeAbstract comp2 = n2;
+				for (BiologicalNodeAbstract child : n1.getLastCommonParentNode(n2).getChildrenNodes()) {
+					if (n1.getAllParentNodes().contains(child) || n1 == child) {
+						comp1 = child;
+					}
+					if (n2.getAllParentNodes().contains(child) || n2 == child) {
+						comp2 = child;
+					}
+				}
+				return comp1.getID() - comp2.getID();
+			}
 		}
 	}
-}
 
 	/**
 	 * Comparator for adding nodes to an already existing order.
 	 * @author tobias
 	 */
-	protected class OrderFusionComparator implements Comparator<BiologicalNodeAbstract>{
+	protected class OrderFusionComparator implements Comparator<BiologicalNodeAbstract> {
 		List<BiologicalNodeAbstract> order;
 		Set<BiologicalNodeAbstract> fusionNodes;
 		int firstNodeIndex = -1;
 		HierarchicalOrderComparator hierarchicalOrderComparator;
-	
-		public OrderFusionComparator(List<BiologicalNodeAbstract> o, Set<BiologicalNodeAbstract> fN){
+
+		public OrderFusionComparator(List<BiologicalNodeAbstract> o, Set<BiologicalNodeAbstract> fN) {
 			this.order = o;
 			this.fusionNodes = fN;
-			for(BiologicalNodeAbstract node : order){
-				if(fusionNodes.contains(node)){
+			for (BiologicalNodeAbstract node : order) {
+				if (fusionNodes.contains(node)) {
 					firstNodeIndex = order.indexOf(node);
 					break;
 				}
 			}
-		
+
 			//Add all nodes to order that does not exist yet.
 			List<BiologicalNodeAbstract> intersection = new ArrayList<BiologicalNodeAbstract>();
 			intersection.addAll(fusionNodes);
 			intersection.removeAll(this.order);
 			order.addAll(intersection);
-		
+
 			hierarchicalOrderComparator = new HierarchicalOrderComparator(new ArrayList<BiologicalNodeAbstract>());
 		}
-	
-		public int compare(BiologicalNodeAbstract n1, BiologicalNodeAbstract n2){
-		
+
+		public int compare(BiologicalNodeAbstract n1, BiologicalNodeAbstract n2) {
+
 			//If both nodes already exist in the order, keep the order of these nodes.
-			if(fusionNodes.contains(n1) && fusionNodes.contains(n2)){
+			if (fusionNodes.contains(n1) && fusionNodes.contains(n2)) {
 				return hierarchicalOrderComparator.compare(n1, n2);
-			} 
-		
-			if(fusionNodes.contains(n1)){
-				return firstNodeIndex-order.indexOf(n2);
 			}
-		
-			if(fusionNodes.contains(n2)){
-				return order.indexOf(n1)-firstNodeIndex;
+
+			if (fusionNodes.contains(n1)) {
+				return firstNodeIndex - order.indexOf(n2);
 			}
-			return order.indexOf(n1)-order.indexOf(n2);
+
+			if (fusionNodes.contains(n2)) {
+				return order.indexOf(n1) - firstNodeIndex;
+			}
+			return order.indexOf(n1) - order.indexOf(n2);
 		}
 	}
-	
-	protected class ShowEdgeArrowsTransformer<T1, T2> implements Function<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape>{
-		
+
+	protected class ShowEdgeArrowsTransformer<T1, T2> implements
+			Function<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape> {
+
 		public ShowEdgeArrowsTransformer() {
 
 		}
@@ -407,20 +402,21 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 		@Override
 		public Shape apply(
 				Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract> arg0) {
-			return new DirectionalEdgeArrowTransformer<BiologicalNodeAbstract,BiologicalEdgeAbstract>(0,0,0).apply(arg0);
+			return new DirectionalEdgeArrowTransformer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(0, 0, 0).apply(
+					arg0);
 		}
 
 	}
-	
-	public CircleVertexData getCircleVertexData(BiologicalNodeAbstract v){
+
+	public CircleVertexData getCircleVertexData(BiologicalNodeAbstract v) {
 		return getCircleData(v);
 	}
-	
-	public Point2D getCenterPoint(){
+
+	public Point2D getCenterPoint() {
 		return centerPoint;
 	}
-	
-	public List<BiologicalNodeAbstract> getOrder(){
+
+	public List<BiologicalNodeAbstract> getOrder() {
 		return order;
 	}
 

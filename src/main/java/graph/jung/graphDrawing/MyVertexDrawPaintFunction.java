@@ -81,7 +81,7 @@ public class MyVertexDrawPaintFunction implements Function<BiologicalNodeAbstrac
 				}
 				return Color.BLUE;
 			} else {
-				for (BiologicalNodeAbstract w : pw.getGraph().getJungGraph().getNeighbors(v)) {
+				for (BiologicalNodeAbstract w : pw.getGraph2().getNeighbors(v)) {
 					if (psV.isPicked(w))
 						medium_check = true;
 				}

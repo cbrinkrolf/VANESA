@@ -18,22 +18,13 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.gui.LayoutConfigPanel;
 
 public class GEMLayoutConfig extends LayoutConfigPanel implements ChangeListener {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -2467919660667415938L;
+	public static final int MAX_ATTRACT = 1048576;
 	private static GEMLayoutConfig config;
 
-	// number of nodes in the graph
 	public int nodeCount;
-
-	//
-	// GEM Constants
-	//
-	public int ELEN = 50; // 128;
-	public int ELENSQR = ELEN * ELEN;
-	public int MAXATTRACT = 1048576;
-
-	//
-	// GEM variables
-	//
+	public int edgeLength = 50;
+	public int edgeLengthSquared = edgeLength * edgeLength;
 	public long iteration;
 	public long temperature;
 	public int centerX;
@@ -41,10 +32,6 @@ public class GEMLayoutConfig extends LayoutConfigPanel implements ChangeListener
 	public long maxtemp;
 	public float oscillation;
 	public float rotation;
-
-	//
-	// GEM Default Parameter Values
-	//
 	public float i_maxtemp = 1.0f;
 	public float a_maxtemp = 1.5f;
 	public float o_maxtemp = 0.25f;
@@ -113,7 +100,6 @@ public class GEMLayoutConfig extends LayoutConfigPanel implements ChangeListener
 
 	private GEMLayoutConfig() {
 		super();
-		// BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
 		GridLayout layout = new GridLayout(0, 2);
 		setLayout(layout);
 
@@ -122,7 +108,7 @@ public class GEMLayoutConfig extends LayoutConfigPanel implements ChangeListener
 		sliderEdgeLength.setBorder(BorderFactory.createTitledBorder("Preferred edge length"));
 		sliderEdgeLength.setMinimum(10);
 		sliderEdgeLength.setMaximum(200);
-		sliderEdgeLength.setValue(ELEN);
+		sliderEdgeLength.setValue(edgeLength);
 		sliderEdgeLength.setMajorTickSpacing(20);
 		sliderEdgeLength.setMinorTickSpacing(5);
 		sliderEdgeLength.setPaintTicks(true);
@@ -305,8 +291,8 @@ public class GEMLayoutConfig extends LayoutConfigPanel implements ChangeListener
 
 	public void stateChanged(ChangeEvent arg0) {
 		if (arg0.getSource().equals(sliderEdgeLength)) {
-			ELEN = sliderEdgeLength.getValue();
-			ELENSQR = ELEN * ELEN;
+			edgeLength = sliderEdgeLength.getValue();
+			edgeLengthSquared = edgeLength * edgeLength;
 		} else if (arg0.getSource().equals(sliderIMaxIter)) {
 			i_maxiter = sliderIMaxIter.getValue();
 		} else if (arg0.getSource().equals(sliderAMaxIter)) {

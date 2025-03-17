@@ -53,7 +53,7 @@ public class GraphMLReader extends BaseReader<Pathway> {
 			setHasErrors();
 			return null;
 		}
-		Pathway pw = new CreatePathway().getPathway();
+		Pathway pw = CreatePathway.create();
 		final Map<String, PropertyKey> nodePropertyTypes = new HashMap<>();
 		final Map<String, Integer> nodeIdMap = new HashMap<>();
 		final Map<String, PropertyKey> edgePropertyTypes = new HashMap<>();
@@ -413,7 +413,7 @@ public class GraphMLReader extends BaseReader<Pathway> {
 			logger.warn("Ignored edge without source or target node");
 			return;
 		}
-		BiologicalEdgeAbstract bea = BiologicalEdgeAbstractFactory.create(label, null);
+		BiologicalEdgeAbstract bea = BiologicalEdgeAbstractFactory.create(label, "", "", source, target);
 		try {
 			bea.setID(id, pw);
 		} catch (IDAlreadyExistException e) {
@@ -421,8 +421,6 @@ public class GraphMLReader extends BaseReader<Pathway> {
 			logger.warn("Ignored edge with already existing id " + id);
 			return;
 		}
-		bea.setFrom(source);
-		bea.setTo(target);
 		setPropertyIfExists(properties, "directed", bea::setDirected, true);
 		setPropertyIfExists(properties, "_label", bea::setLabel);
 		setPropertyIfExists(properties, "name", bea::setName);

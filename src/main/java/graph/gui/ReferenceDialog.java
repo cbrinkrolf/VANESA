@@ -55,14 +55,14 @@ public class ReferenceDialog {
             if (bna != self && !bna.isLogical()) {
                 if (self instanceof Place) {
                     if (bna instanceof Place) {
-                        map.put(bna.getNetworklabel(), bna);
+                        map.put(bna.getNetworkLabel(), bna);
                     }
                 } else if (self instanceof Transition) {
                     if (bna instanceof Transition) {
-                        map.put(bna.getNetworklabel(), bna);
+                        map.put(bna.getNetworkLabel(), bna);
                     }
                 } else {
-                    map.put(bna.getNetworklabel(), bna);
+                    map.put(bna.getNetworkLabel(), bna);
                 }
             }
         }
@@ -70,7 +70,7 @@ public class ReferenceDialog {
         ids.sort(String::compareTo);
         for (String id : ids) {
             list.add(map.get(id));
-            box.addItem(map.get(id).getNetworklabel());
+            box.addItem(map.get(id).getNetworkLabel());
         }
     }
 

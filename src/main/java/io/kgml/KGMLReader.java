@@ -61,7 +61,7 @@ public class KGMLReader extends BaseReader<Pathway> {
                     final String org = getElementAttribute(element, "org");
                     final String title = getElementAttribute(element, "title");
                     final String link = getElementAttribute(element, "link");
-                    pw = new CreatePathway(title).getPathway();
+                    pw = CreatePathway.create(title);
                     pw.setLink(link);
                     pw.setOrganism(org);
                 } else if ("entry".equals(key)) {
@@ -216,7 +216,7 @@ public class KGMLReader extends BaseReader<Pathway> {
                 continue;
             }
             for (RelationSubtype subtype : relation.Subtypes) {
-                if (!pw.existEdge(bna1, bna2) && !pw.existEdge(bna2, bna1)) {
+                if (!pw.containsEdge(bna1, bna2) && !pw.containsEdge(bna2, bna1)) {
                     BiologicalEdgeAbstract bea;
                     switch (subtype.Name) {
                         case Elementdeclerations.dephosphorylationEdge:
@@ -235,9 +235,7 @@ public class KGMLReader extends BaseReader<Pathway> {
                             bea = new Glycosylation("+g", "", bna1, bna2);
                             break;
                         default:
-                            bea = BiologicalEdgeAbstractFactory.create(subtype.Name, null);
-                            bea.setFrom(bna1);
-                            bea.setTo(bna2);
+                            bea = BiologicalEdgeAbstractFactory.create(subtype.Name, "", "", bna1, bna2);
                             break;
                     }
                     bea.setDirected(true);

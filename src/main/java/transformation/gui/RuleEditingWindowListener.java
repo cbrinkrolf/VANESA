@@ -3,7 +3,7 @@ package transformation.gui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Set;
+import java.util.Collection;
 
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
@@ -13,9 +13,8 @@ import graph.jung.classes.MyGraph;
 import gui.ToolBarButton;
 
 public class RuleEditingWindowListener implements ActionListener {
-
-	private Pathway bn;
-	private Pathway pn;
+	private final Pathway bn;
+	private final Pathway pn;
 
 	public RuleEditingWindowListener(Pathway bn, Pathway pn) {
 		this.bn = bn;
@@ -89,16 +88,16 @@ public class RuleEditingWindowListener implements ActionListener {
 			con.setPetriView(true);
 			con.setPetriNetEditingMode(Elementdeclerations.stochasticTransition);
 		} else if ("adjustDown".equals(event)) {
-			Set<BiologicalNodeAbstract> nodes = activePw.getSelectedNodes();
+			Collection<BiologicalNodeAbstract> nodes = activePw.getSelectedNodes();
 			activePw.adjustDown(nodes);
 		} else if ("adjustLeft".equals(event)) {
-			Set<BiologicalNodeAbstract> nodes = activePw.getSelectedNodes();
+			Collection<BiologicalNodeAbstract> nodes = activePw.getSelectedNodes();
 			activePw.adjustLeft(nodes);
 		} else if ("adjustHorizontalSpace".equals(event)) {
-			Set<BiologicalNodeAbstract> nodes = activePw.getSelectedNodes();
+			Collection<BiologicalNodeAbstract> nodes = activePw.getSelectedNodes();
 			activePw.adjustHorizontalSpace(nodes);
 		} else if ("adjustVerticalSpace".equals(event)) {
-			Set<BiologicalNodeAbstract> nodes = activePw.getSelectedNodes();
+			Collection<BiologicalNodeAbstract> nodes = activePw.getSelectedNodes();
 			activePw.adjustVerticalSpace(nodes);
 		}
 	}

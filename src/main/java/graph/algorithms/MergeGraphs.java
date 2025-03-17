@@ -12,16 +12,10 @@ import io.vaml.VAMLInput;
 import io.vaml.VAMLOutput;
 
 public class MergeGraphs {
-	private Pathway pw_one;
-	private Pathway pw_two;
 	private Pathway pw_new;
 
 	public MergeGraphs(Pathway one, Pathway two, boolean showMessage) {
-		pw_one = one;
-		pw_two = two;
-		pw_new = new CreatePathway(pw_one.getTitle() + pw_two.getTitle()).getPathway();
-		pw_new.setOrganism("");
-		pw_new.setLink("");
+		pw_new = CreatePathway.create(one.getTitle() + two.getTitle());
 
 		//CHRIS better deep copy of pathway
 		File file1 = new File("test");

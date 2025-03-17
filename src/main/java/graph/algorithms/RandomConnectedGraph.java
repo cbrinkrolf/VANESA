@@ -16,108 +16,63 @@ import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 
 public class RandomConnectedGraph {
-
-	public RandomConnectedGraph() {
-	}
-
-	public static void generateRandomGraph(int numberOfNodes,
-			int numberOfEdges, boolean weightedGraph, int minimumWeight,
-			int maximumWeigth) {
-
-		int k;
-		int n = numberOfNodes;
-		int m = numberOfEdges;
-		long seed = 1;
-		boolean weighted = weightedGraph;
-		int minweight = minimumWeight;
-		int maxweight = maximumWeigth;
-		int nodei[] = new int[m + 1];
-		int nodej[] = new int[m + 1];
-		int weight[] = new int[m + 1];
-
-		Map<Integer, BiologicalNodeAbstract> nodes = new HashMap<Integer, BiologicalNodeAbstract>();
-
-		k = GraphTheoryAlgorithms.randomConnectedGraph(n, m, seed, weighted,
-				minweight, maxweight, nodei, nodej, weight);
+	public static void generateRandomGraph(final int numberOfNodes, final int numberOfEdges,
+			final boolean weightedGraph, final int minimumWeight, final int maximumWeight) {
+		final long seed = 1;
+		final int[] nodei = new int[numberOfEdges + 1];
+		final int[] nodej = new int[numberOfEdges + 1];
+		final int[] weight = new int[numberOfEdges + 1];
+		final Map<Integer, BiologicalNodeAbstract> nodes = new HashMap<>();
+		int k = GraphTheoryAlgorithms.randomConnectedGraph(numberOfNodes, numberOfEdges, seed, weightedGraph,
+				minimumWeight, maximumWeight, nodei, nodej, weight);
 		if (k != 0)
-			JOptionPane
-					.showMessageDialog(
-							null,
-							"Error during initialising random graph. Parameters are wrong!",
-							"Error Message", 1);
+			JOptionPane.showMessageDialog(null, "Error during initialising random graph. Parameters are wrong!",
+					"Error Message", JOptionPane.INFORMATION_MESSAGE);
 		else {
-
-			Pathway pw = new CreatePathway("Random Connected Graph")
-					.getPathway();
-			MyGraph myGraph = pw.getGraph();
-
-			HashSet<Integer> set = new HashSet<Integer>();
-
+			final Pathway pw = CreatePathway.create("Random Connected Graph");
+			final MyGraph myGraph = pw.getGraph();
+			final HashSet<Integer> set = new HashSet<>();
 			int nodeNumberCounter = 0;
-
-			for (k = 1; k <= m; k++) {
-
+			for (k = 1; k <= numberOfEdges; k++) {
 				if (!set.contains(nodei[k])) {
 					set.add(nodei[k]);
 					Other node = new Other(nodei[k] + "", nodei[k] + "");
 					pw.addVertex(node, new Point(150, 100));
-					// myGraph.moveVertex(node.getVertex(), 150, 100);
 					nodes.put(nodei[k], node);
 					nodeNumberCounter++;
-
 				}
-
 				if (!set.contains(nodej[k])) {
 					set.add(nodej[k]);
 					Other node = new Other(nodej[k] + "", nodej[k] + "");
 					pw.addVertex(node, new Point(150, 100));
-					// myGraph.moveVertex(node.getVertex(), 150, 100);
 					nodes.put(nodej[k], node);
 					nodeNumberCounter++;
 				}
-
 			}
-			for (k = 0; k < n; k++) {
-				if (nodeNumberCounter < n) {
+			for (k = 0; k < numberOfNodes; k++) {
+				if (nodeNumberCounter < numberOfNodes) {
 					if (!set.contains(k)) {
 						set.add(k);
 						Other node = new Other(k + "", k + "");
 						pw.addVertex(node, new Point(150, 100));
-						// myGraph.moveVertex(node.getVertex(), 150, 100);
 						nodes.put(k, node);
 						nodeNumberCounter++;
 					}
 				}
 			}
-			for (k = 1; k <= m; k++) {
-
-				ReactionEdge r = new ReactionEdge("", "", nodes.get(nodei[k]),
-						nodes.get(nodej[k]));
-
+			for (k = 1; k <= numberOfEdges; k++) {
+				final ReactionEdge r = new ReactionEdge("", "", nodes.get(nodei[k]), nodes.get(nodej[k]));
 				r.setDirected(false);
 				r.setVisible(true);
-
 				if (weightedGraph) {
-					//r.setWeighted(true);
-					r.setFunction(weight[k]+"");
+					r.setFunction(weight[k] + "");
 				}
-
 				pw.addEdge(r);
-
 			}
-
 			myGraph.restartVisualizationModel();
-
 			myGraph.normalCentering();
-
-			 MainWindow window = MainWindow.getInstance();
-			 window.updateOptionPanel();
-			// window.enable(true);
-			 
+			MainWindow.getInstance().updateOptionPanel();
 			pw.getGraph().changeToGEMLayout();
-			pw.saveVertexLocations();
-//			 return pw;
 		}
-//		return null;
 	}
 }

@@ -72,7 +72,7 @@ public class GraphAnalysisTree{
 			newLeafs.clear();
 			for(BiologicalNodeAbstract leaf : leafs){
 				connections.put(leaf, new HashSet<>());
-				for(BiologicalNodeAbstract neighbor : pw.getGraph().getJungGraph().getNeighbors(leaf)){
+				for(BiologicalNodeAbstract neighbor : pw.getGraph2().getNeighbors(leaf)){
 					if(children.containsKey(neighbor) && children.get(neighbor).contains(leaf)){
 						parents.put(leaf, neighbor);
 						continue;

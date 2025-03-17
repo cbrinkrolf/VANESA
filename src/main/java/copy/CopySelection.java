@@ -42,27 +42,11 @@ public class CopySelection {
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
-        //Layout layout = vv.getGraphLayout();
-        //for (Iterator iterator = vv.getGraphLayout().getGraph().getVertices().iterator(); iterator.hasNext();) {
-        //	layout.lockVertex((Vertex) iterator.next());
-        //GraphInstance.getMyGraph().lockVertices();
-        //}
-        //HashMap<Vertex, Vertex> map = new HashMap<Vertex, Vertex>();
         BiologicalNodeAbstract bna1;
         BiologicalNodeAbstract bna2;
         BiologicalEdgeAbstract bea2;
         HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract> map = new HashMap<>();
         for (BiologicalEdgeAbstract bea : beas) {
-			/*Edge edge = new UndirectedSparseEdge(map.get(bea.getEdge()
-					.getEndpoints().getFirst()), map.get(bea.getEdge()
-					.getEndpoints().getSecond()));
-			Edge oldEdge = bea.getEdge();
-			if (oldEdge instanceof DirectedSparseEdge)
-				edge = new DirectedSparseEdge(map.get(bea.getEdge()
-						.getEndpoints().getFirst()), map.get(bea.getEdge()
-						.getEndpoints().getSecond()));
-			bea.setEdge(edge);*/
-           
             if (!map.containsKey(bea.getFrom())) {
                 bna1 = bea.getFrom().clone();
                 bna1.removeAllConnectionEdges();

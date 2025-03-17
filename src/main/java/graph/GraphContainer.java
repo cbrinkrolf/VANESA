@@ -52,31 +52,26 @@ public class GraphContainer {
 		this.selectedObject = selectedObject;
 	}
 
-	public String addPathway(String name, Pathway pathway) {
-		String realName = checkNameDuplicates(name, 1);
+	public Pathway addPathway(final String name, final Pathway pathway) {
+		final String realName = findUniqueName(name);
 		pathway.setName(realName);
 		map.put(realName, pathway);
-		return realName;
+		return pathway;
 	}
 
-	private String checkNameDuplicates(String name, int i) {
-
-		int count = i;
+	private String findUniqueName(final String name) {
 		String newName = name;
-
-		if (i > 1)
-			newName = newName + "(" + (count) + ")";
-
-		if (map.containsKey(newName)) {
+		int count = 1;
+		while (map.containsKey(newName)) {
 			count++;
-			newName = checkNameDuplicates(name, count);
+			newName = name + "(" + count + ")";
 		}
 		return newName;
 	}
 
-	public String renamePathway(Pathway pw, String newName) {
+	public void renamePathway(final Pathway pw, final String newName) {
 		removePathway(pw.getName());
-		return addPathway(newName, pw);
+		addPathway(newName, pw);
 	}
 
 	public boolean containsPathway() {
