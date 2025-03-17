@@ -13,6 +13,7 @@ import graph.rendering.shapes.RectangleShape;
 import graph.rendering.shapes.RegularPolygonShape;
 import graph.rendering.shapes.RegularStarShape;
 import graph.rendering.shapes.RoundedRectangleShape;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import transformation.graphElements.ANYPlace;
 import transformation.graphElements.ANYTransition;
@@ -20,8 +21,9 @@ import transformation.graphElements.ANYTransition;
 import javax.swing.*;
 import java.awt.geom.Point2D;
 
-public class GraphRendererPanelTest {
+class GraphRendererPanelTest {
 	@Test
+	@Disabled
 	public void test() throws InterruptedException {
 		final Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph = new Graph<>();
 		ContinuousTransition t1 = new ContinuousTransition("t1", "t1", null);

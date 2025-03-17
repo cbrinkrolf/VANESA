@@ -1,9 +1,9 @@
 package graph.rendering;
 
-import biologicalObjects.edges.petriNet.PNArc;
-import biologicalObjects.nodes.petriNet.*;
+import biologicalObjects.nodes.petriNet.Place;
 import graph.Graph;
 import graph.GraphEdge;
+import graph.GraphEdgeLineStyle;
 import graph.GraphNode;
 import graph.rendering.shapes.*;
 
@@ -342,19 +342,15 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 			} else {
 				g.setColor(edge.getColor());
 			}
-			boolean drawDashed = false;
-			// TODO: generalize
-			if (edge instanceof PNArc) {
-				final PNArc pnEdge = (PNArc) edge;
-				if (pnEdge.isTestArc()) {
-					drawDashed = true;
-				}
-			}
-			if (drawDashed) {
-				g2d.setStroke(new BasicStroke(edge.getThickness(), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10,
-						new float[] { 10 }, 0));
+			if (edge.getLineStyle() == GraphEdgeLineStyle.DASHED) {
+				g2d.setStroke(
+						new BasicStroke(edge.getLineThickness(), BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL, 0,
+								new float[] { 10, 10 }, 0));
+			} else if (edge.getLineStyle() == GraphEdgeLineStyle.DOTTED) {
+				g2d.setStroke(new BasicStroke(edge.getLineThickness(), BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0,
+						new float[] { 3, 3 }, 0));
 			} else {
-				g2d.setStroke(new BasicStroke(edge.getThickness()));
+				g2d.setStroke(new BasicStroke(edge.getLineThickness()));
 			}
 			g.drawLine((int) startX, (int) startY, (int) endX, (int) endY);
 			// Render edge start tip

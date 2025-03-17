@@ -6,6 +6,7 @@ import java.util.List;
 import biologicalElements.Elementdeclerations;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import graph.GraphEdgeLineStyle;
 import graph.rendering.shapes.CircleTipShape;
 import petriNet.FunctionParser;
 
@@ -28,6 +29,8 @@ public class PNArc extends BiologicalEdgeAbstract {
 		setFunction(edgeFunction);
 		if (Elementdeclerations.pnInhibitorArc.equals(getBiologicalElement())) {
 			setToTipShape(new CircleTipShape());
+		} else if (Elementdeclerations.pnTestArc.equals(getBiologicalElement())) {
+			setLineStyle(GraphEdgeLineStyle.DASHED);
 		}
 	}
 

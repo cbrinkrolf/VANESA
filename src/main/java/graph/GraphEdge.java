@@ -9,7 +9,7 @@ public interface GraphEdge<V extends GraphNode> {
 
 	boolean isVisible();
 
-	float getThickness();
+	float getLineThickness();
 
 	Color getColor();
 
@@ -20,6 +20,8 @@ public interface GraphEdge<V extends GraphNode> {
 	EdgeTipShape getFromTipShape();
 
 	EdgeTipShape getToTipShape();
+
+	GraphEdgeLineStyle getLineStyle();
 
 	String getNetworkLabel();
 }

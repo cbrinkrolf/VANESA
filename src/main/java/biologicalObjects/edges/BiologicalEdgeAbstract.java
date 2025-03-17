@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import graph.GraphEdge;
+import graph.GraphEdgeLineStyle;
 import graph.rendering.shapes.ArrowTipShape;
 import graph.rendering.shapes.EdgeTipShape;
 import org.apache.commons.lang3.StringUtils;
@@ -30,7 +31,8 @@ public abstract class BiologicalEdgeAbstract
 	private String label;
 	private int ID = 0;
 	private SortedSet<Integer> set;
-	private float thickness = 3;
+	private float lineThickness = 3;
+	private GraphEdgeLineStyle lineStyle = GraphEdgeLineStyle.NORMAL;
 
 	private String description = "";
 	private String comments = "";
@@ -347,12 +349,21 @@ public abstract class BiologicalEdgeAbstract
 	}
 
 	@Override
-	public float getThickness() {
-		return thickness;
+	public float getLineThickness() {
+		return lineThickness;
 	}
 
-	public void setThickness(final float thickness) {
-		this.thickness = Math.max(0, thickness);
+	public void setLineThickness(final float lineThickness) {
+		this.lineThickness = Math.max(0, lineThickness);
+	}
+
+	@Override
+	public GraphEdgeLineStyle getLineStyle() {
+		return lineStyle;
+	}
+
+	protected void setLineStyle(final GraphEdgeLineStyle lineStyle) {
+		this.lineStyle = lineStyle;
 	}
 
 	@Override
