@@ -22,23 +22,19 @@ import graph.algorithms.NodeAttributeType;
  * s). For a successful mapping the data has to be tab separated in the pattern
  * of label(tab)value so each line contains a label and a value. Labels
  * specified in the file must be unique.
- * 
+ *
  * @author mlewinsk
  *
  */
 public class LabelToDataMappingWindow {
-
 	private JFileChooser filechooser;
-	private File datafile;
 	private HashMap<String, String> datamapping;
-	private final String delimiter = "\t";
-	private String linecuts[], key, value;
-	private int linenumber, successfulmappings;
+	private int linenumber;
 
 	/**
 	 * Regular constructor opens a JFileChooser to specify the input file for
 	 * the mapping. Check if a network is loaded has to be done prior.
-	 * 
+	 *
 	 * @throws IOException
 	 *             if the filestream fails
 	 * @throws InputFormatException
@@ -50,14 +46,9 @@ public class LabelToDataMappingWindow {
 			PopUpDialog.getInstance().show("Error", "Please create a network before.");
 			return;
 		}
-
 		filechooser = new JFileChooser();
-		filechooser
-				.setDialogTitle("please choose your mapping file (label->data)");
-
-		int status = filechooser.showOpenDialog(MainWindow
-				.getInstance().getFrame());
-
+		filechooser.setDialogTitle("please choose your mapping file (label->data)");
+		int status = filechooser.showOpenDialog(MainWindow.getInstance().getFrame());
 		switch (status) {
 		case JFileChooser.APPROVE_OPTION:
 			processFile();
@@ -66,32 +57,25 @@ public class LabelToDataMappingWindow {
 		case JFileChooser.ERROR_OPTION:
 			PopUpDialog.getInstance().show("Error", "Error while loading file.");
 			break;
-
 		default:
-			System.out.println("Unknown switch case in class:"
-					+ this.getClass());
+			System.out.println("Unknown switch case in class:" + this.getClass());
 			break;
 		}
-
 	}
 
 	/**
-	 * 
 	 * @return true if successful, false if the file entered was invalid
-	 * @throws IOException
-	 * @throws InputFormatException
 	 */
 	private boolean processFile() throws IOException, InputFormatException {
-
-		datafile = filechooser.getSelectedFile();
+		File datafile = filechooser.getSelectedFile();
 		System.out.println(datafile.toString());
 
 		datamapping = new HashMap<>();
 		FileInputStream fstream;
+		int successfulmappings;
 		try {
 			fstream = new FileInputStream(datafile);
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					fstream));
+			BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 			String strLine;
 			linenumber = 1;
 			successfulmappings = 0;
@@ -108,85 +92,55 @@ public class LabelToDataMappingWindow {
 			return false;
 		}
 
-		String attributename = JOptionPane.showInputDialog(
-				MainWindow.getInstance().getFrame(),
-				"file accepted.\n please enter a name for the dataset:\n",
-				datafile.getName() + "");
-
+		String attributename = JOptionPane.showInputDialog(MainWindow.getInstance().getFrame(),
+				"file accepted.\n please enter a name for the dataset:\n", datafile.getName());
 		if (attributename.length() > 0) {
-
 			String bnalabel;
-			for (BiologicalNodeAbstract bna : GraphInstance.getMyGraph()
-					.getAllVertices()) {
+			for (BiologicalNodeAbstract bna : GraphInstance.getVanesaGraph().getNodes()) {
 				bnalabel = bna.getLabel();
 				if (datamapping.containsKey(bnalabel)) {
-					bna.addAttribute(NodeAttributeType.ANNOTATION,
-									 attributename, datamapping.get(bnalabel));
+					bna.addAttribute(NodeAttributeType.ANNOTATION, attributename, datamapping.get(bnalabel));
 					successfulmappings++;
 				}
 			}
 		}
-
-		// MARTIN Stream not working, exception cant be thrown from stream?
-		// try (Stream<String> lines = Files.lines(datafile.toPath(),
-		// Charset.defaultCharset())) {
-		// lines.forEach(line -> processLine(line));
-		// }
-
-		PopUpDialog.getInstance().show("Information", successfulmappings + " of " + datamapping.size()
-                                                      + " entries \nhave been mapped and updated.\n\n("
-                                                      + MainWindow.getInstance().getCurrentPathway()
-                                                      + ")");
+		PopUpDialog.getInstance().show("Information",
+				successfulmappings + " of " + datamapping.size() + " entries \nhave been mapped and updated.\n\n("
+						+ MainWindow.getInstance().getCurrentPathway() + ")");
 		return true;
 	}
 
 	/**
 	 * Processing of the Strings of the file reader. Data input format will be
 	 * checked and transferred to the 'datamapping' variable.
-	 * 
+	 *
 	 * @param line
 	 *            String from filereader
 	 * @throws InputFormatException
 	 *             custom exception to deal with wrong input formats. i.e.
 	 *             key->value is not splitted correctly or duplicate labels
 	 *             exist.
-	 * 
 	 */
 	private void processLine(String line) throws InputFormatException {
-		linecuts = line.split(delimiter);
+		String[] linecuts = line.split("\t");
 		if (linecuts.length != 2) {
-			throw new InputFormatException("invalid split: (line " + linenumber
-					+ ")\n" + line);
+			throw new InputFormatException("invalid split: (line " + linenumber + ")\n" + line);
 		}
-		key = linecuts[0];
-		value = linecuts[1];
-
+		String key = linecuts[0];
+		String value = linecuts[1];
 		// allow only unique labels
 		if (datamapping.containsKey(key)) {
-			throw new InputFormatException("duplicate label (" + key + ",line "
-					+ linenumber + ")\n" + line);
-		} else {
-			datamapping.put(key, value);
+			throw new InputFormatException("duplicate label (" + key + ",line " + linenumber + ")\n" + line);
 		}
+		datamapping.put(key, value);
 	}
 
 	/**
-	 * Custom exeption to cancel the current data mapping and provide the user
+	 * Custom exception to cancel the current data mapping and provide the user
 	 * with information about the error.
-	 * 
-	 * @author mlewinsk
-	 *
 	 */
-	public class InputFormatException extends Exception {
-
-		/**
-		 * generated uid
-		 */
+	public static class InputFormatException extends Exception {
 		private static final long serialVersionUID = -441053373711813908L;
-
-		public InputFormatException() {
-			super();
-		}
 
 		public InputFormatException(String message) {
 			super(message);

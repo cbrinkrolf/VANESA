@@ -4,7 +4,6 @@ import graph.operations.GraphOperation;
 
 import java.awt.geom.Point2D;
 import java.util.*;
-import java.util.List;
 
 public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 	private final List<GraphSelectionChangedListener> selectionChangedListeners = new ArrayList<>();
@@ -234,6 +233,82 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 					result.add(edge.getFrom());
 				}
 			}
+		}
+		return result;
+	}
+
+	public Collection<E> getInEdges(final V node) {
+		final Set<E> result = new HashSet<>();
+		if (node != null) {
+			for (final E edge : edges) {
+				if (node.equals(edge.getTo())) {
+					result.add(edge);
+				}
+			}
+		}
+		return result;
+	}
+
+	public Collection<E> getOutEdges(final V node) {
+		final Set<E> result = new HashSet<>();
+		if (node != null) {
+			for (final E edge : edges) {
+				if (node.equals(edge.getFrom())) {
+					result.add(edge);
+				}
+			}
+		}
+		return result;
+	}
+
+	public Collection<E> getIncidentEdges(final V node) {
+		final Set<E> result = new HashSet<>();
+		if (node != null) {
+			for (final E edge : edges) {
+				if (node.equals(edge.getFrom()) || node.equals(edge.getTo())) {
+					result.add(edge);
+				}
+			}
+		}
+		return result;
+	}
+
+	public V getOpposite(final V node, final E edge) {
+		if (node == null || edge == null) {
+			return null;
+		}
+		return node.equals(edge.getFrom()) ? edge.getTo() : edge.getFrom();
+	}
+
+	/**
+	 * Calculate all shortest paths ignoring weights and directions of edges using BFS.
+	 */
+	public Map<V, Map<V, Double>> getUnweightedUndirectedShortestPaths() {
+		final Map<V, Map<V, Double>> result = new HashMap<>();
+		for (final V node : nodes) {
+			result.put(node, getUnweightedUndirectedShortestPaths(node));
+		}
+		return result;
+	}
+
+	/**
+	 * Calculate all shortest paths from a specific node ignoring weights and directions of edges using BFS.
+	 */
+	public Map<V, Double> getUnweightedUndirectedShortestPaths(final V node) {
+		final Map<V, Double> result = new HashMap<>();
+		Set<V> openList = new HashSet<>(getNeighbors(node));
+		openList.remove(node);
+		double distance = 1;
+		while (!openList.isEmpty()) {
+			final Set<V> nextOpenList = new HashSet<>();
+			for (final V v : openList) {
+				if (v != node && !result.containsKey(v)) {
+					result.put(v, distance);
+					nextOpenList.addAll(getNeighbors(v));
+				}
+			}
+			openList = nextOpenList;
+			distance++;
 		}
 		return result;
 	}

@@ -12,7 +12,7 @@ import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Other;
 import graph.CreatePathway;
-import graph.jung.classes.MyGraph;
+import graph.operations.layout.gem.GEMLayoutOperation;
 import gui.MainWindow;
 
 public class RandomConnectedGraph {
@@ -30,7 +30,6 @@ public class RandomConnectedGraph {
 					"Error Message", JOptionPane.INFORMATION_MESSAGE);
 		else {
 			final Pathway pw = CreatePathway.create("Random Connected Graph");
-			final MyGraph myGraph = pw.getGraph();
 			final HashSet<Integer> set = new HashSet<>();
 			int nodeNumberCounter = 0;
 			for (k = 1; k <= numberOfEdges; k++) {
@@ -69,10 +68,10 @@ public class RandomConnectedGraph {
 				}
 				pw.addEdge(r);
 			}
-			myGraph.restartVisualizationModel();
-			myGraph.normalCentering();
+			pw.updateMyGraph();
+			pw.getGraph2().apply(new GEMLayoutOperation());
+			pw.getGraphRenderer().zoomAndCenterGraph();
 			MainWindow.getInstance().updateOptionPanel();
-			pw.getGraph().changeToGEMLayout();
 		}
 	}
 }

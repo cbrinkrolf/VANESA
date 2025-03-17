@@ -168,25 +168,18 @@ public class CompareGraphsGUI implements ActionListener, ItemListener {
 		dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		splitPane.setDividerLocation(0.5);
 		dialog.setVisible(true);
-
 	}
 
 	private void changeGraph(Boolean first, String pathway) {
-
 		Pathway newPathway = con.getPathway(pathway);
-
 		if (first) {
-
 			firstGraphPane.removeAll();
 			firstGraphPane.add(newPathway.getGraph()
 					.getVisualizationPaneCopy(new Dimension(splitWindowWith - 50, splitWindowHeight - 50)));
-
 		} else {
-
 			secondGraphPane.removeAll();
 			secondGraphPane.add(newPathway.getGraph()
 					.getVisualizationPaneCopy(new Dimension(splitWindowWith - 50, splitWindowHeight - 50)));
-
 		}
 	}
 
@@ -198,65 +191,40 @@ public class CompareGraphsGUI implements ActionListener, ItemListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-
 		String event = e.getActionCommand();
 		if ("exit".equals(event)) {
-
 			resetPanels();
 			dialog.setVisible(false);
 			con.changeMouseFunction(mouseFunction);
-
 		} else if ("compare".equals(event)) {
-
 			CompareGraphs.compareGraphs(con.getPathway(firstBox.getSelectedItem().toString()),
 					con.getPathway(secondBox.getSelectedItem().toString()));
 			firstGraph.updateUI();
 			secondGraph.updateUI();
-
 		} else if ("reset".equals(event)) {
-
 			resetPanels();
-
 		} else if ("merge".equals(event)) {
-
 			new MergeGraphs(con.getPathway(firstBox.getSelectedItem().toString()),
 					con.getPathway(secondBox.getSelectedItem().toString()), true);
-			this.closeDialog();
-
+			closeDialog();
 		}
 	}
 
 	private void resetPanels() {
-
-		Iterator<Pathway> it = con.getAllPathways().iterator();
 		MainWindow.getInstance().enableOptionPanelUpdate(false);
-		Pathway p;
-		MyGraph graph;
-
-		while (it.hasNext()) {
-			p = it.next();
-			graph = p.getGraph();
-			graph.disableGraphTheory();
-
-			graph.clearPickedElements();
-
+		for (final Pathway pw : con.getAllPathways()) {
+			pw.getGraph().disableGraphTheory();
+			pw.getGraph2().clearSelection();
 		}
-
 		firstGraph.updateUI();
 		secondGraph.updateUI();
 		MainWindow.getInstance().enableOptionPanelUpdate(true);
 	}
 
 	public void itemStateChanged(ItemEvent e) {
-
 		@SuppressWarnings("unchecked")
 		JComboBox<String> box = (JComboBox<String>) e.getSource();
-
-		if (box.getName().equals("first")) {
-			changeGraph(true, e.getItem().toString());
-		} else {
-			changeGraph(false, e.getItem().toString());
-		}
+		changeGraph(box.getName().equals("first"), e.getItem().toString());
 		resetPanels();
 	}
 

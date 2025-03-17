@@ -7,6 +7,7 @@ import biologicalObjects.edges.*;
 import biologicalObjects.nodes.*;
 import biologicalObjects.nodes.petriNet.*;
 import graph.CreatePathway;
+import graph.operations.layout.gem.GEMLayoutOperation;
 import gui.MainWindow;
 import io.BaseReader;
 import org.apache.commons.lang3.StringUtils;
@@ -93,12 +94,10 @@ public class GraphMLReader extends BaseReader<Pathway> {
 				break;
 			}
 		}
-		pw.getGraph().restartVisualizationModel();
 		if (!hasSeenPositions) {
-			// pw.getGraph().changeToCircleLayout();
-			pw.getGraph().changeToGEMLayout();
+			pw.getGraph2().apply(new GEMLayoutOperation());
 		}
-		pw.getGraph().normalCentering();
+		pw.getGraphRenderer().zoomAndCenterGraph();
 		MainWindow.getInstance().updateProjectProperties();
 		return pw;
 	}

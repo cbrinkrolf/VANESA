@@ -121,7 +121,6 @@ public class DoSmacof extends Thread {
 						point.setLocation(result_mat.getColumn(id)[0], 0);
 					} else if (result_mat.getSecondDimSize() == 2) {
 						point.setLocation(result_mat.getColumn(id)[0], result_mat.getColumn(id)[1]);
-//						System.out.println("ID:"+id+" "+vertices.get(bna));
 					}
 				}
 			} else {
@@ -130,19 +129,15 @@ public class DoSmacof extends Thread {
 					point.setLocation(result_mat.getColumn(id)[0], 0);
 				} else if (result_mat.getSecondDimSize() == 2) {
 					point.setLocation(result_mat.getColumn(id)[0], result_mat.getColumn(id)[1]);
-//					System.out.println("ID:"+id+" "+vertices.get(bna));
 				}
 			}
-
 		}
 
-		con.getPathway(MainWindow.getInstance().getCurrentPathway()).getGraph().getVisualizationViewer().repaint();
 		con.getPathway(MainWindow.getInstance().getCurrentPathway()).updateMyGraph();
 
 		MainWindow w = MainWindow.getInstance();
 		w.closeProgressBar();
 		view.returned();
-
 	}
 
 	/**

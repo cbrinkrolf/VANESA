@@ -8,14 +8,12 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.*;
 import com.fasterxml.jackson.core.type.TypeReference;
-import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
 import graph.CreatePathway;
 import graph.VanesaGraph;
 import graph.algorithms.MergeGraphs;
 import graph.hierarchies.EnzymeNomenclature;
 import graph.hierarchies.HierarchyList;
 import graph.hierarchies.HierarchyListComparator;
-import graph.jung.classes.MyGraph;
 import graph.operations.layout.gem.GEMLayoutOperation;
 import gui.MainWindow;
 import gui.PopUpDialog;
@@ -207,37 +205,22 @@ public class BrendaConnector {
 	}
 
 	/**
-	 * For autocoarsing the resulting network.
+	 * For auto-coarsing the resulting network.
 	 */
 	private void autoCoarseDepth() {
 		// The parent of each node is the neighbor with the shortest path to the root node.
 		class HLC implements HierarchyListComparator<Integer> {
-			final Map<BiologicalNodeAbstract, Number> rootDistanceMap;
+			final Map<BiologicalNodeAbstract, Double> rootDistanceMap;
 
 			public HLC() {
-				Pathway newPw = new Pathway("Brenda Search");
-				MyGraph searchGraph = new MyGraph(newPw);
-				for (BiologicalNodeAbstract nd : graph.getNodes()) {
-					searchGraph.addVertex(nd, graph.getNodePosition(nd));
-				}
-				for (BiologicalEdgeAbstract e : graph.getEdges()) {
-					BiologicalEdgeAbstract reverseEdge = e.clone();
-					reverseEdge.setFrom(e.getTo());
-					reverseEdge.setTo(e.getFrom());
-					searchGraph.addEdge(e);
-					searchGraph.addEdge(reverseEdge);
-				}
-				UnweightedShortestPath<BiologicalNodeAbstract, BiologicalEdgeAbstract> path = new UnweightedShortestPath<>(
-						searchGraph.getJungGraph());
-				rootDistanceMap = path.getDistanceMap(pw.getRootNode());
+				rootDistanceMap = graph.getUnweightedUndirectedShortestPaths(pw.getRootNode());
 			}
 
 			public Integer getValue(BiologicalNodeAbstract n) {
-				Set<BiologicalNodeAbstract> neighbors = new HashSet<>(graph.getNeighbors(n));
 				BiologicalNodeAbstract bestNeighbor = n;
 				int bestDistance = rootDistanceMap.get(n) == null ? Integer.MAX_VALUE : rootDistanceMap.get(n)
 						.intValue();
-				for (BiologicalNodeAbstract neighbor : neighbors) {
+				for (BiologicalNodeAbstract neighbor : graph.getNeighbors(n)) {
 					if (rootDistanceMap.get(neighbor) != null && (bestNeighbor == n || rootDistanceMap.get(neighbor)
 							.intValue() <= bestDistance)) {
 						if (neighbor instanceof Factor || neighbor instanceof Inhibitor) {
@@ -250,18 +233,18 @@ public class BrendaConnector {
 				return bestNeighbor.getID();
 			}
 
-			public Integer getSubValue(BiologicalNodeAbstract n) {
+			public Integer getSubValue(final BiologicalNodeAbstract n) {
 				return n.getID();
 			}
 		}
-		HierarchyList<Integer> l = new HierarchyList<>();
+		final HierarchyList<Integer> l = new HierarchyList<>();
 		l.addAll(graph.getNodes());
 		l.sort(new HLC());
 		l.coarse();
 	}
 
 	/**
-	 * For autocoarsing the resulting network.
+	 * For auto-coarsing the resulting network.
 	 */
 	private void autoCoarseEnzymeNomenclature() {
 		EnzymeNomenclature struc = new EnzymeNomenclature();
@@ -281,7 +264,7 @@ public class BrendaConnector {
 				return n.getLabel();
 			}
 		}
-		HierarchyList<String> l = new HierarchyList<>();
+		final HierarchyList<String> l = new HierarchyList<>();
 		for (BiologicalNodeAbstract n : graph.getNodes()) {
 			if (n instanceof Enzyme) {
 				l.add(n);

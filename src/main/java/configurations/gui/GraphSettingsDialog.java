@@ -54,11 +54,6 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 	private JFontChooserButton edgeFontChooser;
 	private JLabel edgeFontLabel;
 
-	private JCheckBox omitInvisibleNodes;
-	private JCheckBox disabledAntiAliasing;
-
-	private JCheckBox useDefaultTransformers;
-
 	private JSpinner minVertexLabelFontSize;
 	private JSpinner minEdgeLabelFontSize;
 
@@ -168,22 +163,6 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 
 	private void addPerformanceSettings() {
 		addHeader("Performance");
-		omitInvisibleNodes = new JCheckBox();
-		omitInvisibleNodes.setBackground(null);
-		addSetting("Omit invisible nodes",
-				"Omit drawing of invisible nodes. Pathway needs to be re-opened to be effective!", omitInvisibleNodes,
-				() -> omitInvisibleNodes.setSelected(true));
-
-		disabledAntiAliasing = new JCheckBox();
-		disabledAntiAliasing.setBackground(null);
-		addSetting("disable anti-aliasing",
-				"Increases graph drawing performance. Exported graph images are not affected!", disabledAntiAliasing,
-				() -> disabledAntiAliasing.setSelected(false));
-
-		useDefaultTransformers = new JCheckBox();
-		useDefaultTransformers.setBackground(null);
-		addSetting("Use default style for graph", "Use default transformers to visualize the graph (faster)",
-				useDefaultTransformers, () -> useDefaultTransformers.setSelected(false));
 
 		minVertexLabelFontSize = new JSpinner(new SpinnerNumberModel(6, 0, 100, 1));
 		addSetting("Minimal font size of node labels",
@@ -226,10 +205,9 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 		showEdgesCheckBox.setSelected(graphSettings.getDrawEdges());
 		opacitySlider.setValue(graphSettings.getEdgeOpacity());
 		pixelOffset.setText(String.valueOf(graphSettings.getPixelOffset()));
-		useDefaultTransformers.setSelected(graphSettings.isDefaultTransformers());
-		// Performance settings
-		omitInvisibleNodes.setSelected(settings.isOmitPaintInvisibleNodes());
-		disabledAntiAliasing.setSelected(settings.isDisabledAntiAliasing());
+		// Performance
+		minVertexLabelFontSize.setValue(graphSettings.getMinVertexFontSize());
+		minEdgeLabelFontSize.setValue(graphSettings.getMinEdgeFontSize());
 	}
 
 	private void updateFontSettings() {
@@ -296,30 +274,17 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 			graphSettings.setDrawEdges(showEdgesCheckBox.isSelected());
 			graphSettings.setEdgeOpacity(opacitySlider.getValue());
 			graphSettings.setPixelOffset(Integer.parseInt(pixelOffset.getText()));
-			graphSettings.setDefaultTransformers(useDefaultTransformers.isSelected());
-			settings.setOmitPaintInvisibleNodes(omitInvisibleNodes.isSelected());
-			settings.setDisabledAntiAliasing(disabledAntiAliasing.isSelected());
 		}));
 		// Update current visualization
 		final Pathway pathway = GraphInstance.getPathway();
 		if (pathway != null) {
 			pathway.changeBackground(black.isSelected() ? "black" : "white");
 			pathway.getGraph().getEdgeDrawPaintFunction().updateEdgeAlphaValue();
-			pathway.getGraph().disableAntiAliasing(disabledAntiAliasing.isSelected());
-			pathway.getGraph().updateLabelVisibilityOnZoom();
-			pathway.getGraph().getVisualizationViewer().repaint();
 		}
 		return true;
 	}
 
 	public void onCancelClick() {
-		useDefaultTransformers.setSelected(graphSettings.isDefaultTransformers());
-		final Pathway pathway = GraphInstance.getPathway();
-		if (pathway != null) {
-			pathway.getGraph().disableAntiAliasing(graphSettings.isDisabledAntiAliasing());
-			pathway.getGraph().updateLabelVisibilityOnZoom();
-			pathway.getGraph().getVisualizationViewer().repaint();
-		}
 	}
 
 	private void evaluateVertexFontLabel(final Font font) {

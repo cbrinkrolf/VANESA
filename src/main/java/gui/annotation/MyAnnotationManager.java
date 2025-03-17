@@ -118,7 +118,6 @@ public class MyAnnotationManager extends AnnotationManager {
 		}
 		ma.setAnnotation(a2);
 		add(a2.getLayer(), ma);
-		GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 	}
 
 	public void changeLayer(MyAnnotation annotation, int newLayer) {

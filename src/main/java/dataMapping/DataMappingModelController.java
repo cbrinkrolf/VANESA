@@ -25,19 +25,14 @@ import biologicalElements.Pathway;
 import dataMapping.biomartRetrieval.HPRDQueryRetrieval;
 import dataMapping.biomartRetrieval.IntActQueryRetrieval;
 import dataMapping.dataImport.ImportExcelxData;
-import graph.GraphInstance;
-import gui.IndeterminateProgressBar;
-import gui.MainWindow;
 
 /**
  * This class manages the data flow between the GUI, the BioMart information
  * retrieval and the DataMappingModel, notifies the GUI if data has changes
- * 
- * @author dborck
  *
+ * @author dborck
  */
 public class DataMappingModelController extends Observable {
-
 	private DataMappingModel dataMappingModel;
 	private ImportExcelxData importData;
 
@@ -52,15 +47,11 @@ public class DataMappingModelController extends Observable {
 	public static final int VALUES = 3;
 	public static final int SPECIES = 4;
 
-	private boolean[] checks = { false, false, false, false, false };
-
-	private Map<String, String> resultMap;
+	private final boolean[] checks = { false, false, false, false, false };
 	private int headerIndex;
-	public static IndeterminateProgressBar progressBarExport;
 
 	/**
-	 * constructs the DataMappingModelController and instantiates a new
-	 * DataMappingModel
+	 * constructs the DataMappingModelController and instantiates a new DataMappingModel
 	 */
 	public DataMappingModelController() {
 		super();
@@ -69,9 +60,6 @@ public class DataMappingModelController extends Observable {
 
 	/**
 	 * open an Excel file and import the data
-	 * 
-	 * @param file
-	 * @throws Exception
 	 */
 	public void openFile(File file) throws Exception {
 		importData = new ImportExcelxData(file);
@@ -81,8 +69,6 @@ public class DataMappingModelController extends Observable {
 
 	/**
 	 * set the source of the identifiers, e.g. Agilent, Affymetrix, EMBL or UniProt
-	 * 
-	 * @param identifier
 	 */
 	public void setIdentifierType(String identifier) {
 		this.identifierType = identifier.split(" ")[0];
@@ -97,7 +83,7 @@ public class DataMappingModelController extends Observable {
 	 * sets the checks[index] to true and does check if all parameters for the
 	 * dataMapping were set, or if called with "-1" only checks, if true the view is
 	 * notified and the "OK" button will be enable
-	 * 
+	 *
 	 * @param isSet - one out of four parameters
 	 */
 	private void doCheck(int isSet) {
@@ -133,7 +119,7 @@ public class DataMappingModelController extends Observable {
 	/**
 	 * gets the values out of the row[rowIndex] with the new values for the JTable
 	 * header
-	 * 
+	 *
 	 * @param rowIndex
 	 * @return - the new values as a Vector<String>
 	 */
@@ -146,7 +132,7 @@ public class DataMappingModelController extends Observable {
 	/**
 	 * extracts the pathway labels out of the selected pathway, the labels are used
 	 * for the BioMart query
-	 * 
+	 *
 	 * @param pw - the selected pathway
 	 */
 	public void setPathwayLabels(Pathway pw) {
@@ -166,7 +152,7 @@ public class DataMappingModelController extends Observable {
 		createIdentifierMultiValueMap();
 		// TODO numOfThreads
 		int numOfThreads = 1;
-//		System.out.println("Anzahl Threads: " + numOfThreads);
+		//		System.out.println("Anzahl Threads: " + numOfThreads);
 
 		createIdentifierMultiValueMap();
 		List<Future<Map<String, String>>> resultMapPart = new LinkedList<>();
@@ -178,7 +164,7 @@ public class DataMappingModelController extends Observable {
 		int labelsPartMod = labels.size() % numOfThreads;
 
 		if (detectPathwayOrigin().equals("HPRD")) {
-//				query = new HPRDQueryRetrieval("homo sapiens");
+			//				query = new HPRDQueryRetrieval("homo sapiens");
 
 			for (int i = 0; i < numOfThreads; i++) {
 				if (i < labelsPartMod) {
@@ -195,7 +181,7 @@ public class DataMappingModelController extends Observable {
 
 		} else if (detectPathwayOrigin().equals("IntAct")) {
 			// query = new IntActQueryRetrieval(detectPathwaySpeciesHeuristic());
-//				query = new IntActQueryRetrieval(detectPathwaySpeciesAll());
+			//				query = new IntActQueryRetrieval(detectPathwaySpeciesAll());
 
 			for (int i = 0; i < numOfThreads; i++) {
 				if (i < labelsPartMod) {
@@ -213,7 +199,7 @@ public class DataMappingModelController extends Observable {
 
 			System.out.println("Cannot determine the origin source of the pathway");
 		}
-//			
+		//
 		try {
 			resultMapPart = executeQuerys.invokeAll(tasksQuery);
 
@@ -225,21 +211,18 @@ public class DataMappingModelController extends Observable {
 		}
 
 		executeQuerys.shutdown();
-		resultMap = new HashMap<String, String>();
-
+		Map<String, String> resultMap = new HashMap<>();
 		for (Future<Map<String, String>> res : resultMapPart) {
 			try {
 				resultMap.putAll(res.get());
-
 			} catch (InterruptedException | ExecutionException e) {
 				JOptionPane.showMessageDialog(null, "Query dosen't work (no results).", "Error",
 						JOptionPane.ERROR_MESSAGE);
-
 				e.printStackTrace();
 			}
 		}
 
-//			resultMap = query.getResultMap();
+		//			resultMap = query.getResultMap();
 		dataMappingModel.setQueryResultMap(resultMap);
 		dataMappingModel.setColoringParameters();
 		dataMappingModel.merge();
@@ -247,23 +230,16 @@ public class DataMappingModelController extends Observable {
 
 		setChanged();
 		notifyObservers(dataMappingModel);
-		GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 	}
 
 	/**
 	 * creates the HashMap of the data of the input file
 	 */
 	private void createIdentifierMultiValueMap() {
-		Map<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
-//		ArrayList<String> header = new ArrayList<String>();
-//		for(ArrayList<String> multiValue : multiValues){
-//			header.add(multiValue.get(headerIndex));
-//		}
-//		
-//		dataMappingModel.setHeader(header);
+		Map<String, ArrayList<String>> map = new HashMap<>();
 		for (String id : identifiers) {
 			int index = identifiers.indexOf(id);
-			ArrayList<String> valueRow = new ArrayList<String>();
+			ArrayList<String> valueRow = new ArrayList<>();
 			for (ArrayList<String> multiValue : multiValues) {
 				valueRow.add(multiValue.get(index));
 			}
@@ -276,7 +252,7 @@ public class DataMappingModelController extends Observable {
 	/**
 	 * detects of which origin is the selected pathway, depending on the labels you
 	 * have to call different BioMart queries
-	 * 
+	 *
 	 * @return - a String either "HPRD" or "IntAct" which determines the origin of
 	 *         the source
 	 */
@@ -284,56 +260,13 @@ public class DataMappingModelController extends Observable {
 		// TODO: test for mixed variants..., only makes sense if after a merge
 		// there will be a connected graph with these two different identifiers
 		String check = labels.get(labels.size() / 2);
-		String result = null;
-		if (check.contains("_")) {
-			result = "IntAct";
-		} else if (!check.contains("_")) {
-			result = "HPRD";
-		}
-		return result;
+		return check.contains("_") ? "IntAct" : "HPRD";
 	}
-
-	// /**
-	// * detects of which species is the selected pathway,
-	// * depending on the labels you have to call different BioMart queries
-	// * @return - a String representing the species of the pathway, it is used for
-	// the query construction
-	// */
-	// private String detectPathwaySpeciesHeuristic() {
-	// int max = labels.size()-1;
-	// System.out.println(max/2);
-	// int middle = max/2;
-	// String[] check = {labels.get(0),labels.get(middle),labels.get(max)};
-	// String[] split = new String[3];
-	// for (int i = 0; i<check.length; i++) {
-	// split[i] = check[i].split("_")[1];
-	// }
-	// String result = null;
-	// // TODO: detect all common species!!!
-	// // TODO: detect whether the network contains labels from different species,
-	// up to now I do
-	// // not know how to handle this situation!!
-	// if(split[0].equalsIgnoreCase("mouse") && split[1].equalsIgnoreCase("mouse")
-	// && split[2].equalsIgnoreCase("mouse")){
-	// result = "mus musculus";
-	// } else if (split[0].equalsIgnoreCase("human") &&
-	// split[1].equalsIgnoreCase("human") && split[2].equalsIgnoreCase("human")){
-	// result = "homo sapiens";
-	// } else if (split[0].equalsIgnoreCase("yeast") &&
-	// split[1].equalsIgnoreCase("yeast") && split[2].equalsIgnoreCase("yeast")){
-	// result = "yeast";
-	// } else {
-	// System.out.println("Can not determine the source of species");
-	// result = "mus musculus";
-	// }
-	// System.out.println("Species: " + result);
-	// return result;
-	// }
 
 	/**
 	 * detects which species exist in the selected pathway, depending on the labels
 	 * you have to call different BioMart queries
-	 * 
+	 *
 	 * @return - a String representing the species with the most occurrences in the
 	 *         pathway, it is used for the query construction
 	 */
@@ -351,7 +284,7 @@ public class DataMappingModelController extends Observable {
 				split[i] = "NA";
 			}
 		}
-		List<String> species = new ArrayList<String>();
+		List<String> species = new ArrayList<>();
 		// count the occurrences of the three species
 		for (String str : split) {
 			if (str.equalsIgnoreCase("human")) {
@@ -369,7 +302,7 @@ public class DataMappingModelController extends Observable {
 		// the result is either one string corresponding to the only species, or a List
 		// of up to three
 		// species (hs, mmus and/or yeast)
-		List<String> tmpResult = new ArrayList<String>();
+		List<String> tmpResult = new ArrayList<>();
 		if (species.size() > 1) {
 			for (String str : species) {
 				if (str.equalsIgnoreCase("human")) {
@@ -396,10 +329,7 @@ public class DataMappingModelController extends Observable {
 	}
 
 	/**
-	 * extracts the identifier (stored in one column) out of the imported Data
-	 * (stored row wise)
-	 * 
-	 * @param identifierColumnIndex
+	 * extracts the identifier (stored in one column) out of the imported Data (stored row wise)
 	 */
 	public void setIdentifiers(int identifierColumnIndex) {
 		Vector<Vector<String>> allData = importData.getDataVector();
@@ -414,19 +344,14 @@ public class DataMappingModelController extends Observable {
 	}
 
 	/**
-	 * extracts the values (stored in some columns) out of the imported Data (stored
-	 * row wise)
-	 * 
-	 * @param columnIndices
+	 * extracts the values (stored in some columns) out of the imported Data (stored row wise)
 	 */
 	public void setMultiValues(HashSet<Integer> columnIndices) {
-		multiValues = new ArrayList<ArrayList<String>>();
+		multiValues = new ArrayList<>();
 		Vector<Vector<String>> allData = importData.getDataVector();
-
-		ArrayList<String> header = new ArrayList<String>();
-
+		ArrayList<String> header = new ArrayList<>();
 		for (int columnIndex : columnIndices) {
-			ArrayList<String> valueList = new ArrayList<String>();
+			ArrayList<String> valueList = new ArrayList<>();
 			for (int i = 0; i < allData.size(); i++) {
 				Vector<String> rowData = allData.get(i);
 				if (i != headerIndex) {
@@ -437,7 +362,6 @@ public class DataMappingModelController extends Observable {
 			}
 			multiValues.add(valueList);
 		}
-
 		dataMappingModel.setHeader(header);
 
 	}
@@ -450,9 +374,7 @@ public class DataMappingModelController extends Observable {
 	 * after a reset in the view, the values for the checks have to be reset
 	 */
 	public void setChecks() {
-		for (int i = 0; i < checks.length; i++) {
-			checks[i] = false;
-		}
+		Arrays.fill(checks, false);
 		setChanged();
 		notifyObservers("reset");
 	}
@@ -461,8 +383,6 @@ public class DataMappingModelController extends Observable {
 	 * after some choises from the user the mapping have to be disabled, e.g. if
 	 * "none" pathway is selected, sets the checks[index] to false and invokes with
 	 * "-1" the doCheck
-	 * 
-	 * @param index -
 	 */
 	public void disableCheck(int index) {
 		checks[index] = false;
@@ -471,8 +391,6 @@ public class DataMappingModelController extends Observable {
 
 	/**
 	 * invokes the setting of the pathway in the dataMappingModel
-	 * 
-	 * @param selectedPathway
 	 */
 	public void setPathway(Pathway selectedPathway) {
 		dataMappingModel.setPathway(selectedPathway);
@@ -490,23 +408,18 @@ public class DataMappingModelController extends Observable {
 	/**
 	 * extracts the new data for the coloring/storing from the JTable, invokes the
 	 * coloring and notifies the View
-	 * 
-	 * @param dmt
 	 */
 	public void setNewMergeMap(JTable dmt) {
 		Map<String, List<String>> newMergeMap = new HashMap<String, List<String>>();
 		Map<String, List<String>> newDupMap = new HashMap<String, List<String>>();
 		for (int i = 0; i < dmt.getRowCount(); i++) {
 			JRadioButton jButton = (JRadioButton) dmt.getValueAt(i, 3);
+			List<String> changedValue = new ArrayList<>();
+			changedValue.add((String) dmt.getValueAt(i, 1));
+			changedValue.add((String) dmt.getValueAt(i, 2));
 			if (jButton.isSelected()) {
-				List<String> changedValue = new ArrayList<String>();
-				changedValue.add((String) dmt.getValueAt(i, 1));
-				changedValue.add((String) dmt.getValueAt(i, 2));
 				newMergeMap.put((String) dmt.getValueAt(i, 0), changedValue);
-			} else if (!jButton.isSelected()) {
-				List<String> changedValue = new ArrayList<String>();
-				changedValue.add((String) dmt.getValueAt(i, 1));
-				changedValue.add((String) dmt.getValueAt(i, 2));
+			} else {
 				newDupMap.put((String) dmt.getValueAt(i, 0), changedValue);
 			}
 		}
@@ -514,11 +427,6 @@ public class DataMappingModelController extends Observable {
 
 		setChanged();
 		notifyObservers(dataMappingModel);
-	}
-
-	public static void reactivateUI() {
-		// close Progress bar and reactivate UI
-		MainWindow.getInstance().closeProgressBar();
 	}
 
 	public void setHeaderIndex(int headerIndex) {

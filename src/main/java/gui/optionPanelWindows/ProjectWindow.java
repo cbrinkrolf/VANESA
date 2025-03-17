@@ -17,131 +17,136 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 public class ProjectWindow implements FocusListener {
-    private final JPanel panel = new JPanel();
-    private boolean emptyPane = true;
-    private Pathway pw;
+	private final JPanel panel = new JPanel();
+	private boolean emptyPane = true;
+	private Pathway pw;
 
-    public JPanel getPanel() {
-        panel.setVisible(false);
-        return panel;
-    }
+	public ProjectWindow() {
+		panel.setLayout(new MigLayout("fillx", "[grow,fill]"));
+	}
 
-    public void removeAllElements() {
-        emptyPane = true;
-        panel.removeAll();
-        panel.setVisible(false);
-    }
+	public JPanel getPanel() {
+		panel.setVisible(false);
+		return panel;
+	}
 
-    public void revalidateView() {
-        if (!emptyPane) {
-            panel.removeAll();
-        }
-        updateWindow();
-        panel.setVisible(true);
-        panel.repaint();
-        panel.revalidate();
-        emptyPane = false;
-    }
+	public void removeAllElements() {
+		emptyPane = true;
+		panel.removeAll();
+		panel.setVisible(false);
+	}
 
-    private void updateWindow() {
-        pw = GraphInstance.getPathway();
-        MigLayout layout = new MigLayout("fillx", "[grow,fill]", "");
-        panel.setLayout(layout);
+	public void revalidateView() {
+		if (!emptyPane) {
+			panel.removeAll();
+		}
+		updateWindow();
+		panel.setVisible(true);
+		panel.repaint();
+		panel.revalidate();
+		emptyPane = false;
+	}
 
-        panel.add(new JLabel("Pathway"), "gap 5");
-        JTextField pathway = new JTextField(pw.getTitle(), 20);
-        pathway.setName("pathway");
-        pathway.addFocusListener(this);
-        panel.add(pathway, "wrap,span 3");
+	private void updateWindow() {
+		pw = GraphInstance.getPathway();
 
-        panel.add(new JLabel("Organism"), "gap 5");
-        JTextField organism = new JTextField(pw.getOrganism(), 20);
-        organism.setName("organism");
-        organism.addFocusListener(this);
-        panel.add(organism, "wrap ,span 3");
+		panel.add(new JLabel("Pathway"), "gap 5");
+		JTextField pathway = new JTextField(pw.getTitle(), 20);
+		pathway.setName("pathway");
+		pathway.addFocusListener(this);
+		panel.add(pathway, "wrap,span 3");
 
-        panel.add(new JLabel("Author"), "gap 5");
-        JTextField author = new JTextField(pw.getAuthor(), 20);
-        author.setName("author");
-        author.addFocusListener(this);
-        panel.add(author, "wrap ,span 3");
+		panel.add(new JLabel("Organism"), "gap 5");
+		JTextField organism = new JTextField(pw.getOrganism(), 20);
+		organism.setName("organism");
+		organism.addFocusListener(this);
+		panel.add(organism, "wrap ,span 3");
 
-        panel.add(new JLabel("Version"), "gap 5");
-        JTextField version = new JTextField(pw.getVersion(), 20);
-        version.setName("version");
-        version.addFocusListener(this);
-        panel.add(version, "wrap ,span 3");
+		panel.add(new JLabel("Author"), "gap 5");
+		JTextField author = new JTextField(pw.getAuthor(), 20);
+		author.setName("author");
+		author.addFocusListener(this);
+		panel.add(author, "wrap ,span 3");
 
-        panel.add(new JLabel("Date"), "gap 5");
-        JTextField date = new JTextField(pw.getDate(), 20);
-        date.setName("date");
-        date.addFocusListener(this);
-        panel.add(date, "wrap ,span 3");
+		panel.add(new JLabel("Version"), "gap 5");
+		JTextField version = new JTextField(pw.getVersion(), 20);
+		version.setName("version");
+		version.addFocusListener(this);
+		panel.add(version, "wrap ,span 3");
 
-        MigLayout headerLayout = new MigLayout("fillx", "[right]rel[grow,fill]", "");
-        JPanel separatorPanel = new JPanel(headerLayout);
-        separatorPanel.add(new JLabel("Description"), "");
-        separatorPanel.add(new JSeparator(), "gap 10");
-        panel.add(separatorPanel, "wrap, span");
+		panel.add(new JLabel("Date"), "gap 5");
+		JTextField date = new JTextField(pw.getDate(), 20);
+		date.setName("date");
+		date.addFocusListener(this);
+		panel.add(date, "wrap ,span 3");
 
-        JTextArea comment = new JTextArea(15, 5);
-        comment.setName("comment");
-        comment.setText(pw.getDescription());
-        comment.addFocusListener(this);
-        panel.add(comment, "span,wrap,growx ,gap 10");
+		JPanel separatorPanel = new JPanel(new MigLayout("fillx", "[right]rel[grow,fill]"));
+		separatorPanel.add(new JLabel("Description"), "");
+		separatorPanel.add(new JSeparator(), "gap 10");
+		panel.add(separatorPanel, "wrap, span");
 
-        updateWindowTab(pw.getTitle());
-    }
+		JTextArea comment = new JTextArea(15, 5);
+		comment.setName("comment");
+		comment.setText(pw.getDescription());
+		comment.addFocusListener(this);
+		panel.add(comment, "span,wrap,growx ,gap 10");
 
-    public void updateWindowTab(String name) {
-        GraphContainer.getInstance().renamePathway(pw, name);
-        MainWindow.getInstance().renameSelectedTab(pw.getName());
-        GraphContainer.getInstance().setPetriView(pw.isPetriNet());
-        Component[] c = MainWindow.getInstance().getFrame().getContentPane().getComponents();
-        for (Component component : c) {
-            if (component.getClass().getName().equals("javax.swing.JPanel")) {
-                MainWindow.getInstance().getBar().updateVisibility();
-                MainWindow.getInstance().getMenu().setPetriView(pw.isPetriNet() ||
-                                                                pw.getTransformationInformation() != null &&
-                                                                pw.getTransformationInformation().getPetriNet() !=
-                                                                null);
-                break;
-            }
-        }
-    }
+		updateWindowTab(pw.getTitle());
+	}
 
-    @Override
-    public void focusGained(FocusEvent event) {
-        event.getComponent().setBackground(new Color(200, 227, 255));
-    }
+	private void updateWindowTab(String name) {
+		GraphContainer.getInstance().renamePathway(pw, name);
+		MainWindow.getInstance().renameSelectedTab(pw.getName());
+		GraphContainer.getInstance().setPetriView(pw.isPetriNet());
+		Component[] c = MainWindow.getInstance().getFrame().getContentPane().getComponents();
+		for (Component component : c) {
+			if (component.getClass().getName().equals("javax.swing.JPanel")) {
+				MainWindow.getInstance().getBar().updateVisibility();
+				MainWindow.getInstance().getMenu().setPetriView(pw.isPetriNet()
+						|| pw.getTransformationInformation() != null
+						&& pw.getTransformationInformation().getPetriNet() != null);
+				break;
+			}
+		}
+	}
 
-    @Override
-    public void focusLost(FocusEvent event) {
-        String source = event.getComponent().getName();
-        String value = ((JTextField) event.getSource()).getText();
-        switch (source) {
-            case "pathway":
-                GraphContainer.getInstance().renamePathway(pw, value);
-                pw.setTitle(pw.getName());
-                MainWindow.getInstance().renameSelectedTab(pw.getName());
-                ((JTextField) event.getSource()).setText(pw.getName());
-                break;
-            case "author":
-                pw.setAuthor(value);
-                break;
-            case "version":
-                pw.setVersion(value);
-                break;
-            case "date":
-                pw.setDate(value);
-                break;
-            case "organism":
-                pw.setOrganism(value);
-                break;
-            case "comment":
-                pw.setDescription(value);
-                break;
-        }
-        event.getComponent().setBackground(Color.WHITE);
-    }
+	@Override
+	public void focusGained(FocusEvent event) {
+		event.getComponent().setBackground(new Color(200, 227, 255));
+	}
+
+	@Override
+	public void focusLost(FocusEvent event) {
+		String source = event.getComponent().getName();
+		String value = "";
+		if (event.getSource() instanceof JTextField) {
+			value = ((JTextField) event.getSource()).getText();
+		} else if (event.getSource() instanceof JTextArea) {
+			value = ((JTextArea) event.getSource()).getText();
+		}
+		switch (source) {
+		case "pathway":
+			GraphContainer.getInstance().renamePathway(pw, value);
+			pw.setTitle(pw.getName());
+			MainWindow.getInstance().renameSelectedTab(pw.getName());
+			((JTextField) event.getSource()).setText(pw.getName());
+			break;
+		case "author":
+			pw.setAuthor(value);
+			break;
+		case "version":
+			pw.setVersion(value);
+			break;
+		case "date":
+			pw.setDate(value);
+			break;
+		case "organism":
+			pw.setOrganism(value);
+			break;
+		case "comment":
+			pw.setDescription(value);
+			break;
+		}
+		event.getComponent().setBackground(Color.WHITE);
+	}
 }

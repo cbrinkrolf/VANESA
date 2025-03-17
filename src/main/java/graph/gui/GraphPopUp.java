@@ -82,10 +82,8 @@ public class GraphPopUp {
 	private void onCopyClicked() {
 		if (GraphContainer.getInstance().containsPathway()) {
 			Pathway pw = GraphInstance.getPathway();
-			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph()
-					.getVisualizationViewer();
-			Set<BiologicalNodeAbstract> vertices = new HashSet<>(vv.getPickedVertexState().getPicked());
-			Set<BiologicalEdgeAbstract> edges = new HashSet<>(vv.getPickedEdgeState().getPicked());
+			Set<BiologicalNodeAbstract> vertices = new HashSet<>(pw.getGraph2().getSelectedNodes());
+			Set<BiologicalEdgeAbstract> edges = new HashSet<>(pw.getGraph2().getSelectedEdges());
 			CopySelectionSingleton.setInstance(new CopySelection(vertices, edges));
 		}
 	}
@@ -93,10 +91,8 @@ public class GraphPopUp {
 	private void onCutClicked() {
 		if (GraphContainer.getInstance().containsPathway()) {
 			Pathway pw = GraphInstance.getPathway();
-			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph()
-					.getVisualizationViewer();
-			Set<BiologicalNodeAbstract> vertices = new HashSet<>(vv.getPickedVertexState().getPicked());
-			Set<BiologicalEdgeAbstract> edges = new HashSet<>(vv.getPickedEdgeState().getPicked());
+			Set<BiologicalNodeAbstract> vertices = new HashSet<>(pw.getGraph2().getSelectedNodes());
+			Set<BiologicalEdgeAbstract> edges = new HashSet<>(pw.getGraph2().getSelectedEdges());
 			CopySelectionSingleton.setInstance(new CopySelection(vertices, edges));
 			pw.removeSelection();
 			MainWindow w = MainWindow.getInstance();
@@ -110,8 +106,7 @@ public class GraphPopUp {
 		if (GraphContainer.getInstance().containsPathway()) {
 			Pathway pw = GraphInstance.getPathway();
 			CopySelectionSingleton.getInstance().paste();
-			pw.getGraph().restartVisualizationModel();
-			pw.getGraph().getVisualizationViewer().repaint();
+			pw.updateMyGraph();
 		}
 	}
 
@@ -124,34 +119,23 @@ public class GraphPopUp {
 		}
 	}
 
-	private void onSavePictureClicked(ActionEvent e) {
-		JMenuItem item = (JMenuItem) e.getSource();
-		JPopupMenu popup = (JPopupMenu) item.getParent();
-		@SuppressWarnings("unchecked")
-		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) popup
-				.getInvoker();
-		Pathway vvPw = vv.getPathway();// graphInstance.getPathway();
-		VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = vvPw.prepareGraphToPrint();
-		if (GraphContainer.getInstance().containsPathway()) {
-			if (vvPw.hasGotAtLeastOneElement()) {
-				SuffixAwareFilter[] filters;
-				if (Workspace.getCurrentSettings().getDefaultImageExportFormat()
-						.equals(ComponentImageWriter.IMAGE_TYPE_SVG)) {
-					filters = new SuffixAwareFilter[] { SuffixAwareFilter.SVG, SuffixAwareFilter.PNG,
-							SuffixAwareFilter.PDF };
-				} else if (Workspace.getCurrentSettings().getDefaultImageExportFormat()
-						.equals(ComponentImageWriter.IMAGE_TYPE_PDF)) {
-					filters = new SuffixAwareFilter[] { SuffixAwareFilter.PDF, SuffixAwareFilter.PNG,
-							SuffixAwareFilter.SVG };
-				} else {
-					filters = new SuffixAwareFilter[] { SuffixAwareFilter.PNG, SuffixAwareFilter.SVG,
-							SuffixAwareFilter.PDF };
-				}
-
-				new SaveDialog(filters, SaveDialog.DATA_TYPE_GRAPH_PICTURE, wvv);
+	private void onSavePictureClicked(final ActionEvent e) {
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null && pathway.hasGotAtLeastOneElement()) {
+			SuffixAwareFilter[] filters;
+			if (Workspace.getCurrentSettings().getDefaultImageExportFormat().equals(
+					ComponentImageWriter.IMAGE_TYPE_SVG)) {
+				filters = new SuffixAwareFilter[] { SuffixAwareFilter.SVG, SuffixAwareFilter.PNG,
+						SuffixAwareFilter.PDF };
+			} else if (Workspace.getCurrentSettings().getDefaultImageExportFormat().equals(
+					ComponentImageWriter.IMAGE_TYPE_PDF)) {
+				filters = new SuffixAwareFilter[] { SuffixAwareFilter.PDF, SuffixAwareFilter.PNG,
+						SuffixAwareFilter.SVG };
 			} else {
-				PopUpDialog.getInstance().show("Error", "Please create a network first.");
+				filters = new SuffixAwareFilter[] { SuffixAwareFilter.PNG, SuffixAwareFilter.SVG,
+						SuffixAwareFilter.PDF };
 			}
+			new SaveDialog(filters, SaveDialog.DATA_TYPE_GRAPH_PICTURE, pathway.getGraphRenderer().getBounds());
 		} else {
 			PopUpDialog.getInstance().show("Error", "Please create a network first.");
 		}

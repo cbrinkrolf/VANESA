@@ -12,7 +12,7 @@ import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Other;
 import graph.CreatePathway;
-import graph.jung.classes.MyGraph;
+import graph.operations.layout.gem.GEMLayoutOperation;
 import gui.MainWindow;
 
 public class RandomHamiltonGraph {
@@ -33,7 +33,6 @@ public class RandomHamiltonGraph {
 					"Error Message", JOptionPane.INFORMATION_MESSAGE);
 		else {
 			Pathway pw = CreatePathway.create("Random Hamilton Graph");
-			MyGraph myGraph = pw.getGraph();
 			HashSet<Integer> set = new HashSet<>();
 			Map<Integer, BiologicalNodeAbstract> nodes = new HashMap<>();
 			int nodeNumberCounter = 0;
@@ -73,11 +72,11 @@ public class RandomHamiltonGraph {
 				}
 				pw.addEdge(r);
 			}
-			myGraph.restartVisualizationModel();
-			myGraph.normalCentering();
+			pw.updateMyGraph();
+			pw.getGraph2().apply(new GEMLayoutOperation());
+			pw.getGraphRenderer().zoomAndCenterGraph();
 			MainWindow window = MainWindow.getInstance();
 			window.updateOptionPanel();
-			pw.getGraph().changeToGEMLayout();
 		}
 	}
 }

@@ -10,7 +10,7 @@ import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Other;
 import graph.CreatePathway;
-import graph.jung.classes.MyGraph;
+import graph.operations.layout.gem.GEMLayoutOperation;
 import gui.MainWindow;
 
 public class RandomBipartiteGraph {
@@ -22,7 +22,6 @@ public class RandomBipartiteGraph {
 		GraphTheoryAlgorithms.randomBipartiteGraph(numberOfNodesfirstSet, numberOfNodesSecondSet, numberOfEdges, seed,
 				nodei, nodej);
 		Pathway pw = CreatePathway.create("Random Bipartite Graph");
-		MyGraph myGraph = pw.getGraph();
 		HashSet<Integer> set = new HashSet<>();
 		for (int k = 1; k <= nodei[0]; k++) {
 			if (!set.contains(nodei[k])) {
@@ -42,10 +41,10 @@ public class RandomBipartiteGraph {
 			r.setVisible(true);
 			pw.addEdge(r);
 		}
-		myGraph.restartVisualizationModel();
-		pw.getGraph().normalCentering();
+		pw.updateMyGraph();
+		pw.getGraph2().apply(new GEMLayoutOperation());
+		pw.getGraphRenderer().zoomAndCenterGraph();
 		MainWindow window = MainWindow.getInstance();
 		window.updateOptionPanel();
-		pw.getGraph().changeToGEMLayout();
 	}
 }

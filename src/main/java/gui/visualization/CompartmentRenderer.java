@@ -25,184 +25,113 @@ import graph.jung.classes.MyVisualizationViewer;
 import graph.layouts.GraphCenter;
 
 public class CompartmentRenderer implements VisualizationViewer.Paintable {
-
 	private Pathway pw;
 	private MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
-
-	private HashMap<String, Area> areas = new HashMap<String, Area>();
-
+	private HashMap<String, Area> areas = new HashMap<>();
 	private boolean experimental = false;
 
-	public CompartmentRenderer(Pathway pw) {
+	public CompartmentRenderer(final Pathway pw) {
 		this.pw = pw;
-		vv = pw.getGraph().getVisualizationViewer();
 	}
 
-	public void setPathway(Pathway pw) {
+	public void setPathway(final Pathway pw) {
 		this.pw = pw;
-		vv = pw.getGraph().getVisualizationViewer();
 	}
 
 	@Override
-	public void paint(Graphics g) {
+	public void paint(final Graphics g) {
 		prepareCompartments();
-		drawCompartemnts((Graphics2D) g);
+		drawCompartments((Graphics2D) g);
 
 	}
 
 	private void prepareCompartments() {
-		areas = new HashMap<String, Area>();
-		HashMap<String, HashSet<BiologicalNodeAbstract>> compToNodes = new HashMap<String, HashSet<BiologicalNodeAbstract>>();
-		HashMap<String, HashSet<BiologicalEdgeAbstract>> compToEdges = new HashMap<String, HashSet<BiologicalEdgeAbstract>>();
-
-		Iterator<Compartment> comp = pw.getCompartmentManager().getAllCompartmentsAlphabetically().iterator();
-		Compartment c;
-		while (comp.hasNext()) {
-			c = comp.next();
-			// System.out.println(c.getName());
-			this.areas.put(c.getName(), new Area());
-			compToNodes.put(c.getName(), new HashSet<BiologicalNodeAbstract>());
-			compToEdges.put(c.getName(), new HashSet<BiologicalEdgeAbstract>());
+		areas = new HashMap<>();
+		HashMap<String, HashSet<BiologicalNodeAbstract>> compToNodes = new HashMap<>();
+		HashMap<String, HashSet<BiologicalEdgeAbstract>> compToEdges = new HashMap<>();
+		for (final Compartment c : pw.getCompartmentManager().getAllCompartmentsAlphabetically()) {
+			areas.put(c.getName(), new Area());
+			compToNodes.put(c.getName(), new HashSet<>());
+			compToEdges.put(c.getName(), new HashSet<>());
 		}
-
-		long l1 = System.nanoTime();
-
-		Iterator<BiologicalNodeAbstract> itNodes = pw.getAllGraphNodes().iterator();
-		BiologicalNodeAbstract bna;
-		Area a;
-		while (itNodes.hasNext()) {
-			bna = itNodes.next();
-
-			if (pw.getCompartmentManager().getCompartment(bna).length() == 0) {
+		for (final BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
+			if (pw.getCompartmentManager().getCompartment(bna).isEmpty()) {
 				continue;
 			}
-			a = areas.get(pw.getCompartmentManager().getCompartment(bna));
+			final Area a = areas.get(pw.getCompartmentManager().getCompartment(bna));
 
 			if (!compToNodes.get(pw.getCompartmentManager().getCompartment(bna)).contains(bna)) {
-				this.addNodetoArea(bna, a);
+				this.addNodeToArea(bna, a);
 				compToNodes.get(pw.getCompartmentManager().getCompartment(bna)).add(bna);
 			}
-			for (BiologicalEdgeAbstract bea : pw.getGraph().getJungGraph().getInEdges(bna)) {
+			for (BiologicalEdgeAbstract bea : pw.getGraph2().getInEdges(bna)) {
 				if (!compToEdges.get(pw.getCompartmentManager().getCompartment(bna)).contains(bea)) {
 					this.addEdgeToArea(bea, a);
 					compToEdges.get(pw.getCompartmentManager().getCompartment(bna)).add(bea);
 				}
 				if (!compToNodes.get(pw.getCompartmentManager().getCompartment(bna)).contains(bea.getFrom())) {
-					this.addNodetoArea(bea.getFrom(), a);
+					this.addNodeToArea(bea.getFrom(), a);
 					compToNodes.get(pw.getCompartmentManager().getCompartment(bna)).add(bea.getFrom());
 				}
 			}
-			for (BiologicalEdgeAbstract bea : pw.getGraph().getJungGraph().getOutEdges(bna)) {
+			for (BiologicalEdgeAbstract bea : pw.getGraph2().getOutEdges(bna)) {
 				if (!compToEdges.get(pw.getCompartmentManager().getCompartment(bna)).contains(bea)) {
 					this.addEdgeToArea(bea, a);
 					compToEdges.get(pw.getCompartmentManager().getCompartment(bna)).add(bea);
 				}
 				if (!compToNodes.get(pw.getCompartmentManager().getCompartment(bna)).contains(bea.getTo())) {
-					this.addNodetoArea(bea.getTo(), a);
+					this.addNodeToArea(bea.getTo(), a);
 					compToNodes.get(pw.getCompartmentManager().getCompartment(bna)).add(bea.getTo());
 				}
 			}
 		}
-
-		long l2 = System.nanoTime();
-
-		// System.out.println("adding: " + (l2 - l1) / 1000);
-		// }
-
 	}
 
 	private void addEdgeToArea(BiologicalEdgeAbstract bea, Area a) {
-		BiologicalNodeAbstract bna1;
-		BiologicalNodeAbstract bna2;
-
-		Point2D p1;
-		Point2D p2;
-		Point2D p1inv;
-		Point2D p2inv;
-		Polygon poly1;
-		Polygon poly2;
-
-		bna1 = bea.getFrom();
-		bna2 = bea.getTo();
-
-		// if(bna1.getCompartment().equals(bna2.getCompartment())){
-		// System.out.println(bna.getName());
-		// System.out.println(pw.getGraph().getVertexLocation(bna));
-		p1 = pw.getGraph().getVertexLocation(bna1);// pw.getGraph().getVisualizationViewer().getGraphLayout().transform(bna);
-		p2 = pw.getGraph().getVertexLocation(bna2);
-
-		// g2d.drawString("b",(int)((p.getX())), (int)((p.getY())*scale));
-		p1inv = vv.getRenderContext().getMultiLayerTransformer().transform(p1);
-		p2inv = vv.getRenderContext().getMultiLayerTransformer().transform(p2);
-
+		final Point2D p1 = pw.getGraph().getVertexLocation(bea.getFrom());
+		final Point2D p2 = pw.getGraph().getVertexLocation(bea.getTo());
+		final Point2D p1inv = vv.getRenderContext().getMultiLayerTransformer().transform(p1);
+		final Point2D p2inv = vv.getRenderContext().getMultiLayerTransformer().transform(p2);
 		double width = 12;
 		if (pw.getGraph().getVisualizationViewer().getScale() < 1) {
-			width = width * pw.getGraph().getVisualizationViewer().getScale();
+			width *= pw.getGraph().getVisualizationViewer().getScale();
 		}
 
-		poly1 = new Polygon();
+		final Polygon poly1 = new Polygon();
 		poly1.addPoint((int) (p1inv.getX() + width), (int) (p1inv.getY() + width));
 		poly1.addPoint((int) (p1inv.getX() - width), (int) (p1inv.getY() - width));
 		poly1.addPoint((int) (p2inv.getX() - width), (int) (p2inv.getY() - width));
 		poly1.addPoint((int) (p2inv.getX() + width), (int) (p2inv.getY() + width));
 
-		poly2 = new Polygon();
+		final Polygon poly2 = new Polygon();
 		poly2.addPoint((int) (p1inv.getX() + width), (int) (p1inv.getY() - width));
 		poly2.addPoint((int) (p1inv.getX() - width), (int) (p1inv.getY() + width));
 		poly2.addPoint((int) (p2inv.getX() - width), (int) (p2inv.getY() + width));
 		poly2.addPoint((int) (p2inv.getX() + width), (int) (p2inv.getY() - width));
-
-		// System.out.println(bna1.getName()+" "+bna2.getName());
 		a.add(new Area(poly1));
 		a.add(new Area(poly2));
 	}
 
-	private void addNodetoArea(BiologicalNodeAbstract bna, Area a) {
-		Point2D p1;
-		Point2D p1inv;
-		Shape s1;
-		int h1;
-		RoundRectangle2D r1;
-
-		p1 = pw.getGraph().getVertexLocation(bna);
-
-		// g2d.drawString("b",(int)((p.getX())), (int)((p.getY())*scale));
-		p1inv = vv.getRenderContext().getMultiLayerTransformer().transform(p1);
-
-		s1 = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)
-				.transform(bna.getShape().getBounds2D());
-		// System.out.println(p1);
-		// System.out.println(p1inv);
-		// Shape s3 = this.getRenderContext().getMultiLayerTransformer()
-		// .getTransformer(Layer.VIEW).transform(bea.getShape().getBounds2D());
-		// System.out.println(loc);
+	private void addNodeToArea(BiologicalNodeAbstract bna, Area a) {
+		final Point2D p1 = pw.getGraph().getVertexLocation(bna);
+		Point2D p1inv = vv.getRenderContext().getMultiLayerTransformer().transform(p1);
+		Shape s1 = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).transform(
+				bna.getShape().getBounds2D());
 		if (experimental) {
 			p1inv = p1;
 			s1 = bna.getShape().getBounds2D();
 		}
-
-		h1 = (int) s1.getBounds2D().getHeight();
-		h1 = h1 / 2;
-
-		r1 = new RoundRectangle2D.Double((int) (p1inv.getX() - h1 * 1.5), (int) (p1inv.getY() - h1 * 1.5), 3 * h1,
-				3 * h1, 15, 15);
+		final int h1 = (int) s1.getBounds2D().getHeight() / 2;
+		RoundRectangle2D r1 = new RoundRectangle2D.Double((int) (p1inv.getX() - h1 * 1.5),
+				(int) (p1inv.getY() - h1 * 1.5), 3 * h1, 3 * h1, 15, 15);
 		a.add(new Area(r1));
 	}
 
-	private void drawCompartemnts(Graphics2D g2d) {
-
-		long l1 = System.nanoTime();
-		Iterator<String> it = this.areas.keySet().iterator();
-		String comp;
-		while (it.hasNext()) {
-			comp = it.next();
-
+	private void drawCompartments(final Graphics2D g2d) {
+		for (final String comp : areas.keySet()) {
 			g2d.setColor(pw.getCompartmentManager().getCompartment(comp).getColor());
 			g2d.fill(areas.get(comp));
 		}
-		// g2d.setColor(new Color(255, 0, 0, 30));
-		// a.transform(new AffineTransform(0.5, 0.5,0.5,0.5,0.5,0.5));
-		// System.out.println("painting " + (System.nanoTime() - l1) / 1000);
 	}
 
 	@Override

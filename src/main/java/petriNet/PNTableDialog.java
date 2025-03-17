@@ -284,7 +284,6 @@ public class PNTableDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Pathway pw = GraphContainer.getInstance().getPathway(MainWindow.getInstance().getCurrentPathway());
 		Place p;
-		BiologicalNodeAbstract neighbour;
 		BiologicalNodeAbstract node;
 		if (e.getActionCommand().equals("submit")) {
 			boolean changedAllStates = true;
@@ -307,40 +306,31 @@ public class PNTableDialog extends JDialog implements ActionListener {
 							table.convertColumnIndexToView(5)));
 
 					boolean stateChanged = true;
-					Iterator<BiologicalNodeAbstract> k = pw.getGraph().getJungGraph()
-							.getNeighbors(bnas[table.convertRowIndexToView(i)]).iterator();
-					while (k.hasNext()) {
-						neighbour = k.next();
-						Iterator<BiologicalNodeAbstract> j = pw.getAllGraphNodes().iterator();
-						while (j.hasNext()) {
-							node = j.next();
-							if (node.equals(neighbour) && (((String) table.getValueAt(table.convertRowIndexToView(i),
-									table.convertColumnIndexToView(6))).equals(Elementdeclerations.discretePlace)
+					for (BiologicalNodeAbstract neighbour : pw.getGraph2().getNeighbors(
+							bnas[table.convertRowIndexToView(i)])) {
+						for (BiologicalNodeAbstract biologicalNodeAbstract : pw.getAllGraphNodes()) {
+							node = biologicalNodeAbstract;
+							if (node.equals(neighbour) && (table.getValueAt(table.convertRowIndexToView(i),
+									table.convertColumnIndexToView(6)).equals(Elementdeclerations.discretePlace)
 									&& node instanceof ContinuousTransition))
 								stateChanged = false;
 						}
 					}
 					changedAllStates &= stateChanged;
 					if (stateChanged)
-						p.setDiscrete(((String) table.getValueAt(table.convertRowIndexToView(i),
-								table.convertColumnIndexToView(6))).equals(Elementdeclerations.discretePlace));
+						p.setDiscrete(table.getValueAt(table.convertRowIndexToView(i),
+								table.convertColumnIndexToView(6)).equals(Elementdeclerations.discretePlace));
 					else
 						p.setColor(Color.red);
 
 				} else if (bnas[i] instanceof Transition) {
-
 					Transition t = (Transition) bnas[i];
-
-					Iterator<BiologicalNodeAbstract> k = pw.getGraph2().getNeighbors(t).iterator();
-					Iterator<BiologicalNodeAbstract> j;
 					boolean stateChanged = true;
-					while (k.hasNext()) {
-						neighbour = k.next();
-						j = pw.getAllGraphNodes().iterator();
-						while (j.hasNext()) {
-							node = j.next();
-							if (node.equals(neighbour) && (((String) table.getValueAt(table.convertRowIndexToView(i),
-									table.convertColumnIndexToView(6))).equals(Elementdeclerations.continuousTransition)
+					for (BiologicalNodeAbstract neighbour : pw.getGraph2().getNeighbors(t)) {
+						for (BiologicalNodeAbstract biologicalNodeAbstract : pw.getAllGraphNodes()) {
+							node = biologicalNodeAbstract;
+							if (node.equals(neighbour) && (table.getValueAt(table.convertRowIndexToView(i),
+									table.convertColumnIndexToView(6)).equals(Elementdeclerations.continuousTransition)
 									&& node.getBiologicalElement().equals(Elementdeclerations.discretePlace)))
 								stateChanged = false;
 						}
@@ -350,20 +340,17 @@ public class PNTableDialog extends JDialog implements ActionListener {
 					Transition newT = null;
 					System.out.println(
 							table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6)));
-					if (((String) table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6)))
+					if (table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6))
 							.equals(Elementdeclerations.discreteTransition) && !(t instanceof DiscreteTransition)) {
 						newT = new DiscreteTransition(t.getLabel(), t.getName());
-						// System.out.println("neu dt");
-					} else if (((String) table.getValueAt(table.convertRowIndexToView(i),
-							table.convertColumnIndexToView(6))).equals(Elementdeclerations.stochasticTransition)
+					} else if (table.getValueAt(table.convertRowIndexToView(i),
+							table.convertColumnIndexToView(6)).equals(Elementdeclerations.stochasticTransition)
 							&& !(t instanceof StochasticTransition)) {
 						newT = new StochasticTransition(t.getLabel(), t.getName());
-						// System.out.println("neu st");
-					} else if (((String) table.getValueAt(table.convertRowIndexToView(i),
-							table.convertColumnIndexToView(6))).equals(Elementdeclerations.continuousTransition)
+					} else if (table.getValueAt(table.convertRowIndexToView(i),
+							table.convertColumnIndexToView(6)).equals(Elementdeclerations.continuousTransition)
 							&& !(t instanceof ContinuousTransition)) {
 						newT = new ContinuousTransition(t.getLabel(), t.getName());
-						// System.out.println("neu ct");
 					}
 					if (newT != null) {
 						// newT.setCompartment(t.getCompartment());
@@ -380,10 +367,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 						((StochasticTransition) t).setDistribution((String) table
 								.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(8)));
 					}
-
 				}
-
-				// System.out.println("i ende: "+i);
 			}
 
 			/*

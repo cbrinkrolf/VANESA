@@ -193,14 +193,12 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 			if (e.getFrom() != node) {
 				Pathway neighborParent = e.getFrom().getParentNode() == null ? node.getRootPathway()
 						: e.getFrom().getParentNode();
-				node.addVertex(e.getFrom(), neighborParent.getGraph().getVertexLocation(e.getFrom()));
-				// node.getPredefinedEnvironment().add(e.getFrom());
+				node.addVertex(e.getFrom(), neighborParent.getGraph2().getNodePosition(e.getFrom()));
 				e.getFrom().removeConnectingEdge(e);
 			} else if (e.getTo() != node) {
 				Pathway neighborParent = e.getTo().getParentNode() == null ? node.getRootPathway()
 						: e.getTo().getParentNode();
-				node.addVertex(e.getTo(), neighborParent.getGraph().getVertexLocation(e.getTo()));
-				// node.getPredefinedEnvironment().add(e.getTo());
+				node.addVertex(e.getTo(), neighborParent.getGraph2().getNodePosition(e.getTo()));
 				e.getTo().removeConnectingEdge(e);
 			}
 		}
@@ -478,7 +476,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 			MainWindow.getInstance().removeTab(false, getTab(), this);
 			BiologicalNodeAbstract bna = BiologicalNodeAbstract.coarse(innerNodes, getID(), getLabel());
 			setGraph(bna.getGraph());
-			GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 		}
 	}
 

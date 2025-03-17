@@ -16,6 +16,7 @@ import javax.swing.event.ChangeListener;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.gui.LayoutConfigPanel;
+import graph.operations.layout.gem.GEMLayoutOperation;
 
 public class GEMLayoutConfig extends LayoutConfigPanel implements ChangeListener {
 	private static final long serialVersionUID = -2467919660667415938L;
@@ -324,6 +325,6 @@ public class GEMLayoutConfig extends LayoutConfigPanel implements ChangeListener
 
 	@Override
 	protected void applySettings() {
-		getMyGraph().changeToGEMLayout();
+		getGraph().apply(new GEMLayoutOperation());
 	}
 }

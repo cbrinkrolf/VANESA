@@ -35,15 +35,16 @@ public class SaveDialog {
 	private SuffixAwareFilter fileFilter;
 	private int dataType;
 
-	public SaveDialog(SuffixAwareFilter[] formats, int dataType) {
+	public SaveDialog(final SuffixAwareFilter[] formats, final int dataType) {
 		this(formats, dataType, null, MainWindow.getInstance().getFrame(), null);
 	}
 
-	public SaveDialog(SuffixAwareFilter[] formats, int dataType, Component c) {
-		this(formats, dataType, c, MainWindow.getInstance().getFrame(), null);
+	public SaveDialog(final SuffixAwareFilter[] formats, final int dataType, final Rectangle viewportBounds) {
+		this(formats, dataType, viewportBounds, MainWindow.getInstance().getFrame(), null);
 	}
 
-	public SaveDialog(SuffixAwareFilter[] formats, int dataType, Component c, Component relativeTo, String simId) {
+	public SaveDialog(final SuffixAwareFilter[] formats, final int dataType, final Rectangle viewportBounds,
+			Component relativeTo, final String simId) {
 		if (relativeTo == null) {
 			relativeTo = MainWindow.getInstance().getFrame();
 		}
@@ -62,13 +63,8 @@ public class SaveDialog {
 					return;
 				}
 			}
-			if (c != null) {
-				write(c, simId, file);
-			} else {
-				AsyncTaskExecutor.runUIBlocking("Saving data to file. Please wait a second", () -> {
-					write(c, simId, file);
-				});
-			}
+			AsyncTaskExecutor.runUIBlocking("Saving data to file. Please wait a second",
+					() -> write(viewportBounds, simId, file));
 		}
 	}
 
@@ -138,7 +134,7 @@ public class SaveDialog {
 		return file;
 	}
 
-	private void write(final Component c, final String simId, File file) {
+	private void write(final Rectangle viewportBounds, final String simId, File file) {
 		file = ensureExtension(file, fileFilter);
 		if (fileFilter == SuffixAwareFilter.SBML) {
 			writeSBML(file);
@@ -157,17 +153,14 @@ public class SaveDialog {
 		} else if (fileFilter == SuffixAwareFilter.CSML) {
 			write(new CSMLOutput(file), GraphInstance.getPathway());
 		} else if (fileFilter == SuffixAwareFilter.PNG) {
-			if (c != null) {
-				write(new ComponentImageWriter(file, ComponentImageWriter.IMAGE_TYPE_PNG), c);
-			}
+			write(new ComponentImageWriter(file, ComponentImageWriter.IMAGE_TYPE_PNG, viewportBounds),
+					GraphInstance.getPathway());
 		} else if (fileFilter == SuffixAwareFilter.SVG) {
-			if (c != null) {
-				write(new ComponentImageWriter(file, ComponentImageWriter.IMAGE_TYPE_SVG), c);
-			}
+			write(new ComponentImageWriter(file, ComponentImageWriter.IMAGE_TYPE_SVG, viewportBounds),
+					GraphInstance.getPathway());
 		} else if (fileFilter == SuffixAwareFilter.PDF) {
-			if (c != null) {
-				write(new ComponentImageWriter(file, ComponentImageWriter.IMAGE_TYPE_PDF), c);
-			}
+			write(new ComponentImageWriter(file, ComponentImageWriter.IMAGE_TYPE_PDF, viewportBounds),
+					GraphInstance.getPathway());
 		} else if (fileFilter == SuffixAwareFilter.YAML) {
 			writeYAML(file);
 		}

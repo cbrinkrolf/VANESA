@@ -10,7 +10,8 @@ public class ContinuousPlaceShape extends PlaceShape {
 	public void paint(final Graphics2D g, final GraphNode node, final Color strokeColor, final Color fillColor) {
 		super.paint(g, node, strokeColor, fillColor);
 		// Draw additional inner circle
-		double radius = RADIUS * node.getSize() - 5;
-		g.drawOval(-(int) radius, -(int) radius, (int) (radius * 2), (int) (radius * 2));
+		final int radius = (int) (RADIUS * node.getSize()) - 5;
+		final int diameter = radius * 2;
+		g.drawOval(-radius, -radius, diameter, diameter);
 	}
 }

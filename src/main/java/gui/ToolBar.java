@@ -16,6 +16,7 @@ import configurations.Workspace;
 import graph.*;
 import graph.algorithms.gui.CompareGraphsGUI;
 import graph.jung.classes.MyGraph;
+import graph.operations.layout.gem.GEMLayoutOperation;
 import net.miginfocom.swing.MigLayout;
 import petriNet.PNTableDialog;
 import petriNet.ReachController;
@@ -239,7 +240,6 @@ public class ToolBar {
 			Dimension d = g.getVisualizationViewer().getPreferredSize();
 			d.setSize(d.width * 2, d.height * 2);
 			g.getVisualizationViewer().setPreferredSize(d);
-			g.getVisualizationViewer().repaint();
 		}
 	}
 
@@ -253,25 +253,23 @@ public class ToolBar {
 	}
 
 	private void onCenterClicked() {
-		GraphContainer con = GraphContainer.getInstance();
-		if (con.containsPathway()) {
-			GraphInstance.getPathway().getGraphRenderer().zoomAndCenterGraph(100);
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			pathway.getGraphRenderer().zoomAndCenterGraph(100);
 		}
 	}
 
 	private void onZoomInClicked() {
-		GraphContainer con = GraphContainer.getInstance();
-		if (con.containsPathway()) {
-			MyGraph g = GraphInstance.getPathway().getGraph();
-			g.zoomIn();
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			pathway.getGraphRenderer().zoomInAsync();
 		}
 	}
 
 	private void onZoomOutClicked() {
-		GraphContainer con = GraphContainer.getInstance();
-		if (con.containsPathway()) {
-			MyGraph g = GraphInstance.getPathway().getGraph();
-			g.zoomOut();
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			pathway.getGraphRenderer().zoomOutAsync();
 		}
 	}
 
@@ -367,8 +365,8 @@ public class ToolBar {
 				"Please confirm your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			new ReachController(GraphInstance.getPathway());
 		}
-		if (GraphInstance.getMyGraph() != null) {
-			GraphInstance.getMyGraph().changeToGEMLayout();
+		if (GraphInstance.getVanesaGraph() != null) {
+			GraphInstance.getVanesaGraph().apply(new GEMLayoutOperation());
 		} else {
 			System.out.println("No Graph exists!");
 		}

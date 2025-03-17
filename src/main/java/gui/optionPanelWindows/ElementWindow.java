@@ -963,7 +963,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			// CHRIS visible wird noch nicht gehandelt in transformators
 			boolean hide = "hideNeighbours".equals(event);
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
-			for (BiologicalEdgeAbstract bea : pw.getGraph().getJungGraph().getIncidentEdges(bna)) {
+			for (BiologicalEdgeAbstract bea : pw.getGraph2().getIncidentEdges(bna)) {
 				bea.setVisible(!hide);
 				// bea.setLabel(!hide+"");
 			}
@@ -1030,7 +1030,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 			if (ab instanceof BiologicalEdgeAbstract) {
 				((BiologicalEdgeAbstract) ab).setDirected(isDirected.isSelected());
 				pw.updateMyGraph();
-				pw.getGraph().getVisualizationViewer().repaint();
 			}
 		} else if ("constCheck".equals(event)) {
 			if (ab instanceof BiologicalNodeAbstract) {
@@ -1089,7 +1088,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			}
 		} else if ("check".equals(event)) {
 			String result = "";
-			for (BiologicalNodeAbstract bna : GraphInstance.getMyGraph().getAllVertices()) {
+			for (BiologicalNodeAbstract bna : GraphInstance.getVanesaGraph().getNodes()) {
 				if (bna instanceof Place) {
 					Place place = (Place) bna;
 					if (place.hasConflictProperties()) {
@@ -1122,7 +1121,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 				bna.setDiscrete(false);
 			}
 		}
-		GraphInstance.getMyGraph().updateGraph();
 	}
 
 	@Override
@@ -1133,7 +1131,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 			Pathway pw = GraphInstance.getPathway();
 			pw.getCompartmentManager().setCompartment((BiologicalNodeAbstract) ab,
 					pw.getCompartmentManager().getCompartment(compartment.getSelectedItem().toString()));
-
 		}
 	}
 

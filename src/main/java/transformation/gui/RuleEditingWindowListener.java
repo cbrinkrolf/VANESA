@@ -43,7 +43,6 @@ public class RuleEditingWindowListener implements ActionListener {
 				Dimension d = g.getVisualizationViewer().getPreferredSize();
 				d.setSize(d.width * 2, d.height * 2);
 				g.getVisualizationViewer().setPreferredSize(d);
-				g.getVisualizationViewer().repaint();
 			}
 		} else if ("pick".equals(event)) {
 			if (con.containsPathway()) {
@@ -51,7 +50,7 @@ public class RuleEditingWindowListener implements ActionListener {
 				activePw.getGraph().disableGraphTheory();
 			}
 		} else if ("center".equals(event)) {
-			activePw.getGraph().normalCentering();
+			activePw.getGraphRenderer().zoomAndCenterGraph();
 		} else if ("edit".equals(event)) {
 			if (con.containsPathway()) {
 				con.changeMouseFunction("edit");

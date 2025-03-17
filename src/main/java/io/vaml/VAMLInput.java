@@ -631,7 +631,7 @@ public class VAMLInput {
 				}
 			}
 		}
-		pw.getGraph().restartVisualizationModel();
+		pw.updateMyGraph();
 		MainWindow.getInstance().updateProjectProperties();
 		try {
 			in.close();

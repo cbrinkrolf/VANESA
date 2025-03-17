@@ -86,7 +86,6 @@ public class NodeGroupingToolBarMenuButton extends ToolBarMenuButton {
 			Set<BiologicalNodeAbstract> selectedNodes = new HashSet<>(pickedState.getPicked());
 			BiologicalNodeAbstract.coarse(selectedNodes);
 			GraphInstance.getPathway().updateMyGraph();
-			GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 			pickedState.clear();
 			updateEnabledStateForSelectionDependentButtons(new HashSet<>());
 		}
@@ -102,7 +101,6 @@ public class NodeGroupingToolBarMenuButton extends ToolBarMenuButton {
 				pathway.updateMyGraph();
 				MainWindow.getInstance().removeTab(false, node.getTab(), node);
 			}
-			pathway.getGraph().getVisualizationViewer().repaint();
 			pickedState.clear();
 			updateEnabledStateForSelectionDependentButtons(new HashSet<>());
 		}
@@ -128,7 +126,7 @@ public class NodeGroupingToolBarMenuButton extends ToolBarMenuButton {
 				w.getBar().updateVisibility();
 				w.updateAllGuiElements();
 				GraphInstance.getPathway().updateMyGraph();
-				GraphInstance.getPathway().getGraph().normalCentering();
+				GraphInstance.getPathway().getGraphRenderer().zoomAndCenterGraph();
 			}
 		}
 	}
@@ -136,7 +134,6 @@ public class NodeGroupingToolBarMenuButton extends ToolBarMenuButton {
 	private void onAutoCoarseClicked() {
 		if (GraphInstance.getMyGraph() != null) {
 			AutoCoarse.coarseSeparatedSubGraphs(GraphInstance.getPathway());
-			GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 		}
 	}
 

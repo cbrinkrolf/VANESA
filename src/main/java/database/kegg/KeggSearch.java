@@ -9,6 +9,7 @@ import biologicalObjects.nodes.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import database.kegg.gui.KEGGSearchResultWindow;
 import graph.CreatePathway;
+import graph.operations.layout.gem.GEMLayoutOperation;
 import gui.MainWindow;
 import gui.PopUpDialog;
 import io.kgml.KGMLReader;
@@ -96,10 +97,9 @@ public class KeggSearch {
                     newPW.addEdge(c);
                 }
             }
-            newPW.getGraph().restartVisualizationModel();
             MainWindow.getInstance().updateAllGuiElements();
-            newPW.getGraph().changeToGEMLayout();
-            newPW.getGraph().normalCentering();
+            newPW.getGraph2().apply(new GEMLayoutOperation());
+            newPW.getGraphRenderer().zoomAndCenterGraph();
         } else {
             // Merge pathways
             /* TODO: KEGG
@@ -124,7 +124,6 @@ public class KeggSearch {
                         mergePW = GraphInstance.getContainer().getPathway(MainWindow.getInstance().getCurrentPathway());
                         MainWindow.getInstance().closeProgressBar();
                         MainWindow.getInstance().updateAllGuiElements();
-                        mergePW.getGraph().getVisualizationViewer().repaint();
                         mergePW.getGraph().disableGraphTheory();
                         mergePW.getGraph().normalCentering();
                     }

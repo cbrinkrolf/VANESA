@@ -10,7 +10,7 @@ import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Other;
 import graph.CreatePathway;
-import graph.jung.classes.MyGraph;
+import graph.operations.layout.gem.GEMLayoutOperation;
 import gui.MainWindow;
 
 public class RandomRegularGraph {
@@ -21,7 +21,6 @@ public class RandomRegularGraph {
 		int[] nodej = new int[edges + 1];
 		int k = GraphTheoryAlgorithms.randomRegularGraph(numberOfNodes, degree, seed, nodei, nodej);
 		Pathway pw = CreatePathway.create("Random Regular Graph");
-		MyGraph myGraph = pw.getGraph();
 		HashSet<Integer> set = new HashSet<>();
 		Map<Integer, BiologicalNodeAbstract> nodes = new HashMap<>();
 		if (k == 0) {
@@ -44,10 +43,10 @@ public class RandomRegularGraph {
 				pw.addEdge(r);
 			}
 		}
-		myGraph.restartVisualizationModel();
-		myGraph.normalCentering();
+		pw.updateMyGraph();
+		pw.getGraph2().apply(new GEMLayoutOperation());
+		pw.getGraphRenderer().zoomAndCenterGraph();
 		MainWindow window = MainWindow.getInstance();
 		window.updateOptionPanel();
-		pw.getGraph().changeToGEMLayout();
 	}
 }

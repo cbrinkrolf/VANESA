@@ -87,18 +87,15 @@ public class GraphColoringGUI implements ActionListener {
 
     public void recolorGraph() throws IOException {
         // coloring variables
-        NetworkProperties np = new NetworkProperties();
-        Iterator<BiologicalNodeAbstract> itn = np.getPathway().getAllGraphNodes().iterator();
-        Hashtable<BiologicalNodeAbstract, Double> coloring = new Hashtable<BiologicalNodeAbstract, Double>();
+        final NetworkProperties np = new NetworkProperties();
+        final Hashtable<BiologicalNodeAbstract, Double> coloring = new Hashtable<>();
         if (currentAlgorithmIndex == 0) { // node degree
             // get current node degree values
-            while (itn.hasNext()) {
-                BiologicalNodeAbstract bna = itn.next();
-                coloring.put(bna, (double) np.getNodeDegree(np.getNodeAssignment(bna)));
-                // saving
-                bna.addAttribute(NodeAttributeType.GRAPH_PROPERTY, NodeAttributeNames.NODE_DEGREE,
-                                 np.getNodeDegree(np.getNodeAssignment(bna)));
-            }
+			for (final BiologicalNodeAbstract bna : np.getPathway().getAllGraphNodes()) {
+				coloring.put(bna, (double) np.getNodeDegree(np.getNodeAssignment(bna)));
+				bna.addAttribute(NodeAttributeType.GRAPH_PROPERTY, NodeAttributeNames.NODE_DEGREE,
+						np.getNodeDegree(np.getNodeAssignment(bna)));
+			}
         }
         new GraphColorizer(coloring, currentImageId, logView.isSelected());
     }
@@ -128,20 +125,16 @@ public class GraphColoringGUI implements ActionListener {
             String command = e.getActionCommand();
             if ("colorize".equals(command)) {
                 recolorGraph();
-                GraphInstance.getMyGraph().getVisualizationViewer().repaint();
             } else if ("resetcolors".equals(command)) {
-                GraphInstance.getMyGraph().getAllVertices().stream().forEach(bna -> bna.resetAppearance());
-                GraphInstance.getMyGraph().getVisualizationViewer().repaint();
+                GraphInstance.getVanesaGraph().getNodes().stream().forEach(bna -> bna.resetAppearance());
 
             } else if ("algorithm".equals(command)) {
                 currentAlgorithmIndex = chooseAlgorithm.getSelectedIndex();
-                GraphInstance.getMyGraph().getVisualizationViewer().repaint();
             } else if ("logview".equals(command)) {
                 recolorGraph();
-                GraphInstance.getMyGraph().getVisualizationViewer().repaint();
             } else if ("degreedistribution".equals(command)) {
                 NetworkProperties np = new NetworkProperties();
-                TreeMap<String, Integer> sorted_map = new TreeMap<String, Integer>(new NumbersThenWordsComparator());
+                TreeMap<String, Integer> sorted_map = new TreeMap<>(new NumbersThenWordsComparator());
                 for (Entry<Integer, Integer> entry : np.getNodeDegreeDistribution().entrySet()) {
                     sorted_map.put(entry.getKey() + "", entry.getValue());
                 }

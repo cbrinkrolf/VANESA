@@ -3,13 +3,13 @@ package configurations.gui;
 import javax.swing.JPanel;
 
 import graph.GraphInstance;
-import graph.jung.classes.MyGraph;
+import graph.VanesaGraph;
 
 public abstract class LayoutConfigPanel extends JPanel {
 	private static final long serialVersionUID = -6475804437343077119L;
 
-	protected MyGraph getMyGraph() {
-		return GraphInstance.getMyGraph();
+	protected VanesaGraph getGraph() {
+		return GraphInstance.getVanesaGraph();
 	}
 
 	public void resetValues() {

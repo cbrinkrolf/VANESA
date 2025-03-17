@@ -57,6 +57,9 @@ class GraphRendererPanelTest {
 		final var roundRect = new DiscretePlace("rrect", "rrect", null);
 		roundRect.setNodeShape(new RoundedRectangleShape());
 		graph.add(roundRect, new Point2D.Float(-300, -100));
+		while (graph.getNodeCount() < 2000) {
+			graph.add(new DiscretePlace("", "", null), new Point2D.Double());
+		}
 
 		final JFrame frame = new JFrame();
 		frame.setSize(800, 600);

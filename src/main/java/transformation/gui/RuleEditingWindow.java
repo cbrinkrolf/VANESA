@@ -1,16 +1,10 @@
 package transformation.gui;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,9 +35,10 @@ import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
-import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphContainer;
+import graph.VanesaGraph;
+import graph.rendering.VanesaGraphRendererPanel;
 import gui.ImagePath;
 import gui.MainWindow;
 import gui.PopUpDialog;
@@ -55,68 +50,49 @@ import transformation.RuleNode;
 import transformation.graphElements.ANYTransition;
 
 public class RuleEditingWindow implements ActionListener {
-	private final JScrollPane scrollPane = new JScrollPane();
-	private final JPanel panel = new JPanel();
-	private final JPanel biologicalPanel = new JPanel();
-	private final JPanel petriPanel = new JPanel();
 	private final JPanel nodeMappingPanel = new JPanel();
 	private final JPanel parametersPanel = new JPanel();
 
 	private final JFrame frame = new JFrame("Rule Editor");
 
-	private JSplitPane splitPane;
-	private GraphZoomScrollPane biologicalGraphPane;
-	private GraphZoomScrollPane petriGraphPane;
+	private final JTextField ruleName = new JTextField(50);
 
-	private int splitWindowWith = 0;
-	private int splitWindowHeight = 0;
+	private final Pathway bn = new Pathway("bn", true, PathwayType.BiologicalNetwork);
+	private final Pathway pn = new Pathway("petriNet", true, PathwayType.PetriNet);
 
-	private JTextField ruleName = new JTextField(50);
+	private final JLabel elementTypeBN = new JLabel();
+	private final JTextField elementNameBN = new JTextField(20);
+	private final JLabel elementTypePN = new JLabel();
+	private final JTextField elementNamePN = new JTextField(20);
+	private final JCheckBox exactIncidenceChk = new JCheckBox();
 
-	private Pathway bn = null;
-	private Pathway pn = null;
-
-	private JLabel elementTypeBN = new JLabel();
-	private JTextField elementNameBN = new JTextField(20);
-	private JLabel elementTypePN = new JLabel();
-	private JTextField elementNamePN = new JTextField(20);
-	private JCheckBox exactIncidenceChk = new JCheckBox();
-
-	private JCheckBox isDirected = new JCheckBox();
+	private final JCheckBox isDirected = new JCheckBox();
 
 	private GraphElementAbstract gaBN = null;
 	private GraphElementAbstract gaPN = null;
 
-	private RuleEditingWindowListener listener;
+	private final RuleEditingWindowListener listener;
 
-	private JButton cancel = new JButton("cancel");
-	private JButton okButton = new JButton("save");
-	private JButton saveCopy = new JButton("save copy");
-	private JButton[] buttons = { okButton, saveCopy, cancel };
-	private JOptionPane optionPane;
+	private final JButton btnAddMapping = new JButton("add mapping");
+	private final JButton btnHighlightEdges = new JButton("highlight edges");
+	private final JButton btnSetEdges = new JButton("set selected edges");
+	private final JLabel lblSetEdges = new JLabel("[none]");
 
-	private JButton btnAddMapping = new JButton("add mapping");
-	private JButton btnHighlightEdges = new JButton("highlight edges");
-	private JButton btnSetEdges = new JButton("set selected edges");
-	private JLabel lblSetEdges = new JLabel("[none]");
+	private final JButton chkAllEdgesSelected = new JButton("set all edges");
 
-	private Map<BiologicalNodeAbstract, BiologicalNodeAbstract> bnToPn = new HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract>();
-	private Map<GraphElementAbstract, HashMap<String, String>> parameterMapping = new HashMap<GraphElementAbstract, HashMap<String, String>>();
-	private Rule rule = null;
-	private Rule modRule = null;
-	private Set<BiologicalEdgeAbstract> consideredEdges = new HashSet<BiologicalEdgeAbstract>();
-	private Set<BiologicalNodeAbstract> exactIncidence = new HashSet<>();
-
-	private JButton chkAllEdgesSelected = new JButton("set all edges");
+	private final Map<BiologicalNodeAbstract, BiologicalNodeAbstract> bnToPn = new HashMap<>();
+	private final Map<GraphElementAbstract, HashMap<String, String>> parameterMapping = new HashMap<>();
+	private final Set<BiologicalEdgeAbstract> consideredEdges = new HashSet<>();
+	private final Set<BiologicalNodeAbstract> exactIncidence = new HashSet<>();
 
 	private boolean pickLock = false;
+	private Rule rule;
+	private final Rule modRule;
 
 	public RuleEditingWindow(Rule rule, Rule modRule, ActionListener al) {
-
 		this.rule = rule;
 		this.modRule = modRule;
-
-		this.createGraphs();
+		createGraphs();
 		populateGraph();
 
 		listener = new RuleEditingWindowListener(bn, pn);
@@ -129,7 +105,6 @@ public class RuleEditingWindow implements ActionListener {
 				if (gaBN != null) {
 					gaBN.setName(elementNameBN.getText().trim());
 					gaBN.setLabel(elementNameBN.getText().trim());
-					bn.getGraph().getVisualizationViewer().repaint();
 				}
 				populateNodeMapping();
 			}
@@ -139,7 +114,6 @@ public class RuleEditingWindow implements ActionListener {
 				if (gaBN != null) {
 					gaBN.setName(elementNameBN.getText().trim());
 					gaBN.setLabel(elementNameBN.getText().trim());
-					bn.getGraph().getVisualizationViewer().repaint();
 				}
 				populateNodeMapping();
 			}
@@ -149,7 +123,6 @@ public class RuleEditingWindow implements ActionListener {
 				if (gaBN != null) {
 					gaBN.setName(elementNameBN.getText().trim());
 					gaBN.setLabel(elementNameBN.getText().trim());
-					bn.getGraph().getVisualizationViewer().repaint();
 				}
 				populateNodeMapping();
 			}
@@ -161,7 +134,6 @@ public class RuleEditingWindow implements ActionListener {
 				if (gaPN != null) {
 					gaPN.setName(elementNamePN.getText().trim());
 					gaPN.setLabel(elementNamePN.getText().trim());
-					pn.getGraph().getVisualizationViewer().repaint();
 					populateNodeMapping();
 				}
 			}
@@ -171,7 +143,6 @@ public class RuleEditingWindow implements ActionListener {
 				if (gaPN != null) {
 					gaPN.setName(elementNamePN.getText().trim());
 					gaPN.setLabel(elementNamePN.getText().trim());
-					pn.getGraph().getVisualizationViewer().repaint();
 					populateNodeMapping();
 				}
 			}
@@ -181,19 +152,17 @@ public class RuleEditingWindow implements ActionListener {
 				if (gaPN != null) {
 					gaPN.setName(elementNamePN.getText().trim());
 					gaPN.setLabel(elementNamePN.getText().trim());
-					pn.getGraph().getVisualizationViewer().repaint();
 					populateNodeMapping();
 				}
 			}
 		});
 
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, biologicalPanel, petriPanel);
-
-		splitWindowWith = 600; // screenWidth - 150;
-		splitWindowHeight = 400; // screenHeight - 200;
-
-		splitPane.setPreferredSize(new Dimension(splitWindowWith, splitWindowHeight));
-
+		JPanel biologicalPanel = new JPanel();
+		JPanel petriPanel = new JPanel();
+		final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, biologicalPanel, petriPanel);
+		final int splitWindowWidth = 600;
+		final int splitWindowHeight = 400;
+		splitPane.setPreferredSize(new Dimension(splitWindowWidth, splitWindowHeight));
 		splitPane.setOneTouchExpandable(true);
 
 		fillGraphPane(biologicalPanel, new JLabel("Biological graph pattern for matching"));
@@ -228,54 +197,28 @@ public class RuleEditingWindow implements ActionListener {
 		JPanel buttonPanelBN = new JPanel();
 		buttonPanelBN.setName("buttonBN");
 		buttonPanelBN.setLayout(new MigLayout("fillx", "[grow,fill]", ""));
-		this.createButtonPanel(buttonPanelBN, true);
+		createButtonPanel(buttonPanelBN, true);
 
 		JPanel buttonPanelPN = new JPanel();
 		buttonPanelPN.setName("buttonPN");
 		buttonPanelPN.setLayout(new MigLayout("", "[grow,center]", ""));
-		this.createButtonPanel(buttonPanelPN, false);
-
-		// Iterator<Pathway> it = con.getAllPathways().iterator();
-		// int i = 0;
-
-		// bn = new CreatePathway("bn").getPathway();
-
-		biologicalGraphPane = new GraphZoomScrollPane(bn.getGraph().getVisualizationViewer());
-		biologicalGraphPane.setMaximumSize(new Dimension(splitWindowWith - 50, splitWindowHeight - 50));
-		// .getVisualizationPaneCopy(new Dimension(splitWindowWith - 50,
-		// splitWindowHeight - 50)));
-		biologicalGraphPane.removeAll();
-		biologicalGraphPane = new GraphZoomScrollPane(bn.getGraph().getVisualizationViewer());
-		biologicalGraphPane.setMaximumSize(new Dimension(splitWindowWith - 50, splitWindowHeight - 50));
-		// firstGraphPane.add(bn.getGraph()
-		// .getVisualizationPaneCopy(new Dimension(splitWindowWith - 50,
-		// splitWindowHeight - 50)));
-
+		createButtonPanel(buttonPanelPN, false);
+		final VanesaGraphRendererPanel biologicalGraphPane = bn.getGraphRenderer();
+		biologicalGraphPane.setMaximumSize(new Dimension(splitWindowWidth - 50, splitWindowHeight - 50));
 		biologicalPanel.add(biologicalGraphPane, "wrap 5");
 
-		// firstGraphPane.setBackground(Color.WHITE);
-		// bn.getGraph().getVisualizationPaneCopy(getSize())
 		biologicalPanel.add(buttonPanelBN, "wrap 5");
 		biologicalPanel.add(elementInformationBN, "wrap 5");
 		biologicalPanel.add(nodeMappingPanel);
-		petriGraphPane = new GraphZoomScrollPane(pn.getGraph().getVisualizationViewer());
-		petriGraphPane.setMaximumSize(new Dimension(splitWindowWith - 50, splitWindowHeight - 50));
-
-		// secondGraphPane = new GraphZoomScrollPane(pn.getGraph()
-		// .getVisualizationPaneCopy(new Dimension(splitWindowWith - 50,
-		// splitWindowHeight - 50)));
-		petriGraphPane.removeAll();
-		petriGraphPane = new GraphZoomScrollPane(pn.getGraph().getVisualizationViewer());
-		petriGraphPane.setMaximumSize(new Dimension(splitWindowWith - 50, splitWindowHeight - 50));
-		// secondGraphPane.add(pn.getGraph()
-		// .getVisualizationPaneCopy(new Dimension(splitWindowWith - 50,
-		// splitWindowHeight - 50)));
+		final VanesaGraphRendererPanel petriGraphPane = pn.getGraphRenderer();
+		petriGraphPane.setMaximumSize(new Dimension(splitWindowWidth - 50, splitWindowHeight - 50));
 		petriPanel.add(petriGraphPane, "wrap 5");
 		petriPanel.add(buttonPanelPN, "wrap 5");
 		petriPanel.add(elementInformationPN, "wrap 5");
 		petriPanel.add(parametersPanel);
 
 		MigLayout layout = new MigLayout("", "[grow][grow]", "");
+		JPanel panel = new JPanel();
 		panel.setLayout(layout);
 
 		JPanel ruleNamePanel = new JPanel();
@@ -304,8 +247,8 @@ public class RuleEditingWindow implements ActionListener {
 
 		btnSetEdges.setActionCommand("setEdges");
 		btnSetEdges.addActionListener(this);
-		btnSetEdges
-				.setToolTipText("Set edges to be not considered for matching in rules anymore (default: all edges)!");
+		btnSetEdges.setToolTipText(
+				"Set edges to be not considered for matching in rules anymore (default: all edges)!");
 
 		btnHighlightEdges.setActionCommand("highlightEdges");
 		btnHighlightEdges.addActionListener(this);
@@ -314,43 +257,42 @@ public class RuleEditingWindow implements ActionListener {
 
 		populateNodeMapping();
 
-		// panel.add(this.nodeMappingPanel);
-
+		final JButton cancel = new JButton("cancel");
 		cancel.addActionListener(al);
 		cancel.addActionListener(this);
 		cancel.setActionCommand("cancelRE");
 
+		final JButton okButton = new JButton("save");
 		okButton.addActionListener(al);
 		okButton.addActionListener(this);
 		okButton.setActionCommand("okButtonRE");
 
+		final JButton saveCopy = new JButton("save copy");
 		saveCopy.addActionListener(al);
 		saveCopy.addActionListener(this);
 		saveCopy.setActionCommand("saveCopy");
 
+		final JScrollPane scrollPane = new JScrollPane();
 		scrollPane.add(panel);
 		scrollPane.setPreferredSize(new Dimension(1200, 800));
 		scrollPane.setViewportView(panel);
 		scrollPane.setVisible(true);
 
-		optionPane = new JOptionPane(scrollPane, JOptionPane.PLAIN_MESSAGE);
-		optionPane.setOptions(buttons);
+		final JOptionPane optionPane = new JOptionPane(scrollPane, JOptionPane.PLAIN_MESSAGE);
+		optionPane.setOptions(new JButton[] { okButton, saveCopy, cancel });
 
 		frame.setAlwaysOnTop(false);
 		frame.setContentPane(optionPane);
 		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		frame.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
 		frame.revalidate();
-
 		frame.pack();
-
 		frame.setLocationRelativeTo(MainWindow.getInstance().getFrame());
-
 		frame.pack();
 		splitPane.setDividerLocation(0.5);
 		frame.setVisible(true);
-		bn.getGraph().normalCentering();
-		pn.getGraph().normalCentering();
+		bn.getGraphRenderer().zoomAndCenterGraph();
+		pn.getGraphRenderer().zoomAndCenterGraph();
 	}
 
 	public void fillGraphPane(JPanel graphPanel, JLabel label) {
@@ -361,7 +303,6 @@ public class RuleEditingWindow implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-
 		if (e.getActionCommand().equals("okButtonRE")) {
 			// CHRIS perform consistency check first
 			if (bn.hasGotAtLeastOneElement()) {
@@ -377,58 +318,36 @@ public class RuleEditingWindow implements ActionListener {
 		} else if (e.getActionCommand().equals("addMapping")) {
 			addNodeMapping();
 		} else if (e.getActionCommand().equals("highlightEdges")) {
-			PickedState<BiologicalEdgeAbstract> beaPickedState = bn.getGraph().getVisualizationViewer()
-					.getPickedEdgeState();
-			beaPickedState.clear();
-			Iterator<BiologicalEdgeAbstract> it = consideredEdges.iterator();
-			while (it.hasNext()) {
-				beaPickedState.pick(it.next(), true);
-			}
+			bn.getGraph2().selectEdges(consideredEdges);
 		} else if (e.getActionCommand().equals("setEdges")) {
-			PickedState<BiologicalEdgeAbstract> beaPickedState = bn.getGraph().getVisualizationViewer()
-					.getPickedEdgeState();
-			PickedState<BiologicalNodeAbstract> bnaPickedState = bn.getGraph().getVisualizationViewer()
-					.getPickedVertexState();
-
-			Iterator<BiologicalEdgeAbstract> it = beaPickedState.getPicked().iterator();
+			final VanesaGraph bnGraph = bn.getGraph2();
 			consideredEdges.clear();
-			BiologicalEdgeAbstract bea;
-
-			while (it.hasNext()) {
-				consideredEdges.add(it.next());
-			}
+			consideredEdges.addAll(bnGraph.getSelectedEdges());
 			// add also edges if both, from and to, are also picked
-			it = bn.getAllEdges().iterator();
-			while (it.hasNext()) {
-				bea = it.next();
-				if (bnaPickedState.isPicked(bea.getFrom()) && bnaPickedState.isPicked(bea.getTo())) {
+			for (final BiologicalEdgeAbstract bea : bnGraph.getEdges()) {
+				if (bnGraph.isSelected(bea.getFrom()) && bnGraph.isSelected(bea.getTo())) {
 					consideredEdges.add(bea);
 				}
 			}
-			this.revalidateSelectedEdges();
+			revalidateSelectedEdges();
 		} else if (e.getActionCommand().equals("setAllEdges")) {
-			Iterator<BiologicalEdgeAbstract> it = bn.getAllEdges().iterator();
-			BiologicalEdgeAbstract bea;
-			while (it.hasNext()) {
-				bea = it.next();
+			for (BiologicalEdgeAbstract bea : bn.getAllEdges()) {
 				consideredEdges.add(bea);
-				bn.getGraph().getVisualizationViewer().getPickedEdgeState().pick(bea, true);
+				bn.getGraph2().selectEdges(true, bea);
 			}
 			revalidateSelectedEdges();
 		} else if (e.getActionCommand().startsWith("del_")) {
-			// System.out.println("del");
-			int idx = Integer.parseInt(e.getActionCommand().substring(4));
-			Iterator<BiologicalNodeAbstract> it = bnToPn.keySet().iterator();
-			BiologicalNodeAbstract bna = null;
-			while (it.hasNext()) {
-				bna = it.next();
+			final int idx = Integer.parseInt(e.getActionCommand().substring(4));
+			BiologicalNodeAbstract node = null;
+			for (final BiologicalNodeAbstract bna : bnToPn.keySet()) {
 				if (bna.getID() == idx) {
+					node = bna;
 					break;
 				}
 			}
-			if (bna != null) {
-				bnToPn.remove(bna);
-				this.populateNodeMapping();
+			if (node != null) {
+				bnToPn.remove(node);
+				populateNodeMapping();
 			}
 			revalidateSelectedEdges();
 		} else if (e.getActionCommand().equals("del")) {
@@ -439,25 +358,19 @@ public class RuleEditingWindow implements ActionListener {
 				pn.removeSelection();
 			}
 		} else if (e.getActionCommand().equals("exactIncidenceChk")) {
-			PickedState<BiologicalNodeAbstract> vertexState = bn.getGraph().getVisualizationViewer()
-					.getPickedVertexState();
-			if (vertexState.getPicked().size() == 1) {
+			final var selectedNodes = bn.getGraph2().getSelectedNodes();
+			if (selectedNodes.size() == 1) {
 				if (exactIncidenceChk.isSelected()) {
-					exactIncidence.add(vertexState.getPicked().iterator().next());
+					exactIncidence.add(selectedNodes.iterator().next());
 				} else {
-					exactIncidence.remove(vertexState.getPicked().iterator().next());
+					exactIncidence.remove(selectedNodes.iterator().next());
 				}
 			}
 		} else if (e.getActionCommand().equals("isDirected")) {
-			PickedState<BiologicalEdgeAbstract> edgeState = bn.getGraph().getVisualizationViewer().getPickedEdgeState();
-			if (edgeState.getPicked().size() == 1) {
-				if (isDirected.isSelected()) {
-					edgeState.getPicked().iterator().next().setDirected(true);
-				} else {
-					edgeState.getPicked().iterator().next().setDirected(false);
-				}
+			final var selectedEdges = bn.getGraph2().getSelectedEdges();
+			if (selectedEdges.size() == 1) {
+				selectedEdges.iterator().next().setDirected(isDirected.isSelected());
 				bn.updateMyGraph();
-				bn.getGraph().getVisualizationViewer().repaint();
 			}
 		}
 	}
@@ -483,27 +396,15 @@ public class RuleEditingWindow implements ActionListener {
 
 		JButton trash = new ToolBarButton(ImagePath.getInstance().getImageIcon("Trash.png"));
 		trash.setToolTipText("Delete selected items");
-		this.bn.getGraph().getVisualizationViewer().addKeyListener(new KeyListener() {
-
-			@Override
-			public void keyTyped(KeyEvent e) {
-				// nothing to do
-			}
-
+		this.bn.getGraph().getVisualizationViewer().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 					deleteBNSelection();
 				}
 			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				// nothing to do
-			}
 		});
 		trash.setActionCommand("del");
-		// trash.addActionListener(listener);
 		trash.addActionListener(this);
 		panel.add(trash);
 
@@ -597,32 +498,28 @@ public class RuleEditingWindow implements ActionListener {
 	}
 
 	private void addNodeMapping() {
-		PickedState<BiologicalNodeAbstract> bnPickedState = bn.getGraph().getVisualizationViewer()
-				.getPickedVertexState();
-		PickedState<BiologicalNodeAbstract> pnPickedState = pn.getGraph().getVisualizationViewer()
-				.getPickedVertexState();
-
-		if (bnPickedState.getPicked().size() == 1 && pnPickedState.getPicked().size() == 1) {
-			BiologicalNodeAbstract bnBNA = bnPickedState.getPicked().iterator().next();
-			BiologicalNodeAbstract pnBNA = pnPickedState.getPicked().iterator().next();
+		final var selectedBNNodes = bn.getGraph2().getSelectedNodes();
+		final var selectedPNNodes = pn.getGraph2().getSelectedNodes();
+		if (selectedBNNodes.size() == 1 && selectedPNNodes.size() == 1) {
+			BiologicalNodeAbstract bnBNA = selectedBNNodes.iterator().next();
+			BiologicalNodeAbstract pnBNA = selectedPNNodes.iterator().next();
 			if (bnToPn.containsKey(bnBNA)) {
 				PopUpDialog.getInstance().show("Error", "Biological node " + bnBNA.getName() + "is mapped already!");
 				return;
 			} else if (bnToPn.containsValue(pnBNA)) {
 				PopUpDialog.getInstance().show("Error", "Petri net node " + pnBNA.getName() + "is mapped already!");
 				return;
-			} else if (bnBNA.getName().length() < 1) {
+			} else if (bnBNA.getName().isEmpty()) {
 				PopUpDialog.getInstance().show("Error", "Biological node needs a valid name (not empty)!");
 				return;
-			} else if (pnBNA.getName().length() < 1) {
+			} else if (pnBNA.getName().isEmpty()) {
 				PopUpDialog.getInstance().show("Error", "Petri net node needs a valid name (not empty)!");
 				return;
 			}
 			bnToPn.put(bnBNA, pnBNA);
 			addNodeMappingDefaultParameters(bnBNA, pnBNA);
-
-			this.populateNodeMapping();
-			this.populateTransformationParameterPanel();
+			populateNodeMapping();
+			populateTransformationParameterPanel();
 		}
 	}
 
@@ -635,8 +532,7 @@ public class RuleEditingWindow implements ActionListener {
 			getParameterMapping(pnBNA).put("isConstant", bnBNA.getName() + ".isConstant");
 		} else if (pnBNA instanceof Transition) {
 			if (pnBNA instanceof DiscreteTransition || pnBNA instanceof ANYTransition) {
-
-			} else if (pnBNA instanceof ContinuousTransition || pnBNA instanceof ANYTransition) {
+			} else if (pnBNA instanceof ContinuousTransition) {
 				if (bnBNA instanceof DynamicNode) {
 					getParameterMapping(pnBNA).put("maximalSpeed", bnBNA.getName() + ".maximalSpeed");
 				}
@@ -648,10 +544,10 @@ public class RuleEditingWindow implements ActionListener {
 		// put edge mapping if there is an edge between both mapped nodes
 		BiologicalNodeAbstract oppositeBNode;
 		BiologicalNodeAbstract oppositePNode;
-		for (BiologicalEdgeAbstract bEdge : bn.getGraph().getJungGraph().getIncidentEdges(bnBNA)) {
-			for (BiologicalEdgeAbstract pEdge : pn.getGraph().getJungGraph().getIncidentEdges(pnBNA)) {
-				oppositeBNode = bn.getGraph().getJungGraph().getOpposite(bnBNA, bEdge);
-				oppositePNode = pn.getGraph().getJungGraph().getOpposite(pnBNA, pEdge);
+		for (BiologicalEdgeAbstract bEdge : bn.getGraph2().getIncidentEdges(bnBNA)) {
+			for (BiologicalEdgeAbstract pEdge : pn.getGraph2().getIncidentEdges(pnBNA)) {
+				oppositeBNode = bn.getGraph2().getOpposite(bnBNA, bEdge);
+				oppositePNode = pn.getGraph2().getOpposite(pnBNA, pEdge);
 				if (bnToPn.get(oppositeBNode) == oppositePNode) {
 					// System.out.println("match");
 					getParameterMapping(pEdge).put("function", bEdge.getName() + ".function");
@@ -661,7 +557,6 @@ public class RuleEditingWindow implements ActionListener {
 	}
 
 	private void createGraphs() {
-		bn = new Pathway("bn", true, PathwayType.BiologicalNetwork);
 		if (rule.isBNEmpty()) {
 			bn.getGraph().setMouseModeEditing();
 			lblSetEdges.setText("[all edges]");
@@ -669,7 +564,6 @@ public class RuleEditingWindow implements ActionListener {
 			bn.getGraph().setMouseModePick();
 		}
 		GraphContainer.getInstance().addPathway(bn.getName(), bn);
-		pn = new Pathway("petriNet", true, PathwayType.PetriNet);
 		if (rule.isPNEmpty()) {
 			pn.getGraph().setMouseModeEditing();
 		} else {
@@ -717,109 +611,91 @@ public class RuleEditingWindow implements ActionListener {
 				}
 			}
 		});
-		edgeStateBN.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (edgeStateBN.getPicked().size() == 1) {
-					BiologicalEdgeAbstract edge = edgeStateBN.getPicked().iterator().next();
-					gaBN = edge;
-					elementTypeBN.setText(edge.getBiologicalElement());
-					elementNameBN.setText(edge.getName());
-					isDirected.setEnabled(true);
-					isDirected.setSelected(edge.isDirected());
-				} else {
-					gaBN = null;
-					elementTypeBN.setText("");
-					elementNameBN.setText("");
-					exactIncidenceChk.setSelected(false);
-					exactIncidenceChk.setEnabled(false);
-					isDirected.setEnabled(false);
-				}
+		edgeStateBN.addItemListener(e -> {
+			if (edgeStateBN.getPicked().size() == 1) {
+				BiologicalEdgeAbstract edge = edgeStateBN.getPicked().iterator().next();
+				gaBN = edge;
+				elementTypeBN.setText(edge.getBiologicalElement());
+				elementNameBN.setText(edge.getName());
+				isDirected.setEnabled(true);
+				isDirected.setSelected(edge.isDirected());
+			} else {
+				gaBN = null;
+				elementTypeBN.setText("");
+				elementNameBN.setText("");
+				exactIncidenceChk.setSelected(false);
+				exactIncidenceChk.setEnabled(false);
+				isDirected.setEnabled(false);
 			}
 		});
 
-		vertexStatePN.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-
-				if (vertexStateBN.getPicked().size() == 1 && vertexStatePN.getPicked().size() == 1) {
-					if (!bnToPn.containsKey(vertexStateBN.getPicked().iterator().next())
-							&& !bnToPn.containsValue(vertexStatePN.getPicked().iterator().next())) {
-						btnAddMapping.setEnabled(true);
-					} else {
-						btnAddMapping.setEnabled(false);
-					}
-				} else {
-					btnAddMapping.setEnabled(false);
-				}
-				if (!pickLock) {
-					if (vertexStatePN.getPicked().size() == 1) {
-						pickLock = true;
-						BiologicalNodeAbstract bna = vertexStatePN.getPicked().iterator().next();
-						if (bnToPn.containsValue(bna)) {
-							vertexStateBN.clear();
-							for (BiologicalNodeAbstract b : bnToPn.keySet()) {
-								if (bnToPn.get(b) == bna) {
-									vertexStateBN.pick(b, true);
-									gaBN = b;
-									elementTypeBN.setText(b.getBiologicalElement());
-									elementNameBN.setText(b.getName());
-									break;
-								}
+		vertexStatePN.addItemListener(e -> {
+			if (vertexStateBN.getPicked().size() == 1 && vertexStatePN.getPicked().size() == 1) {
+				btnAddMapping.setEnabled(
+						!bnToPn.containsKey(vertexStateBN.getPicked().iterator().next()) && !bnToPn.containsValue(
+								vertexStatePN.getPicked().iterator().next()));
+			} else {
+				btnAddMapping.setEnabled(false);
+			}
+			if (!pickLock) {
+				if (vertexStatePN.getPicked().size() == 1) {
+					pickLock = true;
+					BiologicalNodeAbstract bna = vertexStatePN.getPicked().iterator().next();
+					if (bnToPn.containsValue(bna)) {
+						vertexStateBN.clear();
+						for (BiologicalNodeAbstract b : bnToPn.keySet()) {
+							if (bnToPn.get(b) == bna) {
+								vertexStateBN.pick(b, true);
+								gaBN = b;
+								elementTypeBN.setText(b.getBiologicalElement());
+								elementNameBN.setText(b.getName());
+								break;
 							}
 						}
-						pickLock = false;
-						gaPN = bna;
-						elementTypePN.setText(bna.getBiologicalElement());
-						elementNamePN.setText(bna.getName());
-						populateTransformationParameterPanel();
-					} else {
-						gaPN = null;
-						elementTypePN.setText("");
-						elementNamePN.setText("");
 					}
-				} else {
-					if (vertexStatePN.getPicked().size() == 1) {
-						populateTransformationParameterPanel();
-					}
-				}
-			}
-		});
-		edgeStatePN.addItemListener(new ItemListener() {
-
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (edgeStatePN.getPicked().size() == 1) {
-					BiologicalEdgeAbstract edge = edgeStatePN.getPicked().iterator().next();
-					gaPN = edge;
-					elementTypePN.setText(edge.getBiologicalElement());
-					elementNamePN.setText(edge.getName());
+					pickLock = false;
+					gaPN = bna;
+					elementTypePN.setText(bna.getBiologicalElement());
+					elementNamePN.setText(bna.getName());
 					populateTransformationParameterPanel();
 				} else {
 					gaPN = null;
 					elementTypePN.setText("");
 					elementNamePN.setText("");
 				}
+			} else {
+				if (vertexStatePN.getPicked().size() == 1) {
+					populateTransformationParameterPanel();
+				}
+			}
+		});
+		edgeStatePN.addItemListener(e -> {
+			if (edgeStatePN.getPicked().size() == 1) {
+				BiologicalEdgeAbstract edge = edgeStatePN.getPicked().iterator().next();
+				gaPN = edge;
+				elementTypePN.setText(edge.getBiologicalElement());
+				elementNamePN.setText(edge.getName());
+				populateTransformationParameterPanel();
+			} else {
+				gaPN = null;
+				elementTypePN.setText("");
+				elementNamePN.setText("");
 			}
 		});
 		for (KeyListener k : bn.getGraph().getVisualizationViewer().getKeyListeners()) {
 			bn.getGraph().getVisualizationViewer().removeKeyListener(k);
 		}
-
 	}
 
 	private void revalidateSelectedEdges() {
-		String text = "[";
-		Iterator<BiologicalEdgeAbstract> it = consideredEdges.iterator();
-		BiologicalEdgeAbstract bea;
-		while (it.hasNext()) {
-			bea = it.next();
+		final StringBuilder text = new StringBuilder("[");
+		for (BiologicalEdgeAbstract bea : consideredEdges) {
 			if (text.length() > 1) {
-				text += ",";
+				text.append(",");
 			}
-			text += bea.getName();
+			text.append(bea.getName());
 		}
-		text += "]";
+		text.append("]");
 		if (consideredEdges.size() == bn.getAllEdges().size()) {
 			lblSetEdges.setText("[all edges]");
 			chkAllEdgesSelected.setEnabled(false);
@@ -827,23 +703,19 @@ public class RuleEditingWindow implements ActionListener {
 			lblSetEdges.setText("[none]");
 			chkAllEdgesSelected.setEnabled(true);
 		} else {
-			lblSetEdges.setText(text);
+			lblSetEdges.setText(text.toString());
 			chkAllEdgesSelected.setEnabled(true);
 		}
-		// System.out.println("considered edges: " + consideredEdges.size());
 		lblSetEdges.repaint();
 	}
 
 	private void populateGraph() {
-
 		// for BN
 		// put nodes
-		RuleNode rn;
-		BiologicalNodeAbstract bna;
-		Map<String, BiologicalNodeAbstract> nameToBN = new HashMap<String, BiologicalNodeAbstract>();
+		Map<String, BiologicalNodeAbstract> nameToBN = new HashMap<>();
 		for (int i = 0; i < rule.getBiologicalNodes().size(); i++) {
-			rn = rule.getBiologicalNodes().get(i);
-			bna = BiologicalNodeAbstractFactory.create(rn.getType(), null);
+			RuleNode rn = rule.getBiologicalNodes().get(i);
+			BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(rn.getType(), null);
 			bna.setName(rn.getName());
 			bna.setLabel(rn.getName());
 			nameToBN.put(bna.getName(), bna);
@@ -853,14 +725,11 @@ public class RuleEditingWindow implements ActionListener {
 			}
 			// biologicalNodeBox.addItem(bna.getName());
 		}
-
 		// put edges
-		BiologicalEdgeAbstract bea;
-		RuleEdge re;
 		Map<RuleEdge, BiologicalEdgeAbstract> edgesMap = new HashMap<>();
 		for (int i = 0; i < rule.getBiologicalEdges().size(); i++) {
-			re = rule.getBiologicalEdges().get(i);
-			bea = BiologicalEdgeAbstractFactory.create(re.getType(), re.getName(), re.getName(),
+			RuleEdge re = rule.getBiologicalEdges().get(i);
+			BiologicalEdgeAbstract bea = BiologicalEdgeAbstractFactory.create(re.getType(), re.getName(), re.getName(),
 					nameToBN.get(re.getFrom().getName()), nameToBN.get(re.getTo().getName()));
 			bea.setDirected(re.isDirected());
 			bn.addEdge(bea);
@@ -871,8 +740,8 @@ public class RuleEditingWindow implements ActionListener {
 		// for PN
 		Map<String, BiologicalNodeAbstract> nameToPN = new HashMap<>();
 		for (int i = 0; i < rule.getPetriNodes().size(); i++) {
-			rn = rule.getPetriNodes().get(i);
-			bna = BiologicalNodeAbstractFactory.create(rn.getType(), null);
+			RuleNode rn = rule.getPetriNodes().get(i);
+			BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(rn.getType(), null);
 			bna.setName(rn.getName());
 			bna.setLabel(rn.getName());
 			nameToPN.put(bna.getName(), bna);
@@ -885,8 +754,8 @@ public class RuleEditingWindow implements ActionListener {
 
 		// put edges
 		for (int i = 0; i < rule.getPetriEdges().size(); i++) {
-			re = rule.getPetriEdges().get(i);
-			bea = BiologicalEdgeAbstractFactory.create(re.getType(), re.getName(), re.getName(),
+			RuleEdge re = rule.getPetriEdges().get(i);
+			BiologicalEdgeAbstract bea = BiologicalEdgeAbstractFactory.create(re.getType(), re.getName(), re.getName(),
 					nameToPN.get(re.getFrom().getName()), nameToPN.get(re.getTo().getName()));
 			bea.setDirected(true);
 			pn.addEdge(bea);
@@ -897,16 +766,11 @@ public class RuleEditingWindow implements ActionListener {
 		}
 		pn.updateMyGraph();
 
-		String bn;
-		String pn;
-		Iterator<RuleNode> it = rule.getBnToPnMapping().keySet().iterator();
-		while (it.hasNext()) {
-			rn = it.next();
-			bn = rn.getName();
-			pn = rule.getBnToPnMapping().get(rn).getName();
+		for (RuleNode rn : rule.getBnToPnMapping().keySet()) {
+			String bn = rn.getName();
+			String pn = rule.getBnToPnMapping().get(rn).getName();
 			bnToPn.put(nameToBN.get(bn), nameToPN.get(pn));
 		}
-
 		for (int i = 0; i < rule.getConsideredEdges().size(); i++) {
 			consideredEdges.add(edgesMap.get(rule.getConsideredEdges().get(i)));
 		}
@@ -914,25 +778,17 @@ public class RuleEditingWindow implements ActionListener {
 
 	private void populateNodeMapping() {
 		nodeMappingPanel.removeAll();
-
 		nodeMappingPanel.add(new JLabel("Mapping of biological node to node of Petri net:"), "");
 		nodeMappingPanel.add(new JSeparator(), "span, growx, wrap");
-
 		nodeMappingPanel.add(btnAddMapping, "wrap");
 		nodeMappingPanel.add(new JLabel("Biological node:"));
 		nodeMappingPanel.add(new JLabel("Petri net node:"), "wrap");
-
-		// print actual mapping
-		Iterator<BiologicalNodeAbstract> it = bnToPn.keySet().iterator();
-		BiologicalNodeAbstract bna;
-		Set<BiologicalNodeAbstract> toDelete = new HashSet<BiologicalNodeAbstract>();
-		JButton btnDelete;
-		while (it.hasNext()) {
-			bna = it.next();
+		Set<BiologicalNodeAbstract> toDelete = new HashSet<>();
+		for (BiologicalNodeAbstract bna : bnToPn.keySet()) {
 			if (bn.contains(bna) && pn.contains(bnToPn.get(bna))) {
 				nodeMappingPanel.add(new JLabel(bna.getName()));
 				nodeMappingPanel.add(new JLabel(bnToPn.get(bna).getName()));
-				btnDelete = new JButton("delete");
+				JButton btnDelete = new JButton("delete");
 				btnDelete.addActionListener(this);
 				btnDelete.setActionCommand("del_" + bna.getID());
 				nodeMappingPanel.add(btnDelete, "wrap");
@@ -940,20 +796,16 @@ public class RuleEditingWindow implements ActionListener {
 				toDelete.add(bna);
 			}
 		}
-		// two steps, otherwise concurrent transaction of iteration and deletion
-		it = toDelete.iterator();
-		while (it.hasNext()) {
-			bnToPn.remove(it.next());
+		for (BiologicalNodeAbstract biologicalNodeAbstract : toDelete) {
+			bnToPn.remove(biologicalNodeAbstract);
 		}
-
 		nodeMappingPanel.add(new JSeparator(), "span,growx,wrap 5");
 		nodeMappingPanel.add(new JLabel("Considered edges:"), "grow");
 		nodeMappingPanel.add(chkAllEdgesSelected, "grow");
 		nodeMappingPanel.add(lblSetEdges, "grow, wrap");
 		nodeMappingPanel.add(btnHighlightEdges);
 		nodeMappingPanel.add(btnSetEdges, "wrap");
-
-		this.revalidateSelectedEdges();
+		revalidateSelectedEdges();
 		nodeMappingPanel.repaint();
 		frame.pack();
 		frame.repaint();
@@ -964,59 +816,37 @@ public class RuleEditingWindow implements ActionListener {
 		parametersPanel.add(new JLabel("Set parameters for Petri net elements:"), "");
 		parametersPanel.add(new JSeparator(), "span 2, growx, wrap");
 
-		PickedState<BiologicalNodeAbstract> vertexStatePN = pn.getGraph().getVisualizationViewer()
-				.getPickedVertexState();
-		PickedState<BiologicalEdgeAbstract> edgeStatePN = pn.getGraph().getVisualizationViewer().getPickedEdgeState();
-
-		if (vertexStatePN.getPicked().size() == 1) {
-			BiologicalNodeAbstract bna = vertexStatePN.getPicked().iterator().next();
-			// System.out.println(bna.getTransformationParameters());
-			List<String> params = bna.getTransformationParameters();
-			// Collections.sort(params);
-			// System.out.println("drin");
+		final VanesaGraph pnGraph = pn.getGraph2();
+		if (pnGraph.getSelectedNodes().size() == 1) {
+			final BiologicalNodeAbstract bna = pnGraph.getSelectedNodes().iterator().next();
+			final List<String> params = bna.getTransformationParameters();
 			// set default values for newly added nodes
-			for (String param : params) {
-				// System.out.println(param);
-				JTextField field = new JTextField(20);
+			for (final String param : params) {
+				final JTextField field = new JTextField(20);
 				field.setText(getParameterMapping(bna).get(param));
 				field.getDocument().addDocumentListener(new DocumentListener() {
 					@Override
 					public void removeUpdate(DocumentEvent e) {
-						if (bna != null) {
-							getParameterMapping(bna).put(param, field.getText().trim());
-						}
+						getParameterMapping(bna).put(param, field.getText().trim());
 					}
 
 					@Override
 					public void insertUpdate(DocumentEvent e) {
-						if (bna != null) {
-							getParameterMapping(bna).put(param, field.getText().trim());
-						}
+						getParameterMapping(bna).put(param, field.getText().trim());
 					}
 
 					@Override
 					public void changedUpdate(DocumentEvent e) {
-						if (bna != null) {
-							getParameterMapping(bna).put(param, field.getText().trim());
-						}
+						getParameterMapping(bna).put(param, field.getText().trim());
 					}
 				});
-				this.addTooltip(field, param);
+				addTooltip(field, param);
 				parametersPanel.add(new JLabel(param + ":"), "");
 				parametersPanel.add(field, "wrap");
 			}
-
-		} else if (edgeStatePN.getPicked().size() == 1) {
-			// parametersPanel.removeAll();
-			// parametersPanel.add(new JLabel("Set parameters for Petri net elements:"),
-			// "");
-			// parametersPanel.add(new JSeparator(), "span 2, growx, wrap");
-
-			BiologicalEdgeAbstract bea = edgeStatePN.getPicked().iterator().next();
-
-			List<String> params = bea.getTransformationParameters();
-			// Collections.sort(params);
-			// System.out.println("drin");
+		} else if (pnGraph.getSelectedEdges().size() == 1) {
+			final BiologicalEdgeAbstract bea = pnGraph.getSelectedEdges().iterator().next();
+			final List<String> params = bea.getTransformationParameters();
 			// set default values for newly added nodes
 			for (String param : params) {
 				JTextField field = new JTextField(20);
@@ -1024,23 +854,17 @@ public class RuleEditingWindow implements ActionListener {
 				field.getDocument().addDocumentListener(new DocumentListener() {
 					@Override
 					public void removeUpdate(DocumentEvent e) {
-						if (bea != null) {
-							getParameterMapping(bea).put(param, field.getText().trim());
-						}
+						getParameterMapping(bea).put(param, field.getText().trim());
 					}
 
 					@Override
 					public void insertUpdate(DocumentEvent e) {
-						if (bea != null) {
-							getParameterMapping(bea).put(param, field.getText().trim());
-						}
+						getParameterMapping(bea).put(param, field.getText().trim());
 					}
 
 					@Override
 					public void changedUpdate(DocumentEvent e) {
-						if (bea != null) {
-							getParameterMapping(bea).put(param, field.getText().trim());
-						}
+						getParameterMapping(bea).put(param, field.getText().trim());
 					}
 				});
 				parametersPanel.add(new JLabel(param + ":"), "");
@@ -1059,23 +883,17 @@ public class RuleEditingWindow implements ActionListener {
 			tf.setToolTipText("evaluated to number during transformation, e.g. 1 + random(2,5)");
 			break;
 		case "tokenMin":
-			tf.setToolTipText("evaluated to number during transformation");
-			break;
 		case "tokenMax":
 			tf.setToolTipText("evaluated to number during transformation");
 			break;
 		case "isConstant":
 			tf.setToolTipText("evaluated to boolean during transformation, e.g. and(true,or(true,not(false))");
 			break;
-		case "firingCondition":
-			tf.setToolTipText("evaluated during simulation");
-			break;
 		case "isKnockedOut":
-			tf.setToolTipText("evaluatedto boolean during transformation");
+			tf.setToolTipText("evaluated to boolean during transformation");
 			break;
+		case "firingCondition":
 		case "maximalSpeed":
-			tf.setToolTipText("evaluated during simulation");
-			break;
 		case "function":
 			tf.setToolTipText("evaluated during simulation");
 			break;
@@ -1086,7 +904,6 @@ public class RuleEditingWindow implements ActionListener {
 		if (!checkGraphNames()) {
 			return;
 		}
-
 		if (copyRule) {
 			rule = modRule;
 		}
@@ -1100,26 +917,22 @@ public class RuleEditingWindow implements ActionListener {
 		rule.getConsideredEdges().clear();
 
 		// forBN
-		BiologicalNodeAbstract bna;
-		RuleNode rn;
-		Map<BiologicalNodeAbstract, RuleNode> bnaToBNRuleNode = new HashMap<BiologicalNodeAbstract, RuleNode>();
+		Map<BiologicalNodeAbstract, RuleNode> bnaToBNRuleNode = new HashMap<>();
 		for (int i = 0; i < bn.getAllGraphNodesSortedAlphabetically().size(); i++) {
-			bna = bn.getAllGraphNodesSortedAlphabetically().get(i);
-			rn = new RuleNode();
+			BiologicalNodeAbstract bna = bn.getAllGraphNodesSortedAlphabetically().get(i);
+			RuleNode rn = new RuleNode();
 			rn.setName(bna.getName());
 			rn.setType(bna.getBiologicalElement());
-			rn.setX(bn.getGraph().getVertexLocation(bna).getX());
-			rn.setY(bn.getGraph().getVertexLocation(bna).getY());
+			rn.setX(bn.getGraph2().getNodePosition(bna).getX());
+			rn.setY(bn.getGraph2().getNodePosition(bna).getY());
 			rn.setExactIncidence(exactIncidence.contains(bna));
 			rule.addBiologicalNode(rn);
 			bnaToBNRuleNode.put(bna, rn);
 		}
-		RuleEdge re;
-		BiologicalEdgeAbstract bea;
-		Map<BiologicalEdgeAbstract, RuleEdge> beaToRuleEdge = new HashMap<BiologicalEdgeAbstract, RuleEdge>();
+		Map<BiologicalEdgeAbstract, RuleEdge> beaToRuleEdge = new HashMap<>();
 		for (int i = 0; i < bn.getAllEdgesSortedByID().size(); i++) {
-			bea = bn.getAllEdgesSortedByID().get(i);
-			re = new RuleEdge(bea.getName(), bea.getBiologicalElement(), bnaToBNRuleNode.get(bea.getFrom()),
+			BiologicalEdgeAbstract bea = bn.getAllEdgesSortedByID().get(i);
+			RuleEdge re = new RuleEdge(bea.getName(), bea.getBiologicalElement(), bnaToBNRuleNode.get(bea.getFrom()),
 					bnaToBNRuleNode.get(bea.getTo()));
 			re.setDirected(bea.isDirected());
 			rule.addBiologicalEdge(re);
@@ -1127,14 +940,14 @@ public class RuleEditingWindow implements ActionListener {
 		}
 
 		// for PN
-		Map<BiologicalNodeAbstract, RuleNode> bnaToPNRuleNode = new HashMap<BiologicalNodeAbstract, RuleNode>();
+		Map<BiologicalNodeAbstract, RuleNode> bnaToPNRuleNode = new HashMap<>();
 		for (int i = 0; i < pn.getAllGraphNodesSortedAlphabetically().size(); i++) {
-			bna = pn.getAllGraphNodesSortedAlphabetically().get(i);
-			rn = new RuleNode();
+			BiologicalNodeAbstract bna = pn.getAllGraphNodesSortedAlphabetically().get(i);
+			RuleNode rn = new RuleNode();
 			rn.setName(bna.getName());
 			rn.setType(bna.getBiologicalElement());
-			rn.setX(pn.getGraph().getVertexLocation(bna).getX());
-			rn.setY(pn.getGraph().getVertexLocation(bna).getY());
+			rn.setX(pn.getGraph2().getNodePosition(bna).getX());
+			rn.setY(pn.getGraph2().getNodePosition(bna).getY());
 			rule.addPetriNode(rn);
 			bnaToPNRuleNode.put(bna, rn);
 			for (String param : getParameterMapping(bna).keySet()) {
@@ -1142,23 +955,18 @@ public class RuleEditingWindow implements ActionListener {
 			}
 		}
 		for (int i = 0; i < pn.getAllEdgesSortedByID().size(); i++) {
-			bea = pn.getAllEdgesSortedByID().get(i);
-			re = new RuleEdge(bea.getName(), bea.getBiologicalElement(), bnaToPNRuleNode.get(bea.getFrom()),
+			BiologicalEdgeAbstract bea = pn.getAllEdgesSortedByID().get(i);
+			RuleEdge re = new RuleEdge(bea.getName(), bea.getBiologicalElement(), bnaToPNRuleNode.get(bea.getFrom()),
 					bnaToPNRuleNode.get(bea.getTo()));
 			rule.addPetriEdge(re);
 			for (String param : getParameterMapping(bea).keySet()) {
 				re.getParameterMap().put(param, getParameterMapping(bea).get(param));
-				// System.out.println("set " + param + " to " +
-				// parameterMapping.get(bea).get(param));
 			}
 		}
 
 		// mapping BN nodes to PN nodes
-		Iterator<BiologicalNodeAbstract> it = bnToPn.keySet().iterator();
-		while (it.hasNext()) {
-			bna = it.next();
+		for (BiologicalNodeAbstract bna : bnToPn.keySet()) {
 			rule.addBNtoPNMapping(bnaToBNRuleNode.get(bna), bnaToPNRuleNode.get(bnToPn.get(bna)));
-
 		}
 
 		// considered edges
@@ -1171,42 +979,21 @@ public class RuleEditingWindow implements ActionListener {
 				rule.getConsideredEdges().add(beaToRuleEdge.get(edge));
 			}
 		}
-
-		// for (RuleNode rn1 : rule.getBiologicalNodes()) {
-		// System.out.println(rn1.getName() + " In: " +
-		// rule.getIncomingDirectedEdgeCount(rn1) + " out: "
-		// + rule.getOutgoingDirectedEdgeCount(rn1));
-		// }
 	}
 
 	private void deleteBNSelection() {
-		Iterator<BiologicalEdgeAbstract> itBea = bn.getGraph().getVisualizationViewer().getPickedEdgeState().getPicked()
-				.iterator();
-		BiologicalEdgeAbstract bea;
-		while (itBea.hasNext()) {
-			bea = itBea.next();
-			if (consideredEdges.contains(bea)) {
-				consideredEdges.remove(bea);
-			}
+		for (BiologicalEdgeAbstract bea : bn.getGraph2().getSelectedEdges()) {
+			consideredEdges.remove(bea);
 		}
-
-		Iterator<BiologicalNodeAbstract> itBna = bn.getGraph().getVisualizationViewer().getPickedVertexState()
-				.getPicked().iterator();
-		BiologicalNodeAbstract bna;
-		while (itBna.hasNext()) {
-			bna = itBna.next();
-			if (bnToPn.containsKey(bna)) {
-				bnToPn.remove(bna);
-			}
-			for (BiologicalEdgeAbstract edge : bn.getGraph().getJungGraph().getIncidentEdges(bna)) {
-				if (consideredEdges.contains(edge)) {
-					consideredEdges.remove(edge);
-				}
+		for (BiologicalNodeAbstract bna : bn.getGraph2().getSelectedNodes()) {
+			bnToPn.remove(bna);
+			for (BiologicalEdgeAbstract edge : bn.getGraph2().getIncidentEdges(bna)) {
+				consideredEdges.remove(edge);
 			}
 		}
 		bn.removeSelection();
 		revalidateSelectedEdges();
-		this.populateNodeMapping();
+		populateNodeMapping();
 	}
 
 	private void createDefaultParameterMap(GraphElementAbstract gea) {
@@ -1214,7 +1001,7 @@ public class RuleEditingWindow implements ActionListener {
 			// for nodes
 			if (gea instanceof BiologicalNodeAbstract) {
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) gea;
-				parameterMapping.put(gea, new HashMap<String, String>());
+				parameterMapping.put(gea, new HashMap<>());
 				for (String key : bna.getTransformationParameters()) {
 					switch (key) {
 					case "name":
@@ -1230,7 +1017,7 @@ public class RuleEditingWindow implements ActionListener {
 						parameterMapping.get(bna).put(key, ((Place) bna).getTokenMax() + "");
 						break;
 					case "isConstant":
-						parameterMapping.get(bna).put(key, ((Place) bna).isConstant() + "");
+						parameterMapping.get(bna).put(key, bna.isConstant() + "");
 						break;
 					case "firingCondition":
 						parameterMapping.get(bna).put(key, ((Transition) bna).getFiringCondition());
@@ -1247,7 +1034,7 @@ public class RuleEditingWindow implements ActionListener {
 						break;
 					case "delay":
 						if (bna instanceof DiscreteTransition) {
-							parameterMapping.get(bna).put(key, ((DiscreteTransition) bna).getDelay() + "");
+							parameterMapping.get(bna).put(key, ((DiscreteTransition) bna).getDelay());
 						} else if (bna instanceof ANYTransition) {
 							parameterMapping.get(bna).put(key, "1");
 						}
@@ -1257,12 +1044,11 @@ public class RuleEditingWindow implements ActionListener {
 				// for edges
 			} else if (gea instanceof BiologicalEdgeAbstract) {
 				BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) gea;
-				parameterMapping.put(bea, new HashMap<String, String>());
+				parameterMapping.put(bea, new HashMap<>());
 				for (String key : bea.getTransformationParameters()) {
 					switch (key) {
 					case "function":
-						// System.out.println("put 1");
-						parameterMapping.get(bea).put(key, ("1"));
+						parameterMapping.get(bea).put(key, "1");
 						break;
 					}
 				}
@@ -1271,40 +1057,40 @@ public class RuleEditingWindow implements ActionListener {
 	}
 
 	private boolean checkGraphNames() {
-		Set<String> set = new HashSet<String>();
-		String errorMessage = "";
-		for (BiologicalEdgeAbstract bea : bn.getAllEdges()) {
-			if (bea.getName().length() == 0) {
-				errorMessage += "- at least one edge in the biological pattern has an empty name\r\n";
+		final Set<String> set = new HashSet<>();
+		final StringBuilder errorMessage = new StringBuilder();
+		for (final BiologicalEdgeAbstract bea : bn.getAllEdges()) {
+			if (bea.getName().isEmpty()) {
+				errorMessage.append("- at least one edge in the biological pattern has an empty name\r\n");
 			} else if (set.contains(bea.getName())) {
-				errorMessage += "- name of edge +" + bea.getName() + " is not unique.\r\n";
+				errorMessage.append("- name of edge +").append(bea.getName()).append(" is not unique.\r\n");
 			} else {
 				set.add(bea.getName());
 			}
 		}
-		for (BiologicalNodeAbstract bna : bn.getAllGraphNodes()) {
-			if (bna.getName().length() == 0) {
-				errorMessage += "- at least one node in the biological pattern has an empty name\r\n";
+		for (final BiologicalNodeAbstract bna : bn.getAllGraphNodes()) {
+			if (bna.getName().isEmpty()) {
+				errorMessage.append("- at least one node in the biological pattern has an empty name\r\n");
 			} else if (set.contains(bna.getName())) {
-				errorMessage += "- name of node " + bna.getName() + " is not unique.\r\n";
+				errorMessage.append("- name of node ").append(bna.getName()).append(" is not unique.\r\n");
 			} else {
 				set.add(bna.getName());
 			}
 		}
-		for (BiologicalEdgeAbstract bea : pn.getAllEdges()) {
-			if (bea.getName().length() == 0) {
-				errorMessage += "- at least one edge in the Petri net has an empty name\r\n";
+		for (final BiologicalEdgeAbstract bea : pn.getAllEdges()) {
+			if (bea.getName().isEmpty()) {
+				errorMessage.append("- at least one edge in the Petri net has an empty name\r\n");
 			} else if (set.contains(bea.getName())) {
-				errorMessage += "- name of edge " + bea.getName() + " is not unique.\r\n";
+				errorMessage.append("- name of edge ").append(bea.getName()).append(" is not unique.\r\n");
 			} else {
 				set.add(bea.getName());
 			}
 		}
-		for (BiologicalNodeAbstract bna : pn.getAllGraphNodes()) {
-			if (bna.getName().length() == 0) {
-				errorMessage += "- at least one node in the Petri net has an empty name\r\n";
+		for (final BiologicalNodeAbstract bna : pn.getAllGraphNodes()) {
+			if (bna.getName().isEmpty()) {
+				errorMessage.append("- at least one node in the Petri net has an empty name\r\n");
 			} else if (set.contains(bna.getName())) {
-				errorMessage += "- name of node " + bna.getName() + " is not unique.\r\n";
+				errorMessage.append("- name of node ").append(bna.getName()).append(" is not unique.\r\n");
 			} else {
 				set.add(bna.getName());
 			}
@@ -1312,9 +1098,9 @@ public class RuleEditingWindow implements ActionListener {
 		if (errorMessage.length() == 0) {
 			return true;
 		}
-		errorMessage = "All names of edges and nodes in the biological pattern and in the Petri net must be non-emptyh and unique!\r\n\r\n"
-				+ errorMessage;
-		PopUpDialog.getInstance().show("Error saving rule!", errorMessage);
+		errorMessage.insert(0,
+				"All names of edges and nodes in the biological pattern and in the Petri net must be non-empty and unique!\r\n\r\n");
+		PopUpDialog.getInstance().show("Error saving rule!", errorMessage.toString());
 		return false;
 	}
 

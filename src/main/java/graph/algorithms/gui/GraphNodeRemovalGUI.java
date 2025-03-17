@@ -4,8 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -16,100 +16,78 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import graph.GraphInstance;
+import graph.VanesaGraph;
 import graph.algorithms.NetworkProperties;
-import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
 public class GraphNodeRemovalGUI implements ActionListener {
-
-	private JPanel p = new JPanel();
+	private final JPanel p = new JPanel();
 	private boolean emptyPane = true;
 
 	private JComboBox<String> chooseAlgorithm;
-	private JButton removebutton, trimbutton;
-	private String[] algorithmNames = { "Choose Algorithm", "Node Degree" };// ,
-																			// "Neighbor Degree",
-																			// "Clique"
-																			// };
-	private int currentalgorithmindex = 0;
-	private JPanel valuesfromto, valuesminmax;
-	private JSpinner fromspinner, tospinner;
-	private JLabel minvaluelabel, maxvaluelabel;
-	private double minvalue, maxvalue, removefrom, removeto, currentvalue;
-
-	MigLayout layout;
-
-	// Removal variables
+	private JButton removeButton;
+	private final String[] algorithmNames = { "Choose Algorithm", "Node Degree" };// , "Neighbor Degree", "Clique"
+	private JPanel valuesMinMax;
+	private JSpinner fromSpinner;
+	private JSpinner toSpinner;
+	private JLabel minValueLabel;
+	private JLabel maxValueLabel;
+	private double minvalue;
+	private double maxvalue;
 	private NetworkProperties c;
-	private MainWindow mw;
-	private MyGraph mg;
-	private Iterator<BiologicalNodeAbstract> itn;
-	private Iterator<Map.Entry<BiologicalNodeAbstract, Double>> it;
-	private Map.Entry<BiologicalNodeAbstract, Double> nodevaluesentry;
-	private Hashtable<BiologicalNodeAbstract, Double> nodevalues;
-	private HashSet<BiologicalNodeAbstract> removals;
-	private BiologicalNodeAbstract bna;
-	private SpinnerNumberModel modelremovenodesfrom;
-	private SpinnerNumberModel modelremovenodesto;
-
-	public GraphNodeRemovalGUI() {
-
-	}
+	private Hashtable<BiologicalNodeAbstract, Double> nodeValues;
+	private SpinnerNumberModel modelRemoveNodesFrom;
+	private SpinnerNumberModel modelRemoveNodesTo;
 
 	private void updateWindow() {
-
-		chooseAlgorithm = new JComboBox<String>(algorithmNames);
+		chooseAlgorithm = new JComboBox<>(algorithmNames);
 		chooseAlgorithm.setActionCommand("algorithm");
 		chooseAlgorithm.addActionListener(this);
 
-		valuesfromto = new JPanel(new MigLayout("", "[][][]", ""));
+		JPanel valuesFromTo = new JPanel(new MigLayout("", "[][][]", ""));
 
-		modelremovenodesfrom = new SpinnerNumberModel(0.0d, 0.0d, 1.0d, 1.0d);
-		modelremovenodesto = new SpinnerNumberModel(0.0d, 0.0d, 1.0d, 1.0d);
+		modelRemoveNodesFrom = new SpinnerNumberModel(0.0d, 0.0d, 1.0d, 1.0d);
+		modelRemoveNodesTo = new SpinnerNumberModel(0.0d, 0.0d, 1.0d, 1.0d);
 
-		fromspinner = new JSpinner(modelremovenodesfrom);
-		tospinner = new JSpinner(modelremovenodesto);
-		fromspinner.setEnabled(false);
-		tospinner.setEnabled(false);
+		fromSpinner = new JSpinner(modelRemoveNodesFrom);
+		toSpinner = new JSpinner(modelRemoveNodesTo);
+		fromSpinner.setEnabled(false);
+		toSpinner.setEnabled(false);
 
-		valuesfromto.add(fromspinner);
-		valuesfromto.add(new JLabel(" to "));
-		valuesfromto.add(tospinner);
+		valuesFromTo.add(fromSpinner);
+		valuesFromTo.add(new JLabel(" to "));
+		valuesFromTo.add(toSpinner);
 
-		removebutton = new JButton("remove");
-		removebutton.setActionCommand("remove");
-		removebutton.addActionListener(this);
-		removebutton.setEnabled(false);
+		removeButton = new JButton("remove");
+		removeButton.setActionCommand("remove");
+		removeButton.addActionListener(this);
+		removeButton.setEnabled(false);
 
-		trimbutton = new JButton("trim network");
+		JButton trimbutton = new JButton("trim network");
 		trimbutton.setActionCommand("trim");
 		trimbutton.addActionListener(this);
 
-		valuesminmax = new JPanel(new MigLayout("", "[][grow]", ""));
-		minvaluelabel = new JLabel("NaN");
-		maxvaluelabel = new JLabel("NaN");
-		valuesminmax.add(new JLabel("Min:\t"));
-		valuesminmax.add(minvaluelabel, "wrap");
-		valuesminmax.add(new JLabel("Max:\t"));
-		valuesminmax.add(maxvaluelabel, "wrap");
-		valuesminmax.setVisible(false);
+		valuesMinMax = new JPanel(new MigLayout("", "[][grow]", ""));
+		minValueLabel = new JLabel("NaN");
+		maxValueLabel = new JLabel("NaN");
+		valuesMinMax.add(new JLabel("Min:\t"));
+		valuesMinMax.add(minValueLabel, "wrap");
+		valuesMinMax.add(new JLabel("Max:\t"));
+		valuesMinMax.add(maxValueLabel, "wrap");
+		valuesMinMax.setVisible(false);
 
-		layout = new MigLayout("", "[][grow]", "");
-		p.setLayout(layout);
+		p.setLayout(new MigLayout("", "[][grow]", ""));
 		p.add(new JLabel("Algorithm"), "wrap");
 		p.add(chooseAlgorithm, "wrap");
 		p.add(new JLabel("Remove Nodes with values:"), "wrap");
-		p.add(valuesfromto, "span 2, wrap");
-		p.add(removebutton, "span 2, align right, wrap");
+		p.add(valuesFromTo, "span 2, wrap");
+		p.add(removeButton, "span 2, align right, wrap");
 		// p.add(valuesminmax,"span 2, wrap"); //displays already in Spinner
 		p.add(trimbutton, "align left, wrap");
-
 	}
 
 	public void revalidateView() {
-
 		if (emptyPane) {
 			updateWindow();
 			p.repaint();
@@ -121,7 +99,6 @@ public class GraphNodeRemovalGUI implements ActionListener {
 			p.repaint();
 			p.revalidate();
 			p.setVisible(true);
-
 		}
 	}
 
@@ -135,159 +112,101 @@ public class GraphNodeRemovalGUI implements ActionListener {
 	}
 
 	private void resetRemovalInterface() {
-		fromspinner.setEnabled(false);
-		tospinner.setEnabled(false);
-		valuesminmax.setVisible(false);
-		removebutton.setEnabled(false);
+		fromSpinner.setEnabled(false);
+		toSpinner.setEnabled(false);
+		valuesMinMax.setVisible(false);
+		removeButton.setEnabled(false);
 		chooseAlgorithm.setSelectedIndex(0);
 	}
 
 	private void getNodeDegreeRatings() {
 		c = new NetworkProperties();
-		itn = c.getPathway().getAllGraphNodes().iterator();
-		nodevalues = new Hashtable<BiologicalNodeAbstract, Double>();
+		nodeValues = new Hashtable<>();
 		minvalue = Double.MAX_VALUE;
 		maxvalue = Double.MIN_NORMAL;
-		double degree;
-		while (itn.hasNext()) {
-			bna = itn.next();
-			degree = (double) c.getNodeDegree(c.getNodeAssignment(bna));
+		for (final BiologicalNodeAbstract bna : c.getPathway().getAllGraphNodes()) {
+			final double degree = c.getNodeDegree(c.getNodeAssignment(bna));
 			if (degree > maxvalue)
 				maxvalue = degree;
 			if (degree < minvalue)
 				minvalue = degree;
-			nodevalues.put(bna, degree);
+			nodeValues.put(bna, degree);
 		}
 	}
 
 	public void actionPerformed(ActionEvent e) {
-
-		String command = e.getActionCommand();
-		currentalgorithmindex = chooseAlgorithm.getSelectedIndex();
-		if (currentalgorithmindex > 0 && command.equals("algorithm")) {
+		final String command = e.getActionCommand();
+		final int currentAlgorithmIndex = chooseAlgorithm.getSelectedIndex();
+		if (currentAlgorithmIndex > 0 && command.equals("algorithm")) {
 			// do calculations
-			switch (currentalgorithmindex) {
-			case 1:
-				// debug
-				// System.out.println("Node Removal 1: Node Degree");
+			if (currentAlgorithmIndex == 1) {
 				// Node Degree rating
 				getNodeDegreeRatings();
-
 				// Post min/max values:
-				modelremovenodesfrom = new SpinnerNumberModel(minvalue,
-						minvalue, maxvalue, 1.0d);
-				modelremovenodesto = new SpinnerNumberModel(maxvalue, minvalue,
-						maxvalue, 1.0d);
-
-				fromspinner.setModel(modelremovenodesfrom);
-				tospinner.setModel(modelremovenodesto);
-
-				minvaluelabel.setText("" + minvalue);
-
-				maxvaluelabel.setText("" + maxvalue);
-				tospinner.setValue(maxvalue);
-
-				break;
-			default:
-				break;
+				modelRemoveNodesFrom = new SpinnerNumberModel(minvalue, minvalue, maxvalue, 1.0d);
+				modelRemoveNodesTo = new SpinnerNumberModel(maxvalue, minvalue, maxvalue, 1.0d);
+				fromSpinner.setModel(modelRemoveNodesFrom);
+				toSpinner.setModel(modelRemoveNodesTo);
+				minValueLabel.setText("" + minvalue);
+				maxValueLabel.setText("" + maxvalue);
+				toSpinner.setValue(maxvalue);
 			}
-
 			// Enable further Gui elements
-			fromspinner.setEnabled(true);
-			tospinner.setEnabled(true);
-			removebutton.setEnabled(true);
-			valuesminmax.setVisible(true);
+			fromSpinner.setEnabled(true);
+			toSpinner.setEnabled(true);
+			removeButton.setEnabled(true);
+			valuesMinMax.setVisible(true);
 		} else if (command.equals("remove")) {
 			// get Values from Text fields
 			try {
-				removefrom = (double) fromspinner.getValue();
-				removeto = (double) tospinner.getValue();
-
+				final double removeFrom = (double) fromSpinner.getValue();
+				final double removeTo = (double) toSpinner.getValue();
 				// remove specified Nodes
-				removals = new HashSet<BiologicalNodeAbstract>();
-				it = nodevalues.entrySet().iterator();
-
-				while (it.hasNext()) {
-					nodevaluesentry = it.next();
-					bna = nodevaluesentry.getKey();
-					currentvalue = nodevaluesentry.getValue();
-
-					if (currentvalue >= removefrom && currentvalue <= removeto)
-						removals.add(bna);
+				Set<BiologicalNodeAbstract> removals = new HashSet<>();
+				for (Map.Entry<BiologicalNodeAbstract, Double> entry : nodeValues.entrySet()) {
+					final double value = entry.getValue();
+					if (value >= removeFrom && value <= removeTo) {
+						removals.add(entry.getKey());
+					}
 				}
-
-				mg = c.getPathway().getGraph();
-				mw = MainWindow.getInstance();
-				itn = removals.iterator();
-				while (itn.hasNext()) {
-					mg.removeVertex(itn.next());
+				final VanesaGraph graph = c.getPathway().getGraph2();
+				for (final BiologicalNodeAbstract removal : removals) {
+					graph.remove(removal);
 				}
+				final MainWindow mw = MainWindow.getInstance();
 				mw.updateElementTree();
 				mw.updatePathwayTree();
-
-				//GraphInstance.getMyGraph().changeToGEMLayout();
-				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
-
 				resetRemovalInterface();
-				// DEBUG
-				// System.out.println(" Node Removal: "+removals.size()+" Nodes Removed.");
-
 				if (removals.size() > 0) {
-					JOptionPane.showMessageDialog(MainWindow
-							.getInstance().getFrame(),
-							"Nodes removed from network: " + removals.size(),
-							"Remove Success", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(),
+							"Nodes removed from network: " + removals.size(), "Remove Success",
+							JOptionPane.INFORMATION_MESSAGE);
 				}
-
 			} catch (NumberFormatException nfe) {
 				System.out.println("Input format not allowed");
 			}
-
 		} else if (command.equals("trim")) {
 			try {
 				// remove all nodes with node degree of 0 and 1
-				removefrom = 0.0d;
-				removeto = 1.0d;
-
 				getNodeDegreeRatings();
-
-				if (nodevalues.containsValue(0.0d) //ignore this command if there are no removable nodes
-						|| nodevalues.containsValue(1.0d)) {
-
+				if (nodeValues.containsValue(0d) //ignore this command if there are no removable nodes
+						|| nodeValues.containsValue(1d)) {
 					// remove specified Nodes
-					removals = new HashSet<BiologicalNodeAbstract>();
-					it = nodevalues.entrySet().iterator();
-
-					while (it.hasNext()) {
-						nodevaluesentry = it.next();
-						bna = nodevaluesentry.getKey();
-						currentvalue = nodevaluesentry.getValue();
-
-						if (currentvalue >= removefrom
-								&& currentvalue <= removeto)
-							removals.add(bna);
+					Set<BiologicalNodeAbstract> removals = new HashSet<>();
+					for (Map.Entry<BiologicalNodeAbstract, Double> entry : nodeValues.entrySet()) {
+						final double value = entry.getValue();
+						if (value >= 0d && value <= 1d)
+							removals.add(entry.getKey());
 					}
-
-					mg = c.getPathway().getGraph();
-					mw = MainWindow.getInstance();
-					itn = removals.iterator();
-					while (itn.hasNext()) {
-						mg.removeVertex(itn.next());
+					final VanesaGraph graph = c.getPathway().getGraph2();
+					for (final BiologicalNodeAbstract removal : removals) {
+						graph.remove(removal);
 					}
+					final MainWindow mw = MainWindow.getInstance();
 					mw.updateElementTree();
 					mw.updatePathwayTree();
-
-//					GraphInstance.getMyGraph().changeToGEMLayout();
-					GraphInstance.getMyGraph().getVisualizationViewer()
-							.repaint();
-
 					resetRemovalInterface();
-					// DEBUG
-					System.out.println(" Network trimming: " + removals.size()
-							+ " Nodes Removed.");
-
 				}
-
 			} catch (NumberFormatException nfe) {
 				// TODO BEHANDLUNG von Eingabe, bzw. Formatted text imput
 				System.out.println("Input format not allowed");

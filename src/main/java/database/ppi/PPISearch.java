@@ -12,9 +12,10 @@ import database.ppi.gui.HPRDSearchResultWindow;
 import database.ppi.gui.IntActSearchResultWindow;
 import database.ppi.gui.MintSearchResultWindow;
 import graph.CreatePathway;
+import graph.VanesaGraph;
 import graph.hierarchies.HierarchyList;
 import graph.hierarchies.HierarchyListComparator;
-import graph.jung.classes.MyGraph;
+import graph.operations.layout.gem.GEMLayoutOperation;
 import gui.MainWindow;
 import gui.PopUpDialog;
 
@@ -79,12 +80,11 @@ public final class PPISearch {
         Pathway pw = CreatePathway.create("HPRD network for " + root.name + " (depth=" + depth + ")");
         Map<Integer, Protein> idProteinMap = drawNodes(pw, root.id, response.payload);
         drawEdges(pw, response.payload, idProteinMap);
-        MyGraph graph = pw.getGraph();
-        graph.restartVisualizationModel();
-        graph.changeToGEMLayout();
-        graph.normalCentering();
+        pw.updateMyGraph();
+        pw.getGraph2().apply(new GEMLayoutOperation());
+        pw.getGraphRenderer().zoomAndCenterGraph();
         if (autoCoarse) {
-            autoCoarse(graph);
+            autoCoarse(pw.getGraph2());
         }
         MainWindow.getInstance().closeProgressBar();
         MainWindow window = MainWindow.getInstance();
@@ -110,7 +110,7 @@ public final class PPISearch {
 
     private static void drawEdges(Pathway pw, HPRDRetrievePPIResponsePayload payload,
                                   Map<Integer, Protein> idProteinMap) {
-        var graph = pw.getGraph().getJungGraph();
+        var graph = pw.getGraph2();
         for (int[] entry : payload.binaryInteractions) {
             BiologicalNodeAbstract first = idProteinMap.get(entry[0]);
             BiologicalNodeAbstract second = idProteinMap.get(entry[1]);
@@ -177,12 +177,11 @@ public final class PPISearch {
         Pathway pw = CreatePathway.create("Mint network for " + root.name + " (depth=" + depth + ")");
         Map<Integer, Protein> idProteinMap = drawNodes(pw, root.id, response.payload);
         drawEdges(pw, response.payload, idProteinMap);
-        MyGraph graph = pw.getGraph();
-        graph.restartVisualizationModel();
-        graph.changeToGEMLayout();
-        graph.normalCentering();
+        pw.updateMyGraph();
+        pw.getGraph2().apply(new GEMLayoutOperation());
+        pw.getGraphRenderer().zoomAndCenterGraph();
         if (autoCoarse) {
-            autoCoarse(graph);
+            autoCoarse(pw.getGraph2());
         }
         MainWindow.getInstance().closeProgressBar();
         MainWindow window = MainWindow.getInstance();
@@ -208,7 +207,7 @@ public final class PPISearch {
 
     private static void drawEdges(Pathway pw, MintRetrievePPIResponsePayload payload,
                                   Map<Integer, Protein> idProteinMap) {
-        var graph = pw.getGraph().getJungGraph();
+        var graph = pw.getGraph2();
         for (int[] entry : payload.binaryInteractions) {
             BiologicalNodeAbstract first = idProteinMap.get(entry[0]);
             BiologicalNodeAbstract second = idProteinMap.get(entry[1]);
@@ -283,12 +282,11 @@ public final class PPISearch {
         Pathway pw = CreatePathway.create("IntAct network for " + root.name + " (depth=" + depth + ")");
         Map<Integer, Protein> idProteinMap = drawNodes(pw, root.id, response.payload);
         drawEdges(pw, response.payload, idProteinMap);
-        MyGraph graph = pw.getGraph();
-        graph.restartVisualizationModel();
-        graph.changeToGEMLayout();
-        graph.normalCentering();
+        pw.updateMyGraph();
+        pw.getGraph2().apply(new GEMLayoutOperation());
+        pw.getGraphRenderer().zoomAndCenterGraph();
         if (autoCoarse) {
-            autoCoarse(graph);
+            autoCoarse(pw.getGraph2());
         }
         MainWindow.getInstance().closeProgressBar();
         MainWindow window = MainWindow.getInstance();
@@ -314,7 +312,7 @@ public final class PPISearch {
 
     private static void drawEdges(Pathway pw, IntActRetrievePPIResponsePayload payload,
                                   Map<Integer, Protein> idProteinMap) {
-        var graph = pw.getGraph().getJungGraph();
+        var graph = pw.getGraph2();
         for (int[] entry : payload.binaryInteractions) {
             BiologicalNodeAbstract first = idProteinMap.get(entry[0]);
             BiologicalNodeAbstract second = idProteinMap.get(entry[1]);
@@ -338,7 +336,7 @@ public final class PPISearch {
         pw.addEdge(r);
     }
 
-    private static void autoCoarse(MyGraph graph) {
+    private static void autoCoarse(VanesaGraph graph) {
         class HLC implements HierarchyListComparator<Integer> {
             public HLC() {
             }
@@ -358,7 +356,7 @@ public final class PPISearch {
             }
         }
         HierarchyList<Integer> l = new HierarchyList<>();
-        l.addAll(graph.getAllVertices());
+        l.addAll(graph.getNodes());
         l.sort(new HLC());
         l.coarse();
     }

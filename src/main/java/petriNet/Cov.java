@@ -50,7 +50,7 @@ public class Cov {
 		root.setColor(new Color(255, 0, 0));
 		computeNode(root);
 		paintCoveredNodes();
-		targetPathway.getGraph().restartVisualizationModel();
+		targetPathway.updateMyGraph();
 		sourcePathway.getPetriPropertiesNet().setCovGraph(targetPathway.getName());
 	}
 
@@ -197,8 +197,7 @@ public class Cov {
 		if (!parents.contains(node)) {
 			parents.add(node);
 		}
-		for (final BiologicalEdgeAbstract biologicalEdgeAbstract : targetPathway.getGraph().getJungGraph().getInEdges(
-				node)) {
+		for (final BiologicalEdgeAbstract biologicalEdgeAbstract : targetPathway.getGraph2().getInEdges(node)) {
 			final CovEdge e = (CovEdge) biologicalEdgeAbstract;
 			final CovNode n = (CovNode) e.getFrom();
 			if (!parents.contains(n)) {
@@ -223,7 +222,7 @@ public class Cov {
 				}
 			}
 		}
-		sourcePathway.getGraph().restartVisualizationModel();
+		sourcePathway.updateMyGraph();
 	}
 
 	private boolean isBoundaryHold(CovList list) {

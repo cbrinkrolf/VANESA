@@ -81,7 +81,6 @@ public class PreRenderManagerTableModel extends DefaultTableModel {
         }
         if (valid) {
             super.setValueAt(value, row, col);
-            GraphInstance.getMyGraph().getVisualizationViewer().repaint();
             fireTableCellUpdated(row, col);
         }
     }

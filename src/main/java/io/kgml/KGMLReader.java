@@ -19,7 +19,6 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import java.awt.geom.Point2D;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,16 +26,16 @@ import java.util.stream.Collectors;
 public class KGMLReader extends BaseReader<Pathway> {
     private final Logger logger = Logger.getRootLogger();
 
-    public KGMLReader(File file) {
+    public KGMLReader(final File file) {
         super(file);
     }
 
-    public KGMLReader(InputStream inputStream) {
+    public KGMLReader(final InputStream inputStream) {
         super(inputStream);
     }
 
     @Override
-    protected Pathway internalRead(InputStream inputStream) throws IOException {
+    protected Pathway internalRead(final InputStream inputStream) {
         final XMLEventReader reader;
         try {
             reader = XMLInputFactory.newInstance().createXMLEventReader(inputStream);
@@ -128,8 +127,8 @@ public class KGMLReader extends BaseReader<Pathway> {
             return null;
         }
         populatePathway(pw, pathwayId, entries, relations);
-        pw.getGraph().restartVisualizationModel();
-        pw.getGraph().normalCentering();
+        pw.updateMyGraph();
+        pw.getGraphRenderer().zoomAndCenterGraph();
         MainWindow.getInstance().updateAllGuiElements();
         return pw;
     }

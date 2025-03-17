@@ -46,6 +46,7 @@ import graph.algorithms.gui.RandomHamiltonGraphGui;
 import graph.algorithms.gui.RandomRegularGraphGui;
 import graph.algorithms.gui.smacof.view.SmacofView;
 import graph.jung.classes.MyGraph;
+import graph.operations.layout.gem.GEMLayoutOperation;
 import gui.AboutWindow;
 import gui.AllPopUpsWindow;
 import gui.LabelToDataMappingWindow;
@@ -374,8 +375,8 @@ public class MenuListener implements ActionListener {
 
 	private static void graphPicture() {
 		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
-			Pathway pw = GraphInstance.getPathway();
-			SuffixAwareFilter[] filters;
+			final Pathway pw = GraphInstance.getPathway();
+			final SuffixAwareFilter[] filters;
 			if (Workspace.getCurrentSettings().getDefaultImageExportFormat()
 					.equals(ComponentImageWriter.IMAGE_TYPE_SVG)) {
 				filters = new SuffixAwareFilter[] { SuffixAwareFilter.SVG, SuffixAwareFilter.PNG,
@@ -388,7 +389,7 @@ public class MenuListener implements ActionListener {
 				filters = new SuffixAwareFilter[] { SuffixAwareFilter.PNG, SuffixAwareFilter.SVG,
 						SuffixAwareFilter.PDF };
 			}
-			new SaveDialog(filters, SaveDialog.DATA_TYPE_GRAPH_PICTURE, pw.prepareGraphToPrint());
+			new SaveDialog(filters, SaveDialog.DATA_TYPE_GRAPH_PICTURE, pw.getGraphRenderer().getBounds());
 		}
 	}
 
@@ -426,8 +427,8 @@ public class MenuListener implements ActionListener {
 				"Please Conform your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			new ReachController(GraphInstance.getPathway());
 		}
-		if (GraphInstance.getMyGraph() != null) {
-			GraphInstance.getMyGraph().changeToGEMLayout();
+		if (GraphInstance.getVanesaGraph() != null) {
+			GraphInstance.getVanesaGraph().apply(new GEMLayoutOperation());
 		} else {
 			System.out.println("No Graph exists!");
 		}

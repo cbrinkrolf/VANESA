@@ -442,7 +442,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 		else if (source.equals("activationProb")) {
 			text = ((JTextField) event.getSource()).getText().trim();
 			PNArc e = (PNArc) geb;
-			if (!"".equals(text) && !text.equals(String.valueOf(e.getProbability()))) {
+			if (!text.isEmpty() && !text.equals(String.valueOf(e.getProbability()))) {
 				double prob = Double.parseDouble(text);
 				e.setProbability(prob);
 				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
@@ -450,7 +450,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 		} else if (source.equals("activationPrio")) {
 			text = ((JTextField) event.getSource()).getText().trim();
 			PNArc e = (PNArc) geb;
-			if (!"".equals(text) && !text.equals(String.valueOf(e.getPriority()))) {
+			if (!text.isEmpty() && !text.equals(String.valueOf(e.getPriority()))) {
 				int prob = Integer.parseInt(text);
 				e.setPriority(prob);
 				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
@@ -459,7 +459,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			text = ((JTextField) event.getSource()).getText().trim();
 			if (geb instanceof BiologicalEdgeAbstract) {
 				BiologicalEdgeAbstract e = (BiologicalEdgeAbstract) geb;
-				if (!"".equals(text) && !text.equals(e.getFunction())) {
+				if (!text.isEmpty() && !text.equals(e.getFunction())) {
 					e.setFunction(text);
 					pw.handleChangeFlags(ChangedFlags.EDGEWEIGHT_CHANGED);
 				}
@@ -467,10 +467,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 				return;
 			}
 		}
-		// ContainerSingelton.getInstance().changeMouseFunction("edit");
 		event.getComponent().setBackground(Color.WHITE);
-		// GraphInstance.getMyGraph().updateElementLabel(element);
-		GraphInstance.getMyGraph().updateGraph();
 	}
 
 	@Override

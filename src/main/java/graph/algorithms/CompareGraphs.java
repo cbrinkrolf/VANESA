@@ -15,8 +15,8 @@ import gui.MainWindow;
 public class CompareGraphs {
     private static void createEdges(Pathway pw, BiologicalNodeAbstract one, BiologicalNodeAbstract two) {
         for (BiologicalNodeAbstract bna : pw.getGraph2().getNeighbors(one)) {
-            if (pw.getGraph().getJungGraph().findEdge(bna, two) == null) {
-                if (pw.getGraph().getJungGraph().findEdge(two, one) == null) {
+            if (pw.getGraph2().findEdge(bna, two) == null) {
+                if (pw.getGraph2().findEdge(two, one) == null) {
                     ReactionEdge e = new ReactionEdge("", "", two, bna);
                     e.setDirected(true);
                     pw.addEdge(e);
@@ -42,7 +42,6 @@ public class CompareGraphs {
             checked.add(bna);
         }
         pathway.removeSelection();
-        graph.updateGraph();
     }
 
     private static boolean areNodesEqualLabeled(BiologicalNodeAbstract one, BiologicalNodeAbstract two) {
@@ -63,8 +62,6 @@ public class CompareGraphs {
                 }
             }
         }
-        graph1.updateGraph();
-        graph2.updateGraph();
         MainWindow.getInstance().enableOptionPanelUpdate(true);
     }
 }

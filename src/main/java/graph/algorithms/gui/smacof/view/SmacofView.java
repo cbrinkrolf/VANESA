@@ -23,6 +23,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 
 import configurations.Workspace;
+import graph.VanesaGraph;
 import org.jdesktop.swingx.JXTable;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -37,7 +38,7 @@ import net.miginfocom.swing.MigLayout;
 public class SmacofView extends JFrame implements ActionListener {
 	private static final long serialVersionUID = -1342672281173544345L;
 
-	private final MyGraph graph;
+	private final VanesaGraph graph;
 
 	private final JPanel panelparam = new JPanel();
 	// Thread that executes the SMACOF algorithm
@@ -58,21 +59,21 @@ public class SmacofView extends JFrame implements ActionListener {
 	private static JLabel labelcurepsilon = null;
 	private static JLabel labelcurtime = null;
 	private final String[] dismeasure = { "EUCLIDEAN", "MINKOWSKI",
-// no support	"NONE",
-//			"MAHALANOBIS",
+			// no support	"NONE",
+			//			"MAHALANOBIS",
 			"CANBERRA",
-//		    "DIVERGENCE",
-//		    "BRAY_CURTIS",
-//		    "SOERGEL",
-//		    "BAHATTACHARYYA",
-//		    "WAVE_HEDGES",
+			//		    "DIVERGENCE",
+			//		    "BRAY_CURTIS",
+			//		    "SOERGEL",
+			//		    "BAHATTACHARYYA",
+			//		    "WAVE_HEDGES",
 			"ANGULAR_SEPERATION", "CORRELATION" };
-	private HashMap<Integer, double[]> smacof_data_map = new HashMap<>();
-	private HashMap<BiologicalNodeAbstract, Integer> mapped_nodes = new HashMap<>();
-	private HashMap<Integer, BiologicalNodeAbstract> mapped_nodes_backwards = new HashMap<>();
-	private HashMap<String, Integer> attributes = new HashMap<>();
+	private final HashMap<Integer, double[]> smacof_data_map = new HashMap<>();
+	private final HashMap<BiologicalNodeAbstract, Integer> mapped_nodes = new HashMap<>();
+	private final HashMap<Integer, BiologicalNodeAbstract> mapped_nodes_backwards = new HashMap<>();
+	private final HashMap<String, Integer> attributes = new HashMap<>();
 	private Object[][] tabledata;
-	private String[] tableColumnNames = { "Type", "Name", "Count", "Evaluate" };
+	private final String[] tableColumnNames = { "Type", "Name", "Count", "Evaluate" };
 	final int TYPE_STR = 0, NAME_STR = 1, COUNT_STR = 2, UPLOAD_BOOL = 3;
 
 	public SmacofView() {
@@ -81,13 +82,12 @@ public class SmacofView extends JFrame implements ActionListener {
 		int y = 800;
 		setPreferredSize(new Dimension(x, y));
 		this.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
-		graph = GraphInstance.getMyGraph();
+		graph = GraphInstance.getVanesaGraph();
 
 		if (graph != null) {
 			try {
-
 				// Hier werden die Daten aus dem Graphen gelesen
-				for (BiologicalNodeAbstract bna : graph.getAllVertices()) {
+				for (BiologicalNodeAbstract bna : graph.getNodes()) {
 					for (NodeAttribute na : bna.getNodeAttributesByType(NodeAttributeType.EXPERIMENT)) {
 						// count mapped nodes with given attribute
 						if (!attributes.containsKey(na.getName())) {
@@ -108,19 +108,17 @@ public class SmacofView extends JFrame implements ActionListener {
 
 				}
 				// tabledata fuer die Datentabelle anlegen und befuellen
-				tabledata = new Object[attributes.keySet().size()][tableColumnNames.length];
+				tabledata = new Object[attributes.size()][tableColumnNames.length];
 				TreeSet<String> displayset = new TreeSet<>(attributes.keySet());
-				for (int line = 0; line < attributes.keySet().size(); line++) {
+				for (int line = 0; line < attributes.size(); line++) {
 					// hard coded for now, can be dynamically chosen in future
 					tabledata[line][TYPE_STR] = "Experiment";
 					tabledata[line][NAME_STR] = displayset.pollFirst();
-					tabledata[line][COUNT_STR] = attributes.get(tabledata[line][NAME_STR]) + "/"
-							+ graph.getAllVertices().size();
+					tabledata[line][COUNT_STR] = attributes.get(tabledata[line][NAME_STR]) + "/" + graph.getNodeCount();
 					tabledata[line][UPLOAD_BOOL] = true;
 
 				}
 
-				// hier wird das Fenster fertiggemacht
 				initPanel();
 				this.setLayout(new BorderLayout(5, 5));
 				this.add(panelparam, BorderLayout.NORTH);
@@ -131,7 +129,6 @@ public class SmacofView extends JFrame implements ActionListener {
 				this.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 				setVisible(true);
 				setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				// setResizable(false);
 			} catch (IndexOutOfBoundsException ex) {
 				JOptionPane.showMessageDialog(null, "Network contains no additional attributes.", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -142,7 +139,7 @@ public class SmacofView extends JFrame implements ActionListener {
 	}
 
 	private void initPanel() {
-		choosedismeasure = new JComboBox<String>(dismeasure);
+		choosedismeasure = new JComboBox<>(dismeasure);
 		choosedismeasure.setActionCommand("dismeasure");
 		choosedismeasure.addActionListener(this);
 
@@ -150,52 +147,36 @@ public class SmacofView extends JFrame implements ActionListener {
 		slidermaxiter.setPaintTicks(true);
 		slidermaxiter.setMinorTickSpacing(10);
 		labelmaxiter = new JLabel("max. iterations: " + slidermaxiter.getValue());
-		slidermaxiter.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				labelmaxiter.setText("max. iterations: " + ((JSlider) e.getSource()).getValue());
-			}
-		});
+		slidermaxiter.addChangeListener(
+				e -> labelmaxiter.setText("max. iterations: " + ((JSlider) e.getSource()).getValue()));
 
 		sliderepsilon = new JSlider(-15, 10, -5);
 		sliderepsilon.setPaintTicks(true);
 		sliderepsilon.setMinorTickSpacing(1);
 		labelepsilon = new JLabel("epsilon: " + Math.pow(10, sliderepsilon.getValue()));
-		sliderepsilon.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				double myepsilon;
-				double tmp = ((JSlider) e.getSource()).getValue();
-				if (tmp >= 0) {
-					myepsilon = tmp;
-				} else {
-					myepsilon = Math.pow(10, tmp);
-				}
-				labelepsilon.setText("epsilon: " + myepsilon);
+		sliderepsilon.addChangeListener(e -> {
+			double myepsilon;
+			double tmp = ((JSlider) e.getSource()).getValue();
+			if (tmp >= 0) {
+				myepsilon = tmp;
+			} else {
+				myepsilon = Math.pow(10, tmp);
 			}
+			labelepsilon.setText("epsilon: " + myepsilon);
 		});
 
 		sliderp = new JSlider(1, 10, 2);
 		sliderp.setPaintTicks(true);
 		sliderp.setMinorTickSpacing(1);
 		labelp = new JLabel("p: " + sliderp.getValue());
-		sliderp.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				labelp.setText("p: " + ((JSlider) e.getSource()).getValue());
-			}
-		});
+		sliderp.addChangeListener(e -> labelp.setText("p: " + ((JSlider) e.getSource()).getValue()));
 
 		sliderresultdim = new JSlider(1, 2, 2);
 		sliderresultdim.setPaintTicks(true);
 		sliderresultdim.setMinorTickSpacing(1);
 		labelresultdim = new JLabel("result dimension: " + sliderresultdim.getValue());
-		sliderresultdim.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				labelresultdim.setText("result dimension: " + ((JSlider) e.getSource()).getValue());
-			}
-		});
+		sliderresultdim.addChangeListener(
+				e -> labelresultdim.setText("result dimension: " + ((JSlider) e.getSource()).getValue()));
 
 		startcomputationbutton = new JButton("start computation");
 		startcomputationbutton.setActionCommand("start computation");
@@ -264,7 +245,7 @@ public class SmacofView extends JFrame implements ActionListener {
 					}
 				}
 				int node_id = 0;
-				for (BiologicalNodeAbstract bna : graph.getAllVertices()) {
+				for (BiologicalNodeAbstract bna : graph.getNodes()) {
 					mapped_nodes.put(bna, node_id);
 					mapped_nodes_backwards.put(node_id, bna);
 					smacof_data_map.put(node_id, new double[size_used_attributes]);
@@ -281,25 +262,25 @@ public class SmacofView extends JFrame implements ActionListener {
 				// printSmacofMap(smacof_data_map);
 
 				// hier wird der Thread fuer den SMACOF Algorithmus angestossen
-				double myepsilon = sliderepsilon.getValue() >= 0 ? sliderepsilon.getValue()
-						: Math.pow(10, sliderepsilon.getValue());
-//				//APSP statt werte
-//				NetworkProperties np = new NetworkProperties();
-//				short[][] apsp = np.AllPairShortestPaths(false);
-//				smacof_data_map.clear();
-//				for (int i = 0; i < apsp.length; i++) {
-//					double[] dline = new double[apsp[i].length];
-//					for(int j = 0; j< apsp[i].length; j++){
-//						dline[j] = apsp[i][j];
-//					}
-//					smacof_data_map.put(i, dline);
-//					
-//				}
+				double myepsilon = sliderepsilon.getValue() >= 0 ? sliderepsilon.getValue() : Math.pow(10,
+						sliderepsilon.getValue());
+				//				//APSP statt werte
+				//				NetworkProperties np = new NetworkProperties();
+				//				short[][] apsp = np.AllPairShortestPaths(false);
+				//				smacof_data_map.clear();
+				//				for (int i = 0; i < apsp.length; i++) {
+				//					double[] dline = new double[apsp[i].length];
+				//					for(int j = 0; j< apsp[i].length; j++){
+				//						dline[j] = apsp[i][j];
+				//					}
+				//					smacof_data_map.put(i, dline);
+				//
+				//				}
 
 				// get weights:
-//					Weighting W = new Weighting(mapped_nodes, mapped_nodes_backwards);
-//					W.getWeightsByAdjacency();
-//			    	W.getWeightsByCellularComponent();
+				//					Weighting W = new Weighting(mapped_nodes, mapped_nodes_backwards);
+				//					W.getWeightsByAdjacency();
+				//			    	W.getWeightsByCellularComponent();
 
 				dosmacof = new DoSmacof(smacof_data_map, mapped_nodes, (String) choosedismeasure.getSelectedItem(),
 						slidermaxiter.getValue(), myepsilon, sliderp.getValue(), sliderresultdim.getValue(), this);
@@ -425,7 +406,7 @@ public class SmacofView extends JFrame implements ActionListener {
 		/*
 		 * JTable uses this method to determine the default renderer/ editor for each
 		 * cell. If we didn't implement this method, then the last column would contain
-		 * text ("true"/"false"), rather than a check box.
+		 * text ("true"/"false"), rather than a checkbox.
 		 */
 		public Class<?> getColumnClass(int c) {
 			return getValueAt(0, c).getClass();

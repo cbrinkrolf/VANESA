@@ -227,7 +227,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 				// functions and parameters at arcs belong to the corresponding transition
 				if (bna instanceof Transition) {
 					for (BiologicalEdgeAbstract bea : VanesaUtility
-							.getEdgesSortedByID(pw.getGraph().getJungGraph().getIncidentEdges(bna))) {
+							.getEdgesSortedByID(pw.getGraph2().getIncidentEdges(bna))) {
 						for (Parameter p : bea.getParametersSortedAlphabetically()) {
 
 							// params += this.indentation + "parameter Real
@@ -289,15 +289,15 @@ public class MOoutput extends BaseWriter<Pathway> {
 				// double km = Double.NaN, kcat = Double.NaN;
 				// String ec = "";
 
-				in = pw.getGraph().getJungGraph().getInEdges(bna).size();
-				out = pw.getGraph().getJungGraph().getOutEdges(bna).size();
+				in = pw.getGraph2().getInEdges(bna).size();
+				out = pw.getGraph2().getOutEdges(bna).size();
 
 				if (bna.getRefs().size() > 0) {
 					refIt = bna.getRefs().iterator();
 					while (refIt.hasNext()) {
 						node = refIt.next();
-						in += pw.getGraph().getJungGraph().getInEdges(node).size();
-						out += pw.getGraph().getJungGraph().getOutEdges(node).size();
+						in += pw.getGraph2().getInEdges(node).size();
+						out += pw.getGraph2().getOutEdges(node).size();
 					}
 
 				}
@@ -662,8 +662,8 @@ public class MOoutput extends BaseWriter<Pathway> {
 	}
 
 	private String getFromToAnnotation(Pathway pw, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
-		Point2D p1 = pw.getGraph().getVertexLocation(this.resolveReference(from));
-		Point2D p2 = pw.getGraph().getVertexLocation(this.resolveReference(to));
+		Point2D p1 = pw.getGraph2().getNodePosition(resolveReference(from));
+		Point2D p2 = pw.getGraph2().getNodePosition(resolveReference(to));
 		String color = "{0, 0, 0}";
 		if (from.isLogical() || to.isLogical()) {
 			color = "{180, 180, 180}";
@@ -885,7 +885,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 
 	private Set<BiologicalNodeAbstract> getMarkedNeighborsIn(BiologicalNodeAbstract bna) {
 		HashSet<BiologicalNodeAbstract> set = new HashSet<>();
-		Iterator<BiologicalEdgeAbstract> it = GraphInstance.getMyGraph().getJungGraph().getInEdges(bna).iterator();
+		Iterator<BiologicalEdgeAbstract> it = GraphInstance.getVanesaGraph().getInEdges(bna).iterator();
 		BiologicalEdgeAbstract bea;
 		while (it.hasNext()) {
 			bea = it.next();

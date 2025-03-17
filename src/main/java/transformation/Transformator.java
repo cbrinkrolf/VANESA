@@ -115,7 +115,6 @@ public class Transformator {
 	private List<Match> matches;
 
 	public Pathway transform(Pathway pw, List<Rule> rules) {
-		// System.out.println("new transform");
 		this.pw = pw;
 		this.rules = rules;
 		// multigraph is Necessary for loops
@@ -130,18 +129,11 @@ public class Transformator {
 				tmpGraph.addVertex(bna.getID());
 			}
 		}
-
-		// System.out.println("tmpgraph edges:");
 		for (BiologicalEdgeAbstract bea : pw.getAllEdges()) {
 			remainingEdges.add(bea);
 			tmpGraph.addEdge(bea.getID(), this.getBNARef(bea.getFrom()).getID(), this.getBNARef(bea.getTo()).getID());
 			id2Edge.put(bea.getID(), bea);
-			// System.out.println(getBNARef(bea.getFrom()).getName()+" ->
-			// "+getBNARef(bea.getTo()).getName());
 		}
-		// System.out.println(this.maxAllShortestPath(pw.getGraph().getJungGraph()));
-		// System.out.println(this.maxAllShortestPath(tmpGraph));
-		System.out.println("tmp Graph Edge count: " + tmpGraph.getEdgeCount());
 		// createRules();
 		applyRules();
 
@@ -154,7 +146,6 @@ public class Transformator {
 	}
 
 	private void applyRules() {
-		System.out.println("ruleset size: " + rules.size());
 		long tic = System.currentTimeMillis();
 		for (int i = 0; i < rules.size(); i++) {
 			if (this.done()) {
@@ -781,18 +772,11 @@ public class Transformator {
 		if (pn != null) {
 			double x = 0;
 			double y = 0;
-
 			if (bna != null) {
-				if (bna.getLabel().trim().length() > 0) {
-					// pn.setLabel(bna.getLabel());
-				}
-				if (bna.getName().trim().length() > 0) {
-					// pn.setName(bna.getName());
-				}
 				pn.setColor(bna.getColor());
 				pn.setPlotColor(bna.getPlotColor());
-				x = pw.getGraph().getVertexLocation(bna).getX();// locations.getLocation(bna.getVertex()).getX();
-				y = pw.getGraph().getVertexLocation(bna).getY();// locations.getLocation(bna.getVertex()).getY();
+				x = pw.getGraph2().getNodePosition(bna).getX();
+				y = pw.getGraph2().getNodePosition(bna).getY();
 				bn2pnMap.put(bna, pn);
 			}
 			petriNet.addVertex(pn, new Point2D.Double(x, y));
@@ -984,23 +968,19 @@ public class Transformator {
 	}
 
 	private <V, E> List<V> getAllGraphNodesSortedByEdgeCount(Graph<V, E> g) {
-
-		HashMap<Integer, Collection<V>> map = new HashMap<Integer, Collection<V>>();
-		int size;
+		HashMap<Integer, Collection<V>> map = new HashMap<>();
 		for (V bna : g.getVertices()) {
-			size = g.getInEdges(bna).size();
+			int size = g.getInEdges(bna).size();
 			if (!map.containsKey(size)) {
 				map.put(size, new ArrayList<V>());
 			}
 			map.get(size).add(bna);
 		}
-
-		ArrayList<Integer> ids = new ArrayList<Integer>(map.keySet());
+		ArrayList<Integer> ids = new ArrayList<>(map.keySet());
 		ids.sort(Integer::compare);
-
-		List<V> sortedList = new ArrayList<V>();
-		for (int i = 0; i < ids.size(); i++) {
-			sortedList.addAll(map.get(ids.get(i)));
+		List<V> sortedList = new ArrayList<>();
+		for (Integer id : ids) {
+			sortedList.addAll(map.get(id));
 		}
 		return sortedList;
 	}

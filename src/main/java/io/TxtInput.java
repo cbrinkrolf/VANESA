@@ -14,6 +14,7 @@ import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Protein;
 import graph.CreatePathway;
+import graph.operations.layout.CircleLayoutOperation;
 import gui.MainWindow;
 
 public class TxtInput {
@@ -34,19 +35,18 @@ public class TxtInput {
             String line;
             while ((line = in.readLine()) != null) {
                 String trimmedLine = line.trim();
-                if (trimmedLine.equals("#Edges")) {
-                    state = ReadingState.edges;
-                    continue;
-                }
-                if (trimmedLine.equals("#Nodes")) {
-                    state = ReadingState.nodes;
-                    continue;
-                }
-                if (trimmedLine.equals("#Sequences")) {
-                    state = ReadingState.sequences;
-                    continue;
-                }
-                switch (state) {
+				switch (trimmedLine) {
+				case "#Edges":
+					state = ReadingState.edges;
+					continue;
+				case "#Nodes":
+					state = ReadingState.nodes;
+					continue;
+				case "#Sequences":
+					state = ReadingState.sequences;
+					continue;
+				}
+				switch (state) {
                     case edges:
                         manageEdge(line);
                         break;
@@ -60,9 +60,9 @@ public class TxtInput {
             }
         }
         is.close();
-        pw.getGraph().changeToCircleLayout();
-        pw.getGraph().restartVisualizationModel();
-        pw.getGraph().normalCentering();
+        pw.getGraph2().apply(new CircleLayoutOperation());
+        pw.updateMyGraph();
+        pw.getGraphRenderer().zoomAndCenterGraph();
         MainWindow.getInstance().updateProjectProperties();
     }
 

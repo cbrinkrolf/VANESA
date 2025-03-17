@@ -387,13 +387,13 @@ public class KineticBuilder {
 
 	private static Collection<BiologicalEdgeAbstract> getDirectedInEdges(BiologicalNodeAbstract bna, Pathway pw,
 			boolean integerCheck) {
-		Collection<BiologicalEdgeAbstract> inEdges = pw.getGraph().getJungGraph().getInEdges(bna);
+		Collection<BiologicalEdgeAbstract> inEdges = pw.getGraph2().getInEdges(bna);
 		return getFilteredEdges(inEdges, true, true);
 	}
 
 	private static Collection<BiologicalEdgeAbstract> getDirectedOutEdges(BiologicalNodeAbstract bna, Pathway pw,
 			boolean integerCheck) {
-		Collection<BiologicalEdgeAbstract> outEdges = pw.getGraph().getJungGraph().getOutEdges(bna);
+		Collection<BiologicalEdgeAbstract> outEdges = pw.getGraph2().getOutEdges(bna);
 		return getFilteredEdges(outEdges, true, true);
 	}
 

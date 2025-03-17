@@ -2,35 +2,22 @@ package graph.layouts;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.RectangularShape;
-import java.util.Iterator;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.jung.classes.MyGraph;
 
 public class GraphCenter {
-
-	private Point2D center;
-	private double width;
-	private double height;
-	
+	private final Point2D center;
+	private final double width;
+	private final double height;
 	private double minX = Double.MAX_VALUE;
 	private double minY = Double.MAX_VALUE;
-	private double maxX = -Double.MAX_VALUE;
-	private double maxY = -Double.MAX_VALUE;
-	private MyGraph g;
-	
-	public GraphCenter(MyGraph g){
-		this.g = g;
-		init();
-	}
-	
-	private void init(){
-		Iterator<BiologicalNodeAbstract> it = g.getAllVertices().iterator();
-		
-		BiologicalNodeAbstract bna;
-		while (it.hasNext()) {
-			bna = it.next();
-			Point2D p = g.getVertexLocation(bna);
+
+	public GraphCenter(final MyGraph g) {
+		double maxX = -Double.MAX_VALUE;
+		double maxY = -Double.MAX_VALUE;
+		for (BiologicalNodeAbstract bna : g.getAllVertices()) {
+			final Point2D p = g.getVertexLocation(bna);
 			if (p.getX() < minX) {
 				minX = p.getX();
 			}
@@ -43,11 +30,9 @@ public class GraphCenter {
 			if (p.getY() > maxY) {
 				maxY = p.getY();
 			}
-
 		}
-		
-		for(int i = 0; i<g.getAnnotationManager().getAnnotations().size(); i++){
-			RectangularShape s = g.getAnnotationManager().getAnnotations().get(i).getShape();
+		for (int i = 0; i < g.getAnnotationManager().getAnnotations().size(); i++) {
+			final RectangularShape s = g.getAnnotationManager().getAnnotations().get(i).getShape();
 			if (s.getMinX() < minX) {
 				minX = s.getMinX();
 			}
@@ -61,20 +46,20 @@ public class GraphCenter {
 				maxY = s.getMaxY();
 			}
 		}
-		this.width = maxX-minX;
-		this.height = maxY-minY;
-		this.center = new Point2D.Double(minX+width/2, minY+height/2);
+		width = maxX - minX;
+		height = maxY - minY;
+		center = new Point2D.Double(minX + width / 2, minY + height / 2);
 	}
-	
-	public Point2D getCenter(){
+
+	public Point2D getCenter() {
 		return center;
 	}
-	
-	public double getHeight(){
+
+	public double getHeight() {
 		return height;
 	}
-	
-	public double getWidth(){
+
+	public double getWidth() {
 		return width;
 	}
 
@@ -84,13 +69,5 @@ public class GraphCenter {
 
 	public double getMinY() {
 		return minY;
-	}
-
-	public double getMaxX() {
-		return maxX;
-	}
-
-	public double getMaxY() {
-		return maxY;
 	}
 }

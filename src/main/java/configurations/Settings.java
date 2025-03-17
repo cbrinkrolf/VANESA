@@ -339,37 +339,6 @@ public class Settings {
 		save();
 	}
 
-	public boolean isDisabledAntiAliasing() {
-		return model.isDisabledAntiAliasing != null ? model.isDisabledAntiAliasing : false;
-	}
-
-	public void setDisabledAntiAliasing(Boolean disabledAntiAliasing) {
-		if (disabledAntiAliasing == null || !disabledAntiAliasing) {
-			// Reset to default value
-			model.isDisabledAntiAliasing = null;
-		} else {
-			model.isDisabledAntiAliasing = false;
-		}
-		save();
-	}
-
-	/**
-	 * Setting whether nodes outside the visible frame should be omitted from painting. (Default: true)
-	 */
-	public boolean isOmitPaintInvisibleNodes() {
-		return model.isOmitPaintInvisibleNodes == null || model.isOmitPaintInvisibleNodes;
-	}
-
-	public void setOmitPaintInvisibleNodes(Boolean omitPaintInvisibleNodes) {
-		if (omitPaintInvisibleNodes == null || omitPaintInvisibleNodes) {
-			// Reset to default value
-			model.isOmitPaintInvisibleNodes = null;
-		} else {
-			model.isOmitPaintInvisibleNodes = false;
-		}
-		save();
-	}
-
 	/**
 	 * Setting whether unnecessary files should be removed from the simulation directory after compilation. (Default:
 	 * true)
@@ -450,11 +419,5 @@ public class Settings {
 		public Boolean isPDFClipPaths;
 		@JsonProperty("defaultImageExportFormat")
 		public String defaultImageExportFormat;
-
-		// Rendering settings
-		@JsonProperty("isDisabledAntiAliasing")
-		public Boolean isDisabledAntiAliasing;
-		@JsonProperty("isOmitPaintInvisibleNodes")
-		public Boolean isOmitPaintInvisibleNodes;
 	}
 }

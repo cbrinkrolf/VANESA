@@ -17,9 +17,8 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.*;
-import edu.uci.ics.jung.visualization.VisualizationImageServer;
+import graph.VanesaGraph;
 import graph.gui.Parameter;
-import graph.jung.classes.MyGraph;
 import org.apache.batik.ext.awt.image.codec.png.PNGEncodeParam;
 import org.apache.batik.ext.awt.image.codec.png.PNGImageEncoder;
 import org.apache.commons.lang3.StringUtils;
@@ -32,11 +31,11 @@ public class PNDocWriter extends BaseWriter<Pathway> {
 
 	@Override
 	protected void internalWrite(final OutputStream outputStream, final Pathway pw) throws Exception {
-		final VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = pw.prepareGraphToPrint();
-		final Dimension size = wvv.getSize();
+		// TODO: use image as base64 in html or remove
+		final Dimension size = new Dimension(800, 600);
 		final BufferedImage image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_BYTE_INDEXED);
 		final Graphics2D grp = image.createGraphics();
-		wvv.paint(grp);
+		pw.getGraphRenderer().render(grp, new Rectangle(0, 0, size.width, size.height));
 		final PNGEncodeParam param = PNGEncodeParam.getDefaultEncodeParam(image);
 		try (final OutputStream fos = new ByteArrayOutputStream()) {
 			final PNGImageEncoder encoder = new PNGImageEncoder(fos, param);
@@ -44,8 +43,6 @@ public class PNDocWriter extends BaseWriter<Pathway> {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
-
-		final MyGraph graph = pw.getGraph(false);
 
 		final Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
 		writer.write("<!doctype html>\n");
@@ -97,8 +94,7 @@ public class PNDocWriter extends BaseWriter<Pathway> {
 				}
 				writer.write("</h3>\n");
 				writer.write("      \"" + t.getName() + "\" : \\(");
-				final Iterator<BiologicalEdgeAbstract> inEdgesIt = pw.getGraph().getJungGraph().getInEdges(t)
-						.iterator();
+				final Iterator<BiologicalEdgeAbstract> inEdgesIt = pw.getGraph2().getInEdges(t).iterator();
 				while (inEdgesIt.hasNext()) {
 					final BiologicalEdgeAbstract bea = inEdgesIt.next();
 					String weight = "";
@@ -118,8 +114,7 @@ public class PNDocWriter extends BaseWriter<Pathway> {
 					}
 				}
 				writer.write("\\ \\rightarrow\\ ");
-				final Iterator<BiologicalEdgeAbstract> outEdgesIt = pw.getGraph().getJungGraph().getOutEdges(t)
-						.iterator();
+				final Iterator<BiologicalEdgeAbstract> outEdgesIt = pw.getGraph2().getOutEdges(t).iterator();
 				while (outEdgesIt.hasNext()) {
 					final BiologicalEdgeAbstract bea = outEdgesIt.next();
 					String weight = "";
@@ -212,9 +207,10 @@ public class PNDocWriter extends BaseWriter<Pathway> {
 		writer.write("        },\n");
 		writer.write("      ],\n");
 		writer.write("      data: [\n");
-		for (final BiologicalNodeAbstract bea : pw.getAllGraphNodes()) {
+		final VanesaGraph graph = pw.getGraph2();
+		for (final BiologicalNodeAbstract bea : graph.getNodes()) {
 			// TODO: logical places?
-			final Point2D position = graph.getVertexLocation(bea);
+			final Point2D position = graph.getNodePosition(bea);
 			writer.write("        {\n");
 			writer.write("          name: '" + bea.getName() + "',\n");
 			writer.write("          x: " + position.getX() + ",\n");

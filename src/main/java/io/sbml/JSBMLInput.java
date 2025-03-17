@@ -80,7 +80,6 @@ public class JSBMLInput {
 		}
 		Element sbmlNode = doc.getRootElement();
 		Element modelNode = sbmlNode.getChild("model", null);
-		// List<Element> modelNodeChildren = modelNode.getChildren();
 		Element annotationNode = modelNode.getChild("annotation", null);
 		createAnnotation(annotationNode);
 		// not needed yet
@@ -96,10 +95,8 @@ public class JSBMLInput {
 		// refresh view
 		try {
 			is.close();
-			this.pathway.getGraph().restartVisualizationModel();
+			this.pathway.updateMyGraph();
 			MainWindow.getInstance().updateProjectProperties();
-			// MainWindow.getInstance().updateOptionPanel();
-
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return "An error occurred during the loading.";

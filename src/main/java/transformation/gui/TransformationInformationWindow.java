@@ -21,13 +21,13 @@ import javax.swing.JSeparator;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 
+import graph.VanesaGraph;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import edu.uci.ics.jung.visualization.picking.PickedState;
 import gui.MainWindow;
 import gui.tables.MyTable;
 import gui.tables.NodePropertyTableModel;
@@ -36,17 +36,15 @@ import transformation.Match;
 import transformation.RuleEdge;
 
 public class TransformationInformationWindow implements ActionListener {
-
-	private JPanel mainPanel;
-	private JPanel buttonPanel;
+	private final JPanel mainPanel;
+	private final JPanel buttonPanel;
 	private JFrame frame;
 
-	private List<Match> matches;
+	private final List<Match> matches;
 
 	private MyTable matchTable;
-	private NodePropertyTableModel matchModel;
-	private String[] columnNames = { "# Match", "Rule name" };
-	private Pathway pw;
+	private final String[] columnNames = { "# Match", "Rule name" };
+	private final Pathway pw;
 
 	private Collection<BiologicalNodeAbstract> nodesMatched;
 	private Collection<BiologicalEdgeAbstract> edgesMatched;
@@ -57,19 +55,16 @@ public class TransformationInformationWindow implements ActionListener {
 	private Collection<BiologicalNodeAbstract> nodesTransformed;
 	private Collection<BiologicalEdgeAbstract> edgesTransformed;
 
-	private Collection<BiologicalNodeAbstract> allNodes;;
+	private Collection<BiologicalNodeAbstract> allNodes;
 	private Collection<BiologicalEdgeAbstract> allEdges;
 
 	public TransformationInformationWindow(Pathway pw) {
 		this.pw = pw;
 		this.matches = pw.getTransformationInformation().getMatches();
-
 		MigLayout layout = new MigLayout("", "[left]");
 		mainPanel = new JPanel(layout);
 		buttonPanel = new JPanel(layout);
-
 		createSets();
-
 	}
 
 	// CHRIS take also logical nodes into account
@@ -114,7 +109,6 @@ public class TransformationInformationWindow implements ActionListener {
 	}
 
 	private void createButtons() {
-
 		JLabel totalMatches = new JLabel("Number of executed matches: " + matches.size());
 
 		JLabel nodesMatched = new JLabel();
@@ -142,14 +136,14 @@ public class TransformationInformationWindow implements ActionListener {
 		edgesTransformed.setToolTipText("Edges, which are transformed (considered)");
 
 		JLabel nodesNotTransformed = new JLabel();
-		nodesNotTransformed
-				.setText("Not transformed nodes: " + this.nodesNotTransformed.size() + " out of " + allNodes.size());
+		nodesNotTransformed.setText(
+				"Not transformed nodes: " + this.nodesNotTransformed.size() + " out of " + allNodes.size());
 		nodesNotTransformed.setToolTipText(
 				"Nodes, which are not transformed to a Petri net node (if matched, no mapping between biological node in the rule pattern and its corresponding Petri net node)");
 
 		JLabel edgesNotTransformed = new JLabel();
-		edgesNotTransformed
-				.setText("Not transformed edges: " + this.edgesNotTransformed.size() + " out of " + allEdges.size());
+		edgesNotTransformed.setText(
+				"Not transformed edges: " + this.edgesNotTransformed.size() + " out of " + allEdges.size());
 		edgesNotTransformed.setToolTipText(
 				"Edges, which are not transformed (either not matched, or not be part in the set of considered nodes if matched)");
 
@@ -203,20 +197,15 @@ public class TransformationInformationWindow implements ActionListener {
 		buttonPanel.add(edgesNotTransformed, "");
 		buttonPanel.add(highlightAllNotTransformedEdges, "wrap");
 		buttonPanel.add(new JSeparator(), "span, growx, gaptop 7 ");
-
 	}
 
 	private void initTable() {
-
 		Object[][] rows = new Object[matches.size()][2];
-
 		for (int i = 0; i < matches.size(); i++) {
 			rows[i][0] = i + 1;
 			rows[i][1] = matches.get(i).getRule().getName();
 		}
-
-		matchModel = new NodePropertyTableModel(rows, columnNames);
-
+		NodePropertyTableModel matchModel = new NodePropertyTableModel(rows, columnNames);
 		matchTable = new MyTable();
 		matchTable.setModel(matchModel);
 
@@ -258,15 +247,14 @@ public class TransformationInformationWindow implements ActionListener {
 		sp.setPreferredSize(new Dimension(400, 400));
 
 		mainPanel.add(sp, "growx, spanx");
-		// mainPanel.repaint();
 		mainPanel.revalidate();
 	}
 
 	public void show() {
-		this.createButtons();
+		createButtons();
 		mainPanel.add(buttonPanel, "wrap");
 		if (matches.size() > 0) {
-			this.initTable();
+			initTable();
 		}
 		mainPanel.revalidate();
 		buttonPanel.revalidate();
@@ -286,98 +274,58 @@ public class TransformationInformationWindow implements ActionListener {
 		frame.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		frame.requestFocus();
 		frame.setVisible(true);
-
 		frame.addWindowFocusListener(new WindowFocusListener() {
-
 			@Override
 			public void windowLostFocus(WindowEvent e) {
 			}
 
 			@Override
 			public void windowGainedFocus(WindowEvent e) {
-				// repaintPanel();
 				frame.pack();
-				// revalidate();
-				// pack();
-				// repaint();
 			}
 		});
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		PickedState<BiologicalNodeAbstract> vState = pw.getGraph().getVisualizationViewer().getPickedVertexState();
-		PickedState<BiologicalEdgeAbstract> eState = pw.getGraph().getVisualizationViewer().getPickedEdgeState();
-
-		vState.clear();
-		eState.clear();
-
+		final VanesaGraph graph = pw.getGraph2();
+		graph.clearSelection();
 		switch (e.getActionCommand()) {
-
 		case "highlightAllMatchedNodes":
-			for (BiologicalNodeAbstract bna : nodesMatched) {
-				vState.pick(bna, true);
-			}
+			graph.selectNodes(nodesMatched);
 			break;
 		case "highlightAllMatchedEdges":
-			for (BiologicalEdgeAbstract bea : edgesMatched) {
-				eState.pick(bea, true);
-			}
+			graph.selectEdges(edgesMatched);
 			break;
 		case "highlightAllNotMatchedNodes":
-			for (BiologicalNodeAbstract bna : nodesNotMatched) {
-				vState.pick(bna, true);
-			}
+			graph.selectNodes(nodesNotMatched);
 			break;
 		case "highlightAllNotMatchedEdges":
-			for (BiologicalEdgeAbstract bea : edgesNotMatched) {
-				eState.pick(bea, true);
-			}
+			graph.selectEdges(edgesNotMatched);
 			break;
 		case "highlightAllTransformedNodes":
-			for (BiologicalNodeAbstract bna : nodesTransformed) {
-				vState.pick(bna, true);
-			}
+			graph.selectNodes(nodesTransformed);
 			break;
 		case "highlightAllTransformedEdges":
-			for (BiologicalEdgeAbstract bea : edgesTransformed) {
-				eState.pick(bea, true);
-			}
+			graph.selectEdges(edgesTransformed);
 			break;
 		case "highlightAllNotTransformedNodes":
-			for (BiologicalNodeAbstract bna : nodesNotTransformed) {
-				vState.pick(bna, true);
-			}
+			graph.selectNodes(nodesNotTransformed);
 			break;
 		case "highlightAllNotTransformedEdges":
-			for (BiologicalEdgeAbstract bea : edgesNotTransformed) {
-				eState.pick(bea, true);
-			}
+			graph.selectEdges(edgesNotTransformed);
 			break;
 		}
 	}
-	
+
 	private void highlightSelectedMatch() {
-		if (matchTable.getRowCount() < 1) {
+		if (matchTable.getRowCount() < 1 || matchTable.getSelectedRowCount() == 0) {
 			return;
 		}
-		if (matchTable.getSelectedRowCount() == 0) {
-			return;
-		}
-
-		Match m = matches.get(((int) matchTable.getValueAt(matchTable.getSelectedRow(), 0)) - 1);
-
-		PickedState<BiologicalNodeAbstract> vState = pw.getGraph().getVisualizationViewer().getPickedVertexState();
-		PickedState<BiologicalEdgeAbstract> eState = pw.getGraph().getVisualizationViewer().getPickedEdgeState();
-
-		vState.clear();
-		eState.clear();
-		for (BiologicalNodeAbstract bna : m.getMappedNodes()) {
-			vState.pick(bna, true);
-		}
-
-		for (BiologicalEdgeAbstract bea : m.getMappedEdges()) {
-			eState.pick(bea, true);
-		}
+		final Match m = matches.get(((int) matchTable.getValueAt(matchTable.getSelectedRow(), 0)) - 1);
+		final VanesaGraph graph = pw.getGraph2();
+		graph.clearSelection();
+		graph.selectNodes(m.getMappedNodes());
+		graph.selectEdges(m.getMappedEdges());
 	}
 }

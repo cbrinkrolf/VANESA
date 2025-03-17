@@ -16,7 +16,6 @@ import com.google.common.base.Function;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.util.EdgeIndexFunction;
 import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import graph.GraphInstance;
@@ -41,7 +40,6 @@ public class HEBEdgeShape<V, E> extends EdgeShape<V, E> {
 	 * giving a 'spiral' effect.
 	 */
 	public static class HEBCurve<V, E> extends EdgeShape<V, E> implements Function<E, Shape> {
-		protected EdgeIndexFunction<V, E> parallelEdgeIndexFunction;
 		private static Point2D centerPoint;
 		private final HashMap<BiologicalNodeAbstract, Integer> layer;
 		private Integer maxLayer;
@@ -63,18 +61,6 @@ public class HEBEdgeShape<V, E> extends EdgeShape<V, E> {
 			}
 		}
 
-		public void setEdgeIndexFunction(EdgeIndexFunction<V, E> parallelEdgeIndexFunction) {
-			this.parallelEdgeIndexFunction = parallelEdgeIndexFunction;
-			loop.setEdgeIndexFunction(parallelEdgeIndexFunction);
-		}
-
-		/**
-		 * @return the parallelEdgeIndexFunction
-		 */
-		public EdgeIndexFunction<V, E> getEdgeIndexFunction() {
-			return parallelEdgeIndexFunction;
-		}
-
 		/**
 		 * Get the shape for this edge, returning either the shared instance or, in the
 		 * case of self-loop edges, the Loop shared instance.
@@ -82,7 +68,6 @@ public class HEBEdgeShape<V, E> extends EdgeShape<V, E> {
 		public Shape apply(E e) {
 			if (!(e instanceof BiologicalEdgeAbstract)) {
 				return EdgeShape.quadCurve(graph).apply(e);
-				// return new EdgeShape.CubicCurve<V, E>().apply(context);
 			}
 			Pair<V> endpoints = graph.getEndpoints(e);
 			Pair<BiologicalNodeAbstract> endpointNodes = new Pair<>((BiologicalNodeAbstract) endpoints.getFirst(),

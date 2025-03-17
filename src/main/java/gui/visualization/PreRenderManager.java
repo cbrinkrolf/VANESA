@@ -284,12 +284,9 @@ public class PreRenderManager implements ActionListener {
 			break;
 		case "addrenderer":
 			new AddRendererDialog(this);
-
-			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 			break;
 
 		case "delrenderer":
-
 			if (tablecontent.get(table.getSelectedRow()) instanceof LocalBackboardPaintable) {
 				GraphInstance.getMyGraph().getVisualizationViewer()
 						.removePreRenderPaintable((LocalBackboardPaintable) tablecontent.get(table.getSelectedRow()));
@@ -314,13 +311,7 @@ public class PreRenderManager implements ActionListener {
 				}
 				model.updateContent(contenttmp);
 				tablecontent = contenttmp;
-
 			}
-
-			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
-			break;
-
-		default:
 			break;
 		}
 	}

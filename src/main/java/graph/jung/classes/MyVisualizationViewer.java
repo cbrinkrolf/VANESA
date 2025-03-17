@@ -9,7 +9,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import biologicalElements.Pathway;
-import configurations.Workspace;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationServer;
@@ -20,8 +19,6 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	private static final long serialVersionUID = 1L;
 	private final Pathway pw;
 	private Point2D mousePoint = new Point2D.Double(0, 0);
-	private int fpsCounter = 0;
-	private long fpsTimer = System.currentTimeMillis();
 
 	private final Font fontBold = new Font("default", Font.BOLD, 12);
 	private final Font fontPlain = new Font("default", Font.PLAIN, 12);
@@ -31,30 +28,6 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		this.pw = pw;
 	}
 
-	// private long lastTimeCompartmentRendered = 0;
-	// private double scaleLastCompartmentRendered = 0;
-
-	// private long[] relaxTimes = new long[5];
-
-	// private long[] paintTimes = new long[5];
-
-	// private int relaxIndex = 0;
-
-	// private int paintIndex = 0;
-
-	// private double paintfps, relaxfps;
-
-	/**
-	 * a collection of user-implementable functions to render under the topology
-	 * (before the graph is rendered)
-	 */
-	// protected List<Paintable> preRenderers = new ArrayList<Paintable>();
-
-	/**
-	 * a collection of user-implementable functions to render over the topology
-	 * (after the graph is rendered)
-	 */
-	// protected List<Paintable> postRenderers = new ArrayList<Paintable>();
 	protected void renderGraph(Graphics2D g2d) {
 		super.renderGraph(g2d);
 
@@ -63,11 +36,9 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 
 		if (GraphContainer.getInstance().isPetriView()) {
 			g2d.drawString("P: " + pw.getPlaceCount() + " T: " + pw.getTransitionCount() + " Edges: "
-					+ pw.getGraph().getAllEdges().size(), 1, 11);
+					+ pw.getEdgeCount(), 1, 11);
 		} else {
-			g2d.drawString(
-					"Nodes: " + pw.getGraph().getAllVertices().size() + " Edges: " + pw.getGraph().getAllEdges().size(),
-					1, 11);
+			g2d.drawString("Nodes: " + pw.getNodeCount() + " Edges: " + pw.getEdgeCount(), 1, 11);
 		}
 		g2d.drawString("Picked nodes: " + getPickedVertexState().getPicked().size(), 1, 23);
 
@@ -75,11 +46,6 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		g2d.drawString("Zoom: " + scale + "x", getWidth() - 75, 11);
 
 		drawMousePoint(g2d);
-
-		// g2d.drawString("x", 580, 533);
-		// ContainerSingelton.getInstance().setPetriView(true);
-
-		// not usable as change-based rendering is used: drawFPS(g2d);
 	}
 
 	public List<VisualizationServer.Paintable> getPreRenderers() {
@@ -111,19 +77,5 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		String text = (int) mousePoint.getX() + ", " + (int) mousePoint.getY();
 		Rectangle2D bounds = g2d.getFont().getStringBounds(text, g2d.getFontRenderContext());
 		g2d.drawString(text, (int) (getWidth() - bounds.getWidth()) - 10, 22);
-	}
-
-	private void drawFPS(final Graphics2D g2d) {
-		if (Workspace.getCurrentSettings().isDeveloperMode()) {
-			g2d.drawString("FPS: " + fpsCounter, getWidth() - 75, 33);
-			fpsCounter++;
-			long stop = System.currentTimeMillis();
-			if (stop - fpsTimer > 1000) {
-				fpsCounter = 0;
-				fpsTimer += 1000;
-			}
-		} else {
-			fpsTimer = System.currentTimeMillis();
-		}
 	}
 }

@@ -26,11 +26,9 @@ import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import dataMapping.dataImport.ExcelException;
 import database.ppi.PPISearch;
-import graph.GraphContainer;
+import graph.GraphInstance;
 import graph.algorithms.NodeAttributeType;
-import graph.jung.classes.MyGraph;
 import gui.AsyncTaskExecutor;
-import gui.MainWindow;
 
 /**
  * This class manage the actions from the GUI and sends data to the DataMappingModelController
@@ -118,13 +116,10 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
                         labelsAndValues.put((String) dmt.getValueAt(i, 0), Double.parseDouble((String) dmt.getValueAt(i, 2)));
                     }
                 }
-                //MAP from network label to BNA and save attribute
+                // MAP from network label to BNA and save attribute
                 // get network structure
-                MainWindow w = MainWindow.getInstance();
-                GraphContainer con = GraphContainer.getInstance();
-                Pathway pw = con.getPathway(w.getCurrentPathway());
-                MyGraph mg = pw.getGraph();
-                for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
+                final Pathway pw = GraphInstance.getPathway();
+                for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
                     String label = bna.getLabel();
                     if (labelsAndValues.containsKey(label)) {
                         bna.addAttribute(NodeAttributeType.EXPERIMENT, input, labelsAndValues.get(label));

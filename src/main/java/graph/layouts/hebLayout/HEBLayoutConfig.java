@@ -15,6 +15,7 @@ import javax.swing.event.ChangeListener;
 
 import graph.layouts.ColorSlider;
 import graph.layouts.HierarchicalCircleLayoutConfig;
+import graph.operations.layout.heb.HEBLayoutOperation;
 
 public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements ChangeListener {
 	private static final long serialVersionUID = 852123;
@@ -246,6 +247,6 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 
 	@Override
 	protected void applySettings() {
-		getMyGraph().changeToHEBLayout();
+		getGraph().apply(new HEBLayoutOperation());
 	}
 }

@@ -57,11 +57,10 @@ public final class OpenDialog {
 		AsyncTaskExecutor.runUIBlocking("Loading data from file. Please wait a second", () -> open(fileFilter, file),
 				() -> {
 					if (!fileFilter.getDescription().equals(SuffixAwareFilter.VANESA_SIM_RESULT.getDescription())) {
-						if (GraphContainer.getInstance().containsPathway()) {
-							if (GraphInstance.getPathway().hasGotAtLeastOneElement()) {
-								MainWindow.getInstance().updateAllGuiElements();
-								GraphInstance.getMyGraph().normalCentering();
-							}
+						final Pathway pathway = GraphInstance.getPathway();
+						if (pathway != null && pathway.hasGotAtLeastOneElement()) {
+							MainWindow.getInstance().updateAllGuiElements();
+							pathway.getGraphRenderer().zoomAndCenterGraph();
 						}
 						MainWindow.getInstance().getFrame().repaint();
 					}

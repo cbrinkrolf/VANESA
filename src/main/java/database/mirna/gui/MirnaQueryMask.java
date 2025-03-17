@@ -11,7 +11,7 @@ import database.gui.QueryMask;
 import database.mirna.MirnaSearch;
 import graph.CreatePathway;
 import graph.GraphInstance;
-import graph.jung.classes.MyGraph;
+import graph.operations.layout.gem.GEMLayoutOperation;
 import gui.MainWindow;
 import gui.PopUpDialog;
 import gui.eventhandlers.TextFieldColorChanger;
@@ -168,10 +168,8 @@ public class MirnaQueryMask extends QueryMask {
 					// TODO: show errors
 				}
 			}
-			MyGraph myGraph = pw.getGraph();
-			myGraph.restartVisualizationModel();
-			myGraph.changeToGEMLayout();
-			myGraph.normalCentering();
+			pw.getGraph2().apply(new GEMLayoutOperation());
+			pw.getGraphRenderer().zoomAndCenterGraph();
 			MainWindow.getInstance().closeProgressBar();
 			MainWindow window = MainWindow.getInstance();
 			window.updateOptionPanel();
@@ -206,7 +204,6 @@ public class MirnaQueryMask extends QueryMask {
 			if (response.payload != null && response.payload.results != null && response.payload.results.length > 0) {
 				count += response.payload.results.length;
 				Pathway pw = CreatePathway.create("miRNA network for " + targetGene.name);
-				MyGraph myGraph = pw.getGraph();
 				String label = targetGene.getAccession();
 				DNA root = new DNA(label, targetGene.name != null ? targetGene.name : label);
 				pw.addVertex(root, new Point2D.Double(0, 0));
@@ -220,9 +217,9 @@ public class MirnaQueryMask extends QueryMask {
 					e.setDirected(true);
 					pw.addEdge(e);
 				}
-				myGraph.restartVisualizationModel();
-				myGraph.changeToGEMLayout();
-				myGraph.normalCentering();
+				pw.updateMyGraph();
+				pw.getGraph2().apply(new GEMLayoutOperation());
+				pw.getGraphRenderer().zoomAndCenterGraph();
 				MainWindow.getInstance().closeProgressBar();
 				MainWindow window = MainWindow.getInstance();
 				window.updateOptionPanel();

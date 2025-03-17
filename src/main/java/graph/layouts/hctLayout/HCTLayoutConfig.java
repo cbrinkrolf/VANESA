@@ -19,6 +19,7 @@ import javax.swing.event.ChangeListener;
 
 import graph.layouts.ColorSlider;
 import graph.layouts.HierarchicalCircleLayoutConfig;
+import graph.operations.layout.hct.HCTLayoutOperation;
 
 public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements ChangeListener, ActionListener {
 
@@ -239,7 +240,7 @@ public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 
 	@Override
 	protected void applySettings() {
-		getMyGraph().changeToHCTLayout();
+		getGraph().apply(new HCTLayoutOperation());
 	}
 
 	public enum GroupSelection {

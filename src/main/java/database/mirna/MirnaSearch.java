@@ -99,10 +99,8 @@ public class MirnaSearch {
         for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
             bnas.put(bna.getLabel(), bna);
         }
-        Collection<BiologicalNodeAbstract> nodes;
-        if (pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked().size() > 0) {
-            nodes = pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked();
-        } else {
+        Collection<BiologicalNodeAbstract> nodes = pw.getGraph2().getSelectedNodes();
+        if (nodes.isEmpty()) {
             nodes = pw.getAllGraphNodes();
         }
         HashMap<BiologicalNodeAbstract, DBMirnaMature[]> data = new HashMap<>();
@@ -134,14 +132,13 @@ public class MirnaSearch {
                 }
             }
         }
-        pw.getGraph().updateGraph();
         pw.getGraph().updateLayout();
         PopUpDialog.getInstance().show("Target Gene Enrichment",
                 counterNodes + " nodes and " + counterEdges + " edges have been added!");
     }
 
     private static void addVertexOnCircle(Pathway pw, BiologicalNodeAbstract parent, BiologicalNodeAbstract child) {
-        Point2D p = Circle.getPointOnCircle(pw.getGraph().getVertexLocation(parent), 20,
+        Point2D p = Circle.getPointOnCircle(pw.getGraph2().getNodePosition(parent), 20,
                 2 * Math.random() * Math.PI);
         pw.addVertex(child, p);
     }
@@ -151,10 +148,8 @@ public class MirnaSearch {
         for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
             bnas.put(bna.getLabel(), bna);
         }
-        Collection<BiologicalNodeAbstract> nodes;
-        if (pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked().size() > 0) {
-            nodes = pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked();
-        } else {
+        Collection<BiologicalNodeAbstract> nodes = pw.getGraph2().getSelectedNodes();
+        if (nodes.isEmpty()) {
             nodes = pw.getAllGraphNodes();
         }
         HashMap<BiologicalNodeAbstract, DBMirnaMature[]> data = new HashMap<>();
@@ -186,7 +181,6 @@ public class MirnaSearch {
                 }
             }
         }
-        pw.getGraph().updateGraph();
         pw.getGraph().updateLayout();
         PopUpDialog.getInstance().show("Source Gene Enrichment",
                 counterNodes + " nodes and " + counterEdges + " edges have been added!");
@@ -233,7 +227,6 @@ public class MirnaSearch {
                 }
             }
         }
-        pw.getGraph().updateGraph();
         pw.getGraph().updateLayout();
         PopUpDialog.getInstance().show("miRNA Source Enrichment",
                 counterNodes + " nodes and " + counterEdges + " edges have been added!");
@@ -280,7 +273,6 @@ public class MirnaSearch {
                 }
             }
         }
-        pw.getGraph().updateGraph();
         pw.getGraph().updateLayout();
         PopUpDialog.getInstance().show("miRNA Target Enrichment",
                 counterNodes + " nodes and " + counterEdges + " edges have been added!");

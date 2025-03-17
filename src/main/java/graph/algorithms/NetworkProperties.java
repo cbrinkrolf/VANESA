@@ -7,13 +7,13 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.GraphInstance;
-import graph.jung.classes.MyGraph;
+import graph.VanesaGraph;
 import gui.MainWindow;
 
 public class NetworkProperties {
 	private final MainWindow w = MainWindow.getInstance();
-	private final Pathway pw;
-	private final MyGraph mg;
+	private final Pathway pathway;
+	private final VanesaGraph graph;
 
 	private final int nodes;
 	private final int edges;
@@ -39,12 +39,12 @@ public class NetworkProperties {
 		this(GraphInstance.getPathway());
 	}
 
-	public NetworkProperties(final Pathway pw) {
-		this.pw = pw;
-		mg = pw.getGraph();
+	public NetworkProperties(final Pathway pathway) {
+		this.pathway = pathway;
+		graph = pathway.getGraph2();
 
-		nodes = pw.getNodeCount();
-		edges = pw.getEdgeCount();
+		nodes = pathway.getNodeCount();
+		edges = pathway.getEdgeCount();
 
 		nodei = new int[edges + 1];
 		nodej = new int[edges + 1];
@@ -52,7 +52,7 @@ public class NetworkProperties {
 		adjacency = new short[nodes][nodes];
 
 		// Induce mapping to local adjacency matrix and data structures (BNA.ID)
-		for (final BiologicalNodeAbstract bna : mg.getAllVertices()) {
+		for (final BiologicalNodeAbstract bna : graph.getNodes()) {
 			reassignNodeBNA(bna);
 		}
 
@@ -63,8 +63,8 @@ public class NetworkProperties {
 
 	public Map<Integer, Integer> getNodeDegreeDistribution() {
 		Map<Integer, Integer> occurrenceMap = new HashMap<>();
-		Set<BiologicalNodeAbstract> pickedbnas = mg.getVisualizationViewer().getPickedVertexState().getPicked();
-		if (pickedbnas.isEmpty()) {
+		Collection<BiologicalNodeAbstract> selectedNodes = graph.getSelectedNodes();
+		if (selectedNodes.isEmpty()) {
 			// Count occurrences, all nodes
 			for (int degree : nodedegrees) {
 				if (occurrenceMap.containsKey(degree)) {
@@ -76,9 +76,8 @@ public class NetworkProperties {
 				}
 			}
 		} else {
-			System.out.println(pickedbnas.size());
 			// Count occurrences, just picked nodes
-			for (BiologicalNodeAbstract bna : pickedbnas) {
+			for (BiologicalNodeAbstract bna : selectedNodes) {
 				int degree = nodedegreetable.get(nodeassings.get(bna));
 				if (occurrenceMap.containsKey(degree)) {
 					// not first
@@ -114,7 +113,7 @@ public class NetworkProperties {
 	}
 
 	public Pathway getPathway() {
-		return pw;
+		return pathway;
 	}
 
 	private void reassignNodeBNA(BiologicalNodeAbstract nodeBNA) {
@@ -126,7 +125,7 @@ public class NetworkProperties {
 	}
 
 	private void fillAdjacencyData() {
-		for (BiologicalEdgeAbstract bne : mg.getAllEdges()) {
+		for (BiologicalEdgeAbstract bne : graph.getEdges()) {
 			int fromid = nodeassings.get(bne.getFrom());
 			int toid = nodeassings.get(bne.getTo());
 			// Adjacency matrix is constructed undirected for analysis
@@ -482,20 +481,6 @@ public class NetworkProperties {
 		return distances;
 	}
 
-	public void removeGreyNodes() {
-		final Set<BiologicalNodeAbstract> removals = new HashSet<>();
-		for (final BiologicalNodeAbstract bna : mg.getAllVertices()) {
-			if (bna.getColor().getRGB() == -4144960)
-				removals.add(bna);
-		}
-		for (final BiologicalNodeAbstract bna : removals) {
-			mg.removeVertex(bna);
-		}
-		w.updateElementTree();
-		w.updatePathwayTree();
-
-	}
-
 	public void getSpanningTree() {
 		int[] weight = new int[edges + 1], treearc1 = new int[nodes], treearc2 = new int[nodes];
 		Arrays.fill(weight, 10);
@@ -509,7 +494,7 @@ public class NetworkProperties {
 			bnax = nodeassignsback.get(treearc1[i] - 1);
 			bnay = nodeassignsback.get(treearc2[i] - 1);
 
-			pw.getEdge(bnax, bnay).setColor(Color.red);
+			pathway.getEdge(bnax, bnay).setColor(Color.red);
 			System.out.println(bnax.getLabel() + " - " + bnay.getLabel());
 		}
 	}

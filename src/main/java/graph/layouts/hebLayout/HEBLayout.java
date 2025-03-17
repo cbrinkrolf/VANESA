@@ -21,7 +21,6 @@ import graph.GraphInstance;
 import graph.layouts.HierarchicalCircleLayout;
 
 public class HEBLayout extends HierarchicalCircleLayout {
-
 	protected HashMap<Integer, List<BiologicalNodeAbstract>> bnaGroups;
 	protected List<Integer> groupKeys;
 
@@ -33,6 +32,7 @@ public class HEBLayout extends HierarchicalCircleLayout {
 		super(g, order);
 	}
 
+	@Override
 	public HEBLayoutConfig getConfig() {
 		return HEBLayoutConfig.getInstance();
 	}
@@ -40,27 +40,20 @@ public class HEBLayout extends HierarchicalCircleLayout {
 	@Override
 	public void initialize() {
 		Dimension d = getSize();
-
 		if (d != null) {
 			if (bnaGroups == null) {
 				groupNodes();
 			}
 			computeCircleNumbers();
-
 			computeCircleData(d);
-
 			int group_no = 0;
 			int vertex_no = 0;
-
-			// larger circle for a larger number of nodes on the outter circle.
+			// larger circle for a larger number of nodes on the outer circle.
 			setRadius(getRadius() * Math.log10(graphNodes.size()));
-
-			// distance between two ndoes of the same group
+			// distance between two nodes of the same group
 			final double nodeDistance = HEBLayoutConfig.nodeDistance(bnaGroups.size(), graphNodes.size());
-
 			// distance between two groups (added to small distance between two nodes)
 			final double groupDistance = HEBLayoutConfig.groupDistance(nodeDistance);
-
 			// Move nodes on their circle position
 			CircleVertexData data;
 			for (Integer i : groupKeys) {
@@ -71,7 +64,7 @@ public class HEBLayout extends HierarchicalCircleLayout {
 					addCircleData(v);
 					data = getCircleData(v);
 					data.setVertexAngle(angle);
-					// All nodes on the outter circle
+					// All nodes on the outer circle
 					data.setCircleNumber(1);
 					vertex_no++;
 				}
@@ -84,11 +77,11 @@ public class HEBLayout extends HierarchicalCircleLayout {
 
 	/**
 	 * Computes for all graph nodes and their parents the circle they are part of.
-	 * 
+	 *
 	 * @author tloka
 	 */
 	public void computeCircleNumbers() {
-		circles = new HashMap<BiologicalNodeAbstract, Integer>();
+		circles = new HashMap<>();
 		maxCircle = 0;
 		int c;
 		for (BiologicalNodeAbstract node : getGraph().getVertices()) {
@@ -109,11 +102,11 @@ public class HEBLayout extends HierarchicalCircleLayout {
 
 	/**
 	 * Build groups with nodes of the same parent node in the given depth.
-	 * 
+	 *
 	 * @author tloka
 	 */
 	public void groupNodes() {
-		graphNodes = new HashSet<BiologicalNodeAbstract>();
+		graphNodes = new HashSet<>();
 		graphNodes.addAll(graph.getVertices());
 
 		if (graphNodes.size() < 2) {
@@ -122,9 +115,9 @@ public class HEBLayout extends HierarchicalCircleLayout {
 
 		order = computeOrder();
 
-		bnaGroups = new HashMap<Integer, List<BiologicalNodeAbstract>>();
-		Set<BiologicalNodeAbstract> addedNodes = new HashSet<BiologicalNodeAbstract>();
-		groupKeys = new ArrayList<Integer>();
+		bnaGroups = new HashMap<>();
+		Set<BiologicalNodeAbstract> addedNodes = new HashSet<>();
+		groupKeys = new ArrayList<>();
 		BiologicalNodeAbstract currentNode;
 		BiologicalNodeAbstract referenceParent;
 
@@ -134,11 +127,12 @@ public class HEBLayout extends HierarchicalCircleLayout {
 				continue;
 			}
 
-			referenceParent = HEBLayoutConfig.GROUP_DEPTH == HEBLayoutConfig.FINEST_LEVEL ? currentNode.getParentNode()
+			referenceParent = HEBLayoutConfig.GROUP_DEPTH == HEBLayoutConfig.FINEST_LEVEL
+					? currentNode.getParentNode()
 					: currentNode.getLastParentNode();
 			if (referenceParent == null) {
 				groupKeys.add(currentNode.getID());
-				bnaGroups.put(currentNode.getID(), new ArrayList<BiologicalNodeAbstract>());
+				bnaGroups.put(currentNode.getID(), new ArrayList<>());
 				bnaGroups.get(currentNode.getID()).add(currentNode);
 				addedNodes.add(currentNode);
 				continue;
@@ -146,7 +140,7 @@ public class HEBLayout extends HierarchicalCircleLayout {
 
 			if (!groupKeys.contains(referenceParent.getID())) {
 				groupKeys.add(referenceParent.getID());
-				bnaGroups.put(referenceParent.getID(), new ArrayList<BiologicalNodeAbstract>());
+				bnaGroups.put(referenceParent.getID(), new ArrayList<>());
 			}
 			bnaGroups.get(referenceParent.getID()).add(currentNode);
 			addedNodes.add(currentNode);
@@ -155,8 +149,8 @@ public class HEBLayout extends HierarchicalCircleLayout {
 
 	@Override
 	public void setEdgeShapes() {
-		Function<BiologicalEdgeAbstract, Shape> est = new HEBEdgeShape.HEBCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
-				getCenterPoint(), circles, GraphInstance.getMyGraph().getJungGraph());
+		Function<BiologicalEdgeAbstract, Shape> est = new HEBEdgeShape.HEBCurve<>(getCenterPoint(), circles,
+				GraphInstance.getMyGraph().getJungGraph());
 		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeShapeTransformer(est);
 
 		HEBEdgePaintTransformer ptrans = new HEBEdgePaintTransformer(HEBLayoutConfig.EDGE_OUTCOLOR,
@@ -169,7 +163,7 @@ public class HEBLayout extends HierarchicalCircleLayout {
 
 	/**
 	 * Get the group of a node.
-	 * 
+	 *
 	 * @param node The node.
 	 * @return The group of the node.
 	 * @author tloka
@@ -180,18 +174,13 @@ public class HEBLayout extends HierarchicalCircleLayout {
 				return group;
 			}
 		}
-		return new ArrayList<BiologicalNodeAbstract>();
-	}
-
-	public HashMap<Integer, List<BiologicalNodeAbstract>> getBnaGroups() {
-		return bnaGroups;
+		return new ArrayList<>();
 	}
 
 	/**
 	 * Creates a color gradient for directed edges in HEBLayout.
-	 * 
-	 * @author tobias
 	 *
+	 * @author tobias
 	 */
 	class HEBEdgePaintTransformer extends GradientEdgePaintTransformer<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
 		public HEBEdgePaintTransformer(Color c1, Color c2,
@@ -203,13 +192,12 @@ public class HEBLayout extends HierarchicalCircleLayout {
 		public Paint apply(BiologicalEdgeAbstract e) {
 			if (e.isDirected()) {
 				return super.apply(e);
-			} else {
-				Color oldc2 = c2;
-				c2 = c1;
-				Paint p = super.apply(e);
-				c2 = oldc2;
-				return p;
 			}
+			Color oldc2 = c2;
+			c2 = c1;
+			Paint p = super.apply(e);
+			c2 = oldc2;
+			return p;
 		}
 	}
 }

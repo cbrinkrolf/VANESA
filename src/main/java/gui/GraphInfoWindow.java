@@ -32,7 +32,7 @@ public class GraphInfoWindow {
 		int nodes = np.getNodeCount();
 		int edges = np.getEdgeCount();
 		int logicalNodes = 0;
-		for (BiologicalNodeAbstract bna : pw.getGraph().getAllVertices()) {
+		for (BiologicalNodeAbstract bna : pw.getGraph2().getNodes()) {
 			if (bna.isLogical()) {
 				logicalNodes++;
 			}

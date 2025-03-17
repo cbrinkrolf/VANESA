@@ -392,152 +392,105 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private Thread getRedrawGraphThread() {
-		return new Thread() {
-			public void run() {
-				pw.getGraph().getVisualizationViewer().requestFocus();
-				// w.redrawGraphs();
-				// System.out.println(pw.getPetriNet().getSimResController().get().getTime());
-				List<Double> v = null;// pw.getPetriNet().getSimResController().get().getTime().getAll();
-				// System.out.println("running");
-				DecimalFormat df = new DecimalFormat("#.#####");
-				df.setRoundingMode(RoundingMode.HALF_UP);
-				boolean simAddedToMenu = false;
-				int counter = 0;
-				while (s.isRunning()) {
-					// System.out.println("while");
-
-					if (v == null && pw.getPetriPropertiesNet().getSimResController().get(simId) != null) {
-						v = pw.getPetriPropertiesNet().getSimResController().get(simId).getTime().getAll();
-					}
-
-					if (counter % 5 == 0) {
-						w.redrawGraphs(true);
-					}
-					// System.out.println("before draw");
-					w.redrawGraphs(false);
-					// System.out.println("after draw");
-					// GraphInstance graphInstance = new
-					// GraphInstance();
-					// GraphContainer con =
-					// ContainerSingelton.getInstance();
-					// MainWindow w = MainWindowSingelton.getInstance();
-
-					// double time =
-					if (v != null && v.size() > 0) {
-						if (!simAddedToMenu) {
-							menu.updateSimulationResults();
-							simAddedToMenu = true;
-						}
-						menu.setTime("Time: " + df.format((v.get(v.size() - 1))));
-					}
-					try {
-						sleep(1000);
-					} catch (InterruptedException e) {
-						PopUpDialog.getInstance().show("Simulation error:", e.getMessage());
-						e.printStackTrace();
-					}
-					// System.out.println("end while");
-					counter++;
+		return new Thread(() -> {
+			pw.getGraph().getVisualizationViewer().requestFocus();
+			List<Double> v = null;
+			DecimalFormat df = new DecimalFormat("#.#####");
+			df.setRoundingMode(RoundingMode.HALF_UP);
+			boolean simAddedToMenu = false;
+			int counter = 0;
+			while (s.isRunning()) {
+				if (v == null && pw.getPetriPropertiesNet().getSimResController().get(simId) != null) {
+					v = pw.getPetriPropertiesNet().getSimResController().get(simId).getTime().getAll();
 				}
-				menu.stopped();
-				System.out.println("end of simulation");
-				w.updateSimulationResultView();
-				w.redrawGraphs(true);
-				w.getFrame().revalidate();
-				// w.repaint();
-				if (v.size() > 0) {
-					menu.setTime("Time: " + (v.get(v.size() - 1)).toString());
+				if (counter % 5 == 0) {
+					w.redrawGraphs(true);
 				}
-				System.out.println("redraw thread finished");
+				w.redrawGraphs(false);
+				if (v != null && v.size() > 0) {
+					if (!simAddedToMenu) {
+						menu.updateSimulationResults();
+						simAddedToMenu = true;
+					}
+					menu.setTime("Time: " + df.format((v.get(v.size() - 1))));
+				}
+				VanesaUtility.trySleep(1000);
+				counter++;
 			}
-		};
+			menu.stopped();
+			System.out.println("end of simulation");
+			w.updateSimulationResultView();
+			w.redrawGraphs(true);
+			w.getFrame().revalidate();
+			if (v.size() > 0) {
+				menu.setTime("Time: " + (v.get(v.size() - 1)).toString());
+			}
+			System.out.println("redraw thread finished");
+		});
 	}
 
 	private Thread getSimulationOutputThread() {
-		return new Thread() {
-			public void run() {
-				// System.out.println("running");
-				String line;
-				while (s.isRunning()) {
-					// System.out.println("im thread");
-					if (outputReader != null) {
-						try {
-							line = outputReader.readLine();
-							if (line != null && line.length() > 0) {
-								logAndShow(line);
-
-								System.out.println(line);
-							}
-						} catch (IOException e) {
-							PopUpDialog.getInstance().show("Simulation error:", e.getMessage());
-							e.printStackTrace();
-						}
-					}
+		return new Thread(() -> {
+			String line;
+			while (s.isRunning()) {
+				if (outputReader != null) {
 					try {
-						sleep(100);
-					} catch (InterruptedException e) {
+						line = outputReader.readLine();
+						if (line != null && line.length() > 0) {
+							logAndShow(line);
+							System.out.println(line);
+						}
+					} catch (IOException e) {
 						PopUpDialog.getInstance().show("Simulation error:", e.getMessage());
 						e.printStackTrace();
 					}
 				}
-				try {
-					System.out.println("outputReader server stopped");
-
-					if (outputReader != null) {
-						line = outputReader.readLine();
-						while (line != null && line.length() > 0) {
-							// menue.addText(line + "\r\n");
-							// pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage()
-							// .append(line + "\r\n");
-							logAndShow(line);
-							System.out.println(line);
-							line = outputReader.readLine();
-						}
-						outputReader.close();
-						outputReader = null;
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				System.out.println("outputreader thread finished");
-				stopped = true;
+				VanesaUtility.trySleep(100);
 			}
-		};
+			try {
+				System.out.println("outputReader server stopped");
+
+				if (outputReader != null) {
+					line = outputReader.readLine();
+					while (line != null && line.length() > 0) {
+						logAndShow(line);
+						System.out.println(line);
+						line = outputReader.readLine();
+					}
+					outputReader.close();
+					outputReader = null;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			System.out.println("outputreader thread finished");
+			stopped = true;
+		});
 	}
 
 	private Thread getWaitForServerConnectionThread(int port) {
-		return new Thread() {
-
-			public void run() {
-
-				try {
-					s = new Server(pw, bea2key, simId, port);
-					s.start();
-					System.out.print("wait until servers is ready to connect ");
-					int i = 0;
-					while (s.isRunning() && !s.isReadyToConnect() && !stopped) {
-						if (i % 50 == 0) {
-							System.out.println(".");
-						}
-						System.out.print(".");
-						try {
-							sleep(500);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-						i++;
+		return new Thread(() -> {
+			try {
+				s = new Server(pw, bea2key, simId, port);
+				s.start();
+				System.out.print("wait until servers is ready to connect ");
+				int i = 0;
+				while (s.isRunning() && !s.isReadyToConnect() && !stopped) {
+					if (i % 50 == 0) {
+						System.out.println(".");
 					}
-					System.out.println();
-					if (s.isRunning() && s.isReadyToConnect() && !stopped) {
-						// System.out.println("all threads start");
-						allThread.start();
-					}
-
-				} catch (IOException e1) {
-					e1.printStackTrace();
+					System.out.print(".");
+					VanesaUtility.trySleep(500);
+					i++;
 				}
+				System.out.println();
+				if (s.isRunning() && s.isReadyToConnect() && !stopped) {
+					allThread.start();
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
-		};
+		});
 	}
 
 	private boolean checkInstallation() {
@@ -557,31 +510,30 @@ public class PetriNetSimulation implements ActionListener {
 			if (omcCommunicator.isPNlibVersionInstalled(pnLibVersion)) {
 				System.out.println(pnLibVersion + " is already installed");
 				continue;
-			} else {
-				// correct PNlib version not installed
-				if (omcCommunicator.isPackageManagerSupported()) {
-					String message = "Correct version of PNlib (version " + pnLibVersion
-							+ ") is not installed. Trying to install ...";
+			}
+			// correct PNlib version not installed
+			if (omcCommunicator.isPackageManagerSupported()) {
+				String message = "Correct version of PNlib (version " + pnLibVersion
+						+ ") is not installed. Trying to install ...";
+				logAndShow(message);
+				PopUpDialog.getInstance().show("PNlib not installed!", message);
+				if (omcCommunicator.isInstallPNlibSuccessful(pnLibVersion)) {
+					message = "Installation of PNlib (version " + pnLibVersion + ") was successful!";
 					logAndShow(message);
-					PopUpDialog.getInstance().show("PNlib not installed!", message);
-					if (omcCommunicator.isInstallPNlibSuccessful(pnLibVersion)) {
-						message = "Installation of PNlib (version " + pnLibVersion + ") was successful!";
-						logAndShow(message);
-						PopUpDialog.getInstance().show("PNlib installation successful!", message);
-					} else {
-						message = "Installation of PNlib (version " + pnLibVersion
-								+ ") was not successful! Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
-						logAndShow(message);
-						PopUpDialog.getInstance().show("PNlib installation was not successful!", message);
-						allInstalledSuccess = false;
-					}
+					PopUpDialog.getInstance().show("PNlib installation successful!", message);
 				} else {
-					String message = "Installation error. PNlib version " + pnLibVersion
-							+ " is not installed properly. Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
+					message = "Installation of PNlib (version " + pnLibVersion
+							+ ") was not successful! Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
 					logAndShow(message);
 					PopUpDialog.getInstance().show("PNlib installation was not successful!", message);
 					allInstalledSuccess = false;
 				}
+			} else {
+				String message = "Installation error. PNlib version " + pnLibVersion
+						+ " is not installed properly. Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
+				logAndShow(message);
+				PopUpDialog.getInstance().show("PNlib installation was not successful!", message);
+				allInstalledSuccess = false;
 			}
 		}
 		return allInstalledSuccess;

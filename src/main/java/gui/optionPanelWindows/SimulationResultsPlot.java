@@ -130,7 +130,6 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 			}
 		}
 		if (simResController == null) {
-			pw.getGraph().getVisualizationViewer().repaint();
 			return;
 		}
 		if (pw.isPetriNet() || pw.getTransformationInformation() != null
@@ -170,11 +169,9 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 							}
 						}
 					}
-					pw.getGraph().getVisualizationViewer().repaint();
 				}
 			} else {
 				removeAllElements();
-				pw.getGraph().getVisualizationViewer().repaint();
 			}
 		} else {
 			removeAllElements();
@@ -623,27 +620,23 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 				colors.add(0, 0x0000ff);
 				colors.add(1, 0xff0000);
 				colors.add(2, 0xdedede);
-				final Collection<BiologicalNodeAbstract> ns = pw.getGraph().getAllVertices();
-				if (ns != null) {
-					for (BiologicalNodeAbstract bna : ns) {
-						bna = resolveHidden(bna);
-						if (simRes.contains(bna) && slider.getValue() >= 0) {
-							if (bna instanceof Place) {
-								((Place) bna).setToken(simRes.get(bna, SIM_TOKEN).get(slider.getValue()));
-								MainWindow.getInstance().redrawTokens();
-							} else if (bna instanceof Transition) {
-								Transition t = (Transition) bna;
-								if (simRes.get(t, SIM_ACTIVE) != null) {
-									t.setSimulationActive(simRes.get(t, SIM_ACTIVE).get(slider.getValue()) == 1);
-								}
-								if (simRes.get(t, SIM_FIRE) != null) {
-									t.setSimulationFire(simRes.get(t, SIM_FIRE).get(slider.getValue()) == 1);
-								}
+				for (BiologicalNodeAbstract bna : pw.getGraph2().getNodes()) {
+					bna = resolveHidden(bna);
+					if (simRes.contains(bna) && slider.getValue() >= 0) {
+						if (bna instanceof Place) {
+							((Place) bna).setToken(simRes.get(bna, SIM_TOKEN).get(slider.getValue()));
+							MainWindow.getInstance().redrawTokens();
+						} else if (bna instanceof Transition) {
+							Transition t = (Transition) bna;
+							if (simRes.get(t, SIM_ACTIVE) != null) {
+								t.setSimulationActive(simRes.get(t, SIM_ACTIVE).get(slider.getValue()) == 1);
+							}
+							if (simRes.get(t, SIM_FIRE) != null) {
+								t.setSimulationFire(simRes.get(t, SIM_FIRE).get(slider.getValue()) == 1);
 							}
 						}
 					}
 				}
-				pw.getGraph().getVisualizationViewer().repaint();
 			}
 		}
 	}

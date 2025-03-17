@@ -6,7 +6,6 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.*;
 import biologicalObjects.nodes.*;
 import graph.CreatePathway;
-import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 
 import javax.swing.*;
@@ -121,7 +120,6 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
         pw.setOrganism(organism);
         pw.setLink("https://www.genome.jp/pathway/" + pathwayId);
 
-        MyGraph myGraph = pw.getGraph();
         drawNodes(allOrgElements);
         drawNodes(allEcElements);
         drawNodes(allRnElements);
@@ -137,8 +135,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
         drawRelations(allRnRelations);
         drawRelations(allKoRelations);
 
-        myGraph.restartVisualizationModel();
-        myGraph.normalCentering();
+        pw.getGraphRenderer().zoomAndCenterGraph();
         MainWindow window = MainWindow.getInstance();
         window.updateOptionPanel();
         firePropertyChange("finished", null, "finished");

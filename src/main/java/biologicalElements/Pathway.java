@@ -1,8 +1,6 @@
 package biologicalElements;
 
 import java.awt.Color;
-import java.awt.RenderingHints;
-import java.awt.RenderingHints.Key;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.util.*;
@@ -18,9 +16,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
 import biologicalObjects.nodes.PathwayMap;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
-import edu.uci.ics.jung.algorithms.layout.StaticLayout;
-import edu.uci.ics.jung.visualization.VisualizationImageServer;
-import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import graph.ChangedFlags;
 import graph.VanesaGraph;
 import graph.compartment.CompartmentManager;
@@ -32,7 +27,6 @@ import graph.gui.Parameter;
 import graph.jung.classes.MyGraph;
 import graph.jung.classes.MyVisualizationViewer;
 import graph.layouts.Circle;
-import graph.rendering.GraphRendererPanel;
 import graph.rendering.VanesaGraphRendererPanel;
 import gui.GraphTab;
 import gui.MainWindow;
@@ -60,7 +54,7 @@ public class Pathway implements Cloneable {
 	private PetriNetSimulation petriNetSimulation = null;
 
 	private final VanesaGraph graph2 = new VanesaGraph();
-	private final VanesaGraphRendererPanel rendererPanel = new VanesaGraphRendererPanel(graph2);
+	private VanesaGraphRendererPanel rendererPanel;
 	private GraphTab tab;
 	private Pathway parent;
 	private final SortedSet<Integer> ids = new TreeSet<>();
@@ -80,12 +74,14 @@ public class Pathway implements Cloneable {
 
 	public Pathway(final String name) {
 		this(name, false, PathwayType.BiologicalNetwork);
+		rendererPanel = new VanesaGraphRendererPanel(graph2);
 		tab = new GraphTab(this.name, rendererPanel);
 		tab.setIcon(type);
 	}
 
 	public Pathway(final String name, final PathwayType type) {
 		this(name, false, type);
+		rendererPanel = new VanesaGraphRendererPanel(graph2);
 		tab = new GraphTab(this.name, rendererPanel);
 		tab.setIcon(type);
 	}
@@ -190,9 +186,7 @@ public class Pathway implements Cloneable {
 			BiologicalNodeAbstract to, String element, boolean directed) {
 		final BiologicalEdgeAbstract bea = BiologicalEdgeAbstractFactory.create(element, label, name, from, to);
 		bea.setDirected(directed);
-		if (element.equals(Elementdeclerations.pnArc)) {
-			((PNArc) bea).setProbability(1);
-		} else if (element.equals(Elementdeclerations.pnInhibitorArc)) {
+		if (element.equals(Elementdeclerations.pnArc) || element.equals(Elementdeclerations.pnInhibitorArc)) {
 			((PNArc) bea).setProbability(1);
 		}
 		return addEdge(bea);
@@ -709,14 +703,13 @@ public class Pathway implements Cloneable {
 	}
 
 	public VanesaGraphRendererPanel getGraphRenderer() {
+		if (rendererPanel == null) {
+			rendererPanel = new VanesaGraphRendererPanel(graph2);
+		}
 		return rendererPanel;
 	}
 
 	public MyGraph getGraph() {
-		return null;
-	}
-
-	public MyGraph getGraph(boolean createIfNull) {
 		return null;
 	}
 
@@ -769,8 +762,8 @@ public class Pathway implements Cloneable {
 	 * automatically for all 'inner' edges)
 	 */
 	public void updateMyGraph() {
-		// Clear myGraph
-		getGraph().removeAllElements();
+		/* TODO: revalidate
+		graph2.clear();
 		// Set of all edges of the finest abstraction level
 		Set<BiologicalEdgeAbstract> flattenedEdges = new HashSet<>();
 		// HashMap for abstracted nodes
@@ -821,6 +814,7 @@ public class Pathway implements Cloneable {
 			}
 			flattenedEdges.remove(next);
 		}
+		*/
 	}
 
 	private Point2D getNodePosition(final BiologicalNodeAbstract node) {
@@ -1043,7 +1037,7 @@ public class Pathway implements Cloneable {
 			if (this instanceof BiologicalNodeAbstract) {
 				BiologicalNodeAbstract pwNode = (BiologicalNodeAbstract) this;
 				if (pwNode.getEnvironment().contains(bna)) {
-					if (pwNode.getGraph().getJungGraph().getNeighborCount(bna) != 0) {
+					if (pwNode.getGraph2().getNeighborCount(bna) != 0) {
 						JOptionPane.showMessageDialog(null, "Can't delete connected environment nodes.",
 								"Deletion Error", JOptionPane.ERROR_MESSAGE);
 					} else {
@@ -1088,42 +1082,11 @@ public class Pathway implements Cloneable {
 				bna.getLogicalReference().getRefs().remove(bna);
 			}
 			// delete incident edges
-			for (BiologicalEdgeAbstract bea : getGraph().getJungGraph().getIncidentEdges(bna)) {
+			for (BiologicalEdgeAbstract bea : getGraph2().getIncidentEdges(bna)) {
 				removeElement(bea);
 			}
 			removeElement(bna);
 		}
-	}
-
-	public VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> prepareGraphToPrint() {
-		MyGraph mg = getGraph();
-		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> v = getGraph().getVisualizationViewer();
-		if (!(mg.getLayout() instanceof StaticLayout)) {
-			mg.changeToStaticLayout();
-		}
-		VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = new VisualizationImageServer<>(
-				mg.getLayout(), mg.getLayout().getSize());
-		wvv.setBackground(Color.white);
-		for (Paintable renderer : v.getPreRenderers()) {
-			wvv.addPreRenderPaintable(renderer);
-		}
-		for (Paintable renderer : v.getPostRenderers()) {
-			wvv.addPostRenderPaintable(renderer);
-		}
-		wvv.setBackground(Color.white);
-		wvv.setRenderContext(v.getRenderContext());
-		wvv.setBounds(v.getVisibleRect());
-		Map<Key, Object> map = wvv.getRenderingHints();
-		map.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-		map.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-		map.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		map.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-		map.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
-		map.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-		map.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-		map.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-		map.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-		return wvv;
 	}
 
 	public PetriNetSimulation getPetriNetSimulation() {
@@ -1158,7 +1121,7 @@ public class Pathway implements Cloneable {
 
 	public int getIncomingDirectedEdgeCount(BiologicalNodeAbstract bna) {
 		int count = 0;
-		Collection<BiologicalEdgeAbstract> edges = getGraph().getJungGraph().getIncidentEdges(bna);
+		Collection<BiologicalEdgeAbstract> edges = getGraph2().getIncidentEdges(bna);
 		for (BiologicalEdgeAbstract e : edges) {
 			if (bna == e.getTo() && e.isDirected()) {
 				count++;
@@ -1169,7 +1132,7 @@ public class Pathway implements Cloneable {
 
 	public int getOutgoingDirectedEdgeCount(BiologicalNodeAbstract bna) {
 		int count = 0;
-		Collection<BiologicalEdgeAbstract> edges = getGraph().getJungGraph().getIncidentEdges(bna);
+		Collection<BiologicalEdgeAbstract> edges = getGraph2().getIncidentEdges(bna);
 		for (BiologicalEdgeAbstract e : edges) {
 			if (bna == e.getFrom() && e.isDirected()) {
 				count++;
@@ -1180,7 +1143,7 @@ public class Pathway implements Cloneable {
 
 	public int getUndirectedEdgeCount(BiologicalNodeAbstract bna) {
 		int count = 0;
-		Collection<BiologicalEdgeAbstract> edges = getGraph().getJungGraph().getIncidentEdges(bna);
+		Collection<BiologicalEdgeAbstract> edges = getGraph2().getIncidentEdges(bna);
 		for (BiologicalEdgeAbstract e : edges) {
 			if (!e.isDirected()) {
 				count++;
