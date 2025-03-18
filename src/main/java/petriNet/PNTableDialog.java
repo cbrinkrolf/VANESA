@@ -23,11 +23,12 @@ import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import graph.GraphInstance;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
@@ -37,30 +38,23 @@ import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
-import graph.GraphContainer;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
 public class PNTableDialog extends JDialog implements ActionListener {
-
-	private static final long serialVersionUID = 1L;
-	private JXTable table = new JXTable();
-	private BiologicalNodeAbstract[] bnas;
-	private JXTable table2 = new JXTable();
-	private PNArc[] edges;
+	private static final long serialVersionUID = -4872308937435381486L;
+	private final JXTable table = new JXTable();
+	private final BiologicalNodeAbstract[] bnas;
 
 	public PNTableDialog() {
 		super(MainWindow.getInstance().getFrame(), true);
-
 		int i = 0;
-		final Pathway pw = GraphContainer.getInstance().getPathway(MainWindow.getInstance().getCurrentPathway());
-
+		final Pathway pw = GraphInstance.getPathway();
 		Object[][] rows = new Object[pw.getAllGraphNodes().toArray().length][9];
 		bnas = new BiologicalNodeAbstract[pw.getAllGraphNodes().toArray().length];
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
-		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
-			bna = it.next();
+			BiologicalNodeAbstract bna = it.next();
 			if (bna instanceof Place || bna instanceof Transition) {
 				bnas[i] = bna;
 				rows[i][0] = bna.getName();
@@ -93,19 +87,14 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		// CHRIS refactor Table
 		i = 0;
 		Object[][] rows2 = new Object[pw.getAllEdges().toArray().length][9];
-		edges = new PNArc[pw.getAllEdges().toArray().length];
-		PNArc edge;
+		PNArc[] edges = new PNArc[pw.getAllEdges().toArray().length];
 		Iterator<BiologicalEdgeAbstract> itEdge = pw.getAllEdges().iterator();
-		Iterator<BiologicalNodeAbstract> it2;
 		while (it.hasNext()) {
-			edge = (PNArc) itEdge.next();
+			PNArc edge = (PNArc) itEdge.next();
 			edges[i] = edge;
 			rows2[i][0] = edge.getName();
 			rows2[i][1] = edge.getLabel();
-
-			it2 = pw.getAllGraphNodes().iterator();
-			while (it2.hasNext()) {
-				bna = it2.next();
+			for (final BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 				if (edge.getFrom().equals(bna)) {
 					if (bna instanceof Transition) {
 						rows2[i][2] = bna.getLabel();
@@ -130,44 +119,37 @@ public class PNTableDialog extends JDialog implements ActionListener {
 			// rows2[i][6] = edge.getUpperBoundary();
 			rows2[i][7] = edge.getProbability();
 			i++;
-
 		}
 
-		DefaultTableModel model = new DefaultTableModel(rows, new String[] { "Name", "Label", "Token", "TokenMax",
-				"TokenMin", "TokenStart", "Type", "Delay", "Distribution" }) {
-			/**
-					 * 
-					 */
+		DefaultTableModel model = new DefaultTableModel(rows,
+				new String[] { "Name", "Label", "Token", "TokenMax", "TokenMin", "TokenStart", "Type", "Delay",
+						"Distribution" }) {
 			private static final long serialVersionUID = 1L;
 
 			public Class<?> getColumnClass(int columnIndex) {
 				if (columnIndex == 0 || columnIndex == 1)
 					return String.class;
-				else if (columnIndex == 6 || columnIndex == 8)
+				if (columnIndex == 6 || columnIndex == 8)
 					return JComboBox.class;
-				else
-					return Double.class;
+				return Double.class;
 			}
 
 			public boolean isCellEditable(int rowIndex, int columnIndex) {
 				if (bnas[rowIndex] instanceof Place && (columnIndex == 7 || columnIndex == 8))
 					return false;
-				else if (bnas[rowIndex] instanceof Transition
-						&& (columnIndex == 2 || columnIndex == 3 || columnIndex == 4 || columnIndex == 5))
+				if (bnas[rowIndex] instanceof Transition && (columnIndex == 2 || columnIndex == 3 || columnIndex == 4
+						|| columnIndex == 5))
 					return false;
-				else
-					return true;
+				return true;
 			}
 
 			public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 				if (columnIndex == 6) {
 					String s = (String) aValue;
-					if (((s.equals(Elementdeclerations.continuousPlace) || s.equals(Elementdeclerations.discretePlace))
-							&& !(bnas[rowIndex] instanceof Place))
-							|| ((s.equals(Elementdeclerations.discreteTransition)
-									|| s.equals(Elementdeclerations.continuousTransition)
-									|| s.equals(Elementdeclerations.stochasticTransition))
-									&& !(bnas[rowIndex] instanceof Transition)))
+					if (((s.equals(ElementDeclarations.continuousPlace) || s.equals(ElementDeclarations.discretePlace))
+							&& !(bnas[rowIndex] instanceof Place)) || ((s.equals(ElementDeclarations.discreteTransition)
+							|| s.equals(ElementDeclarations.continuousTransition) || s.equals(
+							ElementDeclarations.stochasticTransition)) && !(bnas[rowIndex] instanceof Transition)))
 						return;
 				}
 				super.setValueAt(aValue, rowIndex, columnIndex);
@@ -177,14 +159,14 @@ public class PNTableDialog extends JDialog implements ActionListener {
 
 		table.setModel(model);
 		TableColumn myColumn = table.getColumnModel().getColumn(6);
-		JComboBox<String> comboEditor = new JComboBox<String>();
-		comboEditor.addItem(Elementdeclerations.discretePlace);
-		comboEditor.addItem(Elementdeclerations.continuousPlace);
-		comboEditor.addItem(Elementdeclerations.discreteTransition);
-		comboEditor.addItem(Elementdeclerations.continuousTransition);
-		comboEditor.addItem(Elementdeclerations.stochasticTransition);
+		JComboBox<String> comboEditor = new JComboBox<>();
+		comboEditor.addItem(ElementDeclarations.discretePlace);
+		comboEditor.addItem(ElementDeclarations.continuousPlace);
+		comboEditor.addItem(ElementDeclarations.discreteTransition);
+		comboEditor.addItem(ElementDeclarations.continuousTransition);
+		comboEditor.addItem(ElementDeclarations.stochasticTransition);
 		myColumn.setCellEditor(new DefaultCellEditor(comboEditor));
-		JComboBox<String> comboEditor2 = new JComboBox<String>();
+		JComboBox<String> comboEditor2 = new JComboBox<>();
 		comboEditor2.addItem("norm");
 		comboEditor2.addItem("exp");
 		table.getColumnModel().getColumn(8).setCellEditor(new DefaultCellEditor(comboEditor2));
@@ -200,28 +182,23 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		JScrollPane sp = new JScrollPane(table);
 		sp.setPreferredSize(new Dimension(740, 400));
-		DefaultTableModel model2 = new DefaultTableModel(rows2, new String[] { "Name", "Label", "Start", "End",
-				"Function", "Lower Boundary", "UpperBoundary", "Activation Probability" }) {
-			/**
-					 * 
-					 */
+		DefaultTableModel model2 = new DefaultTableModel(rows2,
+				new String[] { "Name", "Label", "Start", "End", "Function", "Lower Boundary", "UpperBoundary",
+						"Activation Probability" }) {
 			private static final long serialVersionUID = 1L;
 
 			public Class<?> getColumnClass(int columnIndex) {
 				if (columnIndex == 0 || columnIndex == 1 || columnIndex == 2 || columnIndex == 3 || columnIndex == 4)
 					return String.class;
-				else
-					return Double.class;
+				return Double.class;
 			}
 
 			public boolean isCellEditable(int rowIndex, int columnIndex) {
-				if (columnIndex == 2 || columnIndex == 3)
-					return false;
-				else
-					return true;
+				return columnIndex != 2 && columnIndex != 3;
 			}
 
 		};
+		JXTable table2 = new JXTable();
 		table2.setModel(model2);
 		table2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table2.setColumnControlVisible(false);
@@ -282,20 +259,16 @@ public class PNTableDialog extends JDialog implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Pathway pw = GraphContainer.getInstance().getPathway(MainWindow.getInstance().getCurrentPathway());
-		Place p;
-		BiologicalNodeAbstract node;
+		final Pathway pw = GraphInstance.getPathway();
 		if (e.getActionCommand().equals("submit")) {
 			boolean changedAllStates = true;
-			// System.out.println("nodes: "+pw.getAllNodes().toArray().length);
 			for (int i = 0; i < pw.getAllGraphNodes().toArray().length; i++) {
-				// System.out.println("i: " + i);
 				bnas[i].setName(
 						(String) table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(0)));
 				bnas[i].setLabel(
 						(String) table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(1)));
 				if (bnas[i] instanceof Place) {
-					p = (Place) bnas[i];
+					Place p = (Place) bnas[i];
 					p.setToken((Double) table.getValueAt(table.convertRowIndexToView(i),
 							table.convertColumnIndexToView(2)));
 					p.setTokenMax((Double) table.getValueAt(table.convertRowIndexToView(i),
@@ -308,18 +281,18 @@ public class PNTableDialog extends JDialog implements ActionListener {
 					boolean stateChanged = true;
 					for (BiologicalNodeAbstract neighbour : pw.getGraph2().getNeighbors(
 							bnas[table.convertRowIndexToView(i)])) {
-						for (BiologicalNodeAbstract biologicalNodeAbstract : pw.getAllGraphNodes()) {
-							node = biologicalNodeAbstract;
+						for (BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
 							if (node.equals(neighbour) && (table.getValueAt(table.convertRowIndexToView(i),
-									table.convertColumnIndexToView(6)).equals(Elementdeclerations.discretePlace)
+									table.convertColumnIndexToView(6)).equals(ElementDeclarations.discretePlace)
 									&& node instanceof ContinuousTransition))
 								stateChanged = false;
 						}
 					}
 					changedAllStates &= stateChanged;
 					if (stateChanged)
-						p.setDiscrete(table.getValueAt(table.convertRowIndexToView(i),
-								table.convertColumnIndexToView(6)).equals(Elementdeclerations.discretePlace));
+						p.setDiscrete(
+								table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6))
+										.equals(ElementDeclarations.discretePlace));
 					else
 						p.setColor(Color.red);
 
@@ -327,34 +300,29 @@ public class PNTableDialog extends JDialog implements ActionListener {
 					Transition t = (Transition) bnas[i];
 					boolean stateChanged = true;
 					for (BiologicalNodeAbstract neighbour : pw.getGraph2().getNeighbors(t)) {
-						for (BiologicalNodeAbstract biologicalNodeAbstract : pw.getAllGraphNodes()) {
-							node = biologicalNodeAbstract;
+						for (BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
 							if (node.equals(neighbour) && (table.getValueAt(table.convertRowIndexToView(i),
-									table.convertColumnIndexToView(6)).equals(Elementdeclerations.continuousTransition)
-									&& node.getBiologicalElement().equals(Elementdeclerations.discretePlace)))
+									table.convertColumnIndexToView(6)).equals(ElementDeclarations.continuousTransition)
+									&& node.getBiologicalElement().equals(ElementDeclarations.discretePlace)))
 								stateChanged = false;
 						}
 					}
 					changedAllStates &= stateChanged;
 
 					Transition newT = null;
-					System.out.println(
-							table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6)));
-					if (table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6))
-							.equals(Elementdeclerations.discreteTransition) && !(t instanceof DiscreteTransition)) {
-						newT = new DiscreteTransition(t.getLabel(), t.getName());
-					} else if (table.getValueAt(table.convertRowIndexToView(i),
-							table.convertColumnIndexToView(6)).equals(Elementdeclerations.stochasticTransition)
-							&& !(t instanceof StochasticTransition)) {
-						newT = new StochasticTransition(t.getLabel(), t.getName());
-					} else if (table.getValueAt(table.convertRowIndexToView(i),
-							table.convertColumnIndexToView(6)).equals(Elementdeclerations.continuousTransition)
-							&& !(t instanceof ContinuousTransition)) {
-						newT = new ContinuousTransition(t.getLabel(), t.getName());
+					if (table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6)).equals(
+							ElementDeclarations.discreteTransition) && !(t instanceof DiscreteTransition)) {
+						newT = new DiscreteTransition(t.getLabel(), t.getName(), pw);
+					} else if (table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6))
+							.equals(ElementDeclarations.stochasticTransition) && !(t instanceof StochasticTransition)) {
+						newT = new StochasticTransition(t.getLabel(), t.getName(), pw);
+					} else if (table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6))
+							.equals(ElementDeclarations.continuousTransition) && !(t instanceof ContinuousTransition)) {
+						newT = new ContinuousTransition(t.getLabel(), t.getName(), pw);
 					}
 					if (newT != null) {
 						// newT.setCompartment(t.getCompartment());
-						pw.addVertex(newT, new Point(0, 0));
+						pw.addVertex(newT, new Point());
 						t = newT;
 					}
 					if (!stateChanged)
@@ -364,8 +332,9 @@ public class PNTableDialog extends JDialog implements ActionListener {
 						((DiscreteTransition) t).setDelay((String) table.getValueAt(table.convertRowIndexToView(i),
 								table.convertColumnIndexToView(7)));
 					} else if (t instanceof StochasticTransition) {
-						((StochasticTransition) t).setDistribution((String) table
-								.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(8)));
+						((StochasticTransition) t).setDistribution(
+								(String) table.getValueAt(table.convertRowIndexToView(i),
+										table.convertColumnIndexToView(8)));
 					}
 				}
 			}
@@ -386,7 +355,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 			 * edges[i].setActivationProbability(((Double) table2
 			 * .getValueAt(table2.convertRowIndexToView(i),
 			 * table2.convertColumnIndexToView(7))));
-			 * 
+			 *
 			 * }
 			 */
 

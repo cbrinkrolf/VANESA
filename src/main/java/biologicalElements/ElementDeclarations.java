@@ -3,155 +3,75 @@ package biologicalElements;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Elementdeclerations {
-	
-	public static final String graphdbnode = "GraphDatabase Node";
-
+public class ElementDeclarations {
 	public static final String disease = "Disease";
-
 	public static final String compound = "Compound";
-
 	public static final String drug = "Drug";
-
 	public static final String inhibitor = "Inhibitor";
-
 	public static final String others = "Other";
-
 	public static final String complex = "Complex";
-
 	public static final String enzyme = "Enzyme";
-
 	public static final String degraded = "Degraded";
-
 	public static final String dna = "DNA";
-
 	public static final String homodimerFormation = "Homodimer Formation";
-
 	public static final String ligandBinding = "Ligand Binding";
-
 	public static final String membraneChannel = "Membrane Channel";
-
 	public static final String membraneReceptor = "Membrane Receptor";
-
 	public static final String mRNA = "mRNA";
-
 	public static final String miRNA = "miRNA";
-
 	public static final String lncRNA = "lncRNA";
-
 	public static final String orthologGroup = "Ortholog Group";
-
 	public static final String pathwayMap = "Pathway Map";
-
-	public static final String pathwayNode = "Pathway";
-
 	public static final String protein = "Protein";
-
 	public static final String receptor = "Receptor";
-
 	public static final String sRNA = "sRNA";
-
 	// kept for legacy
 	public static final String smallMolecule = "Small Molecule";
-	
 	public static final String metabolite = "Metabolite";
-
 	public static final String glycan = "Glycan";
-
 	public static final String solubleReceptor = "Soluble Receptor";
-
 	public static final String transcriptionFactor = "Transcription Factor";
-
 	public static final String compoundEdge = "compound";
-
 	public static final String hiddenCompoundEdge = "hidden compound";
-
 	public static final String activationEdge = "activation";
-
 	public static final String inhibitionEdge = "inhibition";
-
 	public static final String expressionEdge = "expression";
-
 	public static final String repressionEdge = "repression";
-
 	public static final String indirectEffectEdge = "indirect effect";
-
 	public static final String stateChangeEdge = "state change";
-
 	public static final String bindingEdge = "binding/association";
-
 	public static final String dissociationEdge = "dissociation";
-
 	public static final String phosphorylationEdge = "phosphorylation";
-
 	public static final String dephosphorylationEdge = "dephosphorylation";
-
 	public static final String glycosylationEdge = "glycosylation";
-
 	public static final String ubiquitinationEdge = "ubiquitination";
-
 	public static final String methylationEdge = "methylation";
-
 	public static final String reactionEdge = "reaction";
-
 	public static final String reaction = "Reaction";
-
 	public static final String reactionPair = "Reaction Pair";
-
 	public static final String reactionPairEdge = "Reaction Pair";
-
-	// public static final String interaction = "Interaction";
-
-	public static final String feature = "Feature";
-
 	public static final String gene = "Gene";
-
-	public static final String symptomEdge = "Symptom";
-
 	public static final String domain = "Domain";
-
 	public static final String location = "Location";
-
 	public static final String go = "Gene Ontology";
-
 	public static final String collector = "Collector";
-
 	public static final String rna = "RNA";
-
 	public static final String factor = "Factor";
-
 	public static final String site = "Site";
-
 	public static final String exon = "Exon";
-
 	public static final String fragment = "Fragment";
-
 	public static final String physicalInteraction = "Physical interaction";
-
 	public static final String matrix = "Matrix";
-	
 	public static final String place = "Place";
-
 	public static final String discretePlace = "Discrete Place";
-
 	public static final String continuousPlace = "Continuous Place";
-
 	public static final String transition = "Transition";
-
 	public static final String stochasticTransition = "Stochastic Transition";
-
 	public static final String discreteTransition = "Discrete Transition";
-
 	public static final String continuousTransition = "Continuous Transition";
-
-	// public static String edge = "Petri Net Edge";
-
 	public static final String pnArc = "PN Arc";
-	
 	public static final String pnTestArc = "PN Test Arc";
-
 	public static final String pnInhibitorArc = "PN Inhibitor Arc";
-	
 	//special edges and nodes not in collections
 	public static final String anyBEA = "ANY Biological Edge";
 	public static final String anyBNA = "ANY Biological Node";

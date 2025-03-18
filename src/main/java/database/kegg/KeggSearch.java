@@ -22,86 +22,85 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KeggSearch {
-    public static void searchPathways(String pathway, String organism, String enzyme, String gene, String compound) {
-        searchPathways(pathway, organism, enzyme, gene, compound, null);
-    }
+	public static void searchPathways(String pathway, String organism, String enzyme, String gene, String compound) {
+		searchPathways(pathway, organism, enzyme, gene, compound, null);
+	}
 
-    public static void searchPathways(String pathway, String organism, String enzyme, String gene, String compound,
-                                      Pathway mergePW) {
-        PathwaySearchRequestPayload payload = new PathwaySearchRequestPayload();
-        payload.pathway = pathway;
-        payload.organism = organism;
-        payload.enzyme = enzyme;
-        payload.gene = gene;
-        payload.compound = compound;
-        Response<PathwaySearchResponsePayload> response = VanesaApi.postSync("/kegg/pathway/search", payload,
-                                                                             new TypeReference<>() {
-                                                                             });
-        MainWindow.getInstance().closeProgressBar();
-        if (response.hasError()) {
-            PopUpDialog.getInstance().show("KEGG search", "Sorry, no entries have been found.\n" + response.error);
-            return;
-        }
-        if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
-            PopUpDialog.getInstance().show("KEGG search", "Sorry, no entries have been found.");
-            return;
-        }
-        KEGGSearchResultWindow searchResultWindow = new KEGGSearchResultWindow(response.payload.results);
-        if (!searchResultWindow.show()) {
-            return;
-        }
-        KeggPathway[] results = searchResultWindow.getSelectedValues();
-        if (results.length == 0) {
-            return;
-        }
-        int answer = JOptionPane.YES_OPTION;
-        if (results.length > 1 || mergePW != null) {
-            answer = JOptionPane.showOptionDialog(MainWindow.getInstance().getFrame(),
-                                                  "Shall the selected Pathways be loaded each into a separate tab, be combined into an overview Pathway or merged?",
-                                                  "Several Pathways selected...", JOptionPane.YES_NO_CANCEL_OPTION,
-                                                  JOptionPane.QUESTION_MESSAGE, null, new String[]{
-                            "Separate Tabs", "Overview Pathway", "Merge Pathways"
-                    }, JOptionPane.YES_OPTION);
-        }
-        MainWindow.getInstance().showProgressBar("Drawing network");
-        if (answer == JOptionPane.YES_OPTION) {
-            for (KeggPathway result : results) {
-                InputStream kgmlStream = VanesaApi.getPathwayFromKegg(result.kgmlLink);
-                if (kgmlStream != null) {
-                    KGMLReader reader = new KGMLReader(kgmlStream);
-                    reader.read();
-                    if (reader.hasErrors()) {
-                        // TODO: error
-                    }
-                } else {
-                    // TODO: error
-                }
-            }
-        } else if (answer == JOptionPane.NO_OPTION) {
-            Pathway newPW = CreatePathway.create("Overview Pathway");
-            List<BiologicalNodeAbstract> bnas = new ArrayList<>();
-            if (StringUtils.isNotBlank(enzyme))
-                bnas.add(new Enzyme(enzyme, enzyme));
-            if (StringUtils.isNotBlank(gene))
-                bnas.add(new Gene(gene, gene));
-            if (StringUtils.isNotBlank(compound))
-                bnas.add(new Metabolite(compound, compound));
-            for (KeggPathway s : results) {
-                PathwayMap map = new PathwayMap(s.name, s.id);
-                map = (PathwayMap) newPW.addVertex(map, new Point(0, 0));
-                for (BiologicalNodeAbstract bna : bnas) {
-                    bna = newPW.addVertex(bna, new Point(0, 0));
-                    bna.setColor(Color.red);
-                    Compound c = new Compound("", "", bna, map);
-                    c.setDirected(true);
-                    newPW.addEdge(c);
-                }
-            }
-            MainWindow.getInstance().updateAllGuiElements();
-            newPW.getGraph2().apply(new GEMLayoutOperation());
-            newPW.getGraphRenderer().zoomAndCenterGraph();
-        } else {
-            // Merge pathways
+	public static void searchPathways(String pathway, String organism, String enzyme, String gene, String compound,
+			Pathway mergePW) {
+		PathwaySearchRequestPayload payload = new PathwaySearchRequestPayload();
+		payload.pathway = pathway;
+		payload.organism = organism;
+		payload.enzyme = enzyme;
+		payload.gene = gene;
+		payload.compound = compound;
+		Response<PathwaySearchResponsePayload> response = VanesaApi.postSync("/kegg/pathway/search", payload,
+				new TypeReference<>() {
+				});
+		MainWindow.getInstance().closeProgressBar();
+		if (response.hasError()) {
+			PopUpDialog.getInstance().show("KEGG search", "Sorry, no entries have been found.\n" + response.error);
+			return;
+		}
+		if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
+			PopUpDialog.getInstance().show("KEGG search", "Sorry, no entries have been found.");
+			return;
+		}
+		KEGGSearchResultWindow searchResultWindow = new KEGGSearchResultWindow(response.payload.results);
+		if (!searchResultWindow.show()) {
+			return;
+		}
+		KeggPathway[] results = searchResultWindow.getSelectedValues();
+		if (results.length == 0) {
+			return;
+		}
+		int answer = JOptionPane.YES_OPTION;
+		if (results.length > 1 || mergePW != null) {
+			answer = JOptionPane.showOptionDialog(MainWindow.getInstance().getFrame(),
+					"Shall the selected Pathways be loaded each into a separate tab, be combined into an overview Pathway or merged?",
+					"Several Pathways selected...", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+					null, new String[] { "Separate Tabs", "Overview Pathway", "Merge Pathways" },
+					JOptionPane.YES_OPTION);
+		}
+		MainWindow.getInstance().showProgressBar("Drawing network");
+		if (answer == JOptionPane.YES_OPTION) {
+			for (KeggPathway result : results) {
+				InputStream kgmlStream = VanesaApi.getPathwayFromKegg(result.kgmlLink);
+				if (kgmlStream != null) {
+					KGMLReader reader = new KGMLReader(kgmlStream);
+					reader.read();
+					if (reader.hasErrors()) {
+						// TODO: error
+					}
+				} else {
+					// TODO: error
+				}
+			}
+		} else if (answer == JOptionPane.NO_OPTION) {
+			Pathway newPW = CreatePathway.create("Overview Pathway");
+			List<BiologicalNodeAbstract> bnas = new ArrayList<>();
+			if (StringUtils.isNotBlank(enzyme))
+				bnas.add(new Enzyme(enzyme, enzyme, newPW));
+			if (StringUtils.isNotBlank(gene))
+				bnas.add(new Gene(gene, gene, newPW));
+			if (StringUtils.isNotBlank(compound))
+				bnas.add(new Metabolite(compound, compound, newPW));
+			for (KeggPathway s : results) {
+				PathwayMap map = new PathwayMap(s.name, s.id, newPW);
+				map = (PathwayMap) newPW.addVertex(map, new Point(0, 0));
+				for (BiologicalNodeAbstract bna : bnas) {
+					bna = newPW.addVertex(bna, new Point(0, 0));
+					bna.setColor(Color.red);
+					Compound c = new Compound("", "", bna, map);
+					c.setDirected(true);
+					newPW.addEdge(c);
+				}
+			}
+			MainWindow.getInstance().updateAllGuiElements();
+			newPW.getGraph2().apply(new GEMLayoutOperation());
+			newPW.getGraphRenderer().zoomAndCenterGraph();
+		} else {
+			// Merge pathways
             /* TODO: KEGG
             KEGGConnector kc = new KEGGConnector(results[0].id, results[0].taxonomyId, mergePW != null);
             kc.addPropertyChangeListener((evt) -> {
@@ -131,32 +130,32 @@ public class KeggSearch {
             });
             kc.execute();
             */
-        }
-        MainWindow.getInstance().closeProgressBar();
-    }
+		}
+		MainWindow.getInstance().closeProgressBar();
+	}
 
-    public static KeggPathway getPathway(String pathwayId) {
-        GetPathwayRequestPayload payload = new GetPathwayRequestPayload();
-        payload.pathwayId = pathwayId;
-        Response<GetPathwayResponsePayload> response = VanesaApi.postSync("/kegg/pathway", payload,
-                                                                          new TypeReference<>() {
-                                                                          });
-        if (response.hasError()) {
-            PopUpDialog.getInstance().show("KEGG search", "Failed to retrieve pathway with id '" + pathwayId + "'.\n" +
-                                                          response.error);
-            return null;
-        }
-        if (response.payload == null || response.payload.id == null) {
-            PopUpDialog.getInstance().show("KEGG search", "Failed to retrieve pathway with id '\" + pathwayId + \"'.");
-            return null;
-        }
+	public static KeggPathway getPathway(String pathwayId) {
+		GetPathwayRequestPayload payload = new GetPathwayRequestPayload();
+		payload.pathwayId = pathwayId;
+		Response<GetPathwayResponsePayload> response = VanesaApi.postSync("/kegg/pathway", payload,
+				new TypeReference<>() {
+				});
+		if (response.hasError()) {
+			PopUpDialog.getInstance().show("KEGG search",
+					"Failed to retrieve pathway with id '" + pathwayId + "'.\n" + response.error);
+			return null;
+		}
+		if (response.payload == null || response.payload.id == null) {
+			PopUpDialog.getInstance().show("KEGG search", "Failed to retrieve pathway with id '\" + pathwayId + \"'.");
+			return null;
+		}
 
-        KeggPathway result = new KeggPathway();
-        result.id = response.payload.id;
-        result.name = response.payload.name;
-        result.kgmlLink = response.payload.kgmlLink;
-        result.taxonomyId = response.payload.taxonomyId;
-        result.taxonomyName = response.payload.taxonomyName;
-        return result;
-    }
+		KeggPathway result = new KeggPathway();
+		result.id = response.payload.id;
+		result.name = response.payload.name;
+		result.kgmlLink = response.payload.kgmlLink;
+		result.taxonomyId = response.payload.taxonomyId;
+		result.taxonomyName = response.payload.taxonomyName;
+		return result;
+	}
 }

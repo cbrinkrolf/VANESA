@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.GraphContainer;
@@ -61,31 +61,31 @@ public class RuleEditingWindowListener implements ActionListener {
 		} else if ("place".equals(event)) {
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);
-			con.setPetriNetEditingMode(Elementdeclerations.place);
+			con.setPetriNetEditingMode(ElementDeclarations.place);
 		} else if ("discretePlace".equals(event)) {
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);
-			con.setPetriNetEditingMode(Elementdeclerations.discretePlace);
+			con.setPetriNetEditingMode(ElementDeclarations.discretePlace);
 		} else if ("continuousPlace".equals(event)) {
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);
-			con.setPetriNetEditingMode(Elementdeclerations.continuousPlace);
+			con.setPetriNetEditingMode(ElementDeclarations.continuousPlace);
 		} else if ("transition".equals(event)) {
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);
-			con.setPetriNetEditingMode(Elementdeclerations.transition);
+			con.setPetriNetEditingMode(ElementDeclarations.transition);
 		} else if ("discreteTransition".equals(event)) {
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);
-			con.setPetriNetEditingMode(Elementdeclerations.discreteTransition);
+			con.setPetriNetEditingMode(ElementDeclarations.discreteTransition);
 		} else if ("continuousTransition".equals(event)) {
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);
-			con.setPetriNetEditingMode(Elementdeclerations.continuousTransition);
+			con.setPetriNetEditingMode(ElementDeclarations.continuousTransition);
 		} else if ("stochasticTransition".equals(event)) {
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);
-			con.setPetriNetEditingMode(Elementdeclerations.stochasticTransition);
+			con.setPetriNetEditingMode(ElementDeclarations.stochasticTransition);
 		} else if ("adjustDown".equals(event)) {
 			Collection<BiologicalNodeAbstract> nodes = activePw.getSelectedNodes();
 			activePw.adjustDown(nodes);

@@ -1,11 +1,10 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class SolubleReceptor extends Receptor {
-	public SolubleReceptor(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.solubleReceptor);
-		attributeSetter(this.getClass().getSimpleName(), this);
+	public SolubleReceptor(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.solubleReceptor, pathway);
 	}
 }

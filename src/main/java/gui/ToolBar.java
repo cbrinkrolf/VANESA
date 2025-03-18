@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.Pathway;
 import biologicalElements.PathwayType;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -328,35 +328,35 @@ public class ToolBar {
 		GraphContainer con = GraphContainer.getInstance();
 		con.changeMouseFunction("edit");
 		con.setPetriView(true);
-		con.setPetriNetEditingMode(Elementdeclerations.discretePlace);
+		con.setPetriNetEditingMode(ElementDeclarations.discretePlace);
 	}
 
 	private void onContinuousPlaceClicked() {
 		GraphContainer con = GraphContainer.getInstance();
 		con.changeMouseFunction("edit");
 		con.setPetriView(true);
-		con.setPetriNetEditingMode(Elementdeclerations.continuousPlace);
+		con.setPetriNetEditingMode(ElementDeclarations.continuousPlace);
 	}
 
 	private void onDiscreteTransitionClicked() {
 		GraphContainer con = GraphContainer.getInstance();
 		con.changeMouseFunction("edit");
 		con.setPetriView(true);
-		con.setPetriNetEditingMode(Elementdeclerations.discreteTransition);
+		con.setPetriNetEditingMode(ElementDeclarations.discreteTransition);
 	}
 
 	private void onContinuousTransitionClicked() {
 		GraphContainer con = GraphContainer.getInstance();
 		con.changeMouseFunction("edit");
 		con.setPetriView(true);
-		con.setPetriNetEditingMode(Elementdeclerations.continuousTransition);
+		con.setPetriNetEditingMode(ElementDeclarations.continuousTransition);
 	}
 
 	private void onStochasticTransitionClicked() {
 		GraphContainer con = GraphContainer.getInstance();
 		con.changeMouseFunction("edit");
 		con.setPetriView(true);
-		con.setPetriNetEditingMode(Elementdeclerations.stochasticTransition);
+		con.setPetriNetEditingMode(ElementDeclarations.stochasticTransition);
 	}
 
 	private void onCreateCovClicked() {

@@ -3,7 +3,7 @@ package biologicalObjects.nodes.petriNet;
 import java.awt.Color;
 import java.util.List;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.Pathway;
 import graph.jung.graphDrawing.VertexShapes;
 import graph.rendering.shapes.ContinuousTransitionShape;
@@ -13,19 +13,10 @@ public class ContinuousTransition extends Transition {
 	// scalar or scalar function for maximum speed
 	private String maximalSpeed = "1";
 
-	public ContinuousTransition(final String label, final String name) {
-		super(label, name);
-		setDefaultShape(VertexShapes.getContinuousTransitionShape());
-		setNodeShape(new ContinuousTransitionShape());
-		setBiologicalElement(Elementdeclerations.continuousTransition);
-		setColor(Color.WHITE);
-	}
-
 	public ContinuousTransition(final String label, final String name, final Pathway pathway) {
-		super(label, name, pathway);
+		super(label, name, ElementDeclarations.continuousTransition, pathway);
 		setDefaultShape(VertexShapes.getContinuousTransitionShape());
-		setNodeShape(new ContinuousTransitionShape());
-		setBiologicalElement(Elementdeclerations.continuousTransition);
+		setDefaultNodeShape(new ContinuousTransitionShape());
 		setColor(Color.WHITE);
 	}
 

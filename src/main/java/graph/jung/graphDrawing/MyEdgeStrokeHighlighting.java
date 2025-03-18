@@ -5,7 +5,7 @@ import java.awt.Stroke;
 
 import com.google.common.base.Function;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -48,13 +48,13 @@ public class MyEdgeStrokeHighlighting implements Function<BiologicalEdgeAbstract
 		Stroke picked = new BasicStroke(pickedFactor * strength);
 		if (psV.getPicked().isEmpty()) {
 			if (psE.getPicked().isEmpty()) {
-				if (bea.getBiologicalElement().equals(Elementdeclerations.pnTestArc)) {
+				if (bea.getBiologicalElement().equals(ElementDeclarations.pnTestArc)) {
 					return dotted;
 				}
 				return hierarchical;
 			} else {
 				if (psE.isPicked(bea)) {
-					if (bea.getBiologicalElement().equals(Elementdeclerations.pnTestArc)) {
+					if (bea.getBiologicalElement().equals(ElementDeclarations.pnTestArc)) {
 						return dottedPicked;
 					}
 					return picked;
@@ -63,7 +63,7 @@ public class MyEdgeStrokeHighlighting implements Function<BiologicalEdgeAbstract
 			}
 		} else {
 			if (psV.isPicked(bea.getFrom()) || psV.isPicked(bea.getTo())) {
-				if (bea.getBiologicalElement().equals(Elementdeclerations.pnTestArc)) {
+				if (bea.getBiologicalElement().equals(ElementDeclarations.pnTestArc)) {
 					return dottedPicked;
 				}
 				return picked;

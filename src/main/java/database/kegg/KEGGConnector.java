@@ -1,7 +1,7 @@
 package database.kegg;
 
 import api.payloads.kegg.KeggPathway;
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.*;
 import biologicalObjects.nodes.*;
@@ -176,28 +176,28 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                 if (label != null) {
                     node.setNodeLabel(label);
                 }
-                bna = new DNA(node.getNodeLabel(), node.getKEGGentryName());
+                bna = new DNA(node.getNodeLabel(), node.getKEGGentryName(), pw);
                 break;
             case "compound":
                 node.setNodeLabel(set[9]);
-                bna = new Metabolite(node.getNodeLabel(), node.getKEGGentryName());
+                bna = new Metabolite(node.getNodeLabel(), node.getKEGGentryName(), pw);
                 break;
             case "ortholog":
-                bna = new OrthologGroup(node.getNodeLabel(), node.getKEGGentryName());
+                bna = new OrthologGroup(node.getNodeLabel(), node.getKEGGentryName(), pw);
                 break;
             case "map":
                 node.setNodeLabel(set[10]);
-                bna = new PathwayMap(node.getNodeLabel(), node.getKEGGentryName());
+                bna = new PathwayMap(node.getNodeLabel(), node.getKEGGentryName(), pw);
                 break;
             case "enzyme":
-                bna = new Enzyme(node.getNodeLabel(), node.getKEGGentryName());
+                bna = new Enzyme(node.getNodeLabel(), node.getKEGGentryName(), pw);
                 break;
             case "other":
             case "undefined":
-                bna = new Other(node.getNodeLabel(), node.getKEGGentryName());
+                bna = new Other(node.getNodeLabel(), node.getKEGGentryName(), pw);
                 break;
             case "group":
-                bna = new Complex("Complex", "");
+                bna = new Complex("Complex", "", pw);
                 break;
         }
         if (bna != null) {
@@ -314,19 +314,19 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                     if (!pw.containsEdge(bna1, bna2) && !pw.containsEdge(bna2, bna1)) {
                         BiologicalEdgeAbstract bea;
                         switch (edgeType) {
-                            case Elementdeclerations.dephosphorylationEdge:
+                            case ElementDeclarations.dephosphorylationEdge:
                                 bea = new Dephosphorylation("-p", "", bna1, bna2);
                                 break;
-                            case Elementdeclerations.phosphorylationEdge:
+                            case ElementDeclarations.phosphorylationEdge:
                                 bea = new Phosphorylation("+p", "", bna1, bna2);
                                 break;
-                            case Elementdeclerations.methylationEdge:
+                            case ElementDeclarations.methylationEdge:
                                 bea = new Methylation("+m", "", bna1, bna2);
                                 break;
-                            case Elementdeclerations.ubiquitinationEdge:
+                            case ElementDeclarations.ubiquitinationEdge:
                                 bea = new Ubiquitination("+u", "", bna1, bna2);
                                 break;
-                            case Elementdeclerations.glycosylationEdge:
+                            case ElementDeclarations.glycosylationEdge:
                                 bea = new Glycosylation("+g", "", bna1, bna2);
                                 break;
                             default:

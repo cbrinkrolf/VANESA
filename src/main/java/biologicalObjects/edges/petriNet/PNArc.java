@@ -3,7 +3,7 @@ package biologicalObjects.edges.petriNet;
 import java.util.ArrayList;
 import java.util.List;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.GraphEdgeLineStyle;
@@ -19,17 +19,17 @@ public class PNArc extends BiologicalEdgeAbstract {
 	public PNArc(BiologicalNodeAbstract from, BiologicalNodeAbstract to, String label, String name, String type,
 			String edgeFunction) {
 		super(edgeFunction, name, from, to,
-				type.equals(Elementdeclerations.inhibitionEdge) || type.equals(Elementdeclerations.inhibitor)
-						|| type.equals(Elementdeclerations.pnInhibitorArc)
-						? Elementdeclerations.pnInhibitorArc
-						: (type.equals(Elementdeclerations.pnTestArc)
-								? Elementdeclerations.pnTestArc
-								: Elementdeclerations.pnArc));
+				type.equals(ElementDeclarations.inhibitionEdge) || type.equals(ElementDeclarations.inhibitor)
+						|| type.equals(ElementDeclarations.pnInhibitorArc)
+						? ElementDeclarations.pnInhibitorArc
+						: (type.equals(ElementDeclarations.pnTestArc)
+								? ElementDeclarations.pnTestArc
+								: ElementDeclarations.pnArc));
 		super.setDirected(true);
 		setFunction(edgeFunction);
-		if (Elementdeclerations.pnInhibitorArc.equals(getBiologicalElement())) {
+		if (ElementDeclarations.pnInhibitorArc.equals(getBiologicalElement())) {
 			setToTipShape(new CircleTipShape());
-		} else if (Elementdeclerations.pnTestArc.equals(getBiologicalElement())) {
+		} else if (ElementDeclarations.pnTestArc.equals(getBiologicalElement())) {
 			setLineStyle(GraphEdgeLineStyle.DASHED);
 		}
 	}
@@ -66,14 +66,14 @@ public class PNArc extends BiologicalEdgeAbstract {
 	}
 
 	public boolean isInhibitorArc() {
-		return getBiologicalElement().equals(Elementdeclerations.pnInhibitorArc);
+		return getBiologicalElement().equals(ElementDeclarations.pnInhibitorArc);
 	}
 
 	public boolean isTestArc() {
-		return getBiologicalElement().equals(Elementdeclerations.pnTestArc);
+		return getBiologicalElement().equals(ElementDeclarations.pnTestArc);
 	}
 
 	public boolean isRegularArc() {
-		return getBiologicalElement().equals(Elementdeclerations.pnArc);
+		return getBiologicalElement().equals(ElementDeclarations.pnArc);
 	}
 }

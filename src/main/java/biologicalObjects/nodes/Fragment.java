@@ -1,11 +1,11 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class Fragment extends BiologicalNodeAbstract {
-    public Fragment(String label, String name) {
-        super(label, name);
-        setBiologicalElement(Elementdeclerations.fragment);
-        attributeSetter(this.getClass().getSimpleName(), this);
-    }
+	public Fragment(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.fragment, pathway);
+		attributeSetter();
+	}
 }

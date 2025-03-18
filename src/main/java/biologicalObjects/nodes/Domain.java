@@ -1,11 +1,11 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class Domain extends BiologicalNodeAbstract {
-	public Domain(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.domain);
-		attributeSetter(this.getClass().getSimpleName(), this);
+	public Domain(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.domain, pathway);
+		attributeSetter();
 	}
 }

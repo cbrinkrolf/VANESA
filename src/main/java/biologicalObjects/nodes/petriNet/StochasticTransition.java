@@ -4,7 +4,8 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 import graph.jung.graphDrawing.VertexShapes;
 import gui.PopUpDialog;
 import util.StochasticDistribution;
@@ -20,16 +21,14 @@ public class StochasticTransition extends Transition {
     private List<Integer> events = new ArrayList<>();
     private List<Double> probabilities = new ArrayList<>();
 
-    public StochasticTransition(String label, String name) {
-        super(label, name);
+    public StochasticTransition(final String label, final String name, final Pathway pathway) {
+        super(label, name, ElementDeclarations.stochasticTransition, pathway);
         setDefaultShape(VertexShapes.getDiscreteTransitionShape());
-        setBiologicalElement(Elementdeclerations.stochasticTransition);
-        this.setDefaultColor(Color.DARK_GRAY);
+        setDefaultColor(Color.DARK_GRAY);
         events.add(1);
         events.add(2);
         events.add(3);
         events.add(4);
-
         probabilities.add(1.0 / 4);
         probabilities.add(1.0 / 4);
         probabilities.add(1.0 / 4);

@@ -95,7 +95,7 @@ public final class PPISearch {
     private static Map<Integer, Protein> drawNodes(Pathway pw, int rootId, HPRDRetrievePPIResponsePayload payload) {
         Map<Integer, Protein> idProteinMap = new HashMap<>();
         for (HPRDEntry entry : payload.entries) {
-            Protein protein = new Protein(entry.geneSymbol, entry.name);
+            Protein protein = new Protein(entry.geneSymbol, entry.name, pw);
             idProteinMap.put(entry.id, protein);
             if (entry.id.equals(rootId)) {
                 protein.setColor(Color.RED);
@@ -192,7 +192,7 @@ public final class PPISearch {
     private static Map<Integer, Protein> drawNodes(Pathway pw, int rootId, MintRetrievePPIResponsePayload payload) {
         Map<Integer, Protein> idProteinMap = new HashMap<>();
         for (MintEntry entry : payload.entries) {
-            Protein protein = new Protein(entry.shortLabel, entry.name);
+            Protein protein = new Protein(entry.shortLabel, entry.name, pw);
             idProteinMap.put(entry.id, protein);
             if (entry.id.equals(rootId)) {
                 protein.setColor(Color.RED);
@@ -297,7 +297,7 @@ public final class PPISearch {
     private static Map<Integer, Protein> drawNodes(Pathway pw, int rootId, IntActRetrievePPIResponsePayload payload) {
         Map<Integer, Protein> idProteinMap = new HashMap<>();
         for (IntActEntry entry : payload.entries) {
-            Protein protein = new Protein(entry.shortLabel, entry.name);
+            Protein protein = new Protein(entry.shortLabel, entry.name, pw);
             idProteinMap.put(entry.id, protein);
             if (entry.id.equals(rootId)) {
                 protein.setColor(Color.RED);

@@ -1,11 +1,11 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class Site extends BiologicalNodeAbstract {
-    public Site(String label, String name) {
-        super(label, name);
-        setBiologicalElement(Elementdeclerations.site);
-        attributeSetter(this.getClass().getSimpleName(), this);
-    }
+	public Site(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.site, pathway);
+		attributeSetter();
+	}
 }

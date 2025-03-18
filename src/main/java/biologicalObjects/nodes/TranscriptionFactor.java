@@ -1,11 +1,10 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class TranscriptionFactor extends Protein {
-	public TranscriptionFactor(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.transcriptionFactor);
-		attributeSetter(this.getClass().getSimpleName(), this);
+	public TranscriptionFactor(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.transcriptionFactor, pathway);
 	}
 }

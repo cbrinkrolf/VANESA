@@ -1,11 +1,11 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class CompoundNode extends BiologicalNodeAbstract {
-    public CompoundNode(String label, String name) {
-        super(label, name);
-        setBiologicalElement(Elementdeclerations.compound);
-        attributeSetter(this.getClass().getSimpleName(), this);
-    }
+	public CompoundNode(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.compound, pathway);
+		attributeSetter();
+	}
 }

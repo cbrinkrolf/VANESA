@@ -715,9 +715,8 @@ public class RuleEditingWindow implements ActionListener {
 		Map<String, BiologicalNodeAbstract> nameToBN = new HashMap<>();
 		for (int i = 0; i < rule.getBiologicalNodes().size(); i++) {
 			RuleNode rn = rule.getBiologicalNodes().get(i);
-			BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(rn.getType(), null);
-			bna.setName(rn.getName());
-			bna.setLabel(rn.getName());
+			BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(rn.getType(), rn.getName(), rn.getName(),
+					bn);
 			nameToBN.put(bna.getName(), bna);
 			bn.addVertex(bna, new Point2D.Double(rn.getX(), rn.getY()));
 			if (rn.isExactIncidence()) {
@@ -741,12 +740,10 @@ public class RuleEditingWindow implements ActionListener {
 		Map<String, BiologicalNodeAbstract> nameToPN = new HashMap<>();
 		for (int i = 0; i < rule.getPetriNodes().size(); i++) {
 			RuleNode rn = rule.getPetriNodes().get(i);
-			BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(rn.getType(), null);
-			bna.setName(rn.getName());
-			bna.setLabel(rn.getName());
+			BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(rn.getType(), rn.getName(), rn.getName(),
+					pn);
 			nameToPN.put(bna.getName(), bna);
 			pn.addVertex(bna, new Point2D.Double(rn.getX(), rn.getY()));
-			// parameterMapping.put(bna, new HashMap<String, String>());
 			for (String key : rn.getParameterMap().keySet()) {
 				getParameterMapping(bna).put(key, rn.getParameterMap().get(key));
 			}
@@ -759,7 +756,6 @@ public class RuleEditingWindow implements ActionListener {
 					nameToPN.get(re.getFrom().getName()), nameToPN.get(re.getTo().getName()));
 			bea.setDirected(true);
 			pn.addEdge(bea);
-			// parameterMapping.put(bea, new HashMap<String, String>());
 			for (String key : re.getParameterMap().keySet()) {
 				getParameterMapping(bea).put(key, re.getParameterMap().get(key));
 			}

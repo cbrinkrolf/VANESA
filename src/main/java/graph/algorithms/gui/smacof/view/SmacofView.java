@@ -18,8 +18,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 
 import configurations.Workspace;
@@ -31,7 +29,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 import graph.GraphInstance;
 import graph.algorithms.NodeAttributeType;
 import graph.algorithms.gui.smacof.DoSmacof;
-import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
@@ -253,7 +250,7 @@ public class SmacofView extends JFrame implements ActionListener {
 						if ((Boolean) tabledata[line][UPLOAD_BOOL]) {
 							nat = bna.getNodeAttributeByName((String) tabledata[line][NAME_STR]);
 							if (nat != null) {
-								smacof_data_map.get(node_id)[line] = nat.getDoublevalue();
+								smacof_data_map.get(node_id)[line] = nat.getDoubleValue();
 							}
 						}
 					}

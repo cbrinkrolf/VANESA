@@ -1,6 +1,6 @@
 package biologicalObjects.edges;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import transformation.graphElements.ANYBiologicalEdge;
@@ -9,57 +9,57 @@ public class BiologicalEdgeAbstractFactory {
 	public static BiologicalEdgeAbstract create(final String type, final String label, final String name,
 			final BiologicalNodeAbstract from, final BiologicalNodeAbstract to) {
 		switch (type) {
-		case Elementdeclerations.activationEdge:
+		case ElementDeclarations.activationEdge:
 			return new Activation(label, name, from, to);
-		case Elementdeclerations.bindingEdge:
+		case ElementDeclarations.bindingEdge:
 			return new BindingAssociation(label, name, from, to);
-		case Elementdeclerations.compoundEdge:
+		case ElementDeclarations.compoundEdge:
 			return new Compound(label, name, from, to);
-		case Elementdeclerations.dephosphorylationEdge:
+		case ElementDeclarations.dephosphorylationEdge:
 			return new Dephosphorylation(label, name, from, to);
-		case Elementdeclerations.dissociationEdge:
+		case ElementDeclarations.dissociationEdge:
 			return new Dissociation(label, name, from, to);
-		case Elementdeclerations.expressionEdge:
+		case ElementDeclarations.expressionEdge:
 			return new Expression(label, name, from, to);
-		case Elementdeclerations.glycosylationEdge:
+		case ElementDeclarations.glycosylationEdge:
 			return new Glycosylation(label, name, from, to);
-		case Elementdeclerations.hiddenCompoundEdge:
+		case ElementDeclarations.hiddenCompoundEdge:
 			return new HiddenCompound(label, name, from, to);
-		case Elementdeclerations.indirectEffectEdge:
+		case ElementDeclarations.indirectEffectEdge:
 			return new IndirectEffect(label, name, from, to);
-		case Elementdeclerations.inhibitionEdge:
+		case ElementDeclarations.inhibitionEdge:
 			return new Inhibition(label, name, from, to);
-		case Elementdeclerations.methylationEdge:
+		case ElementDeclarations.methylationEdge:
 			return new Methylation(label, name, from, to);
-		case Elementdeclerations.phosphorylationEdge:
+		case ElementDeclarations.phosphorylationEdge:
 			return new Phosphorylation(label, name, from, to);
-		case Elementdeclerations.physicalInteraction:
+		case ElementDeclarations.physicalInteraction:
 			return new PhysicalInteraction(label, name, from, to);
-		case Elementdeclerations.reactionPairEdge:
+		case ElementDeclarations.reactionPairEdge:
 			return new ReactionPair(label, name, from, to);
-		case Elementdeclerations.repressionEdge:
+		case ElementDeclarations.repressionEdge:
 			return new Repression(label, name, from, to);
-		case Elementdeclerations.stateChangeEdge:
+		case ElementDeclarations.stateChangeEdge:
 			return new StateChange(label, name, from, to);
-		case Elementdeclerations.ubiquitinationEdge:
+		case ElementDeclarations.ubiquitinationEdge:
 			return new Ubiquitination(label, name, from, to);
-		case Elementdeclerations.anyBEA:
+		case ElementDeclarations.anyBEA:
 			return new ANYBiologicalEdge(label, name, from, to);
 		case "PN Discrete Edge":
 			//old description
 		case "PN Edge":
 			//old description
-		case Elementdeclerations.pnArc:
-			return new PNArc(from, to, label, name, Elementdeclerations.pnArc, "1");
+		case ElementDeclarations.pnArc:
+			return new PNArc(from, to, label, name, ElementDeclarations.pnArc, "1");
 		case "PN Test Edge":
 			//old description
-		case Elementdeclerations.pnTestArc:
-			return new PNArc(from, to, label, name, Elementdeclerations.pnTestArc, "1");
+		case ElementDeclarations.pnTestArc:
+			return new PNArc(from, to, label, name, ElementDeclarations.pnTestArc, "1");
 		case "PN Inhibition Edge":
 			//old description
-		case Elementdeclerations.pnInhibitorArc:
-			return new PNArc(from, to, label, name, Elementdeclerations.pnInhibitorArc, "1");
-		case Elementdeclerations.reactionEdge:
+		case ElementDeclarations.pnInhibitorArc:
+			return new PNArc(from, to, label, name, ElementDeclarations.pnInhibitorArc, "1");
+		case ElementDeclarations.reactionEdge:
 		default:
 			return new ReactionEdge(label, name, from, to);
 		}

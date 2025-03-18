@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
@@ -125,9 +125,9 @@ public class EdgeDialog extends JFrame {
 
 		if (lastTypeIdx < 0 || lastTypeIdx > elementType.getItemCount() - 1) {
 			if (pw.isPetriNet()) {
-				elementType.setSelectedItem(Elementdeclerations.pnArc);
+				elementType.setSelectedItem(ElementDeclarations.pnArc);
 			} else {
-				elementType.setSelectedItem(Elementdeclerations.reactionEdge);
+				elementType.setSelectedItem(ElementDeclarations.reactionEdge);
 			}
 		} else {
 			elementType.setSelectedIndex(lastTypeIdx);
@@ -168,12 +168,12 @@ public class EdgeDialog extends JFrame {
 	private void addEdgeItems(JPanel panel) {
 		List<String> edgeItems;
 		if (pw.isPetriNet()) {
-			edgeItems = new Elementdeclerations().getPNEdgeDeclarations();
+			edgeItems = new ElementDeclarations().getPNEdgeDeclarations();
 		} else {
-			edgeItems = new Elementdeclerations().getNotPNEdgeDeclarations();
+			edgeItems = new ElementDeclarations().getNotPNEdgeDeclarations();
 		}
 		if (pw.isHeadless() && !pw.isPetriNet()) {
-			elementType.addItem(Elementdeclerations.anyBEA);
+			elementType.addItem(ElementDeclarations.anyBEA);
 		}
 		Iterator<String> it = edgeItems.iterator();
 		String element;
@@ -181,7 +181,7 @@ public class EdgeDialog extends JFrame {
 			element = it.next();
 			// only add special arcs, if arc connects Place->Transition
 			if (from instanceof Transition) {
-				if (element.equals(Elementdeclerations.pnArc)) {
+				if (element.equals(ElementDeclarations.pnArc)) {
 					elementType.addItem(element);
 				}
 			} else {

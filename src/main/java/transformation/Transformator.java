@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalElements.PathwayType;
@@ -50,17 +50,17 @@ import util.StringLengthComparator;
 public class Transformator {
 
 	public static final String place = "Place";
-	public static final String discretePlace = Elementdeclerations.discretePlace;
-	public static final String continuousPlace = Elementdeclerations.continuousPlace;
+	public static final String discretePlace = ElementDeclarations.discretePlace;
+	public static final String continuousPlace = ElementDeclarations.continuousPlace;
 
 	public static final String transition = "Transition";
-	public static final String discreteTransition = Elementdeclerations.discreteTransition;
-	public static final String continuousTransition = Elementdeclerations.continuousTransition;
-	public static final String stochasticTransition = Elementdeclerations.stochasticTransition;
+	public static final String discreteTransition = ElementDeclarations.discreteTransition;
+	public static final String continuousTransition = ElementDeclarations.continuousTransition;
+	public static final String stochasticTransition = ElementDeclarations.stochasticTransition;
 
-	public static final String pnArc = Elementdeclerations.pnArc;
-	public static final String pnTestArc = Elementdeclerations.pnTestArc;
-	public static final String pnInhibitorArc = Elementdeclerations.pnInhibitorArc;
+	public static final String pnArc = ElementDeclarations.pnArc;
+	public static final String pnTestArc = ElementDeclarations.pnTestArc;
+	public static final String pnInhibitorArc = ElementDeclarations.pnInhibitorArc;
 
 	public static final Set<String> places = new HashSet<>(Arrays.asList(place, discretePlace, continuousPlace));
 	public static final Set<String> transitions = new HashSet<>(
@@ -757,16 +757,16 @@ public class Transformator {
 
 		switch (type) {
 		case continuousPlace:
-			pn = new ContinuousPlace(defaultPName, defaultPName);
+			pn = new ContinuousPlace(defaultPName, defaultPName, petriNet);
 			break;
 		case continuousTransition:
-			pn = new ContinuousTransition(defaultTName, defaultTName);
+			pn = new ContinuousTransition(defaultTName, defaultTName, petriNet);
 			break;
 		case discretePlace:
-			pn = new DiscretePlace(defaultPName, defaultPName);
+			pn = new DiscretePlace(defaultPName, defaultPName, petriNet);
 			break;
 		case discreteTransition:
-			pn = new DiscreteTransition(defaultTName, defaultTName);
+			pn = new DiscreteTransition(defaultTName, defaultTName, petriNet);
 			break;
 		}
 		if (pn != null) {
@@ -792,13 +792,13 @@ public class Transformator {
 		String type = re.getType();
 		switch (type) {
 		case pnArc:
-			arc = new PNArc(from, to, "1", "1", Elementdeclerations.pnArc, "1");
+			arc = new PNArc(from, to, "1", "1", ElementDeclarations.pnArc, "1");
 			break;
 		case pnTestArc:
-			arc = new PNArc(from, to, "1", "1", Elementdeclerations.pnTestArc, "1");
+			arc = new PNArc(from, to, "1", "1", ElementDeclarations.pnTestArc, "1");
 			break;
 		case pnInhibitorArc:
-			arc = new PNArc(from, to, "1", "1", Elementdeclerations.pnInhibitorArc, "1");
+			arc = new PNArc(from, to, "1", "1", ElementDeclarations.pnInhibitorArc, "1");
 			break;
 		}
 		if (arc == null) {
@@ -818,8 +818,8 @@ public class Transformator {
 		BiologicalEdgeAbstract bea1;
 		String name;
 		Class<?> c;
-		nodeType2bna.put(Elementdeclerations.anyBNA, new ArrayList<BiologicalNodeAbstract>());
-		edgeType2bea.put(Elementdeclerations.anyBEA, new ArrayList<BiologicalEdgeAbstract>());
+		nodeType2bna.put(ElementDeclarations.anyBNA, new ArrayList<BiologicalNodeAbstract>());
+		edgeType2bea.put(ElementDeclarations.anyBEA, new ArrayList<BiologicalEdgeAbstract>());
 
 		// all nodes
 		for (BiologicalNodeAbstract bna : bnas) {
@@ -827,7 +827,7 @@ public class Transformator {
 			c = bna.getClass();
 			name = bna.getClass().getSimpleName();
 			// Object o = c.getSuperclass().cast(bna);
-			nodeType2bna.get(Elementdeclerations.anyBNA).add(bna);
+			nodeType2bna.get(ElementDeclarations.anyBNA).add(bna);
 
 			while (!name.equals("BiologicalNodeAbstract")) {
 				// System.out.println("class: "+c.getSimpleName());
@@ -857,7 +857,7 @@ public class Transformator {
 			c = bea.getClass();
 			name = bea.getClass().getSimpleName();
 
-			edgeType2bea.get(Elementdeclerations.anyBEA).add(bea);
+			edgeType2bea.get(ElementDeclarations.anyBEA).add(bea);
 			while (!name.equals("BiologicalEdgeAbstract")) {
 
 				try {

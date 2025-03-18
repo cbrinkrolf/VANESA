@@ -1,6 +1,7 @@
 package graph.gui;
 
 import api.payloads.dbBrenda.DBBrendaReaction;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -12,11 +13,8 @@ import database.brenda.BRENDASearch;
 import database.brenda.BrendaConnector;
 import database.brenda.gui.BrendaSearchResultWindow;
 import database.kegg.KEGGConnector;
-import edu.uci.ics.jung.visualization.VisualizationImageServer;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.GraphContainer;
 import graph.GraphInstance;
-import graph.jung.classes.MyVisualizationViewer;
 import gui.AsyncTaskExecutor;
 import gui.MainWindow;
 import gui.PopUpDialog;
@@ -280,7 +278,7 @@ public class GraphPopUp {
 			AsyncTaskExecutor.runUIBlocking("BRENDA Query", () -> {
 				String ecNumber = null;
 				String metabolite = null;
-				if (selectedBna.getBiologicalElement().equals(biologicalElements.Elementdeclerations.enzyme)) {
+				if (selectedBna.getBiologicalElement().equals(ElementDeclarations.enzyme)) {
 					ecNumber = selectedBna.getLabel();
 				} else {
 					metabolite = selectedBna.getLabel();

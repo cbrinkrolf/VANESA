@@ -1,11 +1,11 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class Factor extends BiologicalNodeAbstract {
-    public Factor(String label, String name) {
-        super(label, name);
-        setBiologicalElement(Elementdeclerations.factor);
-        attributeSetter(this.getClass().getSimpleName(), this);
-    }
+	public Factor(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.factor, pathway);
+		attributeSetter();
+	}
 }

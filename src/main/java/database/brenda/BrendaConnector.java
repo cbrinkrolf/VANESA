@@ -58,7 +58,7 @@ public class BrendaConnector {
 	private BiologicalNodeAbstract addReactionNodes(String node) {
 		String clean = cleanString(node);
 		if (!enzymes.containsKey(clean)) {
-			Metabolite sm = new Metabolite(clean, clean);
+			Metabolite sm = new Metabolite(clean, clean, pw);
 			enzymes.put(clean, sm);
 			return sm;
 		} else {
@@ -76,7 +76,7 @@ public class BrendaConnector {
 				}
 				for (DBBrendaReaction reaction : results) {
 					if (!enzymes.containsKey(reaction.ec)) {
-						Enzyme e = new Enzyme(reaction.ec, reaction.enzymeName);
+						Enzyme e = new Enzyme(reaction.ec, reaction.enzymeName, pw);
 						enzymes.put(reaction.ec, e);
 						if (reaction.educts != null) {
 							for (String educt : reaction.educts) {
@@ -184,7 +184,7 @@ public class BrendaConnector {
 			if (results != null) {
 				for (DBBrendaReaction reaction : results) {
 					if (!enzymes.containsKey(reaction.ec)) {
-						Enzyme e = new Enzyme(reaction.ec, reaction.enzymeName);
+						Enzyme e = new Enzyme(reaction.ec, reaction.enzymeName, pw);
 						e.setColor(Color.RED);
 						pw.setRootNode(e);
 						e.setHasBrendaNode(true);
@@ -329,7 +329,7 @@ public class BrendaConnector {
 				BiologicalNodeAbstract bna2 = enzymes.get(cofactor.cofactor);
 				buildEdge(bna2, bna, "1");
 			} else {
-				Factor f = new Factor(cofactor.cofactor, cofactor.cofactor);
+				Factor f = new Factor(cofactor.cofactor, cofactor.cofactor, pw);
 				f.setColor(Color.cyan);
 				enzymes.put(cofactor.cofactor, f);
 				Enzyme e = (Enzyme) enzymes.get(cofactor.ec);
@@ -358,7 +358,7 @@ public class BrendaConnector {
 				bna2.setColor(Color.pink);
 				buildEdge(bna2, bna, "1");
 			} else {
-				Inhibitor f = new Inhibitor(inhibitor.inhibitor, inhibitor.inhibitor);
+				Inhibitor f = new Inhibitor(inhibitor.inhibitor, inhibitor.inhibitor, pw);
 				enzymes.put(inhibitor.inhibitor, f);
 				Enzyme e = ((Enzyme) enzymes.get(inhibitor.ec));
 				buildEdge(f, e, "1");

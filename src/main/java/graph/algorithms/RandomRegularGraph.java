@@ -27,13 +27,13 @@ public class RandomRegularGraph {
 			for (k = 1; k <= edges; k++) {
 				if (!set.contains(nodei[k])) {
 					set.add(nodei[k]);
-					Other node = new Other(nodei[k] + "", nodei[k] + "");
+					Other node = new Other(nodei[k] + "", nodei[k] + "", pw);
 					pw.addVertex(node, new Point(150, 100));
 					nodes.put(nodei[k], node);
 				}
 				if (!set.contains(nodej[k])) {
 					set.add(nodej[k]);
-					Other node = new Other(nodej[k] + "", nodej[k] + "");
+					Other node = new Other(nodej[k] + "", nodej[k] + "", pw);
 					pw.addVertex(node, new Point(150, 100));
 					nodes.put(nodej[k], node);
 				}

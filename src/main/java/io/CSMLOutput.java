@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -103,9 +103,9 @@ public class CSMLOutput extends BaseWriter<Pathway> {
     private String getPlaceString(Place place) {
         Point2D p = placePositions.get(place);
         String type = "";
-        if (place.getBiologicalElement().equals(Elementdeclerations.discretePlace)) {
+        if (place.getBiologicalElement().equals(ElementDeclarations.discretePlace)) {
             type = "Integer";
-        } else if (place.getBiologicalElement().equals(Elementdeclerations.continuousPlace)) {
+        } else if (place.getBiologicalElement().equals(ElementDeclarations.continuousPlace)) {
             type = "Double";
         }
         String start = String.valueOf(place.getTokenStart());

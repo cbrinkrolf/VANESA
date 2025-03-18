@@ -1,11 +1,15 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class Complex extends BiologicalNodeAbstract {
-    public Complex(String label, String name) {
-        super(label, name);
-        setBiologicalElement(Elementdeclerations.complex);
-        attributeSetter(this.getClass().getSimpleName(), this);
-    }
+	public Complex(final String label, final String name, final Pathway pathway) {
+		this(label, name, ElementDeclarations.complex, pathway);
+	}
+
+	protected Complex(final String label, final String name, final String biologicalElement, final Pathway pathway) {
+		super(label, name, biologicalElement, pathway);
+		attributeSetter();
+	}
 }

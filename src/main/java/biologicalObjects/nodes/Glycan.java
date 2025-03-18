@@ -1,11 +1,11 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class Glycan extends BiologicalNodeAbstract {
-    public Glycan(String label, String name) {
-        super(label, name);
-        setBiologicalElement(Elementdeclerations.glycan);
-        attributeSetter(this.getClass().getSimpleName(), this);
-    }
+	public Glycan(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.glycan, pathway);
+		attributeSetter();
+	}
 }

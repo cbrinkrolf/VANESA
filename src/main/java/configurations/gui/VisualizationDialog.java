@@ -32,7 +32,7 @@ import configurations.Workspace;
 import io.SuffixAwareFilter;
 import org.yaml.snakeyaml.Yaml;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import gui.MainWindow;
 import gui.PopUpDialog;
 import gui.visualization.YamlToObjectParser;
@@ -54,7 +54,7 @@ public class VisualizationDialog extends JPanel {
 	private MainWindow mWindow;
 
 	public VisualizationDialog() {
-		final Elementdeclerations elementdeclerations = new Elementdeclerations();
+		final ElementDeclarations elementdeclerations = new ElementDeclarations();
 		final List<String> biologicalElements = elementdeclerations.getNotPNNodeDeclarations();
 
 		setLayout(new MigLayout("", "[][grow]"));

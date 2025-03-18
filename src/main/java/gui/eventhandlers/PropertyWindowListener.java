@@ -1,6 +1,6 @@
 package gui.eventhandlers;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
@@ -203,7 +203,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			if (geb instanceof DiscreteTransition) {
 				DiscreteTransition p = (DiscreteTransition) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
-				if (!"".equals(text) && !text.equals(p.getDelay())) {
+				if (!text.isEmpty() && !text.equals(p.getDelay())) {
 					p.setDelay(text.trim());
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
@@ -212,7 +212,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			if (geb instanceof Transition) {
 				Transition t = (Transition) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
-				if (!"".equals(text) && !text.equals(t.getFiringCondition())) {
+				if (!text.isEmpty() && !text.equals(t.getFiringCondition())) {
 					((Transition) geb).setFiringCondition(text.trim());
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
@@ -221,41 +221,40 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			if (geb instanceof DynamicNode) {
 				DynamicNode dn = (DynamicNode) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
-				if (!"".equals(text) && !text.equals(dn.getMaximalSpeed())) {
+				if (!text.isEmpty() && !text.equals(dn.getMaximalSpeed())) {
 					dn.setMaximalSpeed(text);
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
-			} else if(geb instanceof ContinuousTransition){
+			} else if (geb instanceof ContinuousTransition) {
 				ContinuousTransition ct = (ContinuousTransition) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
-				if (!"".equals(text) && !text.equals(ct.getMaximalSpeed())) {
+				if (!text.isEmpty() && !text.equals(ct.getMaximalSpeed())) {
 					ct.setMaximalSpeed(text);
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
 			}
 
 		} else if (source.equals("transList")) {
-			Transition t = (Transition) geb;
-			Transition newT = null;
+			final Transition t = (Transition) geb;
 			Object selectedItem = ((JComboBox<?>) event.getSource()).getSelectedItem();
 			for (BiologicalNodeAbstract neighbour : pw.getGraph2().getNeighbors(t)) {
 				for (BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
-					if (node.equals(neighbour) &&
-						(ContinuousTransition.class.getName().equals(selectedItem) &&
-						 node.getBiologicalElement().equals(Elementdeclerations.discretePlace))) {
+					if (node.equals(neighbour) && (ContinuousTransition.class.getName().equals(selectedItem)
+							&& node.getBiologicalElement().equals(ElementDeclarations.discretePlace))) {
 						JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(),
-													  "Your action would lead to a relation between a discrete place and a continuous transition. That is not possible!",
-													  "Unallowed Operation...", JOptionPane.ERROR_MESSAGE);
+								"Your action would lead to a relation between a discrete place and a continuous transition. That is not possible!",
+								"Unallowed Operation...", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
 			}
+			Transition newT = null;
 			if (DiscreteTransition.class.getName().equals(selectedItem))
-				newT = new DiscreteTransition(t.getLabel(), t.getName());
+				newT = new DiscreteTransition(t.getLabel(), t.getName(), pw);
 			else if (ContinuousTransition.class.getName().equals(selectedItem))
-				newT = new ContinuousTransition(t.getLabel(), t.getName());
+				newT = new ContinuousTransition(t.getLabel(), t.getName(), pw);
 			else if (StochasticTransition.class.getName().equals(selectedItem))
-				newT = new StochasticTransition(t.getLabel(), t.getName());
+				newT = new StochasticTransition(t.getLabel(), t.getName(), pw);
 			if (newT != null) {
 				// newT.setCompartment(pw.getCompartmentManager().getCompartment(t));
 				pw.addVertex(newT, new Point());
@@ -264,22 +263,22 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			Place p = (Place) geb;
 			for (BiologicalNodeAbstract neighbour : pw.getGraph2().getNeighbors(p)) {
 				for (BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
-					if (node.equals(neighbour) &&
-						("discrete".equals(((JComboBox<?>) event.getSource()).getSelectedItem()) &&
-						 node.getBiologicalElement().equals(Elementdeclerations.continuousTransition))) {
+					if (node.equals(neighbour) && ("discrete".equals(
+							((JComboBox<?>) event.getSource()).getSelectedItem()) && node.getBiologicalElement().equals(
+							ElementDeclarations.continuousTransition))) {
 						JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(),
-													  "Your action would lead to a relation between a discrete place and a continuous transition. That is not possible!",
-													  "Unallowed Operation...", JOptionPane.ERROR_MESSAGE);
+								"Your action would lead to a relation between a discrete place and a continuous transition. That is not possible!",
+								"Unallowed Operation...", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
 			}
 
-			Place newP;
+			final Place newP;
 			if ("discrete".equals(((JComboBox<?>) event.getSource()).getSelectedItem())) {
-				newP = new DiscretePlace(p.getLabel(), p.getName());
+				newP = new DiscretePlace(p.getLabel(), p.getName(), pw);
 			} else {
-				newP = new ContinuousPlace(p.getLabel(), p.getName());
+				newP = new ContinuousPlace(p.getLabel(), p.getName(), pw);
 			}
 			pw.addVertex(newP, new Point());
 			newP.setToken(p.getToken());
@@ -303,7 +302,8 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
 			} else {
-				PopUpDialog.getInstance().show("Violation", "h: \"" + tf.getText() + "\" is not a valid decimal number");
+				PopUpDialog.getInstance().show("Violation",
+						"h: \"" + tf.getText() + "\" is not a valid decimal number");
 			}
 		} else if (source.equals("a")) {
 			JFormattedTextField tf = (JFormattedTextField) event.getSource();
@@ -315,7 +315,8 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
 			} else {
-				PopUpDialog.getInstance().show("Violation", "a: \"" + tf.getText() + "\" is not a valid decimal number");
+				PopUpDialog.getInstance().show("Violation",
+						"a: \"" + tf.getText() + "\" is not a valid decimal number");
 			}
 		} else if (source.equals("b")) {
 			JFormattedTextField tf = (JFormattedTextField) event.getSource();
@@ -327,7 +328,8 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
 			} else {
-				PopUpDialog.getInstance().show("Violation", "b: \"" + tf.getText() + "\" is not a valid decimal number");
+				PopUpDialog.getInstance().show("Violation",
+						"b: \"" + tf.getText() + "\" is not a valid decimal number");
 			}
 		} else if (source.equals("c")) {
 			JFormattedTextField tf = (JFormattedTextField) event.getSource();
@@ -339,7 +341,8 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
 			} else {
-				PopUpDialog.getInstance().show("Violation", "c: \"" + tf.getText() + "\" is not a valid decimal number");
+				PopUpDialog.getInstance().show("Violation",
+						"c: \"" + tf.getText() + "\" is not a valid decimal number");
 			}
 		} else if (source.equals("mu")) {
 			JFormattedTextField tf = (JFormattedTextField) event.getSource();
@@ -351,7 +354,8 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
 			} else {
-				PopUpDialog.getInstance().show("Violation", "mu: \"" + tf.getText() + "\" is not a valid decimal number");
+				PopUpDialog.getInstance().show("Violation",
+						"mu: \"" + tf.getText() + "\" is not a valid decimal number");
 			}
 		} else if (source.equals("sigma")) {
 			JFormattedTextField tf = (JFormattedTextField) event.getSource();
@@ -392,9 +396,8 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 				}
 			}
 			if (st.getEvents().size() != st.getProbabilities().size()) {
-				PopUpDialog.getInstance().show("Warning", "Number of given events (" + st.getEvents().size() +
-														  ") is not equal to number of given probabilities(" +
-														  st.getProbabilities().size() + ")!");
+				PopUpDialog.getInstance().show("Warning", "Number of given events (" + st.getEvents().size()
+						+ ") is not equal to number of given probabilities(" + st.getProbabilities().size() + ")!");
 			}
 		} else if (source.equals("probabilities")) {
 			JTextField tf = (JTextField) event.getSource();
@@ -425,16 +428,16 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 
 			st.setProbabilities(list);
 			if (st.getEvents().size() != st.getProbabilities().size()) {
-				PopUpDialog.getInstance().show("Warning", "Number of given events (" + st.getEvents().size() +
-														  ") is not equal to number of given probabilities(" +
-														  st.getProbabilities().size() + ")!");
+				PopUpDialog.getInstance().show("Warning", "Number of given events (" + st.getEvents().size()
+						+ ") is not equal to number of given probabilities(" + st.getProbabilities().size() + ")!");
 			}
 			double sum = 0;
 			for (Double aDouble : list) {
 				sum += aDouble;
 			}
 			if (sum != 1.0) {
-				PopUpDialog.getInstance().show("Warning", "Sum of given probabilities (" + sum + ") is not equal to 1.0!");
+				PopUpDialog.getInstance().show("Warning",
+						"Sum of given probabilities (" + sum + ") is not equal to 1.0!");
 			}
 		}
 
@@ -463,7 +466,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 					e.setFunction(text);
 					pw.handleChangeFlags(ChangedFlags.EDGEWEIGHT_CHANGED);
 				}
-			}else{
+			} else {
 				return;
 			}
 		}

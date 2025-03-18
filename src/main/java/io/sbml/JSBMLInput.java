@@ -17,7 +17,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -260,8 +260,8 @@ public class JSBMLInput {
 							for (int j = 0; j < elSub.getChildren().size(); j++) {
 								Element elSubSub = elSub.getChildren().get(j);
 								String pname = elSubSub.getChild("Name", null).getAttributeValue("Name");
-								double value = Double
-										.parseDouble(elSubSub.getChild("Value", null).getAttributeValue("Value"));
+								double value = Double.parseDouble(
+										elSubSub.getChild("Value", null).getAttributeValue("Value"));
 								String unit = "";
 								if (elSubSub.getChild("Unit", null) != null) {
 									unit = elSubSub.getChild("Unit", null).getAttributeValue("Unit");
@@ -344,7 +344,7 @@ public class JSBMLInput {
 				name = "";
 			}
 			String label = name;
-			BiologicalNodeAbstract bna = new Other(label, name);
+			BiologicalNodeAbstract bna = new Other(label, name, pathway);
 			Point2D.Double p = new Point2D.Double(0.0, 0.0);
 			Element annotation = species.getChild("annotation", null);
 			if (annotation != null) {
@@ -361,22 +361,22 @@ public class JSBMLInput {
 							label = elSub.getAttributeValue("Label");
 						}
 					}
-					bna = BiologicalNodeAbstractFactory.create(biologicalElement, null);
+					bna = BiologicalNodeAbstractFactory.create(biologicalElement, label, name, pathway);
 					if (reverseEngineering) {
 						if (bna instanceof Place) {
-							bna = BiologicalNodeAbstractFactory.create(Elementdeclerations.metabolite, null);
+							bna = BiologicalNodeAbstractFactory.create(ElementDeclarations.metabolite, label, name,
+									pathway);
 						} else if (bna instanceof Transition) {
-							bna = BiologicalNodeAbstractFactory.create(Elementdeclerations.enzyme, null);
+							bna = BiologicalNodeAbstractFactory.create(ElementDeclarations.enzyme, label, name,
+									pathway);
 						}
 					}
-					bna.setLabel(label);
-					bna.setName(name);
 					String attr;
 					switch (bna.getBiologicalElement()) {
-					case Elementdeclerations.mRNA:
-					case Elementdeclerations.miRNA:
-					case Elementdeclerations.lncRNA:
-					case Elementdeclerations.sRNA:
+					case ElementDeclarations.mRNA:
+					case ElementDeclarations.miRNA:
+					case ElementDeclarations.lncRNA:
+					case ElementDeclarations.sRNA:
 						// TODO
 						elSub = specAnnotation.getChild("NtSequence", null);
 						if (elSub != null) {
@@ -384,13 +384,13 @@ public class JSBMLInput {
 							((RNA) bna).setNtSequence(attr);
 						}
 						break;
-					case Elementdeclerations.pathwayMap:
+					case ElementDeclarations.pathwayMap:
 						elSub = specAnnotation.getChild("PathwayLink", null);
 						if (elSub != null) {
 							pathwayLink = String.valueOf(elSub.getAttributeValue("PathwayLink"));
 						}
 						break;
-					case Elementdeclerations.discretePlace:
+					case ElementDeclarations.discretePlace:
 						elSub = specAnnotation.getChild("token", null);
 						attr = String.valueOf(elSub.getAttributeValue("token"));
 						((Place) bna).setToken(Double.parseDouble(attr));
@@ -410,7 +410,7 @@ public class JSBMLInput {
 							((Place) bna).setConflictStrategy(Integer.parseInt(attr));
 						}
 						break;
-					case Elementdeclerations.continuousPlace:
+					case ElementDeclarations.continuousPlace:
 						elSub = specAnnotation.getChild("token", null);
 						attr = String.valueOf(elSub.getAttributeValue("token"));
 						((Place) bna).setToken(Double.parseDouble(attr));
@@ -430,12 +430,12 @@ public class JSBMLInput {
 							((Place) bna).setConflictStrategy(Integer.parseInt(attr));
 						}
 						break;
-					case Elementdeclerations.discreteTransition:
+					case ElementDeclarations.discreteTransition:
 						elSub = specAnnotation.getChild("delay", null);
 						attr = String.valueOf(elSub.getAttributeValue("delay"));
 						((biologicalObjects.nodes.petriNet.DiscreteTransition) bna).setDelay(attr);
 						break;
-					case Elementdeclerations.continuousTransition:
+					case ElementDeclarations.continuousTransition:
 						elSub = specAnnotation.getChild("maximalSpeed", null);
 						if (elSub != null) {
 							attr = String.valueOf(elSub.getAttributeValue("maximalSpeed"));
@@ -448,7 +448,7 @@ public class JSBMLInput {
 							}
 						}
 						break;
-					case Elementdeclerations.stochasticTransition:
+					case ElementDeclarations.stochasticTransition:
 						StochasticTransition st = (StochasticTransition) bna;
 						elSub = specAnnotation.getChild("distributionProperties", null);
 						Element elSubSub = elSub.getChild("distribution", null);
@@ -585,15 +585,15 @@ public class JSBMLInput {
 				childrenSet.add(childNode);
 			}
 			Integer id = Integer.parseInt(coarseNode.getAttributeValue("id").split("_")[1]);
-			String rootNode = coarseNode.getAttribute("root", null) == null ? "null"
-					: coarseNode.getAttributeValue("root");
+			String rootNode = coarseNode.getAttribute("root", null) == null ? "null" : coarseNode.getAttributeValue(
+					"root");
 			if (!rootNode.equals("null")) {
 				hierarchyRootNodes.put(id, Integer.parseInt(coarseNode.getAttributeValue("root").split("_")[1]));
 			}
 			hierarchyMap.put(id, childrenSet);
 			coarseNodeLabels.put(id, coarseNode.getAttributeValue("label"));
-			if (coarseNode.getAttributeValue("opened") != null
-					&& coarseNode.getAttributeValue("opened").equals("true")) {
+			if (coarseNode.getAttributeValue("opened") != null && coarseNode.getAttributeValue("opened").equals(
+					"true")) {
 				openedCoarseNodes.add(id);
 			}
 		}

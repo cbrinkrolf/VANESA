@@ -1,11 +1,11 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class OrthologGroup extends Complex {
-    public OrthologGroup(String label, String name) {
-        super(label, name);
-        setBiologicalElement(Elementdeclerations.orthologGroup);
-        attributeSetter(this.getClass().getSimpleName(), this);
-    }
+	public OrthologGroup(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.orthologGroup, pathway);
+		attributeSetter();
+	}
 }

@@ -23,18 +23,9 @@ public abstract class Place extends PNNode {
 	private double tokenStart = 0;
 	private int conflictStrategy = 0;
 
-	protected Place(final String label, final String name, final String biologicalElement, final boolean isDiscrete) {
-		super(label, name);
-		setBiologicalElement(biologicalElement);
-		setDiscrete(isDiscrete);
-		setDefaultSize(2);
-		setDefaultColor(Color.WHITE);
-	}
-
 	protected Place(final String label, final String name, final String biologicalElement, final boolean isDiscrete,
 			final Pathway pathway) {
-		super(label, name, pathway);
-		setBiologicalElement(biologicalElement);
+		super(label, name, biologicalElement, pathway);
 		setDiscrete(isDiscrete);
 		setDefaultSize(2);
 		setDefaultColor(Color.WHITE);

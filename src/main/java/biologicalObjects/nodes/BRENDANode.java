@@ -12,9 +12,9 @@ public class BRENDANode {
 	private String kcat;
 	private String substrate;
 	private String product;
-	private Vector<String> cofactor = new Vector<>();
-	private Vector<String> inhibitor = new Vector<>();
-	private Vector<String> comment = new Vector<>();
+	private final Vector<String> cofactor = new Vector<>();
+	private final Vector<String> inhibitor = new Vector<>();
+	private final Vector<String> comment = new Vector<>();
 
 	public BRENDANode() {
 		name = "";

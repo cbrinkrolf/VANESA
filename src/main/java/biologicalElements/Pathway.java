@@ -129,7 +129,7 @@ public class Pathway implements Cloneable {
 
 	public BiologicalNodeAbstract addVertex(final String name, final String label, final String type,
 			final String compartment, final Point2D p) {
-		final BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(type, null, label, name);
+		final BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(type, label, name, this);
 		getCompartmentManager().setCompartment(bna, this.getCompartmentManager().getCompartment(compartment));
 		if (isBNA()) {
 			final BiologicalNodeAbstract thisBna = (BiologicalNodeAbstract) this;
@@ -186,7 +186,7 @@ public class Pathway implements Cloneable {
 			BiologicalNodeAbstract to, String element, boolean directed) {
 		final BiologicalEdgeAbstract bea = BiologicalEdgeAbstractFactory.create(element, label, name, from, to);
 		bea.setDirected(directed);
-		if (element.equals(Elementdeclerations.pnArc) || element.equals(Elementdeclerations.pnInhibitorArc)) {
+		if (element.equals(ElementDeclarations.pnArc) || element.equals(ElementDeclarations.pnInhibitorArc)) {
 			((PNArc) bea).setProbability(1);
 		}
 		return addEdge(bea);
@@ -380,6 +380,14 @@ public class Pathway implements Cloneable {
 		return graph2.getSelectedEdges();
 	}
 
+	public boolean isEmpty() {
+		return graph2.getNodeCount() == 0;
+	}
+
+	public boolean isNotEmpty() {
+		return graph2.getNodeCount() > 0;
+	}
+
 	public int getNodeCount() {
 		return graph2.getNodeCount();
 	}
@@ -448,7 +456,6 @@ public class Pathway implements Cloneable {
 						addEdge(bea);
 						updateMyGraph();
 					}
-
 				}
 				first.addLabel(bna.getLabelSet());
 				if (bna.isLogical() && bna.getLogicalReference() == first) {
@@ -475,8 +482,7 @@ public class Pathway implements Cloneable {
 					final BiologicalEdgeAbstract bea = itEdges.next();
 					removeElement(bea);
 					updateMyGraph();
-					final BiologicalNodeAbstract newBNA = BiologicalNodeAbstractFactory.create(
-							bna.getBiologicalElement(), bna);
+					final BiologicalNodeAbstract newBNA = BiologicalNodeAbstractFactory.copy(bna, this);
 					newBNA.setID(this);
 					newBNA.setRefs(new HashSet<>());
 					newBNA.setLogicalReference(bna);
@@ -978,7 +984,7 @@ public class Pathway implements Cloneable {
 			Iterator<BiologicalNodeAbstract> it = nodes.iterator();
 			BiologicalNodeAbstract nextNode = it.next();
 			if (nextNode.isInGroup()) {
-				for (BiologicalNodeAbstract node : nextNode.getbiggestGroup()) {
+				for (BiologicalNodeAbstract node : nextNode.getBiggestGroup()) {
 					graph2.selectNodes(true, node);
 				}
 			}
@@ -993,7 +999,7 @@ public class Pathway implements Cloneable {
 		Iterator<BiologicalNodeAbstract> iter = vv.getPickedVertexState().getPicked().iterator();
 		boolean deletegroup = true;
 		BiologicalNodeAbstract firstNode = iter.next();
-		Group groupToDelete = firstNode.getbiggestGroup();
+		Group groupToDelete = firstNode.getBiggestGroup();
 		// Checks if all selected nodes are of the same group
 		for (BiologicalNodeAbstract bnaNode : vv.getPickedVertexState().getPicked()) {
 			if (!bnaNode.getGroups().contains(groupToDelete)) {

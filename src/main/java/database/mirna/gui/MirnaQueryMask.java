@@ -126,7 +126,7 @@ public class MirnaQueryMask extends QueryMask {
 		int count = 0;
 		for (DBMirnaMature mature : results) {
 			Pathway pw = CreatePathway.create("miRNA network for " + mature.name);
-			MIRNA root = new MIRNA(mature.name, mature.name);
+			MIRNA root = new MIRNA(mature.name, mature.name, pw);
 			if (mature.sequence != null) {
 				root.setNtSequence(mature.sequence);
 			}
@@ -139,7 +139,7 @@ public class MirnaQueryMask extends QueryMask {
 					pw.addVertex(root, new Point2D.Double(0, 0));
 					for (DBMirnaTargetGene targetGene : response.payload.results) {
 						String label = targetGene.getAccession();
-						DNA dna = new DNA(label, targetGene.name != null ? targetGene.name : label);
+						DNA dna = new DNA(label, targetGene.name != null ? targetGene.name : label, pw);
 						pw.addVertex(dna, new Point2D.Double(0, 0));
 						PhysicalInteraction e = new PhysicalInteraction("", "", root, dna);
 						e.setDirected(true);
@@ -158,7 +158,7 @@ public class MirnaQueryMask extends QueryMask {
 					pw.addVertex(root, new Point2D.Double(0, 0));
 					for (DBMirnaSourceGene sourceGene : response.payload.results) {
 						String label = sourceGene.getAccession();
-						DNA dna = new DNA(label, sourceGene.name != null ? sourceGene.name : label);
+						DNA dna = new DNA(label, sourceGene.name != null ? sourceGene.name : label, pw);
 						pw.addVertex(dna, new Point2D.Double(0, 0));
 						Expression e = new Expression("", "", dna, root);
 						e.setDirected(true);
@@ -205,10 +205,10 @@ public class MirnaQueryMask extends QueryMask {
 				count += response.payload.results.length;
 				Pathway pw = CreatePathway.create("miRNA network for " + targetGene.name);
 				String label = targetGene.getAccession();
-				DNA root = new DNA(label, targetGene.name != null ? targetGene.name : label);
+				DNA root = new DNA(label, targetGene.name != null ? targetGene.name : label, pw);
 				pw.addVertex(root, new Point2D.Double(0, 0));
 				for (DBMirnaMature mature : response.payload.results) {
-					MIRNA mirna = new MIRNA(mature.name, mature.name);
+					MIRNA mirna = new MIRNA(mature.name, mature.name, pw);
 					if (mature.sequence != null) {
 						mirna.setNtSequence(mature.sequence);
 					}

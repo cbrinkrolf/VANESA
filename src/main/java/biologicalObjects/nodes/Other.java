@@ -1,11 +1,11 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class Other extends BiologicalNodeAbstract {
-    public Other(String label, String name) {
-        super(label, name);
-        setBiologicalElement(Elementdeclerations.others);
-        attributeSetter(this.getClass().getSimpleName(), this);
-    }
+	public Other(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.others, pathway);
+		attributeSetter();
+	}
 }

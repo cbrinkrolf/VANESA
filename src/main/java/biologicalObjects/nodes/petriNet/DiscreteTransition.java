@@ -3,7 +3,7 @@ package biologicalObjects.nodes.petriNet;
 import java.awt.Color;
 import java.util.List;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.Pathway;
 import graph.jung.graphDrawing.VertexShapes;
 import graph.rendering.shapes.TransitionShape;
@@ -11,19 +11,10 @@ import graph.rendering.shapes.TransitionShape;
 public class DiscreteTransition extends Transition {
     private String delay = "1";
 
-    public DiscreteTransition(final String label, final String name) {
-        super(label, name);
-		setDefaultShape(VertexShapes.getDiscreteTransitionShape());
-        setNodeShape(new TransitionShape());
-        setBiologicalElement(Elementdeclerations.discreteTransition);
-        setColor(Color.WHITE);
-    }
-
     public DiscreteTransition(final String label, final String name, final Pathway pathway) {
-        super(label, name, pathway);
+        super(label, name, ElementDeclarations.discreteTransition, pathway);
         setDefaultShape(VertexShapes.getDiscreteTransitionShape());
-        setNodeShape(new TransitionShape());
-        setBiologicalElement(Elementdeclerations.discreteTransition);
+        setDefaultNodeShape(new TransitionShape());
         setColor(Color.WHITE);
     }
 

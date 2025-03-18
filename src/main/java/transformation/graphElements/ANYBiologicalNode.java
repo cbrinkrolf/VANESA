@@ -1,13 +1,12 @@
 package transformation.graphElements;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class ANYBiologicalNode extends BiologicalNodeAbstract {
-
-	public ANYBiologicalNode(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.anyBNA);
-		attributeSetter(this.getClass().getSimpleName(), this);
+	public ANYBiologicalNode(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.anyBNA, pathway);
+		attributeSetter();
 	}
 }

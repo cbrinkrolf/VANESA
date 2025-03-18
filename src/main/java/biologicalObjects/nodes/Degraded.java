@@ -1,11 +1,11 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class Degraded extends BiologicalNodeAbstract {
-	public Degraded(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.degraded);
-		attributeSetter(this.getClass().getSimpleName(), this);
+	public Degraded(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.degraded, pathway);
+		attributeSetter();
 	}
 }

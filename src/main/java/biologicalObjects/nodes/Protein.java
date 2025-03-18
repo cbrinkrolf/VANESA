@@ -1,21 +1,25 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class Protein extends BiologicalNodeAbstract {
-    private String aaSequence = "";
+	private String aaSequence = "";
 
-    public Protein(String label, String name) {
-        super(label, name);
-        setBiologicalElement(Elementdeclerations.protein);
-        attributeSetter(this.getClass().getSimpleName(), this);
-    }
+	public Protein(final String label, final String name, final Pathway pathway) {
+		this(label, name, ElementDeclarations.protein, pathway);
+	}
 
-    public String getAaSequence() {
-        return aaSequence;
-    }
+	protected Protein(String label, String name, final String biologicalElement, final Pathway pathway) {
+		super(label, name, biologicalElement, pathway);
+		attributeSetter();
+	}
 
-    public void setAaSequence(String aaSequence) {
-        this.aaSequence = aaSequence;
-    }
+	public String getAaSequence() {
+		return aaSequence;
+	}
+
+	public void setAaSequence(String aaSequence) {
+		this.aaSequence = aaSequence;
+	}
 }

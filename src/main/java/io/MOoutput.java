@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
@@ -301,13 +301,13 @@ public class MOoutput extends BaseWriter<Pathway> {
 					}
 
 				}
-				if (biologicalElement.equals(Elementdeclerations.discretePlace)) {
+				if (biologicalElement.equals(ElementDeclarations.discretePlace)) {
 					place = (Place) bna;
 					attr.append("startTokens=" + (int) place.getTokenStart() + ", minTokens="
 							+ (int) place.getTokenMin() + ", maxTokens=" + (int) place.getTokenMax());
 					// places = places.concat(getPlaceString(getModelicaString(place), bna, atr, in,
 					// out));
-				} else if (biologicalElement.equals(Elementdeclerations.continuousPlace)) {
+				} else if (biologicalElement.equals(ElementDeclarations.continuousPlace)) {
 					place = (Place) bna;
 					if (colored) {
 						start = "{0.0, " + place.getTokenStart() + "}";
@@ -338,7 +338,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 					// bna, atr, in, out));
 					// System.out.println(place.getName() + " conflicting edges:
 					// " + place.getConflictingOutEdges().size());
-				} else if (biologicalElement.equals(Elementdeclerations.stochasticTransition)) {
+				} else if (biologicalElement.equals(ElementDeclarations.stochasticTransition)) {
 
 					st = (StochasticTransition) bna;
 					attr.append("distributionType = " + distrPackage);
@@ -382,7 +382,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 					// places = places.concat(getTransitionString(bna,
 					// getModelicaString(t), bna.getName(), atr, in, out));
 
-				} else if (biologicalElement.equals(Elementdeclerations.discreteTransition)) {
+				} else if (biologicalElement.equals(ElementDeclarations.discreteTransition)) {
 
 					dt = (DiscreteTransition) bna;
 					delay = this.replaceAll(dt.getDelay(), dt.getParameters(), dt.getName(), false);
@@ -390,7 +390,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 					// places = places.concat(getTransitionString(bna,
 					// getModelicaString(t), bna.getName(), atr, in, out));
 
-				} else if (biologicalElement.equals(Elementdeclerations.continuousTransition)) {
+				} else if (biologicalElement.equals(ElementDeclarations.continuousTransition)) {
 					ct = (ContinuousTransition) bna;
 					// System.out.println(ct.getMaximalSpeed());
 					speed = this.replaceAll(ct.getMaximalSpeed(), ct.getParameters(), ct.getName(), false);
@@ -512,11 +512,11 @@ public class MOoutput extends BaseWriter<Pathway> {
 
 				actualOutEdges.get(fromString).add(e.getTo());
 
-				if (e.getBiologicalElement().equals(Elementdeclerations.pnInhibitorArc)) {
+				if (e.getBiologicalElement().equals(ElementDeclarations.pnInhibitorArc)) {
 					if (e.getFrom() instanceof Place) {
 						componentsSB.append(this.createInhibitoryArc(pw, fromString, toString, e));
 					}
-				} else if (e.getBiologicalElement().equals(Elementdeclerations.pnTestArc)) {
+				} else if (e.getBiologicalElement().equals(ElementDeclarations.pnTestArc)) {
 					if (e.getFrom() instanceof Place) {
 						componentsSB.append(this.createTestArc(pw, fromString, toString, e));
 					}
@@ -669,11 +669,11 @@ public class MOoutput extends BaseWriter<Pathway> {
 			color = "{180, 180, 180}";
 		}
 		double shiftFrom = 10;
-		if (from.getBiologicalElement().equals(Elementdeclerations.continuousPlace)) {
+		if (from.getBiologicalElement().equals(ElementDeclarations.continuousPlace)) {
 			shiftFrom = 25;
 		}
 		double shiftTo = -10;
-		if (to.getBiologicalElement().equals(Elementdeclerations.continuousPlace)) {
+		if (to.getBiologicalElement().equals(ElementDeclarations.continuousPlace)) {
 			shiftTo = -25;
 		}
 		return "annotation(Line(color=" + color + ", points={{" + (p1.getX() + shiftFrom) + ", " + (-p1.getY()) + "}, {"

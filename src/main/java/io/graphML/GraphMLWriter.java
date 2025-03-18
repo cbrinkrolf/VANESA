@@ -1,6 +1,6 @@
 package io.graphML;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.Inhibition;
@@ -213,35 +213,35 @@ public class GraphMLWriter extends BaseWriter<Pathway> {
         Color plotColor = null;
         */
         switch (bna.getBiologicalElement()) {
-            case Elementdeclerations.mRNA:
-            case Elementdeclerations.miRNA:
-            case Elementdeclerations.lncRNA:
-            case Elementdeclerations.sRNA:
+            case ElementDeclarations.mRNA:
+            case ElementDeclarations.miRNA:
+            case ElementDeclarations.lncRNA:
+            case ElementDeclarations.sRNA:
                 writePropertyIfNotNull(writer, properties, "ntSequence", ((RNA) bna).getNtSequence());
                 writePropertyIfNotNull(writer, properties, "logFC", ((RNA) bna).getLogFC());
                 break;
-            case Elementdeclerations.dna:
+            case ElementDeclarations.dna:
                 writePropertyIfNotNull(writer, properties, "ntSequence", ((DNA) bna).getNtSequence());
                 writePropertyIfNotNull(writer, properties, "logFC", ((DNA) bna).getLogFC());
                 break;
-            case Elementdeclerations.gene:
+            case ElementDeclarations.gene:
                 writePropertyIfNotNull(writer, properties, "ntSequence", ((Gene) bna).getNtSequence());
                 break;
-            case Elementdeclerations.pathwayMap:
+            case ElementDeclarations.pathwayMap:
                 writePropertyIfNotNull(writer, properties, "specification", ((PathwayMap) bna).isSpecification());
                 break;
-            case Elementdeclerations.protein:
+            case ElementDeclarations.protein:
                 writePropertyIfNotNull(writer, properties, "aaSequence", ((Protein) bna).getAaSequence());
                 break;
-            case Elementdeclerations.reaction:
+            case ElementDeclarations.reaction:
                 writePropertyIfNotNull(writer, properties, "maximalSpeed", ((Reaction) bna).getMaximalSpeed());
                 writePropertyIfNotNull(writer, properties, "knockedOut", ((Reaction) bna).isKnockedOut());
                 break;
-            case Elementdeclerations.transition:
+            case ElementDeclarations.transition:
                 writePropertyIfNotNull(writer, properties, "knockedOut", ((Transition) bna).isKnockedOut());
                 writePropertyIfNotNull(writer, properties, "firingCondition", ((Transition) bna).getFiringCondition());
                 break;
-            case Elementdeclerations.stochasticTransition:
+            case ElementDeclarations.stochasticTransition:
                 writePropertyIfNotNull(writer, properties, "knockedOut", ((Transition) bna).isKnockedOut());
                 writePropertyIfNotNull(writer, properties, "firingCondition", ((Transition) bna).getFiringCondition());
                 writePropertyIfNotNull(writer, properties, "distribution",
@@ -256,20 +256,20 @@ public class GraphMLWriter extends BaseWriter<Pathway> {
                 writePropertyIfNotNull(writer, properties, "probabilities",
                                        ((StochasticTransition) bna).getProbabilities());
                 break;
-            case Elementdeclerations.continuousTransition:
+            case ElementDeclarations.continuousTransition:
                 writePropertyIfNotNull(writer, properties, "knockedOut", ((Transition) bna).isKnockedOut());
                 writePropertyIfNotNull(writer, properties, "firingCondition", ((Transition) bna).getFiringCondition());
                 writePropertyIfNotNull(writer, properties, "maximalSpeed",
                                        ((ContinuousTransition) bna).getMaximalSpeed());
                 break;
-            case Elementdeclerations.discreteTransition:
+            case ElementDeclarations.discreteTransition:
                 writePropertyIfNotNull(writer, properties, "knockedOut", ((Transition) bna).isKnockedOut());
                 writePropertyIfNotNull(writer, properties, "firingCondition", ((Transition) bna).getFiringCondition());
                 writePropertyIfNotNull(writer, properties, "delay", ((DiscreteTransition) bna).getDelay());
                 break;
-            case Elementdeclerations.place:
-            case Elementdeclerations.continuousPlace:
-            case Elementdeclerations.discretePlace:
+            case ElementDeclarations.place:
+            case ElementDeclarations.continuousPlace:
+            case ElementDeclarations.discretePlace:
                 writePropertyIfNotNull(writer, properties, "token", ((Place) bna).getToken());
                 writePropertyIfNotNull(writer, properties, "tokenMin", ((Place) bna).getTokenMin());
                 writePropertyIfNotNull(writer, properties, "tokenMax", ((Place) bna).getTokenMax());
@@ -326,11 +326,11 @@ public class GraphMLWriter extends BaseWriter<Pathway> {
         ArrayList<Parameter> parameters = new ArrayList<>();
         */
         switch (bea.getBiologicalElement()) {
-            case Elementdeclerations.inhibitionEdge:
+            case ElementDeclarations.inhibitionEdge:
                 writePropertyIfNotNull(writer, properties, "absoluteInhibition",
                                        ((Inhibition) bea).isAbsoluteInhibition());
                 break;
-            case Elementdeclerations.reactionPairEdge:
+            case ElementDeclarations.reactionPairEdge:
                 writePropertyIfNotNull(writer, properties, "hasReactionPairEdge",
                                        ((ReactionPair) bea).hasReactionPairEdge());
                 final ReactionPairEdge rpe = ((ReactionPair) bea).getReactionPairEdge();

@@ -1,11 +1,11 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class HomodimerFormation extends BiologicalNodeAbstract {
-	public HomodimerFormation(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.homodimerFormation);
-		attributeSetter(this.getClass().getSimpleName(), this);
+	public HomodimerFormation(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.homodimerFormation, pathway);
+		attributeSetter();
 	}
 }

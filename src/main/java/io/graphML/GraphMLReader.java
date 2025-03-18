@@ -1,6 +1,6 @@
 package io.graphML;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.*;
@@ -161,15 +161,14 @@ public class GraphMLReader extends BaseReader<Pathway> {
 		if (p.x != 0 || p.y != 0) {
 			hasSeenPositions = true;
 		}
-		BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(label, null);
+		final BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(label,
+				(String) properties.get("_label"), (String) properties.get("name"), pw);
 		try {
 			bna.setID(id, pw);
 		} catch (IDAlreadyExistException e) {
 			logger.warn("Ignored node with already existing id " + id);
 			return;
 		}
-		setPropertyIfExists(properties, "_label", bna::setLabel);
-		setPropertyIfExists(properties, "name", bna::setName);
 		setPropertyIfExists(properties, "color", c -> bna.setColor(VanesaUtility.colorFromHex((String) c)));
 		setPropertyIfExists(properties, "concentration", bna::setConcentration);
 		setPropertyIfExists(properties, "concentrationMin", bna::setConcentrationMin);
@@ -179,37 +178,37 @@ public class GraphMLReader extends BaseReader<Pathway> {
 		setPropertyIfExists(properties, "discrete", bna::setDiscrete);
 		setPropertyIfExists(properties, "description", bna::setDescription);
 		switch (label) {
-		case Elementdeclerations.mRNA:
-		case Elementdeclerations.miRNA:
-		case Elementdeclerations.lncRNA:
-		case Elementdeclerations.sRNA:
+		case ElementDeclarations.mRNA:
+		case ElementDeclarations.miRNA:
+		case ElementDeclarations.lncRNA:
+		case ElementDeclarations.sRNA:
 			RNA rna = (RNA) bna;
 			setPropertyIfExists(properties, "ntSequence", rna::setNtSequence);
 			setPropertyIfExists(properties, "logFC", rna::setLogFC);
 			break;
-		case Elementdeclerations.dna:
+		case ElementDeclarations.dna:
 			DNA dna = (DNA) bna;
 			setPropertyIfExists(properties, "ntSequence", dna::setNtSequence);
 			setPropertyIfExists(properties, "logFC", dna::setLogFC);
 			break;
-		case Elementdeclerations.gene:
+		case ElementDeclarations.gene:
 			setPropertyIfExists(properties, "ntSequence", ((Gene) bna)::setNtSequence);
 			break;
-		case Elementdeclerations.pathwayMap:
+		case ElementDeclarations.pathwayMap:
 			setPropertyIfExists(properties, "specification", ((PathwayMap) bna)::setSpecification);
 			break;
-		case Elementdeclerations.protein:
+		case ElementDeclarations.protein:
 			setPropertyIfExists(properties, "aaSequence", ((Protein) bna)::setAaSequence);
 			break;
-		case Elementdeclerations.reaction:
+		case ElementDeclarations.reaction:
 			setPropertyIfExists(properties, "maximalSpeed", ((Reaction) bna)::setMaximalSpeed);
 			setPropertyIfExists(properties, "knockedOut", ((Reaction) bna)::setKnockedOut);
 			break;
-		case Elementdeclerations.transition:
+		case ElementDeclarations.transition:
 			setPropertyIfExists(properties, "knockedOut", ((Transition) bna)::setKnockedOut);
 			setPropertyIfExists(properties, "firingCondition", ((Transition) bna)::setFiringCondition);
 			break;
-		case Elementdeclerations.stochasticTransition:
+		case ElementDeclarations.stochasticTransition:
 			setPropertyIfExists(properties, "knockedOut", ((Transition) bna)::setKnockedOut);
 			setPropertyIfExists(properties, "firingCondition", ((Transition) bna)::setFiringCondition);
 			setPropertyIfExists(properties, "distribution", ((StochasticTransition) bna)::setDistribution);
@@ -222,19 +221,19 @@ public class GraphMLReader extends BaseReader<Pathway> {
 			setPropertyIfExists(properties, "events", ((StochasticTransition) bna)::setEvents);
 			setPropertyIfExists(properties, "probabilities", ((StochasticTransition) bna)::setProbabilities);
 			break;
-		case Elementdeclerations.continuousTransition:
+		case ElementDeclarations.continuousTransition:
 			setPropertyIfExists(properties, "knockedOut", ((Transition) bna)::setKnockedOut);
 			setPropertyIfExists(properties, "firingCondition", ((Transition) bna)::setFiringCondition);
 			setPropertyIfExists(properties, "maximalSpeed", ((ContinuousTransition) bna)::setMaximalSpeed);
 			break;
-		case Elementdeclerations.discreteTransition:
+		case ElementDeclarations.discreteTransition:
 			setPropertyIfExists(properties, "knockedOut", ((Transition) bna)::setKnockedOut);
 			setPropertyIfExists(properties, "firingCondition", ((Transition) bna)::setFiringCondition);
 			setPropertyIfExists(properties, "delay", ((DiscreteTransition) bna)::setDelay);
 			break;
-		case Elementdeclerations.place:
-		case Elementdeclerations.discretePlace:
-		case Elementdeclerations.continuousPlace:
+		case ElementDeclarations.place:
+		case ElementDeclarations.discretePlace:
+		case ElementDeclarations.continuousPlace:
 			setPropertyIfExists(properties, "token", ((Place) bna)::setToken);
 			setPropertyIfExists(properties, "tokenMin", ((Place) bna)::setTokenMin);
 			setPropertyIfExists(properties, "tokenMax", ((Place) bna)::setTokenMax);
@@ -428,10 +427,10 @@ public class GraphMLReader extends BaseReader<Pathway> {
 		setPropertyIfExists(properties, "description", bea::setDescription);
 		// TODO: more
 		switch (label) {
-		case Elementdeclerations.inhibitionEdge:
+		case ElementDeclarations.inhibitionEdge:
 			setPropertyIfExists(properties, "absoluteInhibition", ((Inhibition) bea)::setAbsoluteInhibition);
 			break;
-		case Elementdeclerations.reactionPairEdge:
+		case ElementDeclarations.reactionPairEdge:
 			setPropertyIfExists(properties, "hasReactionPairEdge", ((ReactionPair) bea)::setHasReactionPairEdge);
 			if (properties.containsKey("reactionPairEdgeId") || properties.containsKey("reactionPairEdgeName")
 					|| properties.containsKey("reactionPairEdgeType")) {

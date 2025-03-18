@@ -2,7 +2,8 @@ package biologicalObjects.nodes;
 
 import java.util.Vector;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class Gene extends BiologicalNodeAbstract implements NodeWithNTSequence {
 	private String ntSequence = "";
@@ -11,10 +12,9 @@ public class Gene extends BiologicalNodeAbstract implements NodeWithNTSequence {
 	private boolean hasProteins = false;
 	private boolean hasEnzymes = false;
 
-	public Gene(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.gene);
-		attributeSetter(this.getClass().getSimpleName(), this);
+	public Gene(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.gene, pathway);
+		attributeSetter();
 	}
 
 	public String getNtSequence() {
@@ -33,11 +33,11 @@ public class Gene extends BiologicalNodeAbstract implements NodeWithNTSequence {
 		return enzymes;
 	}
 
-	public boolean isHasProteins() {
+	public boolean hasProteins() {
 		return hasProteins;
 	}
 
-	public boolean isHasEnzymes() {
+	public boolean hasEnzymes() {
 		return hasEnzymes;
 	}
 

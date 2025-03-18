@@ -9,14 +9,8 @@ import gui.PopUpDialog;
 import util.FormulaSafety;
 
 public abstract class PNNode extends BiologicalNodeAbstract {
-	public PNNode(final String label, final String name) {
-		super(label, name);
-		setLabel(label);
-		setName(name);
-	}
-
-	public PNNode(final String label, final String name, final Pathway pathway) {
-		super(label, name, pathway);
+	protected PNNode(final String label, final String name, final String biologicalElement, final Pathway pathway) {
+		super(label, name, biologicalElement, pathway);
 		setLabel(label);
 		setName(name);
 	}
@@ -33,8 +27,8 @@ public abstract class PNNode extends BiologicalNodeAbstract {
 				System.out.println(pw.getName());
 				PopUpDialog.getInstance().show("Type mismatch",
 						"Node with same name already exists. Cannot create logical place because of type mismatch: "
-								+ pw.getNodeByName(name).getClass().getSimpleName() + " versus "
-								+ this.getClass().getSimpleName());
+								+ pw.getNodeByName(name).getClass().getSimpleName() + " versus " + this.getClass()
+								.getSimpleName());
 			}
 			return;
 		}

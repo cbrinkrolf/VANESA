@@ -1,10 +1,11 @@
 package biologicalObjects.nodes;
 
 public interface DynamicNode {
-	
-	public String getMaximalSpeed();
-	public void setMaximalSpeed(String maximalSpeed);
-	
-	public boolean isKnockedOut();
-	public void setKnockedOut(Boolean knockedOut);
+	String getMaximalSpeed();
+
+	void setMaximalSpeed(String maximalSpeed);
+
+	boolean isKnockedOut();
+
+	void setKnockedOut(Boolean knockedOut);
 }

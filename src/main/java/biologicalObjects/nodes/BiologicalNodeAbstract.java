@@ -44,10 +44,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 	private String comments = "";
 	private Color color = Color.LIGHT_GRAY;
 	private Color defaultColor = Color.LIGHT_GRAY;
-	private String BiologicalElement = "";
+	private final String biologicalElement;
 	private Shape shape = VertexShapes.getEllipse();
 	private Shape defaultShape = VertexShapes.getEllipse();
 	private NodeShape nodeShape = new PlaceShape();
+	private NodeShape defaultNodeShape = new PlaceShape();
 	private boolean hasKEGGNode = false;
 	private boolean hasBrendaNode = false;
 	private Set<String> labelSet = new HashSet<>();
@@ -73,15 +74,13 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 	private double concentrationMax = Double.MAX_VALUE;
 	private double concentrationStart = 1;
 
-	public BiologicalNodeAbstract(final String label, final String name) {
-		this(label, name, GraphInstance.getPathway());
-	}
-
-	public BiologicalNodeAbstract(final String label, final String name, final Pathway pathway) {
+	protected BiologicalNodeAbstract(final String label, final String name, final String biologicalElement,
+			final Pathway pathway) {
 		super(name, pathway);
 		super.setName(name);
 		setLabel(label);
 		labelSet.add(label);
+		this.biologicalElement = biologicalElement;
 	}
 
 	public void delete() {
@@ -108,39 +107,13 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 		deleted = true;
 	}
 
-	/*
-	 * private boolean stringsEqualAndAreNotEmpty(String s1, String s2) { return
-	 * s1.length() > 0 && s2.length() > 0 && s1.equalsIgnoreCase(s2); }
-	 */
-
-	/**
-	 * checks if the given BiologicalNodeAbstract is equal to this one nodes are
-	 * equal if name OR label match (also when name matches the label of the other
-	 * node)
-	 */
-	/*
-	 * public boolean equals(Object o) {
-	 *
-	 * if (!(o instanceof BiologicalNodeAbstract)) { return super.equals(o); }
-	 *
-	 * BiologicalNodeAbstract bna = (BiologicalNodeAbstract) o;
-	 *
-	 * String name = this.getName(); String label = this.getLabel();
-	 *
-	 * String name2 = bna.getName(); String label2 = bna.getLabel();
-	 *
-	 * return stringsEqualAndAreNotEmpty(name,name2) //||
-	 * stringsEqualAndAreNotEmpty(name,label2) //||
-	 * stringsEqualAndAreNotEmpty(label,name2) ||
-	 * stringsEqualAndAreNotEmpty(label,label2); }
-	 */
-	public void attributeSetter(String className, BiologicalNodeAbstract bna) {
-		// MainWindow.getInstance().nodeAttributeChanger(bna, false);
+	public void attributeSetter() {
+		MainWindow.getInstance().nodeAttributeChanger(this, false);
 	}
 
 	private String getCorrectLabel(Integer type) {
-		if ((getLabel().length() == 0 || getLabel().equals(" "))
-				&& (getName().length() == 0 || getName().equals(" "))) {
+		if ((getLabel().length() == 0 || getLabel().equals(" ")) && (getName().length() == 0 || getName().equals(
+				" "))) {
 			return "";
 		} else {
 			if (type == GraphSettings.SHOW_LABEL) {
@@ -191,13 +164,13 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 		}
 		for (BiologicalEdgeAbstract e : node.getConnectingEdges()) {
 			if (e.getFrom() != node) {
-				Pathway neighborParent = e.getFrom().getParentNode() == null ? node.getRootPathway()
-						: e.getFrom().getParentNode();
+				Pathway neighborParent =
+						e.getFrom().getParentNode() == null ? node.getRootPathway() : e.getFrom().getParentNode();
 				node.addVertex(e.getFrom(), neighborParent.getGraph2().getNodePosition(e.getFrom()));
 				e.getFrom().removeConnectingEdge(e);
 			} else if (e.getTo() != node) {
-				Pathway neighborParent = e.getTo().getParentNode() == null ? node.getRootPathway()
-						: e.getTo().getParentNode();
+				Pathway neighborParent =
+						e.getTo().getParentNode() == null ? node.getRootPathway() : e.getTo().getParentNode();
 				node.addVertex(e.getTo(), neighborParent.getGraph2().getNodePosition(e.getTo()));
 				e.getTo().removeConnectingEdge(e);
 			}
@@ -578,7 +551,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 	 * @return true, if coarse-node.
 	 */
 	public boolean isCoarseNode() {
-		return getNodeCount() > 0;
+		return isNotEmpty();
 	}
 
 	// still buggy, do not use too frequent
@@ -663,18 +636,14 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 
 	@Override
 	public String getBiologicalElement() {
-		return BiologicalElement;
-	}
-
-	protected void setBiologicalElement(String biologicalElement) {
-		BiologicalElement = biologicalElement;
+		return biologicalElement;
 	}
 
 	public Shape getShape() {
 		return shape;
 	}
 
-	public void setShape(Shape shape) {
+	public void setShape(final Shape shape) {
 		this.shape = shape;
 	}
 
@@ -683,7 +652,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 		return nodeShape;
 	}
 
-	public void setNodeShape(NodeShape nodeShape) {
+	public void setNodeShape(final NodeShape nodeShape) {
 		this.nodeShape = nodeShape;
 	}
 
@@ -871,7 +840,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 
 	public void setDefaultSize(double defaultSize) {
 		this.defaultSize = defaultSize;
-		this.setSize(defaultSize);
+		setSize(defaultSize);
 	}
 
 	public Shape getDefaultShape() {
@@ -880,7 +849,16 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 
 	public void setDefaultShape(Shape defaultShape) {
 		this.defaultShape = defaultShape;
-		this.setShape(defaultShape);
+		setShape(defaultShape);
+	}
+
+	public NodeShape getDefaultNodeShape() {
+		return defaultNodeShape;
+	}
+
+	public void setDefaultNodeShape(NodeShape defaultNodeShape) {
+		this.defaultNodeShape = defaultNodeShape;
+		setNodeShape(defaultNodeShape);
 	}
 
 	public Color getDefaultColor() {
@@ -899,24 +877,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 	public boolean isDeleted() {
 		return deleted;
 	}
-
-	/*
-	 * public Vertex getVertex() { return vertex; }
-	 *
-	 * public void setVertex(Vertex vertex) { this.vertex = vertex; if (vertex !=
-	 * null) { sbml.setVertex(vertex.toString()); } }
-	 */
-
-	/*
-	 * public int getAnimationValue(int time) { return values.get(time); }
-	 *
-	 * public void setAnimationValue(int time, int value) { values.put(time, value);
-	 * }
-	 *
-	 * public void removeAnimationValue(int time) { values.remove(time); }
-	 *
-	 * public int getAnimationSteps() { return values.size(); }
-	 */
 
 	public void setCoarseNodesize() {
 		if (isCoarseNode()) {
@@ -1006,7 +966,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 	 */
 	public BiologicalNodeAbstract getCurrentShownParentNode(VanesaGraph graph) {
 		if (graph == null) {
-			graph = getActiveGraph();
+			graph = GraphInstance.getPathway().getGraph2();
 		}
 		if (graph.contains(this)) {
 			return this;
@@ -1032,10 +992,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 			}
 		}
 		return cscn;
-	}
-
-	private VanesaGraph getActiveGraph() {
-		return GraphInstance.getPathway().getGraph2();
 	}
 
 	public boolean isLogical() {
@@ -1119,10 +1075,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 		labelSet.remove(this.label);
 		this.label = label.trim();
 		labelSet.add(this.label);
-		if (getName().length() == 0) {
+		if (getName().isEmpty()) {
 			setName(this.label);
 		}
-		// this.networklabel = label;
 	}
 
 	@Override
@@ -1220,10 +1175,12 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 		return connectingEdges;
 	}
 
+	@Override
 	public void resetAppearance() {
-		this.shape = defaultShape;
-		this.color = defaultColor;
-		this.size = defaultSize;
+		shape = defaultShape;
+		nodeShape = defaultNodeShape;
+		color = defaultColor;
+		size = defaultSize;
 	}
 
 	public Set<BiologicalNodeAbstract> getLeafNodes() {
@@ -1286,121 +1243,110 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 	}
 
 	public class NodeAttribute {
-		private NodeAttributeType type;
-		private String name;
-		private double doublevalue;
-		private String stringvalue;
+		private final NodeAttributeType type;
+		private final String name;
+		private final double doubleValue;
+		private final String stringValue;
 
-		public NodeAttribute(NodeAttributeType nodeAttributeType, String name, double value) {
+		public NodeAttribute(final NodeAttributeType nodeAttributeType, final String name, final double value) {
 			type = nodeAttributeType;
 			this.name = name;
-			doublevalue = value;
-			stringvalue = "";
+			doubleValue = value;
+			stringValue = null;
 		}
 
-		public NodeAttribute(NodeAttributeType nodeAttributeType, String name, String value) {
+		public NodeAttribute(final NodeAttributeType nodeAttributeType, final String name, final String value) {
 			type = nodeAttributeType;
 			this.name = name;
-			doublevalue = -1d;
-			stringvalue = value;
+			doubleValue = -1d;
+			stringValue = value;
 		}
 
 		public NodeAttributeType getType() {
 			return type;
 		}
 
-		public void setType(NodeAttributeType type) {
-			this.type = type;
-		}
-
 		public String getName() {
 			return name;
 		}
 
-		public void setName(String name) {
-			this.name = name;
+		public double getDoubleValue() {
+			return doubleValue;
 		}
 
-		public double getDoublevalue() {
-			return doublevalue;
-		}
-
-		public void setDoublevalue(double doublevalue) {
-			this.doublevalue = doublevalue;
-		}
-
-		public String getStringvalue() {
-			return stringvalue;
-		}
-
-		public void setStringvalue(String stringvalue) {
-			this.stringvalue = stringvalue;
-		}
-
-		private BiologicalNodeAbstract getOuterType() {
-			return BiologicalNodeAbstract.this;
+		public String getStringValue() {
+			return stringValue;
 		}
 
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			long temp;
-			temp = Double.doubleToLongBits(doublevalue);
-			result = prime * result + (int) (temp ^ (temp >>> 32));
+			result = prime * result + BiologicalNodeAbstract.this.hashCode();
+			result = prime * result + Double.hashCode(doubleValue);
 			result = prime * result + ((name == null) ? 0 : name.hashCode());
-			result = prime * result + ((stringvalue == null) ? 0 : stringvalue.hashCode());
+			result = prime * result + ((stringValue == null) ? 0 : stringValue.hashCode());
 			result = prime * result + type.getId();
 			return result;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if (obj == null) {
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
-			NodeAttribute other = (NodeAttribute) obj;
-			if (!getOuterType().equals(other.getOuterType()))
+			}
+			final NodeAttribute other = (NodeAttribute) obj;
+			if (!BiologicalNodeAbstract.this.equals(other.getOuterType())) {
 				return false;
-			if (Double.doubleToLongBits(doublevalue) != Double.doubleToLongBits(other.doublevalue))
+			}
+			if (Double.doubleToLongBits(doubleValue) != Double.doubleToLongBits(other.doubleValue)) {
 				return false;
+			}
 			if (name == null) {
-				if (other.name != null)
+				if (other.name != null) {
 					return false;
-			} else if (!name.equals(other.name))
+				}
+			} else if (!name.equals(other.name)) {
 				return false;
-			if (stringvalue == null) {
-				if (other.stringvalue != null)
+			}
+			if (stringValue == null) {
+				if (other.stringValue != null) {
 					return false;
-			} else if (!stringvalue.equals(other.stringvalue))
+				}
+			} else if (!stringValue.equals(other.stringValue)) {
 				return false;
-			if (type != other.type)
-				return false;
-			return true;
+			}
+			return type == other.type;
+		}
+
+		private BiologicalNodeAbstract getOuterType() {
+			return BiologicalNodeAbstract.this;
 		}
 	}
 
-	public void addGroup(Group group) {
-		this.groups.add(group);
+	public void addGroup(final Group group) {
+		groups.add(group);
 	}
 
-	public Group getbiggestGroup() {
-		Group bigG = null;
-		for (Group g : groups) {
-			if (bigG == null || g.size() > bigG.size()) {
-				bigG = g;
+	public Group getBiggestGroup() {
+		Group result = null;
+		for (final Group g : groups) {
+			if (result == null || g.size() > result.size()) {
+				result = g;
 			}
 		}
-		return bigG;
+		return result;
 	}
 
 	// defines parameters which are available in during transformation
 	public List<String> getTransformationParameters() {
-		List<String> list = new ArrayList<>();
+		final List<String> list = new ArrayList<>();
 		list.add("name");
 		list.add("label");
 		list.add("concentrationStart");
@@ -1411,7 +1357,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 		return list;
 	}
 
-	public String getTransformationParameterValue(String parameter) {
+	public String getTransformationParameterValue(final String parameter) {
 		switch (parameter) {
 		case "name":
 			return getName();

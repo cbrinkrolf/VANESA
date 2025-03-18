@@ -1,11 +1,11 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class Inhibitor extends BiologicalNodeAbstract {
-	public Inhibitor(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.inhibitor);
-		attributeSetter(this.getClass().getSimpleName(), this);
+	public Inhibitor(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.inhibitor, pathway);
+		attributeSetter();
 	}
 }

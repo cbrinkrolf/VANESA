@@ -1,7 +1,7 @@
 package graph.gui;
 
 import biologicalElements.EnzymeNames;
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.Pathway;
 import graph.compartment.Compartment;
 import gui.MainWindow;
@@ -45,7 +45,7 @@ public class VertexDialog {
         panel.add(new JLabel("Element"), "span 4");
 
         elementType.addItemListener(e -> {
-            if (Elementdeclerations.enzyme.equals(elementType.getSelectedItem())) {
+            if (ElementDeclarations.enzyme.equals(elementType.getSelectedItem())) {
                 elementNames.setModel(dcbm);
                 AutoCompleteDecorator.decorate(elementNames);
             } else {
@@ -57,13 +57,13 @@ public class VertexDialog {
         AutoCompleteDecorator.decorate(elementType);
         if (pw.isHeadless()) {
             if (lastTypeidx < 0) {
-                elementType.setSelectedItem(Elementdeclerations.anyBNA);
+                elementType.setSelectedItem(ElementDeclarations.anyBNA);
             } else {
                 elementType.setSelectedIndex(lastTypeidx);
             }
         } else {
             if (lastTypeidx < 0) {
-                elementType.setSelectedItem(Elementdeclerations.enzyme);
+                elementType.setSelectedItem(ElementDeclarations.enzyme);
             } else {
                 elementType.setSelectedIndex(lastTypeidx);
             }
@@ -90,9 +90,9 @@ public class VertexDialog {
     }
 
     private void addNodeItems() {
-        List<String> nodeItems = new Elementdeclerations().getNotPNNodeDeclarations();
+        List<String> nodeItems = new ElementDeclarations().getNotPNNodeDeclarations();
         if (pw.isHeadless()) {
-            elementType.addItem(Elementdeclerations.anyBNA);
+            elementType.addItem(ElementDeclarations.anyBNA);
         }
         for (String element : nodeItems) {
             elementType.addItem(element);

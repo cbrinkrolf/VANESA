@@ -1,11 +1,11 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class LNCRNA extends RNA {
-    public LNCRNA(String label, String name) {
-        super(label, name);
-        setBiologicalElement(Elementdeclerations.lncRNA);
-        attributeSetter(this.getClass().getSimpleName(), this);
-    }
+	public LNCRNA(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.lncRNA, pathway);
+		attributeSetter();
+	}
 }

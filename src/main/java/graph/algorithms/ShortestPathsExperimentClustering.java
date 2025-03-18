@@ -69,7 +69,7 @@ public class ShortestPathsExperimentClustering {
 			// into the array
 			// MARTIN: behavior of non existent experimental data?
 			try {
-				currentvalue = np.getNodeAssignmentBackwards(i).getNodeAttributeByName(experimentname).getDoublevalue();
+				currentvalue = np.getNodeAssignmentBackwards(i).getNodeAttributeByName(experimentname).getDoubleValue();
 
 			} catch (NullPointerException e) {
 				System.out.printf("node %d has no entry \'%s\' (%s) \n", i, experimentname,

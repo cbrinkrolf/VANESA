@@ -10,12 +10,8 @@ public abstract class Transition extends PNNode {
 	private String firingCondition = "true";// "time>9.8";
 	private boolean knockedOut = false;
 
-	public Transition(final String label, final String name) {
-		super(label, name);
-	}
-
-	public Transition(final String label, final String name, final Pathway pathway) {
-		super(label, name, pathway);
+	protected Transition(final String label, final String name, final String biologicalElement, final Pathway pathway) {
+		super(label, name, biologicalElement, pathway);
 	}
 
 	public boolean isSimulationActive() {
@@ -25,7 +21,7 @@ public abstract class Transition extends PNNode {
 	public void setSimulationActive(boolean simulationActive) {
 		this.simulationActive = simulationActive;
 	}
-	
+
 	public boolean isSimulationFire() {
 		return simulationFire;
 	}

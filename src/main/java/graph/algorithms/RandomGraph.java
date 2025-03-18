@@ -40,14 +40,14 @@ public class RandomGraph {
 			for (k = 1; k <= numberOfEdges; k++) {
 				if (!set.contains(nodei[k])) {
 					set.add(nodei[k]);
-					node = new Other(nodei[k] + "", nodei[k] + "");
+					node = new Other(nodei[k] + "", nodei[k] + "", pw);
 					pw.addVertex(node, new Point(150, 100));
 					nodes.put(nodei[k], node);
 					nodeNumberCounter++;
 				}
 				if (!set.contains(nodej[k])) {
 					set.add(nodej[k]);
-					node = new Other(nodej[k] + "", nodej[k] + "");
+					node = new Other(nodej[k] + "", nodej[k] + "", pw);
 					pw.addVertex(node, new Point(150, 100));
 					nodes.put(nodej[k], node);
 					nodeNumberCounter++;
@@ -57,7 +57,7 @@ public class RandomGraph {
 				if (nodeNumberCounter < numberOfNodes) {
 					if (!set.contains(k)) {
 						set.add(k);
-						node = new Other(k + "", k + "");
+						node = new Other(k + "", k + "", pw);
 						pw.addVertex(node, new Point(150, 100));
 						nodes.put(k, node);
 						nodeNumberCounter++;

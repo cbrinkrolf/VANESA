@@ -1,11 +1,11 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class Matrix extends BiologicalNodeAbstract {
-    public Matrix(String label, String name) {
-        super(label, name);
-        setBiologicalElement(Elementdeclerations.matrix);
-        attributeSetter(this.getClass().getSimpleName(), this);
-    }
+	public Matrix(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.matrix, pathway);
+		attributeSetter();
+	}
 }

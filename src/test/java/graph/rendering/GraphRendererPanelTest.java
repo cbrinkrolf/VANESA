@@ -1,6 +1,6 @@
 package graph.rendering;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -38,9 +38,9 @@ class GraphRendererPanelTest {
 		graph.add(p1, new Point2D.Float(0, 200));
 		graph.add(p2, new Point2D.Float(-100, 100));
 		graph.add(p3, new Point2D.Float(-100, -100));
-		graph.add(new PNArc(t1, p1, "a1", "a1", Elementdeclerations.pnArc, "1 + sqrt(4 / 3)"));
-		graph.add(new PNArc(p1, t2, "a2", "a2", Elementdeclerations.pnInhibitorArc, "2"));
-		graph.add(new PNArc(p1, t3, "a3", "a3", Elementdeclerations.pnTestArc, "1 + sin(3)"));
+		graph.add(new PNArc(t1, p1, "a1", "a1", ElementDeclarations.pnArc, "1 + sqrt(4 / 3)"));
+		graph.add(new PNArc(p1, t2, "a2", "a2", ElementDeclarations.pnInhibitorArc, "2"));
+		graph.add(new PNArc(p1, t3, "a3", "a3", ElementDeclarations.pnTestArc, "1 + sin(3)"));
 		for (int i = 3; i <= 8; i++) {
 			final var n = new DiscretePlace("poly" + i, "poly" + i, null);
 			n.setNodeShape(new RegularPolygonShape(i));

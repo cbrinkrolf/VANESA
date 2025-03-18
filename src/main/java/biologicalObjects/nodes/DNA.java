@@ -2,16 +2,16 @@ package biologicalObjects.nodes;
 
 import java.util.List;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class DNA extends BiologicalNodeAbstract implements NodeWithNTSequence, NodeWithLogFC {
 	private String ntSequence = "";
-	private Double logFC = 0.0;
+	private Double logFC = 0d;
 
-	public DNA(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.dna);
-		attributeSetter(this.getClass().getSimpleName(), this);
+	public DNA(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.dna, pathway);
+		attributeSetter();
 	}
 
 	public String getNtSequence() {
@@ -29,18 +29,17 @@ public class DNA extends BiologicalNodeAbstract implements NodeWithNTSequence, N
 	public void setLogFC(Double logFC) {
 		this.logFC = logFC;
 	}
-	
+
 	@Override
 	public List<String> getTransformationParameters() {
-		List<String> list = super.getTransformationParameters();
+		final List<String> list = super.getTransformationParameters();
 		list.add("logFC");
 		return list;
 	}
 
 	public String getTransformationParameterValue(String parameter) {
-		switch (parameter) {
-		case "logFC":
-			return this.getLogFC().toString();
+		if ("logFC".equals(parameter)) {
+			return logFC.toString();
 		}
 		return super.getTransformationParameterValue(parameter);
 	}

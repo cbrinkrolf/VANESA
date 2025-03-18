@@ -1,11 +1,11 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class MIRNA extends RNA {
-    public MIRNA(String label, String name) {
-        super(label, name);
-        setBiologicalElement(Elementdeclerations.miRNA);
-        attributeSetter(this.getClass().getSimpleName(), this);
-    }
+	public MIRNA(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.miRNA, pathway);
+		attributeSetter();
+	}
 }

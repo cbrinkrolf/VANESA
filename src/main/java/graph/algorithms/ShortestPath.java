@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Vector;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.GraphInstance;
@@ -64,7 +64,7 @@ public class ShortestPath {
 			}
 			for (BiologicalNodeAbstract node : pw.getGraph2().getNeighbors(p.getName())) {
 				if (mindMaps) {
-					if (node.getBiologicalElement().equals(Elementdeclerations.pathwayMap)) {
+					if (node.getBiologicalElement().equals(ElementDeclarations.pathwayMap)) {
 						relax(p.getName(), node, 10);
 					} else {
 						relax(p.getName(), node, 1);

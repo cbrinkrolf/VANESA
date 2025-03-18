@@ -173,7 +173,7 @@ public class AddRendererDialog implements ActionListener {
 				name = valuesbox.getSelectedItem().toString();
 				for (BiologicalNodeAbstract bna : GraphInstance.getVanesaGraph().getNodes()) {
 					for (NodeAttribute na : bna.getNodeAttributes()) {
-						if (na.getStringvalue().equals(name))
+						if (na.getStringValue().equals(name))
 							bnas.add(bna);
 					}
 				}
@@ -191,11 +191,11 @@ public class AddRendererDialog implements ActionListener {
 				for (BiologicalNodeAbstract bna : GraphInstance.getVanesaGraph().getNodes()) {
 					for (NodeAttribute na : bna.getNodeAttributes()) {
 
-						System.out.println(na.getName() + ": " + na.getDoublevalue() + " \t" + bna.getLabel());
+						System.out.println(na.getName() + ": " + na.getDoubleValue() + " \t" + bna.getLabel());
 						if (na.getName().equals(nodeattributesbox.getSelectedItem().toString())
-								&& na.getDoublevalue() >= min && na.getDoublevalue() <= max) {
+								&& na.getDoubleValue() >= min && na.getDoubleValue() <= max) {
 							bnas.add(bna);
-							System.out.println(na.getName() + ": " + na.getDoublevalue() + " \t" + bna.getLabel());
+							System.out.println(na.getName() + ": " + na.getDoubleValue() + " \t" + bna.getLabel());
 						}
 					}
 				}
@@ -306,7 +306,7 @@ public class AddRendererDialog implements ActionListener {
 						for (BiologicalNodeAbstract bna : GraphInstance.getVanesaGraph().getNodes()) {
 							NodeAttribute na = bna.getNodeAttributeByName(val);
 							if (na != null)
-								choices.add(na.getStringvalue());
+								choices.add(na.getStringValue());
 						}
 
 						for (String s : choices)
@@ -325,10 +325,10 @@ public class AddRendererDialog implements ActionListener {
 							NodeAttribute na = bna.getNodeAttributeByName(val);
 							if (na != null) {
 								novalues = false;
-								if (na.getDoublevalue() > max)
-									max = na.getDoublevalue();
-								if (na.getDoublevalue() < min)
-									min = na.getDoublevalue();
+								if (na.getDoubleValue() > max)
+									max = na.getDoubleValue();
+								if (na.getDoubleValue() < min)
+									min = na.getDoubleValue();
 							}
 						}
 

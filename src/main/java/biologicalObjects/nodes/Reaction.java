@@ -2,16 +2,16 @@ package biologicalObjects.nodes;
 
 import java.util.List;
 
-import biologicalElements.Elementdeclerations;
+import biologicalElements.ElementDeclarations;
+import biologicalElements.Pathway;
 
 public class Reaction extends BiologicalNodeAbstract implements DynamicNode {
 	private String maximalSpeed = "1";
 	private boolean knockedOut = false;
 
-	public Reaction(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.reaction);
-		attributeSetter(this.getClass().getSimpleName(), this);
+	public Reaction(final String label, final String name, final Pathway pathway) {
+		super(label, name, ElementDeclarations.reaction, pathway);
+		attributeSetter();
 	}
 
 	@Override
@@ -35,19 +35,19 @@ public class Reaction extends BiologicalNodeAbstract implements DynamicNode {
 	}
 
 	public List<String> getTransformationParameters() {
-        List<String> list = super.getTransformationParameters();
-        list.add("maximalSpeed");
-        list.add("isKnockedOut");
-        return list;
-    }
+		final List<String> list = super.getTransformationParameters();
+		list.add("maximalSpeed");
+		list.add("isKnockedOut");
+		return list;
+	}
 
-    public String getTransformationParameterValue(String parameter) {
-        switch (parameter) {
-            case "maximalSpeed":
-                return getMaximalSpeed();
-            case "isKnockedOut":
-                return String.valueOf(isKnockedOut());
-        }
-        return super.getTransformationParameterValue(parameter);
-    }
+	public String getTransformationParameterValue(String parameter) {
+		switch (parameter) {
+		case "maximalSpeed":
+			return getMaximalSpeed();
+		case "isKnockedOut":
+			return String.valueOf(isKnockedOut());
+		}
+		return super.getTransformationParameterValue(parameter);
+	}
 }
