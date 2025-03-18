@@ -3,7 +3,6 @@ package gui;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.Workspace;
-import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.hierarchies.AutoCoarse;
@@ -54,93 +53,89 @@ public class NodeGroupingToolBarMenuButton extends ToolBarMenuButton {
 	}
 
 	private void onMergeSelectedNodesClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			Pathway pw = GraphInstance.getPathway();
-			pw.mergeNodes(pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			pathway.mergeNodes(pathway.getSelectedNodes());
 		}
 	}
 
 	private void onGroupClicked() {
-		GraphContainer con = GraphContainer.getInstance();
-		if (con.containsPathway()) {
-			GraphInstance.getPathway().groupSelectedNodes();
-			GraphInstance.getPathway().updateMyGraph();
-			final Collection<BiologicalNodeAbstract> selection = GraphInstance.getPathway().getSelectedNodes();
-			updateEnabledStateForSelectionDependentButtons(selection);
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			pathway.groupSelectedNodes();
+			pathway.updateMyGraph();
+			updateEnabledStateForSelectionDependentButtons(pathway.getSelectedNodes());
 		}
 	}
 
 	private void onDeleteGroupClicked() {
-		GraphContainer con = GraphContainer.getInstance();
-		if (con.containsPathway()) {
-			GraphInstance.getPathway().deleteGroup();
-			GraphInstance.getPathway().updateMyGraph();
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			pathway.deleteGroup();
+			pathway.updateMyGraph();
 		}
 	}
 
 	private void onCoarseSelectedNodesClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			final Pathway pathway = GraphInstance.getPathway();
-			final PickedState<BiologicalNodeAbstract> pickedState = pathway.getGraph().getVisualizationViewer()
-					.getPickedVertexState();
-			Set<BiologicalNodeAbstract> selectedNodes = new HashSet<>(pickedState.getPicked());
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			Set<BiologicalNodeAbstract> selectedNodes = new HashSet<>(pathway.getSelectedNodes());
 			BiologicalNodeAbstract.coarse(selectedNodes);
-			GraphInstance.getPathway().updateMyGraph();
-			pickedState.clear();
+			pathway.updateMyGraph();
+			pathway.getGraph2().clearNodeSelection();
 			updateEnabledStateForSelectionDependentButtons(new HashSet<>());
 		}
 	}
 
 	private void onFlatSelectedNodesClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			final Pathway pathway = GraphInstance.getPathway();
-			final PickedState<BiologicalNodeAbstract> pickedState = pathway.getGraph().getVisualizationViewer()
-					.getPickedVertexState();
-			for (BiologicalNodeAbstract node : pickedState.getPicked()) {
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			for (BiologicalNodeAbstract node : pathway.getSelectedNodes()) {
 				node.flat();
 				pathway.updateMyGraph();
 				MainWindow.getInstance().removeTab(false, node.getTab(), node);
 			}
-			pickedState.clear();
+			pathway.getGraph2().clearNodeSelection();
 			updateEnabledStateForSelectionDependentButtons(new HashSet<>());
 		}
 	}
 
 	private void onEnterNodeClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			MainWindow w = MainWindow.getInstance();
-			GraphContainer con = GraphContainer.getInstance();
-			for (BiologicalNodeAbstract node : GraphInstance.getPathway().getGraph().getVisualizationViewer()
-					.getPickedVertexState().getPicked()) {
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			final MainWindow w = MainWindow.getInstance();
+			final GraphContainer con = GraphContainer.getInstance();
+			for (final BiologicalNodeAbstract node : pathway.getSelectedNodes()) {
 				if (!node.isCoarseNode() && !node.isMarkedAsCoarseNode()) {
 					continue;
 				}
 				w.setCursor(Cursor.WAIT_CURSOR);
-				for (BiologicalNodeAbstract n : node.getVertices().keySet()) {
+				for (final BiologicalNodeAbstract n : node.getVertices().keySet()) {
 					node.getVertices().put(n, GraphInstance.getPathway().getVertices().get(n));
 				}
-				con.addPathway(node.getLabel(), node);
+				final Pathway enteredPathway = con.addPathway(node.getLabel(), node);
 				w.addTab(node.getTab());
 				w.setCursor(Cursor.DEFAULT_CURSOR);
-				GraphInstance.getPathway().setIsPetriNet(node.isPetriNet());
+				enteredPathway.setIsPetriNet(node.isPetriNet());
 				w.getBar().updateVisibility();
 				w.updateAllGuiElements();
-				GraphInstance.getPathway().updateMyGraph();
-				GraphInstance.getPathway().getGraphRenderer().zoomAndCenterGraph();
+				enteredPathway.updateMyGraph();
+				enteredPathway.getGraphRenderer().zoomAndCenterGraph();
 			}
 		}
 	}
 
 	private void onAutoCoarseClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			AutoCoarse.coarseSeparatedSubGraphs(GraphInstance.getPathway());
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			AutoCoarse.coarseSeparatedSubGraphs(pathway);
 		}
 	}
 
 	private void onSplitNodeClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			Pathway pw = GraphInstance.getPathway();
-			pw.splitNode(pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			pathway.splitNode(pathway.getSelectedNodes());
 		}
 	}
 

@@ -39,7 +39,6 @@ import biologicalObjects.nodes.petriNet.PNNode;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
-import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphInstance;
 import gui.DetailedSimRes;
 import gui.MainWindow;
@@ -64,8 +63,6 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 	private JFreeChart chart;
 	private ValueMarker marker;
 	private Pathway pw = null;
-	private PickedState<BiologicalNodeAbstract> vState;
-	private PickedState<BiologicalEdgeAbstract> eState;
 	private SimulationResultController simResController;
 	private boolean hiddenPN = false;
 	private final JButton zoomGraphButton = new JButton("Enlarge Graph");
@@ -183,9 +180,8 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 	 */
 	private void drawPlot() {
 		chart.setNotify(false);
-		int pickedV = vState.getPicked().size();
-		int pickedE = eState.getPicked().size();
-
+		final int pickedV = pw.getGraph2().getSelectedNodeCount();
+		final int pickedE = pw.getGraph2().getSelectedEdgeCount();
 		for (int i = 0; i < seriesListR1.size(); i++) {
 			try {
 				renderer.setSeriesVisible(i, false);
@@ -201,7 +197,7 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 		boolean secondAxis = false;
 		String legendY = "Tokens";
 		if (pickedV == 0 && pickedE == 1) {
-			BiologicalEdgeAbstract bea = eState.getPicked().iterator().next();
+			BiologicalEdgeAbstract bea = pw.getGraph2().getSelectedEdges().iterator().next();
 			if (hiddenPN) {
 				bea = pw.getTransformationInformation().getPetriNet().getEdge(
 						pw.getTransformationInformation().getBnToPnMapping().get(bea.getFrom()),
@@ -225,7 +221,7 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 			}
 		} else if (pickedV == 0 && pickedE > 1) {
 			final Set<PNArc> validSet = new HashSet<>();
-			for (BiologicalEdgeAbstract bea : eState.getPicked()) {
+			for (BiologicalEdgeAbstract bea : pw.getGraph2().getSelectedEdges()) {
 				if (hiddenPN) {
 					bea = pw.getTransformationInformation().getPetriNet().getEdge(
 							pw.getTransformationInformation().getBnToPnMapping().get(bea.getFrom()),
@@ -251,7 +247,7 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 			}
 
 		} else if (pickedV == 1) {
-			BiologicalNodeAbstract bna = vState.getPicked().iterator().next();
+			BiologicalNodeAbstract bna = pw.getGraph2().getSelectedNodes().iterator().next();
 			bna = resolveReference(bna);
 			bna = resolveHidden(bna);
 			if (bna instanceof PNNode) {
@@ -288,8 +284,8 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 		} else {
 			boolean onlyT = true;
 			boolean onlyDiscreteT = true;
-			if (vState.getPicked().size() > 0) {
-				Iterator<BiologicalNodeAbstract> it = vState.getPicked().iterator();
+			if (pw.getGraph2().getSelectedNodeCount() > 0) {
+				Iterator<BiologicalNodeAbstract> it = pw.getGraph2().getSelectedNodes().iterator();
 				while (onlyT && it.hasNext()) {
 					BiologicalNodeAbstract bna = it.next();
 					bna = resolveReference(bna);
@@ -310,7 +306,7 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 
 			final Iterator<BiologicalNodeAbstract> iterator;
 			if (pickedV > 0) {
-				iterator = vState.getPicked().iterator();
+				iterator = pw.getGraph2().getSelectedNodes().iterator();
 			} else {
 				iterator = pw.getAllGraphNodes().iterator();
 			}
@@ -654,8 +650,6 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 		}
 
 		hiddenPN = !pw.isPetriNet() && pw.getTransformationInformation().getPetriNet() != null;
-		vState = pw.getGraph().getVisualizationViewer().getPickedVertexState();
-		eState = pw.getGraph().getVisualizationViewer().getPickedEdgeState();
 		simResController = pw.getPetriPropertiesNet().getSimResController();
 		renderer = new XYLineAndShapeRenderer();
 		renderer.setDrawSeriesLineAsPath(true);
@@ -683,15 +677,15 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 			}
 		}
 		renderer.setDefaultToolTipGenerator((arg0, seriesIdx, arg2) -> {
-			int pickedV = vState.getPicked().size();
-			int pickedE = eState.getPicked().size();
+			final int pickedV = pw.getGraph2().getSelectedNodeCount();
+			final int pickedE = pw.getGraph2().getSelectedEdgeCount();
 			if (seriesIdx > labelsR1.size()) {
 				// if a PN element of a transformed graph is deleted and corresponding BN node is picked
 				return "";
 			}
 
 			if (pickedV == 1 && pickedE == 0) {
-				BiologicalNodeAbstract graphElement = vState.getPicked().iterator().next();
+				BiologicalNodeAbstract graphElement = pw.getGraph2().getSelectedNodes().iterator().next();
 				graphElement = resolveReference(graphElement);
 				final BiologicalNodeAbstract bna = hiddenPN ? resolveHidden(graphElement) : graphElement;
 				if (bna instanceof Place && simResController.getAllActiveWithData(bna, SIM_TOKEN).size() <= 1) {
@@ -708,10 +702,10 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 		});
 
 		renderer.setLegendItemLabelGenerator((arg0, seriesIdx) -> {
-			final int pickedV = vState.getPicked().size();
-			final int pickedE = eState.getPicked().size();
+			final int pickedV = pw.getGraph2().getSelectedNodeCount();
+			final int pickedE = pw.getGraph2().getSelectedEdgeCount();
 			if (pickedV == 1 && pickedE == 0) {
-				BiologicalNodeAbstract graphElement = vState.getPicked().iterator().next();
+				BiologicalNodeAbstract graphElement = pw.getGraph2().getSelectedNodes().iterator().next();
 				graphElement = resolveReference(graphElement);
 				final BiologicalNodeAbstract bna = hiddenPN ? resolveHidden(graphElement) : graphElement;
 				if (bna instanceof Place && simResController.getAllActiveWithData(bna, SIM_TOKEN).size() <= 1) {
@@ -728,7 +722,7 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 				return idx2simR1.get(seriesIdx).getName();
 			}
 			if (pickedV == 0 && pickedE == 1) {
-				BiologicalEdgeAbstract bea = eState.getPicked().iterator().next();
+				BiologicalEdgeAbstract bea = pw.getGraph2().getSelectedEdges().iterator().next();
 				if (hiddenPN) {
 					bea = pw.getTransformationInformation().getPetriNet().getEdge(
 							pw.getTransformationInformation().getBnToPnMapping().get(bea.getFrom()),
@@ -746,10 +740,10 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 		});
 
 		renderer2.setLegendItemLabelGenerator((arg0, seriesIdx) -> {
-			int pickedV = vState.getPicked().size();
-			int pickedE = eState.getPicked().size();
+			final int pickedV = pw.getGraph2().getSelectedNodeCount();
+			final int pickedE = pw.getGraph2().getSelectedEdgeCount();
 			if (pickedV == 0 && pickedE == 1) {
-				BiologicalEdgeAbstract bea = eState.getPicked().iterator().next();
+				BiologicalEdgeAbstract bea = pw.getGraph2().getSelectedEdges().iterator().next();
 				if (hiddenPN) {
 					bea = pw.getTransformationInformation().getPetriNet().getEdge(
 							pw.getTransformationInformation().getBnToPnMapping().get(bea.getFrom()),
@@ -803,23 +797,23 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 		if (event.getEntity() == null || !(event.getEntity() instanceof XYItemEntity)) {
 			return;
 		}
-		final int pickedV = vState.getPicked().size();
-		final int pickedE = eState.getPicked().size();
+		final int pickedV = pw.getGraph2().getSelectedNodeCount();
+		final int pickedE = pw.getGraph2().getSelectedEdgeCount();
 		if (pickedE == 0 && pickedV == 0) {
 			final XYItemEntity entity = (XYItemEntity) event.getEntity();
 			final BiologicalNodeAbstract p = places.get(entity.getSeriesIndex());
-			vState.clear();
+			pw.getGraph2().clearNodeSelection();
 			if (hiddenPN) {
 				final Map<BiologicalNodeAbstract, PNNode> bnToPNMap = pw.getTransformationInformation()
 						.getBnToPnMapping();
 				for (final BiologicalNodeAbstract key : bnToPNMap.keySet()) {
 					if (bnToPNMap.get(key) == p) {
-						vState.pick(key, true);
+						pw.getGraph2().selectNodes(true, key);
 						break;
 					}
 				}
 			} else {
-				vState.pick(p, true);
+				pw.getGraph2().selectNodes(true, p);
 			}
 		}
 	}

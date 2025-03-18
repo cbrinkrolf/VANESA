@@ -89,7 +89,7 @@ public abstract class Place extends PNNode {
 	}
 
 	public Set<PNArc> getConflictingOutEdges() {
-		Collection<BiologicalEdgeAbstract> edges = GraphInstance.getVanesaGraph().getOutEdges(this);
+		Collection<BiologicalEdgeAbstract> edges = GraphInstance.getGraph().getOutEdges(this);
 		Set<PNArc> result = new HashSet<>();
 		if (edges != null) {
 			for (BiologicalEdgeAbstract bea : edges) {

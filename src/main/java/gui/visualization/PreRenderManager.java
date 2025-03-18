@@ -130,13 +130,13 @@ public class PreRenderManager implements ActionListener {
 		// get Pre renderers from Mygraph
 		ArrayList<Paintable> paintables = new ArrayList<>();
 		ArrayList<MyAnnotation> annotations = new ArrayList<>();
-		for (Paintable p : GraphInstance.getMyGraph().getVisualizationViewer().getPreRenderers()) {
+		for (Paintable p : GraphInstance.getPathway().getGraph().getVisualizationViewer().getPreRenderers()) {
 			if (p instanceof LocalBackboardPaintable) {
 				paintables.add(p);
 			}
 		}
 		// Get MyAnnotation objects from Annotationmanager
-		for (MyAnnotation ma : GraphInstance.getMyGraph().getAnnotationManager().getAnnotations()) {
+		for (MyAnnotation ma : GraphInstance.getPathway().getGraph().getAnnotationManager().getAnnotations()) {
 			annotations.add(ma);
 		}
 
@@ -159,7 +159,7 @@ public class PreRenderManager implements ActionListener {
 
 		for (MyAnnotation ma : annotations) {
 			tablecontent.put(rowcounter, ma);
-			rows[rowcounter][ACTIVE] = GraphInstance.getMyGraph().getAnnotationManager().isEnabled(ma);// ;
+			rows[rowcounter][ACTIVE] = GraphInstance.getPathway().getGraph().getAnnotationManager().isEnabled(ma);// ;
 			rows[rowcounter][NAME] = ma.getName();
 			rows[rowcounter][TYPE] = JUNG_ANNOTATION;
 			rows[rowcounter][COLOR] = ma.getAnnotation().getPaint();
@@ -288,10 +288,10 @@ public class PreRenderManager implements ActionListener {
 
 		case "delrenderer":
 			if (tablecontent.get(table.getSelectedRow()) instanceof LocalBackboardPaintable) {
-				GraphInstance.getMyGraph().getVisualizationViewer()
+				GraphInstance.getPathway().getGraph().getVisualizationViewer()
 						.removePreRenderPaintable((LocalBackboardPaintable) tablecontent.get(table.getSelectedRow()));
 			} else if (tablecontent.get(table.getSelectedRow()) instanceof MyAnnotation) {
-				GraphInstance.getMyGraph().getAnnotationManager()
+				GraphInstance.getPathway().getGraph().getAnnotationManager()
 						.remove((MyAnnotation) tablecontent.get(table.getSelectedRow()));
 			}
 

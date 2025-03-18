@@ -47,7 +47,7 @@ public class GraphSettings {
 
 	public void setNodeLabel(Integer nodeLabel) {
 		this.nodeLabel = nodeLabel;
-		// GraphInstance.getMyGraph().updateAllNodeLabels();
+		// GraphInstance.getPathway().getGraph().updateAllNodeLabels();
 	}
 
 	public Integer getEdgeLabel() {
@@ -74,7 +74,7 @@ public class GraphSettings {
 
 	public void setEdgeLabel(Integer edgeLabel) {
 		this.edgeLabel = edgeLabel;
-		// GraphInstance.getMyGraph().updateAllEdgeLabels();
+		// GraphInstance.getPathway().getGraph().updateAllEdgeLabels();
 	}
 
 	public int getPixelOffset() {

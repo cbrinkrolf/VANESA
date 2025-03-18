@@ -46,10 +46,10 @@ public class LayoutConfig {
 	}
 
 	public static boolean askBeforeLayoutIfClustersPresent() {
-		if (GraphInstance.getMyGraph().getAnnotationManager().getAnnotations().isEmpty()) {
+		if (GraphInstance.getPathway().getGraph().getAnnotationManager().getAnnotations().isEmpty()) {
 			return true;
 		}
-		final int option = JOptionPane.showConfirmDialog(GraphInstance.getMyGraph().getVisualizationViewer(),
+		final int option = JOptionPane.showConfirmDialog(GraphInstance.getPathway().getGraph().getVisualizationViewer(),
 				"This graph contains selected clusters,\nall selected clusters maybe out of date\nafter new layout!",
 				"continue", JOptionPane.YES_NO_OPTION);
 		return option == JOptionPane.YES_OPTION;

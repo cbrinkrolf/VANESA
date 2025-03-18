@@ -22,7 +22,6 @@ import graph.layouts.HierarchicalCircleLayoutConfig;
 import graph.operations.layout.hct.HCTLayoutOperation;
 
 public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements ChangeListener, ActionListener {
-
 	private static final long serialVersionUID = 852123;
 
 	private static HCTLayoutConfig instance;
@@ -67,7 +66,7 @@ public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		groupSeperationSlider.setMajorTickSpacing(20);
 		groupSeperationSlider.setMinorTickSpacing(5);
 		groupSeperationSlider.setPaintTicks(true);
-		Hashtable<Integer, JLabel> sepLabels = new Hashtable<Integer, JLabel>();
+		Hashtable<Integer, JLabel> sepLabels = new Hashtable<>();
 		sepLabels.put(1, new JLabel("min"));
 		sepLabels.put(100, new JLabel("max"));
 		groupSeperationSlider.setLabelTable(sepLabels);

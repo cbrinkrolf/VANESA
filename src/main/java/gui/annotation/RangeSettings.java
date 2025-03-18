@@ -64,7 +64,7 @@ public class RangeSettings extends JPanel implements ActionListener {
 	}
 
 	public int showDialog() {
-		int option = JOptionPane.showOptionDialog(GraphInstance.getMyGraph().getVisualizationViewer(), this,
+		int option = JOptionPane.showOptionDialog(GraphInstance.getPathway().getGraph().getVisualizationViewer(), this,
 				"Layout settings", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				new JButton[] { applyChange, cancel }, applyChange);
 		return option;
@@ -107,7 +107,7 @@ public class RangeSettings extends JPanel implements ActionListener {
 		} else if (e.getSource() == this.fillColor || e.getSource() == this.outlineColor
 				|| e.getSource() == this.textColor) {
 			JButton button = (JButton) e.getSource();
-			MyColorChooser mc = new MyColorChooser(GraphInstance.getMyGraph().getVisualizationViewer(), "Choose color",
+			MyColorChooser mc = new MyColorChooser(GraphInstance.getPathway().getGraph().getVisualizationViewer(), "Choose color",
 					true, button.getBackground());
 			if (mc.isOkAction()) {
 				button.setBackground(mc.getColor());

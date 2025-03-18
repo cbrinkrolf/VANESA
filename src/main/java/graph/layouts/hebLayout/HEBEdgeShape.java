@@ -73,7 +73,7 @@ public class HEBEdgeShape<V, E> extends EdgeShape<V, E> {
 			Pair<BiologicalNodeAbstract> endpointNodes = new Pair<>((BiologicalNodeAbstract) endpoints.getFirst(),
 					(BiologicalNodeAbstract) endpoints.getSecond());
 			// current MyGraph
-			VanesaGraph myGraph = GraphInstance.getVanesaGraph();
+			VanesaGraph myGraph = GraphInstance.getGraph();
 			// If Loop, draw loop.
 			if (endpoints != null) {
 				boolean isLoop = endpoints.getFirst().equals(endpoints.getSecond());

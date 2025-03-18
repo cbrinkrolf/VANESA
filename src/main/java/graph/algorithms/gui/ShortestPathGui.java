@@ -107,7 +107,7 @@ public class ShortestPathGui implements ActionListener {
 		Pathway pw = GraphInstance.getPathway();
 		pw.getGraph().setMouseModeTransform();
 		if ("path".equals(event)) {
-			pw.getGraph().enableGraphTheory();
+			pw.getGraph2().enableGraphTheory();
 			final BiologicalNodeAbstract bna1 = table.get(fromBox.getSelectedItem().toString());
 			final BiologicalNodeAbstract bna2 = table.get(ToBox.getSelectedItem().toString());
 			final ShortestPath sp = new ShortestPath(bna1, bna2, mindMaps.isSelected());

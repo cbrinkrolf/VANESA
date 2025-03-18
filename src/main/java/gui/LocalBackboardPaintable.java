@@ -52,7 +52,7 @@ public class LocalBackboardPaintable implements VisualizationViewer.Paintable {
 	public void paint(Graphics g) {
 		if (active) {
 			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = GraphInstance
-					.getMyGraph().getVisualizationViewer();
+					.getPathway().getGraph().getVisualizationViewer();
 			Graphics2D g2d = (Graphics2D) g;
 			AffineTransform oldXform = g2d.getTransform();
 			AffineTransform lat = vv.getRenderContext()
@@ -69,7 +69,7 @@ public class LocalBackboardPaintable implements VisualizationViewer.Paintable {
 			g2d.setColor(bgcolor);
 			for (BiologicalNodeAbstract bna : bnas) {
 				vv.getModel().getGraphLayout().getSize();
-				Point2D p = GraphInstance.getMyGraph().getVertexLocation(bna);
+				Point2D p = GraphInstance.getGraph().getNodePosition(bna);
 				double px = p.getX();
 				double py = p.getY();
 				int drawSizeHalf = drawsize / 2;

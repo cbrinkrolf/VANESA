@@ -170,7 +170,7 @@ public class GraphNodeDimensionGUI implements ActionListener {
 			switch (chooseAlgorithm.getSelectedIndex()) {
 			case 0:
 				// Reset to standard node size of 1
-				GraphInstance.getVanesaGraph().getNodes().forEach(bna -> bna.setSize(1d));
+				GraphInstance.getGraph().getNodes().forEach(bna -> bna.setSize(1d));
 				nodeSizeFromSpinner.setEnabled(false);
 				nodeSizeToSpinner.setEnabled(false);
 				resizeButton.setEnabled(false);

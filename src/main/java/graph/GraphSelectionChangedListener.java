@@ -1,5 +1,7 @@
 package graph;
 
 public interface GraphSelectionChangedListener {
-	void onSelectionChanged();
+	void onNodeSelectionChanged();
+
+	void onEdgeSelectionChanged();
 }

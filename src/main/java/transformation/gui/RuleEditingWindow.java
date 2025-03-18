@@ -35,8 +35,8 @@ import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
-import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphContainer;
+import graph.GraphSelectionChangedListener;
 import graph.VanesaGraph;
 import graph.rendering.VanesaGraphRendererPanel;
 import gui.ImagePath;
@@ -564,122 +564,124 @@ public class RuleEditingWindow implements ActionListener {
 			bn.getGraph().setMouseModePick();
 		}
 		GraphContainer.getInstance().addPathway(bn.getName(), bn);
+		final VanesaGraph bnGraph = bn.getGraph2();
 		if (rule.isPNEmpty()) {
 			pn.getGraph().setMouseModeEditing();
 		} else {
 			pn.getGraph().setMouseModePick();
 		}
 		GraphContainer.getInstance().addPathway(pn.getName(), pn);
-		PickedState<BiologicalNodeAbstract> vertexStateBN = bn.getGraph().getVisualizationViewer()
-				.getPickedVertexState();
-		PickedState<BiologicalEdgeAbstract> edgeStateBN = bn.getGraph().getVisualizationViewer().getPickedEdgeState();
-		PickedState<BiologicalNodeAbstract> vertexStatePN = pn.getGraph().getVisualizationViewer()
-				.getPickedVertexState();
-		PickedState<BiologicalEdgeAbstract> edgeStatePN = pn.getGraph().getVisualizationViewer().getPickedEdgeState();
-
-		vertexStateBN.addItemListener(e -> {
-			if (vertexStateBN.getPicked().size() == 1 && vertexStatePN.getPicked().size() == 1) {
-				btnAddMapping.setEnabled(
-						!bnToPn.containsKey(vertexStateBN.getPicked().iterator().next()) && !bnToPn.containsValue(
-								vertexStatePN.getPicked().iterator().next()));
-			} else {
-				btnAddMapping.setEnabled(false);
-			}
-			if (!pickLock) {
-				if (vertexStateBN.getPicked().size() == 1) {
-					pickLock = true;
-					exactIncidenceChk.setEnabled(true);
-					BiologicalNodeAbstract bna = vertexStateBN.getPicked().iterator().next();
-					if (bnToPn.containsKey(bna)) {
-						vertexStatePN.clear();
-						vertexStatePN.pick(bnToPn.get(bna), true);
-						gaPN = bnToPn.get(bna);
-						elementTypePN.setText(bnToPn.get(bna).getBiologicalElement());
-						elementNamePN.setText(bnToPn.get(bna).getName());
+		final VanesaGraph pnGraph = pn.getGraph2();
+		bnGraph.addSelectionChangedListener(new GraphSelectionChangedListener() {
+			@Override
+			public void onNodeSelectionChanged() {
+				if (bnGraph.getSelectedNodeCount() == 1 && pnGraph.getSelectedNodeCount() == 1) {
+					btnAddMapping.setEnabled(
+							!bnToPn.containsKey(bnGraph.getSelectedNodes().iterator().next()) && !bnToPn.containsValue(
+									pnGraph.getSelectedNodes().iterator().next()));
+				} else {
+					btnAddMapping.setEnabled(false);
+				}
+				if (!pickLock) {
+					if (bnGraph.getSelectedNodeCount() == 1) {
+						pickLock = true;
+						exactIncidenceChk.setEnabled(true);
+						final BiologicalNodeAbstract bna = bnGraph.getSelectedNodes().iterator().next();
+						if (bnToPn.containsKey(bna)) {
+							pnGraph.clearNodeSelection();
+							pnGraph.selectNodes(true, bnToPn.get(bna));
+							gaPN = bnToPn.get(bna);
+							elementTypePN.setText(bnToPn.get(bna).getBiologicalElement());
+							elementNamePN.setText(bnToPn.get(bna).getName());
+						}
+						pickLock = false;
+						gaBN = bna;
+						elementTypeBN.setText(bna.getBiologicalElement());
+						elementNameBN.setText(bna.getName());
+						exactIncidenceChk.setSelected(exactIncidence.contains(bna));
+					} else {
+						gaBN = null;
+						elementTypeBN.setText("");
+						elementNameBN.setText("");
+						exactIncidenceChk.setSelected(false);
+						exactIncidenceChk.setEnabled(false);
 					}
-					pickLock = false;
-					gaBN = bna;
-					elementTypeBN.setText(bna.getBiologicalElement());
-					elementNameBN.setText(bna.getName());
-					exactIncidenceChk.setSelected(exactIncidence.contains(bna));
+				}
+			}
+
+			@Override
+			public void onEdgeSelectionChanged() {
+				if (bnGraph.getSelectedEdgeCount() == 1) {
+					final BiologicalEdgeAbstract edge = bnGraph.getSelectedEdges().iterator().next();
+					gaBN = edge;
+					elementTypeBN.setText(edge.getBiologicalElement());
+					elementNameBN.setText(edge.getName());
+					isDirected.setEnabled(true);
+					isDirected.setSelected(edge.isDirected());
 				} else {
 					gaBN = null;
 					elementTypeBN.setText("");
 					elementNameBN.setText("");
 					exactIncidenceChk.setSelected(false);
 					exactIncidenceChk.setEnabled(false);
+					isDirected.setEnabled(false);
 				}
 			}
 		});
-		edgeStateBN.addItemListener(e -> {
-			if (edgeStateBN.getPicked().size() == 1) {
-				BiologicalEdgeAbstract edge = edgeStateBN.getPicked().iterator().next();
-				gaBN = edge;
-				elementTypeBN.setText(edge.getBiologicalElement());
-				elementNameBN.setText(edge.getName());
-				isDirected.setEnabled(true);
-				isDirected.setSelected(edge.isDirected());
-			} else {
-				gaBN = null;
-				elementTypeBN.setText("");
-				elementNameBN.setText("");
-				exactIncidenceChk.setSelected(false);
-				exactIncidenceChk.setEnabled(false);
-				isDirected.setEnabled(false);
-			}
-		});
-
-		vertexStatePN.addItemListener(e -> {
-			if (vertexStateBN.getPicked().size() == 1 && vertexStatePN.getPicked().size() == 1) {
-				btnAddMapping.setEnabled(
-						!bnToPn.containsKey(vertexStateBN.getPicked().iterator().next()) && !bnToPn.containsValue(
-								vertexStatePN.getPicked().iterator().next()));
-			} else {
-				btnAddMapping.setEnabled(false);
-			}
-			if (!pickLock) {
-				if (vertexStatePN.getPicked().size() == 1) {
-					pickLock = true;
-					BiologicalNodeAbstract bna = vertexStatePN.getPicked().iterator().next();
-					if (bnToPn.containsValue(bna)) {
-						vertexStateBN.clear();
-						for (BiologicalNodeAbstract b : bnToPn.keySet()) {
-							if (bnToPn.get(b) == bna) {
-								vertexStateBN.pick(b, true);
-								gaBN = b;
-								elementTypeBN.setText(b.getBiologicalElement());
-								elementNameBN.setText(b.getName());
-								break;
+		pn.getGraph2().addSelectionChangedListener(new GraphSelectionChangedListener() {
+			@Override
+			public void onNodeSelectionChanged() {
+				if (bnGraph.getSelectedNodeCount() == 1 && pnGraph.getSelectedNodeCount() == 1) {
+					btnAddMapping.setEnabled(
+							!bnToPn.containsKey(bnGraph.getSelectedNodes().iterator().next()) && !bnToPn.containsValue(
+									pnGraph.getSelectedNodes().iterator().next()));
+				} else {
+					btnAddMapping.setEnabled(false);
+				}
+				if (!pickLock) {
+					if (pnGraph.getSelectedNodeCount() == 1) {
+						pickLock = true;
+						BiologicalNodeAbstract bna = pnGraph.getSelectedNodes().iterator().next();
+						if (bnToPn.containsValue(bna)) {
+							bnGraph.clearNodeSelection();
+							for (BiologicalNodeAbstract b : bnToPn.keySet()) {
+								if (bnToPn.get(b) == bna) {
+									bnGraph.selectNodes(true, b);
+									gaBN = b;
+									elementTypeBN.setText(b.getBiologicalElement());
+									elementNameBN.setText(b.getName());
+									break;
+								}
 							}
 						}
+						pickLock = false;
+						gaPN = bna;
+						elementTypePN.setText(bna.getBiologicalElement());
+						elementNamePN.setText(bna.getName());
+						populateTransformationParameterPanel();
+					} else {
+						gaPN = null;
+						elementTypePN.setText("");
+						elementNamePN.setText("");
 					}
-					pickLock = false;
-					gaPN = bna;
-					elementTypePN.setText(bna.getBiologicalElement());
-					elementNamePN.setText(bna.getName());
+				} else if (pnGraph.getSelectedNodeCount() == 1) {
+					populateTransformationParameterPanel();
+				}
+			}
+
+			@Override
+			public void onEdgeSelectionChanged() {
+				if (pnGraph.getSelectedEdgeCount() == 1) {
+					final BiologicalEdgeAbstract edge = pnGraph.getSelectedEdges().iterator().next();
+					gaPN = edge;
+					elementTypePN.setText(edge.getBiologicalElement());
+					elementNamePN.setText(edge.getName());
 					populateTransformationParameterPanel();
 				} else {
 					gaPN = null;
 					elementTypePN.setText("");
 					elementNamePN.setText("");
 				}
-			} else {
-				if (vertexStatePN.getPicked().size() == 1) {
-					populateTransformationParameterPanel();
-				}
-			}
-		});
-		edgeStatePN.addItemListener(e -> {
-			if (edgeStatePN.getPicked().size() == 1) {
-				BiologicalEdgeAbstract edge = edgeStatePN.getPicked().iterator().next();
-				gaPN = edge;
-				elementTypePN.setText(edge.getBiologicalElement());
-				elementNamePN.setText(edge.getName());
-				populateTransformationParameterPanel();
-			} else {
-				gaPN = null;
-				elementTypePN.setText("");
-				elementNamePN.setText("");
 			}
 		});
 		for (KeyListener k : bn.getGraph().getVisualizationViewer().getKeyListeners()) {
@@ -813,7 +815,7 @@ public class RuleEditingWindow implements ActionListener {
 		parametersPanel.add(new JSeparator(), "span 2, growx, wrap");
 
 		final VanesaGraph pnGraph = pn.getGraph2();
-		if (pnGraph.getSelectedNodes().size() == 1) {
+		if (pnGraph.getSelectedNodeCount() == 1) {
 			final BiologicalNodeAbstract bna = pnGraph.getSelectedNodes().iterator().next();
 			final List<String> params = bna.getTransformationParameters();
 			// set default values for newly added nodes
@@ -840,7 +842,7 @@ public class RuleEditingWindow implements ActionListener {
 				parametersPanel.add(new JLabel(param + ":"), "");
 				parametersPanel.add(field, "wrap");
 			}
-		} else if (pnGraph.getSelectedEdges().size() == 1) {
+		} else if (pnGraph.getSelectedEdgeCount() == 1) {
 			final BiologicalEdgeAbstract bea = pnGraph.getSelectedEdges().iterator().next();
 			final List<String> params = bea.getTransformationParameters();
 			// set default values for newly added nodes

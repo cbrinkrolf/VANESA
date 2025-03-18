@@ -39,7 +39,7 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	public HierarchicalCircleLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g) {
 		super(g);
 		graph = g;
-		myGraph = GraphInstance.getVanesaGraph();
+		myGraph = GraphInstance.getGraph();
 	}
 
 	public HierarchicalCircleLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g,
@@ -137,12 +137,12 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 			if (circleVertexDataMap.get(v) == null) {
 				continue;
 			}
-			nodePoint = GraphInstance.getVanesaGraph().getNodePosition(v);
+			nodePoint = GraphInstance.getGraph().getNodePosition(v);
 			nodeAngle = Circle.getAngle(getCenterPoint(), nodePoint);
 			finalAngle = nodeAngle + (movementAngle);
 			Point2D vp = layout.apply(v);
 			vp.setLocation(getPointOnCircle(finalAngle, circleVertexDataMap.get(v).getCircleNumber()));
-			GraphInstance.getVanesaGraph().setNodePosition(v, vp.getX(), vp.getY());
+			GraphInstance.getGraph().setNodePosition(v, vp.getX(), vp.getY());
 			layout.setLocation(v, vp);
 		}
 	}
@@ -156,7 +156,7 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 			groupNodes();
 			initialize();
 		} else {
-			VanesaGraph g = GraphInstance.getVanesaGraph();
+			VanesaGraph g = GraphInstance.getGraph();
 			HashSet<BiologicalNodeAbstract> orderNodes = new HashSet<>(g.getNodes());
 			orderNodes.removeAll(circleVertexDataMap.keySet());
 			if (!orderNodes.isEmpty()) {
@@ -237,7 +237,7 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	 */
 	protected class AngleComparator implements Comparator<BiologicalNodeAbstract> {
 		public int compare(BiologicalNodeAbstract n1, BiologicalNodeAbstract n2) {
-			VanesaGraph myGraph = GraphInstance.getVanesaGraph();
+			VanesaGraph myGraph = GraphInstance.getGraph();
 			BiologicalNodeAbstract n1P = n1.getCurrentShownParentNode(myGraph).getParentNode();
 			BiologicalNodeAbstract n2P = n2.getCurrentShownParentNode(myGraph).getParentNode();
 			Set<BiologicalNodeAbstract> n1G = new HashSet<>();

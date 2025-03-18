@@ -421,10 +421,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 			for (BiologicalNodeAbstract leafNode : ln) {
 				getVertices().put(leafNode, getRootPathway().getVertices().get(leafNode));
 			}
+			final VanesaGraph graph = GraphInstance.getGraph();
 			for (BiologicalNodeAbstract n : vertices) {
 				n.setParentNode(this);
-				n.setParentNodeDistance(Circle.get2Ddistance(GraphInstance.getMyGraph().getVertexLocation(this),
-						vertexLocations.get(n)));
+				n.setParentNodeDistance(Circle.get2Ddistance(graph.getNodePosition(this), vertexLocations.get(n)));
 			}
 			updateNodeType();
 			return true;

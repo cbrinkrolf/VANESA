@@ -9,7 +9,7 @@ public abstract class LayoutConfigPanel extends JPanel {
 	private static final long serialVersionUID = -6475804437343077119L;
 
 	protected VanesaGraph getGraph() {
-		return GraphInstance.getVanesaGraph();
+		return GraphInstance.getGraph();
 	}
 
 	public void resetValues() {

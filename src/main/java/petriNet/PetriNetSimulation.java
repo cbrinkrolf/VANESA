@@ -393,7 +393,7 @@ public class PetriNetSimulation implements ActionListener {
 
 	private Thread getRedrawGraphThread() {
 		return new Thread(() -> {
-			pw.getGraph().getVisualizationViewer().requestFocus();
+			pw.getGraphRenderer().requestFocus();
 			List<Double> v = null;
 			DecimalFormat df = new DecimalFormat("#.#####");
 			df.setRoundingMode(RoundingMode.HALF_UP);

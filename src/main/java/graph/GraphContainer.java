@@ -108,9 +108,8 @@ public class GraphContainer {
 
 	public void changeMouseFunction(String function) {
 		mouseFunction = function;
-		for (Entry<String, Pathway> entry : map.entrySet()) {
-			Pathway p = entry.getValue();
-			MyGraph g = p.getGraph();
+		for (final Pathway pathway : map.values()) {
+			final MyGraph g = pathway.getGraph();
 			if (function.equals("move")) {
 				g.setMouseModeTransform();
 			} else if (function.equals("pick")) {

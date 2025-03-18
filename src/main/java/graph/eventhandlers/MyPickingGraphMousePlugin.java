@@ -17,6 +17,8 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import graph.VanesaGraph;
+import graph.operations.layout.hc.HierarchicalCircleLayoutOperation;
 import org.apache.commons.lang3.StringUtils;
 
 import biologicalElements.Pathway;
@@ -74,9 +76,9 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				super.mouseReleased(e);
 				return;
 			}
-			if (pw.getGraph().getLayout() instanceof HierarchicalCircleLayout) {
-				HierarchicalCircleLayout hclayout = (HierarchicalCircleLayout) pw.getGraph().getLayout();
-				hclayout.saveCurrentOrder();
+			if (pw.getGraph2().getLayout() instanceof HierarchicalCircleLayoutOperation) {
+				HierarchicalCircleLayoutOperation hclayout = (HierarchicalCircleLayoutOperation) pw.getGraph2().getLayout();
+				// TODO: hclayout.saveCurrentOrder();
 			}
 			// Find coarse nodes in specified environment of the final mouse position.
 			GraphElementAccessor<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport = vv.getPickSupport();
@@ -92,21 +94,21 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 			} else {
 				super.mouseReleased(e);
 				Point2D movement = new Point2D.Double();
-				MyGraph graph = pw.getGraph();
+				VanesaGraph graph = pw.getGraph2();
 				for (BiologicalNodeAbstract selectedNode : selectedNodes) {
 					if (selectedNode.isCoarseNode()) {
 						movement.setLocation(
-								graph.getVertexLocation(selectedNode).getX()
-										- oldVertexPositions.get(selectedNode).getX(),
-								graph.getVertexLocation(selectedNode).getY()
-										- oldVertexPositions.get(selectedNode).getY());
+								graph.getNodePosition(selectedNode).getX() - oldVertexPositions.get(selectedNode)
+										.getX(),
+								graph.getNodePosition(selectedNode).getY() - oldVertexPositions.get(selectedNode)
+										.getY());
 						for (BiologicalNodeAbstract child : selectedNode.getVertices().keySet()) {
-							pw.getVertices().get(child)
-									.setLocation(Circle.addPoints(pw.getVertices().get(child), movement));
+							pw.getVertices().get(child).setLocation(
+									Circle.addPoints(pw.getVertices().get(child), movement));
 						}
 					} else {
 						if (pw.getVertices().containsKey(selectedNode)) {
-							pw.getVertices().get(selectedNode).setLocation(graph.getVertexLocation(selectedNode));
+							pw.getVertices().get(selectedNode).setLocation(graph.getNodePosition(selectedNode));
 						}
 					}
 				}
@@ -137,7 +139,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 		Set<BiologicalNodeAbstract> selection = new HashSet<>(pw.getSelectedNodes());
 		if (!vertex.addToCoarseNode(selection, oldVertexPositions)) {
 			for (BiologicalNodeAbstract node : selection) {
-				pw.getGraph().moveVertex(node, oldVertexPositions.get(node).getX(),
+				pw.getGraph2().setNodePosition(node, oldVertexPositions.get(node).getX(),
 						oldVertexPositions.get(node).getY());
 			}
 		} else {
@@ -154,36 +156,32 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 
 			originalSelection.clear();
 			originalSelection.addAll(pw.getSelectedNodes());
-			if (pw.getGraph().getLayout() instanceof HierarchicalCircleLayout) {
-				HierarchicalCircleLayout hcLayout = (HierarchicalCircleLayout) pw.getGraph().getLayout();
+			if (pw.getGraph2().getLayout() instanceof HierarchicalCircleLayoutOperation) {
+				final var hcLayout = (HierarchicalCircleLayoutOperation) pw.getGraph2().getLayout();
 				if (hcLayout.getConfig().getMoveInGroups()) {
 					for (BiologicalNodeAbstract selectedNode : pw.getSelectedNodes()) {
+						/* TODO
 						for (BiologicalNodeAbstract node : hcLayout.getNodesGroup(selectedNode)) {
 							pw.getGraph().getVisualizationViewer().getPickedVertexState().pick(node, true);
 						}
+						*/
 					}
 				}
 			}
 			saveOldVertexPositions();
-
 			// selecting edges with offset of mouse position
 			if (pw.getSelectedNodes().isEmpty() && pw.getSelectedEdges().isEmpty()) {
 				Point2D ip = e.getPoint();
-				// System.out.println(super.edge == null);
 				int counter = 1;
 				double dx = ip.getX();
 				double dy = ip.getY();
-				// System.out.println("start x: "+dx+" y:"+dy);
-
 				int xyEdgeSelectionOffset = settings.getPixelOffset();
-
 				while (edge == null && counter <= xyEdgeSelectionOffset) {
 					for (int i = -xyEdgeSelectionOffset; i < xyEdgeSelectionOffset; i++) {
 						counter++;
 						for (int j = i; j < xyEdgeSelectionOffset; j++) {
 							dx = ip.getX() + i;
 							dy = ip.getY() + j;
-							// System.out.println("x: "+dx+" y:"+dy);
 							if ((super.edge = vv.getPickSupport().getEdge(vv.getGraphLayout(), dx, dy)) != null) {
 								vv.getPickedEdgeState().clear();
 								vv.getPickedEdgeState().pick(super.edge, true);
@@ -192,9 +190,8 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 					}
 				}
 			}
-
-			if (pw.getSelectedNodes().isEmpty() && pw.getSelectedEdges().isEmpty()
-					&& SwingUtilities.isLeftMouseButton(e)) {
+			if (pw.getSelectedNodes().isEmpty() && pw.getSelectedEdges().isEmpty() && SwingUtilities.isLeftMouseButton(
+					e)) {
 				mousePressedAnnotation(e);
 			} else {
 				setModifyShape(false);
@@ -205,7 +202,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	private void saveOldVertexPositions() {
 		oldVertexPositions.clear();
 		for (BiologicalNodeAbstract vertex : pw.getSelectedNodes()) {
-			oldVertexPositions.put(vertex, pw.getGraph().getVertexLocation(vertex));
+			oldVertexPositions.put(vertex, pw.getGraph2().getNodePosition(vertex));
 		}
 	}
 
@@ -236,8 +233,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 			if (this.currentAnnotation != null && SwingUtilities.isLeftMouseButton(e)) {
 				this.mouseDraggedAnnotation(e);
 			} else {
-				if (!(pw.getGraph().getLayout() instanceof HierarchicalCircleLayout)) {
-
+				if (!(pw.getGraph2().getLayout() instanceof HierarchicalCircleLayoutOperation)) {
 					if (SwingUtilities.isRightMouseButton(e)) {
 						if (!dragging) {
 							dragging = true;
@@ -281,11 +277,11 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				} else {
 					if (!locked) {
 						if (vertex != null) {
-							HierarchicalCircleLayout hcLayout = (HierarchicalCircleLayout) pw.getGraph().getLayout();
+							HierarchicalCircleLayoutOperation hcLayout = (HierarchicalCircleLayoutOperation) pw.getGraph2().getLayout();
 							// mouse position
 							Point p = e.getPoint();
 							// move nodes in layout
-							hcLayout.moveOnCircle(p, down, vv);
+							// TODO: hcLayout.moveOnCircle(p, down, vv);
 							down = p;
 						} else {
 							Point2D out = e.getPoint();
@@ -333,7 +329,6 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 		pressed = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
 		MyAnnotationManager am = pw.getGraph().getAnnotationManager();
 		MyAnnotation ma = am.getMyAnnotations(e.getPoint());
-		// System.out.println(ma);
 		if (GraphInstance.getSelectedObject() == null) {
 			setModifyShape(false);
 		}

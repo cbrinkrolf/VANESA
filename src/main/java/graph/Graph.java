@@ -25,13 +25,13 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 	public final void selectNodes(final V... nodes) {
 		selectedNodes.clear();
 		Collections.addAll(selectedNodes, nodes);
-		invokeSelectionChangedListeners();
+		invokeSelectionChangedListenersForNodes();
 	}
 
 	public void selectNodes(final Collection<V> nodes) {
 		selectedNodes.clear();
 		selectedNodes.addAll(nodes);
-		invokeSelectionChangedListeners();
+		invokeSelectionChangedListenersForNodes();
 	}
 
 	@SafeVarargs
@@ -40,7 +40,7 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 			selectedNodes.clear();
 		}
 		Collections.addAll(selectedNodes, nodes);
-		invokeSelectionChangedListeners();
+		invokeSelectionChangedListenersForNodes();
 	}
 
 	public void selectNodes(final boolean additive, final Collection<V> nodes) {
@@ -48,20 +48,20 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 			selectedNodes.clear();
 		}
 		selectedNodes.addAll(nodes);
-		invokeSelectionChangedListeners();
+		invokeSelectionChangedListenersForNodes();
 	}
 
 	@SafeVarargs
 	public final void selectEdges(final E... edges) {
 		selectedEdges.clear();
 		Collections.addAll(selectedEdges, edges);
-		invokeSelectionChangedListeners();
+		invokeSelectionChangedListenersForEdges();
 	}
 
 	public void selectEdges(final Collection<E> edges) {
 		selectedEdges.clear();
 		selectedEdges.addAll(edges);
-		invokeSelectionChangedListeners();
+		invokeSelectionChangedListenersForEdges();
 	}
 
 	@SafeVarargs
@@ -70,7 +70,7 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 			selectedEdges.clear();
 		}
 		Collections.addAll(selectedEdges, edges);
-		invokeSelectionChangedListeners();
+		invokeSelectionChangedListenersForEdges();
 	}
 
 	public final void selectEdges(final boolean additive, final Collection<E> edges) {
@@ -78,17 +78,17 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 			selectedEdges.clear();
 		}
 		selectedEdges.addAll(edges);
-		invokeSelectionChangedListeners();
+		invokeSelectionChangedListenersForEdges();
 	}
 
 	public void clearNodeSelection() {
 		selectedNodes.clear();
-		invokeSelectionChangedListeners();
+		invokeSelectionChangedListenersForNodes();
 	}
 
 	public void clearEdgeSelection() {
 		selectedEdges.clear();
-		invokeSelectionChangedListeners();
+		invokeSelectionChangedListenersForEdges();
 	}
 
 	public void clearSelection() {
@@ -101,8 +101,16 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 		return selectedNodes;
 	}
 
+	public int getSelectedNodeCount() {
+		return selectedNodes.size();
+	}
+
 	public Collection<E> getSelectedEdges() {
 		return selectedEdges;
+	}
+
+	public int getSelectedEdgeCount() {
+		return selectedEdges.size();
 	}
 
 	public boolean isSelected(final V node) {
@@ -208,7 +216,20 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 
 	private void invokeSelectionChangedListeners() {
 		for (final GraphSelectionChangedListener listener : selectionChangedListeners) {
-			listener.onSelectionChanged();
+			listener.onNodeSelectionChanged();
+			listener.onEdgeSelectionChanged();
+		}
+	}
+
+	private void invokeSelectionChangedListenersForNodes() {
+		for (final GraphSelectionChangedListener listener : selectionChangedListeners) {
+			listener.onNodeSelectionChanged();
+		}
+	}
+
+	private void invokeSelectionChangedListenersForEdges() {
+		for (final GraphSelectionChangedListener listener : selectionChangedListeners) {
+			listener.onEdgeSelectionChanged();
 		}
 	}
 

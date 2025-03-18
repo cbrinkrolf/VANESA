@@ -25,7 +25,6 @@ import graph.gui.CoarseNodeDeleteDialog;
 import graph.gui.EdgeDeleteDialog;
 import graph.gui.Parameter;
 import graph.jung.classes.MyGraph;
-import graph.jung.classes.MyVisualizationViewer;
 import graph.layouts.Circle;
 import graph.rendering.VanesaGraphRendererPanel;
 import gui.GraphTab;
@@ -207,7 +206,7 @@ public class Pathway implements Cloneable {
 	}
 
 	/**
-	 * Add an edge to the current view (MyGraph)
+	 * Add an edge to the current view
 	 *
 	 * @param bea   The edge
 	 * @param force If true, missing nodes are added before to guarantee that the edge will be added
@@ -396,7 +395,7 @@ public class Pathway implements Cloneable {
 		return graph2.getEdgeCount();
 	}
 
-	public void mergeNodes(Set<BiologicalNodeAbstract> nodes) {
+	public void mergeNodes(final Collection<BiologicalNodeAbstract> nodes) {
 		if (nodes.isEmpty()) {
 			return;
 		}
@@ -472,7 +471,7 @@ public class Pathway implements Cloneable {
 		graph2.selectNodes(true, first);
 	}
 
-	public void splitNode(final Set<BiologicalNodeAbstract> nodes) {
+	public void splitNode(final Collection<BiologicalNodeAbstract> nodes) {
 		for (final BiologicalNodeAbstract bna : new HashSet<>(nodes)) {
 			if (graph2.getNeighborCount(bna) > 1) {
 				final Set<BiologicalEdgeAbstract> edges = new HashSet<>(bna.getConnectingEdges());
@@ -995,22 +994,21 @@ public class Pathway implements Cloneable {
 	 * Delete selected group.
 	 */
 	public void deleteGroup() {
-		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = getGraph().getVisualizationViewer();
-		Iterator<BiologicalNodeAbstract> iter = vv.getPickedVertexState().getPicked().iterator();
+		final Collection<BiologicalNodeAbstract> selectedNodes = graph2.getSelectedNodes();
 		boolean deletegroup = true;
-		BiologicalNodeAbstract firstNode = iter.next();
-		Group groupToDelete = firstNode.getBiggestGroup();
+		final BiologicalNodeAbstract firstNode = selectedNodes.iterator().next();
+		final Group groupToDelete = firstNode.getBiggestGroup();
 		// Checks if all selected nodes are of the same group
-		for (BiologicalNodeAbstract bnaNode : vv.getPickedVertexState().getPicked()) {
+		for (final BiologicalNodeAbstract bnaNode : selectedNodes) {
 			if (!bnaNode.getGroups().contains(groupToDelete)) {
 				deletegroup = false;
 				PopUpDialog.getInstance().show("Deletion error", "This cannot be deleted.");
 			}
 		}
 		// if all selected are from same group, delete group
-		Iterator<BiologicalNodeAbstract> it = vv.getPickedVertexState().getPicked().iterator();
+		final Iterator<BiologicalNodeAbstract> it = selectedNodes.iterator();
 		while (it.hasNext() && deletegroup) {
-			BiologicalNodeAbstract nextNode = it.next();
+			final BiologicalNodeAbstract nextNode = it.next();
 			if (nextNode.getGroups().size() == 1) {
 				nextNode.setInGroup(false);
 			}
@@ -1035,11 +1033,8 @@ public class Pathway implements Cloneable {
 		if (graph2.getNodeCount() <= 0) {
 			return;
 		}
-		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = getGraph().getVisualizationViewer();
 		int savedAnswer = -1;
-		Iterator<BiologicalNodeAbstract> it = vv.getPickedVertexState().getPicked().iterator();
-		while (it.hasNext()) {
-			BiologicalNodeAbstract bna = it.next();
+		for (final BiologicalNodeAbstract bna : graph2.getSelectedNodes()) {
 			if (this instanceof BiologicalNodeAbstract) {
 				BiologicalNodeAbstract pwNode = (BiologicalNodeAbstract) this;
 				if (pwNode.getEnvironment().contains(bna)) {
@@ -1048,7 +1043,7 @@ public class Pathway implements Cloneable {
 								"Deletion Error", JOptionPane.ERROR_MESSAGE);
 					} else {
 						Object[] options = { "Yes", "No" };
-						int answer = JOptionPane.showOptionDialog(vv,
+						int answer = JOptionPane.showOptionDialog(rendererPanel,
 								"Do you want to delete the predefined environment node " + bna.getLabel() + "?",
 								"Delete predefined environment node", JOptionPane.YES_NO_OPTION,
 								JOptionPane.QUESTION_MESSAGE, null, options, options[1]);

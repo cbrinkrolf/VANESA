@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.Dimension;
 import java.util.Collection;
 
 import javax.swing.JButton;
@@ -15,7 +14,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.Workspace;
 import graph.*;
 import graph.algorithms.gui.CompareGraphsGUI;
-import graph.jung.classes.MyGraph;
 import graph.operations.layout.gem.GEMLayoutOperation;
 import net.miginfocom.swing.MigLayout;
 import petriNet.PNTableDialog;
@@ -147,7 +145,16 @@ public class ToolBar {
 			final VanesaGraph graph = pathway.getGraph2();
 			if (graph != null) {
 				lastPathway = pathway;
-				lastPathwayItemListener = this::onPathwaySelectedNodesChanged;
+				lastPathwayItemListener = new GraphSelectionChangedListener() {
+					@Override
+					public void onNodeSelectionChanged() {
+						onPathwaySelectedNodesChanged();
+					}
+
+					@Override
+					public void onEdgeSelectionChanged() {
+					}
+				};
 				graph.addSelectionChangedListener(lastPathwayItemListener);
 			}
 		}
@@ -234,12 +241,8 @@ public class ToolBar {
 		GraphContainer con = GraphContainer.getInstance();
 		if (con.containsPathway()) {
 			con.changeMouseFunction("move");
-			MyGraph g = GraphInstance.getPathway().getGraph();
+			final VanesaGraph g = GraphInstance.getGraph();
 			g.disableGraphTheory();
-			// g.getVisualizationViewer().resize(20, 20);
-			Dimension d = g.getVisualizationViewer().getPreferredSize();
-			d.setSize(d.width * 2, d.height * 2);
-			g.getVisualizationViewer().setPreferredSize(d);
 		}
 	}
 
@@ -247,7 +250,7 @@ public class ToolBar {
 		GraphContainer con = GraphContainer.getInstance();
 		if (con.containsPathway()) {
 			con.changeMouseFunction("pick");
-			MyGraph g = GraphInstance.getPathway().getGraph();
+			final VanesaGraph g = GraphInstance.getGraph();
 			g.disableGraphTheory();
 		}
 	}
@@ -277,7 +280,7 @@ public class ToolBar {
 		GraphContainer con = GraphContainer.getInstance();
 		if (con.containsPathway()) {
 			con.changeMouseFunction("edit");
-			MyGraph g = GraphInstance.getPathway().getGraph();
+			final VanesaGraph g = GraphInstance.getGraph();
 			g.disableGraphTheory();
 		}
 	}
@@ -285,7 +288,7 @@ public class ToolBar {
 	private void onMergeClicked() {
 		GraphContainer con = GraphContainer.getInstance();
 		if (con.getPathwayNumbers() > 1) {
-			MyGraph g = GraphInstance.getPathway().getGraph();
+			final VanesaGraph g = GraphInstance.getGraph();
 			g.disableGraphTheory();
 			new CompareGraphsGUI();
 		} else {
@@ -297,7 +300,6 @@ public class ToolBar {
 		GraphContainer con = GraphContainer.getInstance();
 		if (con.containsPathway()) {
 			MainWindow w = MainWindow.getInstance();
-			// g.stopVisualizationModel();
 			GraphInstance.getPathway().removeSelection();
 			w.updateElementTree();
 			w.updatePathwayTree();
@@ -365,8 +367,8 @@ public class ToolBar {
 				"Please confirm your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			new ReachController(GraphInstance.getPathway());
 		}
-		if (GraphInstance.getVanesaGraph() != null) {
-			GraphInstance.getVanesaGraph().apply(new GEMLayoutOperation());
+		if (GraphInstance.getGraph() != null) {
+			GraphInstance.getGraph().apply(new GEMLayoutOperation());
 		} else {
 			System.out.println("No Graph exists!");
 		}
@@ -380,7 +382,7 @@ public class ToolBar {
 		GraphContainer con = GraphContainer.getInstance();
 		if (con.containsPathway()) {
 			con.changeMouseFunction("hierarchy");
-			MyGraph g = GraphInstance.getPathway().getGraph();
+			final VanesaGraph g = GraphInstance.getGraph();
 			g.disableGraphTheory();
 		}
 	}

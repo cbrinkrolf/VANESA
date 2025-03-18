@@ -224,7 +224,7 @@ public class VAMLOutput {
 				}
 			}
 			writer.writeStartElement("coordinates");
-			Point2D p = pw.getGraph().getVertexLocation(bna);
+			final Point2D p = pw.getGraph2().getNodePosition(bna);
 			// .getLocation(bna);
 			writer.writeAttribute("x", p.getX() + "");
 			writer.writeAttribute("y", p.getY() + "");

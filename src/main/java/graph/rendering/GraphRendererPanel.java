@@ -582,6 +582,7 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 			minY = minY == null ? nodeMinY : Math.min(minY, nodeMinY);
 			maxY = maxY == null ? nodeMaxY : Math.max(maxY, rawPosition.getY() + bounds.getMaxY());
 		}
+		// TODO: consider additional elements
 		minX -= padding;
 		minY -= padding;
 		maxX += padding;

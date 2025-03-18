@@ -62,7 +62,7 @@ public class CSMLOutput extends BaseWriter<Pathway> {
 
     private void prepare(Pathway pw) {
         for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
-            Point2D p = pw.getGraph().getVertexLocation(bna);
+            Point2D p = pw.getGraph2().getNodePosition(bna);
             if (bna instanceof Transition) {
                 transitionPositions.put(bna, p);
             } else {

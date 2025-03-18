@@ -3,14 +3,7 @@ package io;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import biologicalElements.ElementDeclarations;
 import biologicalElements.Pathway;
@@ -55,7 +48,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 
 	private final Map<BiologicalEdgeAbstract, String> bea2resultkey = new HashMap<>();
 
-	private Set<BiologicalNodeAbstract> marked;
+	private Collection<BiologicalNodeAbstract> marked;
 
 	private String modelName;
 	private final String packageInfo;
@@ -97,7 +90,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 	}
 
 	private void init() {
-		marked = GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked();
+		marked = GraphInstance.getGraph().getSelectedNodes();
 
 		// set correct PNlib names, they might change from OM version
 		Map<String, String> env = System.getenv();
@@ -642,8 +635,9 @@ public class MOoutput extends BaseWriter<Pathway> {
 	}
 
 	private String getPlacementAnnotation(Pathway pw, BiologicalNodeAbstract bna) {
-		double x = pw.getGraph().getVertexLocation(bna).getX();
-		double y = -pw.getGraph().getVertexLocation(bna).getY();
+		final Point2D nodePosition = pw.getGraph2().getNodePosition(bna);
+		double x = nodePosition.getX();
+		double y = -nodePosition.getY();
 		if (x < minX) {
 			minX = x;
 		}
@@ -656,7 +650,6 @@ public class MOoutput extends BaseWriter<Pathway> {
 		if (y > maxY) {
 			maxY = y;
 		}
-
 		return "annotation(Placement(visible=true, transformation(origin={" + x + "," + y
 				+ "}, extent={{-20, -20}, {20, 20}}, rotation=0)))";
 	}
@@ -885,7 +878,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 
 	private Set<BiologicalNodeAbstract> getMarkedNeighborsIn(BiologicalNodeAbstract bna) {
 		HashSet<BiologicalNodeAbstract> set = new HashSet<>();
-		Iterator<BiologicalEdgeAbstract> it = GraphInstance.getVanesaGraph().getInEdges(bna).iterator();
+		Iterator<BiologicalEdgeAbstract> it = GraphInstance.getGraph().getInEdges(bna).iterator();
 		BiologicalEdgeAbstract bea;
 		while (it.hasNext()) {
 			bea = it.next();

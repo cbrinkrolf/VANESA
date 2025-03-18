@@ -1,6 +1,5 @@
 package transformation.gui;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
@@ -9,7 +8,6 @@ import biologicalElements.ElementDeclarations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.GraphContainer;
-import graph.jung.classes.MyGraph;
 import gui.ToolBarButton;
 
 public class RuleEditingWindowListener implements ActionListener {
@@ -24,7 +22,6 @@ public class RuleEditingWindowListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Pathway activePw = bn;
-
 		String panelName = ((ToolBarButton) e.getSource()).getParent().getName();
 		if (panelName.equals("buttonBN")) {
 			activePw = bn;
@@ -37,24 +34,19 @@ public class RuleEditingWindowListener implements ActionListener {
 		if ("move".equals(event)) {
 			if (con.containsPathway()) {
 				con.changeMouseFunction("move");
-				MyGraph g = activePw.getGraph();
-				g.disableGraphTheory();
-				// g.getVisualizationViewer().resize(20, 20);
-				Dimension d = g.getVisualizationViewer().getPreferredSize();
-				d.setSize(d.width * 2, d.height * 2);
-				g.getVisualizationViewer().setPreferredSize(d);
+				activePw.getGraph2().disableGraphTheory();
 			}
 		} else if ("pick".equals(event)) {
 			if (con.containsPathway()) {
 				con.changeMouseFunction("pick");
-				activePw.getGraph().disableGraphTheory();
+				activePw.getGraph2().disableGraphTheory();
 			}
 		} else if ("center".equals(event)) {
 			activePw.getGraphRenderer().zoomAndCenterGraph();
 		} else if ("edit".equals(event)) {
 			if (con.containsPathway()) {
 				con.changeMouseFunction("edit");
-				activePw.getGraph().disableGraphTheory();
+				activePw.getGraph2().disableGraphTheory();
 			}
 		} else if ("del".equals(event)) {
 			// activePw.removeSelection();

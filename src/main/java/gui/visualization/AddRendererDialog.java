@@ -171,7 +171,7 @@ public class AddRendererDialog implements ActionListener {
 					&& valuesbox.isEnabled()) {
 
 				name = valuesbox.getSelectedItem().toString();
-				for (BiologicalNodeAbstract bna : GraphInstance.getVanesaGraph().getNodes()) {
+				for (BiologicalNodeAbstract bna : GraphInstance.getGraph().getNodes()) {
 					for (NodeAttribute na : bna.getNodeAttributes()) {
 						if (na.getStringValue().equals(name))
 							bnas.add(bna);
@@ -188,7 +188,7 @@ public class AddRendererDialog implements ActionListener {
 				name = nodeattributesbox.getSelectedItem().toString() + " (" + min + "/" + max + ")";
 				System.out.println(name + " " + min + "/" + max);
 
-				for (BiologicalNodeAbstract bna : GraphInstance.getVanesaGraph().getNodes()) {
+				for (BiologicalNodeAbstract bna : GraphInstance.getGraph().getNodes()) {
 					for (NodeAttribute na : bna.getNodeAttributes()) {
 
 						System.out.println(na.getName() + ": " + na.getDoubleValue() + " \t" + bna.getLabel());
@@ -202,7 +202,7 @@ public class AddRendererDialog implements ActionListener {
 			}
 
 			LocalBackboardPaintable lp = new LocalBackboardPaintable(bnas, Color.red, drawsize, shape, name);
-			GraphInstance.getMyGraph().getVisualizationViewer().addPreRenderPaintable(lp);
+			GraphInstance.getPathway().getGraph().getVisualizationViewer().addPreRenderPaintable(lp);
 			manager.addRow(lp);
 			dialog.dispose();
 			break;
@@ -239,7 +239,7 @@ public class AddRendererDialog implements ActionListener {
 				nodeattributesbox.removeAllItems();
 				nodeattributesbox.addItem("");
 				TreeSet<String> annstrings = new TreeSet<>();
-				for (BiologicalNodeAbstract bna : GraphInstance.getVanesaGraph().getNodes()) {
+				for (BiologicalNodeAbstract bna : GraphInstance.getGraph().getNodes()) {
 					for (NodeAttribute na : bna.getNodeAttributesByType(NodeAttributeType.ANNOTATION))
 						annstrings.add(na.getName());
 				}
@@ -303,7 +303,7 @@ public class AddRendererDialog implements ActionListener {
 						valuesbox.removeAllItems();
 						valuesbox.addItem("");
 
-						for (BiologicalNodeAbstract bna : GraphInstance.getVanesaGraph().getNodes()) {
+						for (BiologicalNodeAbstract bna : GraphInstance.getGraph().getNodes()) {
 							NodeAttribute na = bna.getNodeAttributeByName(val);
 							if (na != null)
 								choices.add(na.getStringValue());
@@ -321,7 +321,7 @@ public class AddRendererDialog implements ActionListener {
 						double min = Double.MAX_VALUE, max = Double.MIN_VALUE;
 						boolean novalues = true;
 
-						for (BiologicalNodeAbstract bna : GraphInstance.getVanesaGraph().getNodes()) {
+						for (BiologicalNodeAbstract bna : GraphInstance.getGraph().getNodes()) {
 							NodeAttribute na = bna.getNodeAttributeByName(val);
 							if (na != null) {
 								novalues = false;

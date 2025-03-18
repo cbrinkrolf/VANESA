@@ -1,13 +1,8 @@
 package graph.operations.layout.hc;
 
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-import graph.Graph;
-import graph.operations.VanesaGraphOperation;
+import graph.layouts.HierarchicalCircleLayoutConfig;
+import graph.operations.layout.LayoutOperation;
 
-public class HierarchicalCircleLayoutOperation extends VanesaGraphOperation {
-	@Override
-	public void apply(final Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph) {
-
-	}
+public abstract class HierarchicalCircleLayoutOperation extends LayoutOperation {
+	public abstract HierarchicalCircleLayoutConfig getConfig();
 }

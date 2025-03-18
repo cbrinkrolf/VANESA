@@ -34,18 +34,16 @@ import configurations.Workspace;
 import configurations.gui.SettingsPanel;
 import dataMapping.DataMappingColorMVC;
 import database.mirna.MirnaSearch;
-import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.CreatePathway;
 import graph.GraphContainer;
 import graph.GraphInstance;
+import graph.VanesaGraph;
 import graph.algorithms.gui.RandomBipartiteGraphGui;
 import graph.algorithms.gui.RandomConnectedGraphGui;
 import graph.algorithms.gui.RandomGraphGui;
 import graph.algorithms.gui.RandomHamiltonGraphGui;
 import graph.algorithms.gui.RandomRegularGraphGui;
 import graph.algorithms.gui.smacof.view.SmacofView;
-import graph.jung.classes.MyGraph;
 import graph.operations.layout.gem.GEMLayoutOperation;
 import gui.AboutWindow;
 import gui.AllPopUpsWindow;
@@ -317,9 +315,9 @@ public class MenuListener implements ActionListener {
 				Pathway petriNet = pw.getTransformationInformation().getPetriNet();
 				Map<BiologicalNodeAbstract, Point2D> staticNodes = new HashMap<>();
 				for (BiologicalNodeAbstract bna : pw.getTransformationInformation().getBnToPnMapping().values()) {
-					staticNodes.put(bna, petriNet.getGraph().getVertexLocation(bna));
+					staticNodes.put(bna, petriNet.getGraph2().getNodePosition(bna));
 				}
-				petriNet.getGraph().changeToGEMLayout(staticNodes);
+				petriNet.getGraph2().changeToGEMLayout(staticNodes);
 				CreatePathway.showPathway(petriNet);
 			} else {
 				PopUpDialog.getInstance().show("Error",
@@ -427,8 +425,8 @@ public class MenuListener implements ActionListener {
 				"Please Conform your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			new ReachController(GraphInstance.getPathway());
 		}
-		if (GraphInstance.getVanesaGraph() != null) {
-			GraphInstance.getVanesaGraph().apply(new GEMLayoutOperation());
+		if (GraphInstance.getGraph() != null) {
+			GraphInstance.getGraph().apply(new GEMLayoutOperation());
 		} else {
 			System.out.println("No Graph exists!");
 		}
@@ -761,33 +759,25 @@ public class MenuListener implements ActionListener {
 		}
 		CompletableFuture.runAsync(() -> {
 			Pathway pw = GraphInstance.getPathway();
-			MyGraph graph = pw.getGraph();
+			VanesaGraph graph = pw.getGraph2();
+			final Map<Enzyme, Point2D> initialEnzymePositions = new HashMap<>();
+			for (final BiologicalNodeAbstract bna : graph.getNodes()) {
+				if (bna instanceof Enzyme) {
+					initialEnzymePositions.put((Enzyme) bna, graph.getNodePosition(bna));
+				}
+			}
 			for (int i = 0; i < 10; i++) {
-				double offset = 5;
-				if (i % 2 == 0) {
-					offset *= -1;
+				final double offset = 5 * (i % 2 == 0 ? -1 : 1); // TODO: scale?
+				for (final Enzyme enzyme : initialEnzymePositions.keySet()) {
+					final Point2D p = initialEnzymePositions.get(enzyme);
+					graph.setNodePosition(enzyme, new Point2D.Double(p.getX() + offset, p.getY()));
 				}
-				VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph()
-						.getVisualizationViewer();
-				double scaleV = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
-				double scaleL = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)
-						.getScale();
-				double scale = scaleV < 1 ? scaleV : scaleL;
-				offset /= scale;
-				for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
-					if (bna instanceof Enzyme) {
-						Point2D p = graph.getVertexLocation(bna);
-						Point2D inv = graph.getVisualizationViewer().getRenderContext().getMultiLayerTransformer()
-								.inverseTransform(p);
-						graph.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().transform(inv);
-						vv.getModel().getGraphLayout().setLocation(bna,
-								new Point2D.Double(p.getX() + offset, p.getY()));
-					}
-				}
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException ignored) {
-				}
+				VanesaUtility.trySleep(100);
+			}
+			// Restore original enzyme positions
+			for (final Enzyme enzyme : initialEnzymePositions.keySet()) {
+				final Point2D p = initialEnzymePositions.get(enzyme);
+				graph.setNodePosition(enzyme, p);
 			}
 		});
 	}

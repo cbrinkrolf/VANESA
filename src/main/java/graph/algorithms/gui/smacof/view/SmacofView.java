@@ -79,7 +79,7 @@ public class SmacofView extends JFrame implements ActionListener {
 		int y = 800;
 		setPreferredSize(new Dimension(x, y));
 		this.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
-		graph = GraphInstance.getVanesaGraph();
+		graph = GraphInstance.getGraph();
 
 		if (graph != null) {
 			try {

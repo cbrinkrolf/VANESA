@@ -60,7 +60,7 @@ public class HCTLayout extends HierarchicalCircleLayout {
 			final Set<BiologicalNodeAbstract> rootNodes = new HashSet<>();
 			for (final Integer i : groupKeys) {
 				if (bnaGroups.get(i).get(0) == rootNode) {
-					GraphInstance.getMyGraph().moveVertex(rootNode, centerPoint.getX(), centerPoint.getY());
+					GraphInstance.getGraph().setNodePosition(rootNode, centerPoint.getX(), centerPoint.getY());
 					addCircleData(rootNode);
 					final CircleVertexData data = circleVertexDataMap.get(rootNode);
 					data.setCircleNumber(circles.get(rootNode));
@@ -77,7 +77,7 @@ public class HCTLayout extends HierarchicalCircleLayout {
 						continue;
 					}
 					final double angle = group_no * groupDistance + vertex_no * nodeDistance;
-					GraphInstance.getMyGraph().moveVertex(v,
+					GraphInstance.getGraph().setNodePosition(v,
 							Math.cos(angle) * getRadius() * circles.get(v) + centerPoint.getX(),
 							Math.sin(angle) * getRadius() * circles.get(v) + centerPoint.getY());
 
@@ -104,7 +104,7 @@ public class HCTLayout extends HierarchicalCircleLayout {
 								circleVertexDataMap.get(child).getVertexAngle()));
 					}
 					final double angle = Circle.getAngle(centerPoint, Circle.averagePoint(childrenLocations));
-					GraphInstance.getMyGraph().moveVertex(v,
+					GraphInstance.getGraph().setNodePosition(v,
 							Math.cos(angle) * getRadius() * circles.get(v) + centerPoint.getX(),
 							Math.sin(angle) * getRadius() * circles.get(v) + centerPoint.getY());
 
@@ -275,12 +275,12 @@ public class HCTLayout extends HierarchicalCircleLayout {
 
 	@Override
 	public void setEdgeShapes() {
-		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeShapeTransformer(
+		GraphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().setEdgeShapeTransformer(
 				new HctEdgeShape());
-		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeDrawPaintTransformer(
-				new HCTEdgePaintTransformer(GraphInstance.getMyGraph().getVisualizationViewer()));
+		GraphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().setEdgeDrawPaintTransformer(
+				new HCTEdgePaintTransformer(GraphInstance.getPathway().getGraph().getVisualizationViewer()));
 
-		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeArrowTransformer(
+		GraphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().setEdgeArrowTransformer(
 				new ShowEdgeArrowsTransformer<BiologicalNodeAbstract, BiologicalEdgeAbstract>());
 
 	}

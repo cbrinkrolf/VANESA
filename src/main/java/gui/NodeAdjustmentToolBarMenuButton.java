@@ -1,12 +1,11 @@
 package gui;
 
+import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import graph.GraphContainer;
 import graph.GraphInstance;
 
 import java.awt.*;
 import java.util.Collection;
-import java.util.Set;
 
 public class NodeAdjustmentToolBarMenuButton extends ToolBarMenuButton {
 	private final ToolBarButton adjustDown;
@@ -40,46 +39,50 @@ public class NodeAdjustmentToolBarMenuButton extends ToolBarMenuButton {
 	}
 
 	private void onStretchEdgesClicked() {
-		GraphContainer con = GraphContainer.getInstance();
-		if (con.containsPathway()) {
-			GraphInstance.getPathway().stretchGraph(1.1);
-			GraphInstance.getPathway().updateMyGraph();
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			pathway.stretchGraph(1.1);
+			pathway.updateMyGraph();
 		}
 	}
 
 	private void onCompressEdgesClicked() {
-		GraphContainer con = GraphContainer.getInstance();
-		if (con.containsPathway()) {
-			GraphInstance.getPathway().stretchGraph(0.9);
-			GraphInstance.getPathway().updateMyGraph();
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			pathway.stretchGraph(0.9);
+			pathway.updateMyGraph();
 		}
 	}
 
 	private void onAdjustDownClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			Collection<BiologicalNodeAbstract> nodes = GraphInstance.getPathway().getSelectedNodes();
-			GraphInstance.getPathway().adjustDown(nodes);
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			Collection<BiologicalNodeAbstract> nodes = pathway.getSelectedNodes();
+			pathway.adjustDown(nodes);
 		}
 	}
 
 	private void onAdjustLeftClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			Collection<BiologicalNodeAbstract> nodes = GraphInstance.getPathway().getSelectedNodes();
-			GraphInstance.getPathway().adjustLeft(nodes);
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			Collection<BiologicalNodeAbstract> nodes = pathway.getSelectedNodes();
+			pathway.adjustLeft(nodes);
 		}
 	}
 
 	private void onAdjustHorizontalSpaceClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			Collection<BiologicalNodeAbstract> nodes = GraphInstance.getPathway().getSelectedNodes();
-			GraphInstance.getPathway().adjustHorizontalSpace(nodes);
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			Collection<BiologicalNodeAbstract> nodes = pathway.getSelectedNodes();
+			pathway.adjustHorizontalSpace(nodes);
 		}
 	}
 
 	private void onAdjustVerticalSpaceClicked() {
-		if (GraphInstance.getMyGraph() != null) {
-			Collection<BiologicalNodeAbstract> nodes = GraphInstance.getPathway().getSelectedNodes();
-			GraphInstance.getPathway().adjustVerticalSpace(nodes);
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			Collection<BiologicalNodeAbstract> nodes = pathway.getSelectedNodes();
+			pathway.adjustVerticalSpace(nodes);
 		}
 	}
 

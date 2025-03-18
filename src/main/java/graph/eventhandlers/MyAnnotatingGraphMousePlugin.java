@@ -24,8 +24,8 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends AnnotatingGraphMousePlug
 
 	public MyAnnotatingGraphMousePlugin(RenderContext<V, E> rc) {
 		super(rc);
-		this.annotationManager = GraphInstance.getMyGraph().getAnnotationManager();
-		vv = GraphInstance.getMyGraph().getVisualizationViewer();
+		this.annotationManager = GraphInstance.getPathway().getGraph().getAnnotationManager();
+		vv = GraphInstance.getPathway().getGraph().getVisualizationViewer();
 	}
 
 	public int getCurrentType() {

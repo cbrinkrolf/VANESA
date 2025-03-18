@@ -18,6 +18,7 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.decorators.GradientEdgePaintTransformer;
 import graph.GraphInstance;
+import graph.VanesaGraph;
 import graph.layouts.HierarchicalCircleLayout;
 
 public class HEBLayout extends HierarchicalCircleLayout {
@@ -46,29 +47,27 @@ public class HEBLayout extends HierarchicalCircleLayout {
 			}
 			computeCircleNumbers();
 			computeCircleData(d);
-			int group_no = 0;
-			int vertex_no = 0;
+			int vertexIndex = 0;
 			// larger circle for a larger number of nodes on the outer circle.
 			setRadius(getRadius() * Math.log10(graphNodes.size()));
 			// distance between two nodes of the same group
 			final double nodeDistance = HEBLayoutConfig.nodeDistance(bnaGroups.size(), graphNodes.size());
 			// distance between two groups (added to small distance between two nodes)
 			final double groupDistance = HEBLayoutConfig.groupDistance(nodeDistance);
+			final VanesaGraph g = GraphInstance.getGraph();
 			// Move nodes on their circle position
-			CircleVertexData data;
-			for (Integer i : groupKeys) {
-				for (BiologicalNodeAbstract v : bnaGroups.get(i)) {
-					double angle = group_no * groupDistance + vertex_no * nodeDistance;
-					GraphInstance.getMyGraph().moveVertex(v, Math.cos(angle) * getRadius() + centerPoint.getX(),
+			for (int groupIndex = 0; groupIndex < groupKeys.size(); groupIndex++) {
+				for (final BiologicalNodeAbstract v : bnaGroups.get(groupKeys.get(groupIndex))) {
+					final double angle = groupIndex * groupDistance + vertexIndex * nodeDistance;
+					g.setNodePosition(v, Math.cos(angle) * getRadius() + centerPoint.getX(),
 							Math.sin(angle) * getRadius() + centerPoint.getY());
 					addCircleData(v);
-					data = getCircleData(v);
+					CircleVertexData data = getCircleData(v);
 					data.setVertexAngle(angle);
 					// All nodes on the outer circle
 					data.setCircleNumber(1);
-					vertex_no++;
+					vertexIndex++;
 				}
-				group_no++;
 			}
 		}
 		// compute the edge shapes
@@ -150,14 +149,14 @@ public class HEBLayout extends HierarchicalCircleLayout {
 	@Override
 	public void setEdgeShapes() {
 		Function<BiologicalEdgeAbstract, Shape> est = new HEBEdgeShape.HEBCurve<>(getCenterPoint(), circles,
-				GraphInstance.getMyGraph().getJungGraph());
-		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeShapeTransformer(est);
+				GraphInstance.getPathway().getGraph().getJungGraph());
+		GraphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().setEdgeShapeTransformer(est);
 
 		HEBEdgePaintTransformer ptrans = new HEBEdgePaintTransformer(HEBLayoutConfig.EDGE_OUTCOLOR,
-				HEBLayoutConfig.EDGE_INCOLOR, GraphInstance.getMyGraph().getVisualizationViewer());
-		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeDrawPaintTransformer(ptrans);
+				HEBLayoutConfig.EDGE_INCOLOR, GraphInstance.getPathway().getGraph().getVisualizationViewer());
+		GraphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().setEdgeDrawPaintTransformer(ptrans);
 
-		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeArrowTransformer(
+		GraphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().setEdgeArrowTransformer(
 				new ShowEdgeArrowsTransformer<BiologicalNodeAbstract, BiologicalEdgeAbstract>());
 	}
 
@@ -182,7 +181,8 @@ public class HEBLayout extends HierarchicalCircleLayout {
 	 *
 	 * @author tobias
 	 */
-	class HEBEdgePaintTransformer extends GradientEdgePaintTransformer<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
+	private static class HEBEdgePaintTransformer
+			extends GradientEdgePaintTransformer<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
 		public HEBEdgePaintTransformer(Color c1, Color c2,
 				VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv) {
 			super(c1, c2, vv);

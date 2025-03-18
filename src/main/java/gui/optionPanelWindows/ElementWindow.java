@@ -15,7 +15,6 @@ import graph.compartment.Compartment;
 import graph.gui.LabelsWindow;
 import graph.gui.ParameterWindow;
 import graph.gui.ReferenceDialog;
-import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.PopUpDialog;
 import gui.eventhandlers.PropertyWindowListener;
@@ -981,35 +980,30 @@ public class ElementWindow implements ActionListener, ItemListener {
 			pw.removeElement(edge);
 			pw.addEdge(newEdge);
 			pw.updateMyGraph();
-			pw.getGraph().getVisualizationViewer().getPickedEdgeState().clear();
-			pw.getGraph().getVisualizationViewer().getPickedEdgeState().pick(newEdge, true);
+			pw.getGraph2().selectEdges(newEdge);
 			GraphInstance.setSelectedObject(newEdge);
 			ab = newEdge;
 		} else if ("chooseRef".equals(event)) {
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) original;
-			ReferenceDialog dialog = new ReferenceDialog(bna);
-			BiologicalNodeAbstract node = dialog.getAnswer();
+			final BiologicalNodeAbstract bna = (BiologicalNodeAbstract) original;
+			final ReferenceDialog dialog = new ReferenceDialog(bna);
+			final BiologicalNodeAbstract node = dialog.getAnswer();
 			if (node != null) {
 				bna.setLogicalReference(node);
-				this.revalidateView();
+				revalidateView();
 				w.updateElementTree();
 			}
 		} else if ("deleteRef".equals(event)) {
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) original;
+			final BiologicalNodeAbstract bna = (BiologicalNodeAbstract) original;
 			bna.deleteLogicalReference();
 			revalidateView();
 			w.updateElementTree();
 		} else if ("pickOrigin".equals(event)) {
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) original;
-			MyGraph g = pw.getGraph();
-			g.getVisualizationViewer().getPickedVertexState().pick(bna.getLogicalReference(), true);
+			final BiologicalNodeAbstract bna = (BiologicalNodeAbstract) original;
+			pw.getGraph2().selectNodes(true, bna.getLogicalReference());
 			revalidateView();
 		} else if ("pickRefs".equals(event)) {
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) original;
-			MyGraph g = pw.getGraph();
-			for (BiologicalNodeAbstract pick : bna.getRefs()) {
-				g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
-			}
+			final BiologicalNodeAbstract bna = (BiologicalNodeAbstract) original;
+			pw.getGraph2().selectNodes(true, bna.getRefs());
 			revalidateView();
 		} else if ("showParameters".equals(event)) {
 			new ParameterWindow(ab);
@@ -1088,7 +1082,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			}
 		} else if ("check".equals(event)) {
 			String result = "";
-			for (BiologicalNodeAbstract bna : GraphInstance.getVanesaGraph().getNodes()) {
+			for (BiologicalNodeAbstract bna : GraphInstance.getGraph().getNodes()) {
 				if (bna instanceof Place) {
 					Place place = (Place) bna;
 					if (place.hasConflictProperties()) {

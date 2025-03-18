@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -126,7 +125,7 @@ public class GraphColoringGUI implements ActionListener {
             if ("colorize".equals(command)) {
                 recolorGraph();
             } else if ("resetcolors".equals(command)) {
-                GraphInstance.getVanesaGraph().getNodes().stream().forEach(bna -> bna.resetAppearance());
+                GraphInstance.getGraph().getNodes().stream().forEach(bna -> bna.resetAppearance());
 
             } else if ("algorithm".equals(command)) {
                 currentAlgorithmIndex = chooseAlgorithm.getSelectedIndex();

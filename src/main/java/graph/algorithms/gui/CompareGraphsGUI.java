@@ -18,30 +18,24 @@ import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
 
 import biologicalElements.Pathway;
-import configurations.Workspace;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import graph.GraphContainer;
 import graph.algorithms.CompareGraphs;
 import graph.algorithms.MergeGraphs;
-import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.algorithms.ScreenSize;
 import net.miginfocom.swing.MigLayout;
 
 public class CompareGraphsGUI implements ActionListener, ItemListener {
-	private JPanel panel = new JPanel();
-	private JPanel firstGraph = new JPanel();
-	private JPanel secondGraph = new JPanel();
-	private JComboBox<String> firstBox = new JComboBox<>();
-	private JComboBox<String> secondBox = new JComboBox<>();
-	private JOptionPane optionPane;
-	private JDialog dialog;
-	private JSplitPane splitPane;
-	private GraphContainer con;
-	private String mouseFunction;
+	private final JPanel firstGraph = new JPanel();
+	private final JPanel secondGraph = new JPanel();
+	private final JComboBox<String> firstBox = new JComboBox<>();
+	private final JComboBox<String> secondBox = new JComboBox<>();
+	private final JDialog dialog;
+	private final GraphContainer con;
+	private final String mouseFunction;
 	private GraphZoomScrollPane firstGraphPane;
 	private GraphZoomScrollPane secondGraphPane;
-	private JButton[] buttons;
 
 	int splitWindowWith = 0;
 	int splitWindowHeight = 0;
@@ -60,12 +54,7 @@ public class CompareGraphsGUI implements ActionListener, ItemListener {
 		// JButton heatmap = new JButton("heatmap");
 		// JButton compare3d = new JButton("compare 3D");
 
-		if (Workspace.getCurrentSettings().isDeveloperMode()) {
-			buttons = new JButton[] { exit, compare, merge, reset };
-		} else {
-			buttons = new JButton[] { exit, compare, merge, reset };
-		}
-
+		final JButton[] buttons = new JButton[] { exit, compare, merge, reset };
 		exit.addActionListener(this);
 		exit.setActionCommand("exit");
 
@@ -87,7 +76,8 @@ public class CompareGraphsGUI implements ActionListener, ItemListener {
 		// compare3d.addActionListener(this);
 		// compare3d.setActionCommand("compare3d");
 
-		optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE);
+		JPanel panel = new JPanel();
+		JOptionPane optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE);
 		optionPane.setOptions(buttons);
 
 		dialog = new JDialog(new JFrame(), "Graph comparison", true);
@@ -98,7 +88,7 @@ public class CompareGraphsGUI implements ActionListener, ItemListener {
 		firstBox.setEditable(false);
 		secondBox.setEditable(false);
 
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, firstGraph, secondGraph);
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, firstGraph, secondGraph);
 
 		ScreenSize screen = new ScreenSize();
 		splitWindowWith = screen.width - 150;
@@ -213,7 +203,7 @@ public class CompareGraphsGUI implements ActionListener, ItemListener {
 	private void resetPanels() {
 		MainWindow.getInstance().enableOptionPanelUpdate(false);
 		for (final Pathway pw : con.getAllPathways()) {
-			pw.getGraph().disableGraphTheory();
+			pw.getGraph2().disableGraphTheory();
 			pw.getGraph2().clearSelection();
 		}
 		firstGraph.updateUI();

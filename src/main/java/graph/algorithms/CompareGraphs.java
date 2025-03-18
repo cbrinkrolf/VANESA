@@ -5,7 +5,7 @@ import java.util.Vector;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import graph.jung.classes.MyGraph;
+import graph.VanesaGraph;
 import gui.MainWindow;
 
 /**
@@ -26,7 +26,7 @@ public class CompareGraphs {
     }
 
     public static void mergeGraph(Pathway pathway) {
-        MyGraph graph = pathway.getGraph();
+        final VanesaGraph graph = pathway.getGraph2();
         graph.enableGraphTheory();
         Vector<BiologicalNodeAbstract> checked = new Vector<>();
         for (BiologicalNodeAbstract bna : pathway.getAllGraphNodes()) {
@@ -35,7 +35,7 @@ public class CompareGraphs {
                     if (areNodesEqualLabeled(bna, bna2)) {
                         createEdges(pathway, bna, bna2);
                         createEdges(pathway, bna2, bna);
-                        graph.getVisualizationViewer().getPickedVertexState().pick(bna2, true);
+                        graph.selectNodes(true, bna2);
                     }
                 }
             }
@@ -50,15 +50,15 @@ public class CompareGraphs {
 
     public static void compareGraphs(Pathway one, Pathway two) {
         MainWindow.getInstance().enableOptionPanelUpdate(false);
-        MyGraph graph1 = one.getGraph();
+        final VanesaGraph graph1 = one.getGraph2();
         graph1.enableGraphTheory();
-        MyGraph graph2 = two.getGraph();
+        final VanesaGraph graph2 = two.getGraph2();
         graph2.enableGraphTheory();
-        for (BiologicalNodeAbstract bna : one.getAllGraphNodes()) {
-            for (BiologicalNodeAbstract bna2 : two.getAllGraphNodes()) {
+        for (final BiologicalNodeAbstract bna : one.getAllGraphNodes()) {
+            for (final BiologicalNodeAbstract bna2 : two.getAllGraphNodes()) {
                 if (areNodesEqualLabeled(bna, bna2)) {
-                    graph1.getVisualizationViewer().getPickedVertexState().pick(bna, true);
-                    graph2.getVisualizationViewer().getPickedVertexState().pick(bna2, true);
+                    graph1.selectNodes(true, bna);
+                    graph2.selectNodes(true, bna2);
                 }
             }
         }

@@ -3,10 +3,8 @@ package graph.jung.classes;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,19 +14,11 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.GraphSettings;
-import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.algorithms.layout.AggregateLayout;
-import edu.uci.ics.jung.algorithms.layout.CircleLayout;
-import edu.uci.ics.jung.algorithms.layout.FRLayout;
-import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
-import edu.uci.ics.jung.algorithms.layout.KKLayout;
-import edu.uci.ics.jung.algorithms.layout.SpringLayout;
-import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.DefaultVisualizationModel;
-import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -60,22 +50,15 @@ import graph.jung.graphDrawing.MyVertexLabelRenderer;
 import graph.jung.graphDrawing.MyVertexShapeTransformer;
 import graph.jung.graphDrawing.MyVertexStringer;
 import graph.jung.graphDrawing.MyVertexStrokeHighlighting;
-import graph.layouts.GraphCenter;
-import graph.layouts.gemLayout.GEMLayout;
-import graph.layouts.hctLayout.HCTLayout;
-import graph.layouts.hebLayout.HEBLayout;
 import gui.MainWindow;
-import gui.PopUpDialog;
 import gui.algorithms.ScreenSize;
 import gui.annotation.MyAnnotation;
 import gui.annotation.MyAnnotationManager;
 import gui.annotation.MyAnnotationEditingGraphMouse;
-import util.VanesaUtility;
 
 public class MyGraph {
 	private final Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g = new SparseMultigraph<>();
 	private final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
-	private AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout;
 	private final MyEditingModalGraphMouse graphMouse;
 	private final ScalingControl scaler = new CrossoverScalingControl();
 	private final RenderContext<BiologicalNodeAbstract, BiologicalEdgeAbstract> pr;
@@ -116,11 +99,7 @@ public class MyGraph {
 		this.pathway = pw;
 		graphMouse = new MyEditingModalGraphMouse();
 		Dimension preferredSize = new Dimension(visualizationViewerWidth, visualizationViewerHeight);
-
-		layout = new StaticLayout<>(g);
-		layout.setSize(preferredSize);
-
-		visualizationModel = new DefaultVisualizationModel<>(new AggregateLayout<>(layout), preferredSize);
+		visualizationModel = new DefaultVisualizationModel<>(new AggregateLayout<>(null), preferredSize);
 		visualizationModel.getRelaxer().setSleepTime(10);
 		vv = new MyVisualizationViewer<>(visualizationModel, preferredSize, pathway);
 
@@ -248,14 +227,6 @@ public class MyGraph {
 		setMouseModePick();
 	}
 
-	public void moveVertex(BiologicalNodeAbstract vertex, double xPos, double yPos) {
-		layout.setLocation(vertex, new Point.Double(xPos, yPos));
-	}
-
-	public Point2D getVertexLocation(BiologicalNodeAbstract vertex) {
-		return layout.apply(vertex);
-	}
-
 	public boolean addEdge(BiologicalEdgeAbstract bea) {
 		return g.addEdge(bea, bea.getFrom(), bea.getTo(), bea.isDirected() ? EdgeType.DIRECTED : EdgeType.UNDIRECTED);
 	}
@@ -324,141 +295,6 @@ public class MyGraph {
 		copyVV.setPickSupport(vv.getPickSupport());
 
 		return copyVV;
-	}
-
-	public void changeToCircleLayout() {
-		if (stateV.getPicked().isEmpty() || stateV.getPicked().isEmpty()) {
-			changeToLayout(new CircleLayout<>(g));
-		}
-	}
-
-	public void changeToStaticLayout() {
-		HashMap<BiologicalNodeAbstract, Point2D> map = new HashMap<>();
-		for (BiologicalNodeAbstract bna : g.getVertices()) {
-			Point2D p = getVertexLocation(bna);
-			map.put(bna, p);
-		}
-		// shifting to 100,100
-		GraphCenter gc = new GraphCenter(this);
-		double minX = gc.getMinX();
-		double minY = gc.getMinY();
-		double offsetX = 0;
-		double offsetY = 0;
-		if (minX < 0) {
-			offsetX = Math.abs(minX) + 100;
-		} else if (minX < 100) {
-			offsetX = 100 - minX;
-		}
-
-		if (minY < 0) {
-			offsetY = Math.abs(minY) + 100;
-		} else if (minY < 100) {
-			offsetY = 100 - minY;
-		}
-
-		changeToLayout(new StaticLayout<>(g));
-		for (BiologicalNodeAbstract bna : g.getVertices()) {
-			moveVertex(bna, map.get(bna).getX() + offsetX, map.get(bna).getY() + offsetY);
-		}
-		annotationManager.moveAllAnnotation(offsetX, offsetY);
-	}
-
-	public void changeToGEMLayout() {
-		Collection<BiologicalNodeAbstract> nodes = getVisualizationViewer().getPickedVertexState().getPicked();
-		if (nodes.size() > 0) {
-			Map<BiologicalNodeAbstract, Point2D> map = new HashMap<>();
-			// put unpicked nodes to static
-			for (BiologicalNodeAbstract n : g.getVertices()) {
-				if (!nodes.contains(n)) {
-					map.put(n, getVertexLocation(n));
-				}
-			}
-			changeToLayout(new GEMLayout(g, map));
-			PopUpDialog.getInstance().show("GEMLayout", "GEMLayout was applied on picked nodes only!");
-		} else {
-			changeToLayout(new GEMLayout(g));
-		}
-	}
-
-	public void changeToGEMLayout(Map<BiologicalNodeAbstract, Point2D> mapOfStaticNodes) {
-		changeToLayout(new GEMLayout(g, mapOfStaticNodes));
-	}
-
-	public void changeToHEBLayout() {
-		if (layout instanceof HEBLayout && !((HEBLayout) layout).getConfig().resetLayout()) {
-			if (((HEBLayout) layout).getConfig().getAutoRelayout()) {
-				changeToLayout(new HEBLayout(g, ((HEBLayout) layout).getOrder()));
-			} else {
-				((HEBLayout) layout).saveCurrentOrder();
-			}
-			return;
-		}
-		changeToLayout(new HEBLayout(g));
-	}
-
-	public void changeToHCTLayout() {
-		changeToLayout(new HCTLayout(g, pathway.getRootNode()));
-	}
-
-	public void changeToISOMLayout() {
-		changeToLayout(new ISOMLayout<>(g));
-	}
-
-	public void changeToFRLayout() {
-		changeToLayout(new FRLayout<>(g));
-	}
-
-	public void changeToKKLayout() {
-		changeToLayout(new KKLayout<>(g));
-	}
-
-	public void changeToSpringLayout() {
-		changeToLayout(new SpringLayout<>(g));
-	}
-
-	public void updateLayout() {
-		if (layout instanceof HEBLayout) {
-			changeToHEBLayout();
-		} else if (layout instanceof HCTLayout) {
-			changeToHCTLayout();
-		} else if (layout instanceof GEMLayout) {
-			// changeToGEMLayout();
-		} else if (layout instanceof StaticLayout) {
-			// changeToStaticLayout();
-		} else if (layout instanceof CircleLayout) {
-			changeToCircleLayout();
-		} else if (layout instanceof SpringLayout) {
-			// changeToSpringLayout();
-		} else if (layout instanceof ISOMLayout) {
-			// changeToISOMLayout();
-		} else if (layout instanceof FRLayout) {
-			// changeToFRLayout();
-		} else if (layout instanceof KKLayout) {
-			// changeToKKLayout();
-		}
-	}
-
-	public AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> getLayout() {
-		return layout;
-	}
-
-	private void changeToLayout(AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout) {
-		if (g.getVertexCount() == 0) {
-			return;
-		}
-		this.layout = layout;
-		visualizationModel.setGraphLayout(layout);
-		new Thread(() -> {
-			VanesaUtility.trySleep(500);
-			if (g.getVertexCount() > 0) {
-				final GraphCenter graphCenter = new GraphCenter(this);
-				final Point2D q = graphCenter.getCenter();
-				final Point2D lvc = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(vv.getCenter());
-				final double dx = (lvc.getX() - q.getX());
-				final double dy = (lvc.getY() - q.getY());
-				vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(dx, dy);
-			}
-		}).start();
 	}
 
 	public void enableGraphTheory() {

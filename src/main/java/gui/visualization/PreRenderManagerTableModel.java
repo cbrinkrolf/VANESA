@@ -42,7 +42,7 @@ public class PreRenderManagerTableModel extends DefaultTableModel {
                 lbp.setActive(active);
             } else if (tableContent.get(row) instanceof MyAnnotation) {
                 MyAnnotation ma = (MyAnnotation) tableContent.get(row);
-                GraphInstance.getMyGraph().getAnnotationManager().setEnable(ma, active);
+                GraphInstance.getPathway().getGraph().getAnnotationManager().setEnable(ma, active);
             }
         } else if (col == 1) {
             String name = (String) value;

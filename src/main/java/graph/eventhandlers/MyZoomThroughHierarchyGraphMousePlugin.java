@@ -163,7 +163,7 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 						pw.closeSubPathway(node.getParentNode());
 						pw.updateMyGraph();
 					} else if (e.getSource() == openAllNodes) {
-						set.addAll(GraphInstance.getVanesaGraph().getNodes());
+						set.addAll(GraphInstance.getGraph().getNodes());
 						for (BiologicalNodeAbstract n : set) {
 							if (n.isCoarseNode()) {
 								pw.openSubPathway(n);
@@ -172,7 +172,7 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 						pw.updateMyGraph();
 					} else if (e.getSource() == closeAllNodes) {
 						int maxLevel = 0;
-						for (BiologicalNodeAbstract n : GraphInstance.getVanesaGraph().getNodes()) {
+						for (BiologicalNodeAbstract n : GraphInstance.getGraph().getNodes()) {
 							if (n.getAllParentNodes().size() > 0) {
 								set.add(n.getParentNode());
 								maxLevel = Math.max(maxLevel, n.getAllParentNodes().size() - 1);
@@ -209,7 +209,7 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 							}
 						}
 					}
-					GraphInstance.getMyGraph().updateLayout();
+					GraphInstance.getGraph().updateLayout();
 					menu = null;
 				}
 			};

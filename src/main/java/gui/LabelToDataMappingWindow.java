@@ -96,7 +96,7 @@ public class LabelToDataMappingWindow {
 				"file accepted.\n please enter a name for the dataset:\n", datafile.getName());
 		if (attributename.length() > 0) {
 			String bnalabel;
-			for (BiologicalNodeAbstract bna : GraphInstance.getVanesaGraph().getNodes()) {
+			for (BiologicalNodeAbstract bna : GraphInstance.getGraph().getNodes()) {
 				bnalabel = bna.getLabel();
 				if (datamapping.containsKey(bnalabel)) {
 					bna.addAttribute(NodeAttributeType.ANNOTATION, attributename, datamapping.get(bnalabel));

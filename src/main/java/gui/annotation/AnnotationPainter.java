@@ -32,7 +32,7 @@ public class AnnotationPainter {
 
 	public void setCurrentRangeType(int currentRangeType) {
 		// this.currentRangeType = currentRangeType;
-		// GraphInstance.getMyGraph().setMouseModeSelectRange();
+		// GraphInstance.getPathway().getGraph().setMouseModeSelectRange();
 		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = GraphInstance.getPathway().getGraph()
 				.getVisualizationViewer();
 		RenderContext<BiologicalNodeAbstract, BiologicalEdgeAbstract> rc = vv.getRenderContext();

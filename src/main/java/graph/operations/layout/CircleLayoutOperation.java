@@ -3,9 +3,8 @@ package graph.operations.layout;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.Graph;
-import graph.operations.VanesaGraphOperation;
 
-public class CircleLayoutOperation extends VanesaGraphOperation {
+public class CircleLayoutOperation extends LayoutOperation {
 	private double radius = 400;
 
 	public double getRadius() {

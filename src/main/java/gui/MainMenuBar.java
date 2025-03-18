@@ -166,19 +166,19 @@ public class MainMenuBar extends JMenuBar {
 		final JMenu layoutMenu = new JMenu("Layout");
 		layoutMenu.setMnemonic(KeyEvent.VK_L);
 		springLayout = createMenuItem("Spring Layout",
-				() -> changeLayoutImmediately(() -> GraphInstance.getMyGraph().changeToSpringLayout()));
+				() -> changeLayoutImmediately(() -> GraphInstance.getGraph().changeToSpringLayout()));
 		kkLayout = createMenuItem("KK Layout",
-				() -> changeLayoutImmediately(() -> GraphInstance.getMyGraph().changeToKKLayout()));
+				() -> changeLayoutImmediately(() -> GraphInstance.getGraph().changeToKKLayout()));
 		frLayout = createMenuItem("FR Layout",
-				() -> changeLayoutImmediately(() -> GraphInstance.getMyGraph().changeToFRLayout()));
+				() -> changeLayoutImmediately(() -> GraphInstance.getGraph().changeToFRLayout()));
 		circleLayout = createMenuItem("Circle Layout",
-				() -> changeLayoutImmediately(() -> GraphInstance.getMyGraph().changeToCircleLayout()));
+				() -> changeLayoutImmediately(() -> GraphInstance.getGraph().changeToCircleLayout()));
 		hebLayout = createMenuItem("HEB Layout (Hierarchical Edge Bundling)...",
 				() -> changeLayout(HEBLayoutConfig.getInstance()));
 		hctLayout = createMenuItem("HCT Layout (Hierarchical Circle Tree)...",
 				() -> changeLayout(HCTLayoutConfig.getInstance()));
 		isomLayout = createMenuItem("ISOM Layout", KeyEvent.VK_S,
-				() -> changeLayoutImmediately(() -> GraphInstance.getMyGraph().changeToISOMLayout()));
+				() -> changeLayoutImmediately(() -> GraphInstance.getGraph().changeToISOMLayout()));
 		gemLayout = createMenuItem("GEM Layout...", () -> changeLayout(GEMLayoutConfig.getInstance()));
 		layoutMenu.add(circleLayout);
 		layoutMenu.add(hebLayout);

@@ -8,6 +8,7 @@ import biologicalObjects.nodes.petriNet.ContinuousPlace;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
+import configurations.Workspace;
 import graph.Graph;
 import graph.rendering.shapes.RectangleShape;
 import graph.rendering.shapes.RegularPolygonShape;
@@ -25,6 +26,7 @@ class GraphRendererPanelTest {
 	@Test
 	@Disabled
 	public void test() throws InterruptedException {
+		Workspace.switchToDefaultWorkspace();
 		final Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph = new Graph<>();
 		ContinuousTransition t1 = new ContinuousTransition("t1", "t1", null);
 		DiscreteTransition t2 = new DiscreteTransition("t2", "t2", null);
