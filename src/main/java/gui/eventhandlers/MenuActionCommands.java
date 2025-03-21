@@ -19,7 +19,6 @@ public enum MenuActionCommands {
     visualizationSettings("visualizationSettings"),
     allPopUps("allPopUps"),
     settings("settings"),
-    rendererSettings("rendererSettings"),
     mathGraph("mathGraph"),
     biGraph("biGraph"),
     regularGraph("regularGraph"),

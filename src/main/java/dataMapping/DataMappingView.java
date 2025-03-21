@@ -50,7 +50,7 @@ import javax.swing.table.TableColumn;
 
 import biologicalElements.Pathway;
 import dataMapping.dataImport.ExcelException;
-import dataMapping.dataImport.ImportExcelxData;
+import dataMapping.dataImport.ImportExcelData;
 import graph.GraphContainer;
 import gui.MainWindow;
 import gui.PopUpDialog;
@@ -318,8 +318,8 @@ public class DataMappingView extends JDialog implements Observer{
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if (arg.getClass().equals(ImportExcelxData.class)) {
-			final ImportExcelxData importData = (ImportExcelxData) arg;
+		if (arg.getClass().equals(ImportExcelData.class)) {
+			final ImportExcelData importData = (ImportExcelData) arg;
 			// this invokeLater() avoids a java bug when a model is set to the table
 			// and the new number of columns differs from the old number
 			SwingUtilities.invokeLater(new Runnable() {

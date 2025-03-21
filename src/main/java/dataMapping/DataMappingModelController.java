@@ -24,7 +24,7 @@ import javax.swing.JTable;
 import biologicalElements.Pathway;
 import dataMapping.biomartRetrieval.HPRDQueryRetrieval;
 import dataMapping.biomartRetrieval.IntActQueryRetrieval;
-import dataMapping.dataImport.ImportExcelxData;
+import dataMapping.dataImport.ImportExcelData;
 
 /**
  * This class manages the data flow between the GUI, the BioMart information
@@ -34,7 +34,7 @@ import dataMapping.dataImport.ImportExcelxData;
  */
 public class DataMappingModelController extends Observable {
 	private DataMappingModel dataMappingModel;
-	private ImportExcelxData importData;
+	private ImportExcelData importData;
 
 	private String identifierType;
 	private List<String> labels;
@@ -62,7 +62,7 @@ public class DataMappingModelController extends Observable {
 	 * open an Excel file and import the data
 	 */
 	public void openFile(File file) throws Exception {
-		importData = new ImportExcelxData(file);
+		importData = new ImportExcelData(file);
 		setChanged();
 		notifyObservers(importData);
 	}

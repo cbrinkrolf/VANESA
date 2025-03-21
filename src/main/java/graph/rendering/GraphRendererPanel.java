@@ -32,6 +32,7 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 	private float offsetY = 0;
 	private float scrollSpeed = 0.1f;
 	private final Timer timer = new Timer(1000 / 60, e -> repaint());
+	private Point lastMousePosition = null;
 	private Point2D mousePressedStartPosition = null;
 	private Point2D dragStartOffset = null;
 	private final Map<V, Point2D> moveStartNodePositions = new HashMap<>();
@@ -44,6 +45,8 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 	private int fpsCounter = 0;
 	private long millisecondsCounter = 0;
 	private int lastFps = 60;
+	private boolean zoomAndCenterNextFrame = false;
+	private int zoomAndCenterNextFramePadding = 0;
 
 	public GraphRendererPanel(final Graph<V, E> graph) {
 		this.graph = graph;
@@ -72,6 +75,15 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 						getHeight() - SATELLITE_BUTTON_SIZE, SATELLITE_BUTTON_SIZE, SATELLITE_BUTTON_SIZE);
 				zoomAndCenterButton.setBounds(getWidth() - SATELLITE_BUTTON_SIZE,
 						getHeight() - SATELLITE_BUTTON_SIZE * 2, SATELLITE_BUTTON_SIZE, SATELLITE_BUTTON_SIZE);
+			}
+		});
+		addHierarchyListener(event -> {
+			if ((event.getChangeFlags() & HierarchyEvent.PARENT_CHANGED) != 0) {
+				if (getParent() == null) {
+					stopTimer();
+				} else {
+					startTimer();
+				}
 			}
 		});
 		addMouseWheelListener(this::onZoom);
@@ -125,7 +137,23 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 		});
 		addMouseMotionListener(new MouseAdapter() {
 			@Override
+			public void mouseEntered(final MouseEvent e) {
+				lastMousePosition = e.getPoint();
+			}
+
+			@Override
+			public void mouseExited(final MouseEvent e) {
+				lastMousePosition = null;
+			}
+
+			@Override
+			public void mouseMoved(final MouseEvent e) {
+				lastMousePosition = e.getPoint();
+			}
+
+			@Override
 			public void mouseDragged(final MouseEvent e) {
+				lastMousePosition = e.getPoint();
 				if (currentOperation == GraphRendererOperation.NODES_MOVE) {
 					if (mousePressedStartPosition != null) {
 						final var movementX = (e.getX() - mousePressedStartPosition.getX()) / zoom;
@@ -154,24 +182,36 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 		final boolean previouslyVisible = super.isVisible();
 		super.setVisible(visible);
 		if (previouslyVisible && !visible) {
-			timer.stop();
+			stopTimer();
 		} else if (!previouslyVisible && visible) {
-			timer.start();
-			lastFrameTime = 0;
+			startTimer();
 		}
+	}
+
+	private void stopTimer() {
+		timer.stop();
+	}
+
+	private void startTimer() {
+		timer.start();
+		lastFrameTime = 0;
 	}
 
 	private void onZoom(final MouseWheelEvent e) {
 		final var canvasBounds = getBounds();
-		final Point2D lastMousePositionInViewport = new Point2D.Double(e.getX() - canvasBounds.getCenterX(),
-				e.getY() - canvasBounds.getCenterY());
-		final var preZoomPosition = new Point2D.Double(lastMousePositionInViewport.getX() * zoom,
-				lastMousePositionInViewport.getY() * zoom);
-		zoom = Math.max(MIN_ZOOM, zoom + (float) (e.getPreciseWheelRotation() * scrollSpeed));
-		final var postZoomPosition = new Point2D.Double(lastMousePositionInViewport.getX() * zoom,
-				lastMousePositionInViewport.getY() * zoom);
-		offsetX += (float) (preZoomPosition.getX() - postZoomPosition.getX());
-		offsetY += (float) (preZoomPosition.getY() - postZoomPosition.getY());
+		final var lastMousePositionInViewportX = e.getX() - canvasBounds.getCenterX();
+		final var lastMousePositionInViewportY = e.getY() - canvasBounds.getCenterY();
+		final var preZoomPositionX = lastMousePositionInViewportX * zoom;
+		final var preZoomPositionY = lastMousePositionInViewportY * zoom;
+		float change = (float) (e.getPreciseWheelRotation() * scrollSpeed);
+		if (change < 0) {
+			change = Math.min(change, zoom - MIN_ZOOM);
+		}
+		zoom = Math.max(MIN_ZOOM, zoom + change);
+		final var postZoomPositionX = lastMousePositionInViewportX * zoom;
+		final var postZoomPositionY = lastMousePositionInViewportY * zoom;
+		offsetX += (float) (preZoomPositionX - postZoomPositionX);
+		offsetY += (float) (preZoomPositionY - postZoomPositionY);
 	}
 
 	public float getScrollSpeed() {
@@ -199,6 +239,11 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 		fpsCounter++;
 		lastFrameTime = new Date().getTime();
 		super.paintComponent(g);
+		// If requested, execute zoom and center inside the render loop to ensure viewport bounds have been set
+		if (zoomAndCenterNextFrame) {
+			zoomAndCenterGraphImpl();
+			zoomAndCenterNextFrame = false;
+		}
 		final var g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		// Previous options for image export: evaluate
@@ -211,7 +256,9 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 		// g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 		// g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 		final var viewportBounds = getBounds();
-		final var mousePosition = getMousePosition();
+		final var mousePosition = lastMousePosition != null
+				? new Point(lastMousePosition.x, lastMousePosition.y)
+				: null;
 		if (mousePosition != null) {
 			mousePosition.setLocation(mousePosition.x - viewportBounds.getWidth() * 0.5f - offsetX,
 					mousePosition.y - viewportBounds.getHeight() * 0.5f - offsetY);
@@ -260,6 +307,8 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 		g2d.setColor(Color.RED);
 		g2d.drawString(String.format("Zoom %.3fx", zoom), (float) viewportBounds.getWidth() - 74, 12);
 		g2d.drawString(String.format("FPS %3d", lastFps), (float) viewportBounds.getWidth() - 74, 26);
+		if (mousePosition != null)
+			g2d.drawString(mousePosition.x + "," + mousePosition.y, (float) viewportBounds.getWidth() - 74, 40);
 		g2d.drawString(String.format("Nodes: %s, Edges: %s", graph.getNodeCount(), graph.getEdgeCount()), 4, 12);
 	}
 
@@ -278,6 +327,7 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 		if (zoom < 1) {
 			g.scale(zoom, zoom);
 		}
+
 		// Filter for nodes visible in the viewport and find the top-most node the mouse hovers over
 		final List<V> visibleNodes = new ArrayList<>();
 		V hoveredNode = null;
@@ -566,6 +616,17 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 			zoom = 1f;
 			return;
 		}
+		zoomAndCenterNextFrame = true;
+		zoomAndCenterNextFramePadding = padding;
+	}
+
+	private void zoomAndCenterGraphImpl() {
+		if (graph.getNodeCount() == 0) {
+			offsetX = 0;
+			offsetY = 0;
+			zoom = 1f;
+			return;
+		}
 		Double minX = null;
 		Double maxX = null;
 		Double minY = null;
@@ -583,10 +644,10 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 			maxY = maxY == null ? nodeMaxY : Math.max(maxY, rawPosition.getY() + bounds.getMaxY());
 		}
 		// TODO: consider additional elements
-		minX -= padding;
-		minY -= padding;
-		maxX += padding;
-		maxY += padding;
+		minX -= zoomAndCenterNextFramePadding;
+		minY -= zoomAndCenterNextFramePadding;
+		maxX += zoomAndCenterNextFramePadding;
+		maxY += zoomAndCenterNextFramePadding;
 		final double width = maxX - minX;
 		final double height = maxY - minY;
 		zoom = (float) Math.min(getWidth() / width, getHeight() / height);
