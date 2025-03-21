@@ -3,6 +3,7 @@ package graph.operations.layout;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.Graph;
+import graph.annotations.VanesaAnnotation;
 
 public class CircleLayoutOperation extends LayoutOperation {
 	private double radius = 400;
@@ -16,7 +17,7 @@ public class CircleLayoutOperation extends LayoutOperation {
 	}
 
 	@Override
-	public void apply(final Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph) {
+	public void apply(final Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract, VanesaAnnotation> graph) {
 		final double angleStep = Math.PI * 2 / graph.getNodeCount();
 		int i = 0;
 		for (final BiologicalNodeAbstract node : graph.getNodes()) {

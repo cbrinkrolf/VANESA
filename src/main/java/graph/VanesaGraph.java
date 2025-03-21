@@ -2,6 +2,7 @@ package graph;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import graph.annotations.VanesaAnnotation;
 import graph.operations.layout.*;
 import graph.operations.layout.gem.GEMLayoutOperation;
 import graph.operations.layout.hct.HCTLayoutOperation;
@@ -10,7 +11,7 @@ import graph.operations.layout.heb.HEBLayoutOperation;
 import java.awt.geom.Point2D;
 import java.util.Map;
 
-public class VanesaGraph extends Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
+public class VanesaGraph extends Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract, VanesaAnnotation> {
 	private LayoutOperation layout;
 
 	public LayoutOperation getLayout() {

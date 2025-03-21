@@ -3,10 +3,11 @@ package graph.operations.layout;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.Graph;
+import graph.annotations.VanesaAnnotation;
 
 public class StaticLayoutOperation extends LayoutOperation {
 	@Override
-	public void apply(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph) {
+	public void apply(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract, VanesaAnnotation> graph) {
 		// TODO: center all elements
 		/*
 		HashMap<BiologicalNodeAbstract, Point2D> map = new HashMap<>();

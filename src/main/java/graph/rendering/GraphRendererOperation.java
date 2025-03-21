@@ -1,5 +1,5 @@
 package graph.rendering;
 
 public enum GraphRendererOperation {
-	NONE, VIEWPORT_DRAG, NODES_MOVE, RECTANGLE_SELECTION
+	NONE, VIEWPORT_DRAG, MOVE, RECTANGLE_SELECTION
 }

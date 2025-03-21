@@ -1,4 +1,4 @@
-package graph.rendering.shapes;
+package graph.rendering.nodes;
 
 import graph.GraphNode;
 import graph.Rect;
@@ -6,30 +6,27 @@ import graph.Rect;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-public class RoundedRectangleShape extends NodeShape {
+public class RectangleShape extends NodeShape {
 	private final float width;
 	private final float height;
-	private final float rounding;
 
-	public RoundedRectangleShape() {
+	public RectangleShape() {
 		this(20, 20);
 	}
 
-	public RoundedRectangleShape(final float width, final float height) {
+	public RectangleShape(final float width, final float height) {
 		this.width = width;
 		this.height = height;
-		rounding = Math.min(width, height) * 0.5f;
 	}
 
 	@Override
 	public void paint(final Graphics2D g, final GraphNode node, final Color strokeColor, final Color fillColor) {
-		int rounding = (int) (this.rounding * node.getSize());
 		final Rect bounds = getBounds(node);
 		g.setColor(fillColor);
-		g.fillRoundRect((int) bounds.x, (int) bounds.y, (int) bounds.width, (int) bounds.height, rounding, rounding);
+		g.fillRect((int) bounds.x, (int) bounds.y, (int) bounds.width, (int) bounds.height);
 		g.setColor(strokeColor);
 		g.setStroke(DEFAULT_STROKE);
-		g.drawRoundRect((int) bounds.x, (int) bounds.y, (int) bounds.width, (int) bounds.height, rounding, rounding);
+		g.drawRect((int) bounds.x, (int) bounds.y, (int) bounds.width, (int) bounds.height);
 	}
 
 	@Override

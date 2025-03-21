@@ -1,4 +1,4 @@
-package graph.rendering.shapes;
+package graph.rendering.nodes;
 
 import graph.GraphNode;
 import graph.Rect;
@@ -6,22 +6,24 @@ import graph.Rect;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-public class RegularPolygonShape extends NodeShape {
+public class RegularStarShape extends NodeShape {
 	private static final int RADIUS = 10;
+	private static final int INSET_RADIUS = 5;
 	private final double[] pathPointsX;
 	private final double[] pathPointsY;
 	private final int[] scaledPathPointsX;
 	private final int[] scaledPathPointsY;
 
-	public RegularPolygonShape(final int sides) {
-		pathPointsX = new double[sides];
-		pathPointsY = new double[sides];
+	public RegularStarShape(final int sides) {
+		pathPointsX = new double[sides * 2];
+		pathPointsY = new double[sides * 2];
 		scaledPathPointsX = new int[pathPointsX.length];
 		scaledPathPointsY = new int[pathPointsX.length];
-		final double stepAngle = Math.PI * 2 / sides;
-		for (int i = 0; i < sides; i++) {
-			pathPointsX[i] = RADIUS * Math.cos(stepAngle * i);
-			pathPointsY[i] = RADIUS * Math.sin(stepAngle * i);
+		final double stepAngle = Math.PI * 2 / (sides * 2);
+		for (int i = 0; i < sides * 2; i++) {
+			final var radius = i % 2 == 0 ? INSET_RADIUS : RADIUS;
+			pathPointsX[i] = radius * Math.cos(stepAngle * i);
+			pathPointsY[i] = radius * Math.sin(stepAngle * i);
 		}
 	}
 

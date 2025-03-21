@@ -5,13 +5,29 @@ import graph.operations.GraphOperation;
 import java.awt.geom.Point2D;
 import java.util.*;
 
-public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
+public class Graph<V extends GraphNode, E extends GraphEdge<V>, A extends GraphAnnotation> {
 	private final List<GraphSelectionChangedListener> selectionChangedListeners = new ArrayList<>();
+	private final List<A> annotations = new ArrayList<>();
 	private final List<V> nodes = new ArrayList<>();
 	private final List<E> edges = new ArrayList<>();
+	private final Map<A, Point2D> annotationPositions = new HashMap<>();
 	private final Map<V, Point2D> nodePositions = new HashMap<>();
+	private final Set<A> selectedAnnotations = new HashSet<>();
 	private final Set<V> selectedNodes = new HashSet<>();
 	private final Set<E> selectedEdges = new HashSet<>();
+	private Object context;
+
+	public Object getContext() {
+		return context;
+	}
+
+	public void setContext(final Object context) {
+		this.context = context;
+	}
+
+	public int getAnnotationCount() {
+		return annotations.size();
+	}
 
 	public int getNodeCount() {
 		return nodes.size();
@@ -19,6 +35,36 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 
 	public int getEdgeCount() {
 		return edges.size();
+	}
+
+	@SafeVarargs
+	public final void selectAnnotations(final A... annotations) {
+		selectedAnnotations.clear();
+		Collections.addAll(selectedAnnotations, annotations);
+		invokeSelectionChangedListenersForAnnotations();
+	}
+
+	public void selectAnnotations(final Collection<A> annotations) {
+		selectedAnnotations.clear();
+		selectedAnnotations.addAll(annotations);
+		invokeSelectionChangedListenersForAnnotations();
+	}
+
+	@SafeVarargs
+	public final void selectAnnotations(final boolean additive, final A... annotations) {
+		if (!additive) {
+			selectedAnnotations.clear();
+		}
+		Collections.addAll(selectedAnnotations, annotations);
+		invokeSelectionChangedListenersForAnnotations();
+	}
+
+	public void selectAnnotations(final boolean additive, final Collection<A> annotations) {
+		if (!additive) {
+			selectedAnnotations.clear();
+		}
+		selectedAnnotations.addAll(annotations);
+		invokeSelectionChangedListenersForAnnotations();
 	}
 
 	@SafeVarargs
@@ -81,6 +127,11 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 		invokeSelectionChangedListenersForEdges();
 	}
 
+	public void clearAnnotationSelection() {
+		selectedAnnotations.clear();
+		invokeSelectionChangedListenersForAnnotations();
+	}
+
 	public void clearNodeSelection() {
 		selectedNodes.clear();
 		invokeSelectionChangedListenersForNodes();
@@ -92,9 +143,18 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 	}
 
 	public void clearSelection() {
+		selectedAnnotations.clear();
 		selectedNodes.clear();
 		selectedEdges.clear();
 		invokeSelectionChangedListeners();
+	}
+
+	public Collection<A> getSelectedAnnotations() {
+		return selectedAnnotations;
+	}
+
+	public int getSelectedAnnotationCount() {
+		return selectedAnnotations.size();
 	}
 
 	public Collection<V> getSelectedNodes() {
@@ -113,12 +173,28 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 		return selectedEdges.size();
 	}
 
+	public boolean isSelected(final A annotation) {
+		return selectedAnnotations.contains(annotation);
+	}
+
 	public boolean isSelected(final V node) {
 		return selectedNodes.contains(node);
 	}
 
 	public boolean isSelected(final E edge) {
 		return selectedEdges.contains(edge);
+	}
+
+	public Point2D getAnnotationPosition(final A annotation) {
+		return annotationPositions.get(annotation);
+	}
+
+	public void setAnnotationPosition(final A annotation, final Point2D p) {
+		annotationPositions.put(annotation, p);
+	}
+
+	public void setAnnotationPosition(final A annotation, final double x, final double y) {
+		annotationPositions.put(annotation, new Point2D.Double(x, y));
 	}
 
 	public Point2D getNodePosition(final V node) {
@@ -131,6 +207,27 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 
 	public void setNodePosition(final V node, final double x, final double y) {
 		nodePositions.put(node, new Point2D.Double(x, y));
+	}
+
+	public void add(final A annotation) {
+		if (!annotations.contains(annotation)) {
+			annotations.add(annotation);
+			annotationPositions.put(annotation, new Point2D.Double());
+		}
+	}
+
+	public void add(final A annotation, final double x, final double y) {
+		if (!annotations.contains(annotation)) {
+			annotations.add(annotation);
+			annotationPositions.put(annotation, new Point2D.Double(x, y));
+		}
+	}
+
+	public void add(final A annotation, final Point2D p) {
+		if (!annotations.contains(annotation)) {
+			annotations.add(annotation);
+			annotationPositions.put(annotation, p);
+		}
 	}
 
 	public void add(final V node) {
@@ -147,10 +244,22 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 		}
 	}
 
+	public void add(final V node, final double x, final double y) {
+		if (!nodes.contains(node)) {
+			nodes.add(node);
+			nodePositions.put(node, new Point2D.Double(x, y));
+		}
+	}
+
 	public void add(final E edge) {
 		if (!edges.contains(edge)) {
 			edges.add(edge);
 		}
+	}
+
+	public void remove(final A annotation) {
+		annotations.remove(annotation);
+		annotationPositions.remove(annotation);
 	}
 
 	public void remove(final V node) {
@@ -163,9 +272,15 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 	}
 
 	public void clear() {
+		annotations.clear();
 		edges.clear();
 		nodes.clear();
+		annotationPositions.clear();
 		nodePositions.clear();
+	}
+
+	public boolean contains(final A annotation) {
+		return annotations.contains(annotation);
 	}
 
 	public boolean contains(final V node) {
@@ -185,6 +300,10 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 			}
 		}
 		return null;
+	}
+
+	public Collection<A> getAnnotations() {
+		return annotations;
 	}
 
 	public Collection<V> getNodes() {
@@ -216,8 +335,15 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 
 	private void invokeSelectionChangedListeners() {
 		for (final GraphSelectionChangedListener listener : selectionChangedListeners) {
+			listener.onAnnotationSelectionChanged();
 			listener.onNodeSelectionChanged();
 			listener.onEdgeSelectionChanged();
+		}
+	}
+
+	private void invokeSelectionChangedListenersForAnnotations() {
+		for (final GraphSelectionChangedListener listener : selectionChangedListeners) {
+			listener.onAnnotationSelectionChanged();
 		}
 	}
 
@@ -334,7 +460,7 @@ public class Graph<V extends GraphNode, E extends GraphEdge<V>> {
 		return result;
 	}
 
-	public void apply(final GraphOperation<V, E> operation) {
+	public void apply(final GraphOperation<V, E, A> operation) {
 		operation.apply(this);
 	}
 }

@@ -93,6 +93,7 @@ public class Pathway implements Cloneable {
 		if (type == PathwayType.PetriNet) {
 			petriNetProperties = new PetriNetProperties(this);
 		}
+		graph.setContext(this);
 	}
 
 	/**

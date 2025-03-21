@@ -21,11 +21,10 @@ import graph.algorithms.NodeAttributeType;
 import graph.groups.Group;
 import graph.gui.Parameter;
 import graph.jung.classes.MyGraph;
-import graph.jung.graphDrawing.VertexShapes;
 import graph.layouts.Circle;
-import graph.rendering.shapes.CoarseShape;
-import graph.rendering.shapes.NodeShape;
-import graph.rendering.shapes.PlaceShape;
+import graph.rendering.nodes.CoarseShape;
+import graph.rendering.nodes.NodeShape;
+import graph.rendering.nodes.PlaceShape;
 import gui.MainWindow;
 
 public abstract class BiologicalNodeAbstract extends Pathway implements GraphNode, GraphElementAbstract {
@@ -45,8 +44,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 	private Color color = Color.LIGHT_GRAY;
 	private Color defaultColor = Color.LIGHT_GRAY;
 	private final String biologicalElement;
-	private Shape shape = VertexShapes.getEllipse();
-	private Shape defaultShape = VertexShapes.getEllipse();
 	private NodeShape nodeShape = new PlaceShape();
 	private NodeShape defaultNodeShape = new PlaceShape();
 	private boolean hasKEGGNode = false;
@@ -389,11 +386,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 	}
 
 	private void makeCoarseShape() {
-		final Shape coarseShape = VertexShapes.makeCoarse(getRootNode() == null ? shape : getRootNode().shape);
-		setDefaultShape(coarseShape);
-		setShape(coarseShape);
 		final NodeShape shape = new CoarseShape(getRootNode() == null ? nodeShape : getRootNode().nodeShape);
-		setNodeShape(shape);
+		setDefaultNodeShape(shape);
 	}
 
 	/**
@@ -640,11 +634,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 	}
 
 	public Shape getShape() {
-		return shape;
-	}
-
-	public void setShape(final Shape shape) {
-		this.shape = shape;
+		return null;
 	}
 
 	@Override
@@ -841,15 +831,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 	public void setDefaultSize(double defaultSize) {
 		this.defaultSize = defaultSize;
 		setSize(defaultSize);
-	}
-
-	public Shape getDefaultShape() {
-		return defaultShape;
-	}
-
-	public void setDefaultShape(Shape defaultShape) {
-		this.defaultShape = defaultShape;
-		setShape(defaultShape);
 	}
 
 	public NodeShape getDefaultNodeShape() {
@@ -1177,7 +1158,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphNod
 
 	@Override
 	public void resetAppearance() {
-		shape = defaultShape;
 		nodeShape = defaultNodeShape;
 		color = defaultColor;
 		size = defaultSize;

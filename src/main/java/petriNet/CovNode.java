@@ -4,14 +4,14 @@ import java.awt.Color;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import graph.jung.graphDrawing.VertexShapes;
+import graph.rendering.nodes.CircleShape;
 
 public class CovNode extends BiologicalNodeAbstract {
 	private CovList tokenList;
 
 	public CovNode(final String label, final String name, final int numberPlaces, final Pathway pathway) {
 		super(label, name, "", pathway);
-		setShape(VertexShapes.getEllipse());
+		setNodeShape(new CircleShape());
 		setColor(Color.WHITE);
 		tokenList = new CovList(numberPlaces);
 	}

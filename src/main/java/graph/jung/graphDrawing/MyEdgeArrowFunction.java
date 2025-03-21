@@ -15,13 +15,13 @@ public class MyEdgeArrowFunction implements
 		Function<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape> {
 	@Override
 	public Shape apply(Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract> context) {
-		if (context.element.getBiologicalElement().equals(ElementDeclarations.pnInhibitorArc)) {
-			return VertexShapes.getPNInhibitorArrowHead();
-		}
-		if (context.element.getBiologicalElement().equals(ElementDeclarations.inhibitionEdge)
-				|| context.element.getBiologicalElement().equals(ElementDeclarations.inhibitor)) {
-			return VertexShapes.getInhibitorArrowHead();
-		}
+		// if (context.element.getBiologicalElement().equals(ElementDeclarations.pnInhibitorArc)) {
+		// 	return VertexShapes.getPNInhibitorArrowHead();
+		// }
+		// if (context.element.getBiologicalElement().equals(ElementDeclarations.inhibitionEdge)
+		// 		|| context.element.getBiologicalElement().equals(ElementDeclarations.inhibitor)) {
+		// 	return VertexShapes.getInhibitorArrowHead();
+		// }
 		return new DirectionalEdgeArrowTransformer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(10, 8, 4)
 				.apply(context);
 	}

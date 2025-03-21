@@ -6,12 +6,10 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.List;
 
 import biologicalElements.Pathway;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationModel;
-import edu.uci.ics.jung.visualization.VisualizationServer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.GraphContainer;
 
@@ -46,14 +44,6 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		g2d.drawString("Zoom: " + scale + "x", getWidth() - 75, 11);
 
 		drawMousePoint(g2d);
-	}
-
-	public List<VisualizationServer.Paintable> getPreRenderers() {
-		return super.preRenderers;
-	}
-
-	public List<VisualizationServer.Paintable> getPostRenderers() {
-		return super.postRenderers;
 	}
 
 	public Pathway getPathway() {

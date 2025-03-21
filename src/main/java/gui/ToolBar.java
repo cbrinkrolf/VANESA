@@ -145,14 +145,10 @@ public class ToolBar {
 			final VanesaGraph graph = pathway.getGraph2();
 			if (graph != null) {
 				lastPathway = pathway;
-				lastPathwayItemListener = new GraphSelectionChangedListener() {
+				lastPathwayItemListener = new GraphSelectionChangedAdapter() {
 					@Override
 					public void onNodeSelectionChanged() {
 						onPathwaySelectedNodesChanged();
-					}
-
-					@Override
-					public void onEdgeSelectionChanged() {
 					}
 				};
 				graph.addSelectionChangedListener(lastPathwayItemListener);

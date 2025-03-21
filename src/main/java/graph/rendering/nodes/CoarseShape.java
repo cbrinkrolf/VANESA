@@ -1,4 +1,4 @@
-package graph.rendering.shapes;
+package graph.rendering.nodes;
 
 import graph.GraphNode;
 import graph.Rect;

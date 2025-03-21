@@ -1,6 +1,8 @@
 package graph;
 
 public class Rect {
+	public static final Rect EMPTY = new Rect(0, 0, 0, 0);
+
 	public final double x;
 	public final double y;
 	public final double width;

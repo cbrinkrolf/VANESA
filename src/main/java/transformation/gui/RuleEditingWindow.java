@@ -36,7 +36,7 @@ import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.GraphContainer;
-import graph.GraphSelectionChangedListener;
+import graph.GraphSelectionChangedAdapter;
 import graph.VanesaGraph;
 import graph.rendering.VanesaGraphRendererPanel;
 import gui.ImagePath;
@@ -572,7 +572,7 @@ public class RuleEditingWindow implements ActionListener {
 		}
 		GraphContainer.getInstance().addPathway(pn.getName(), pn);
 		final VanesaGraph pnGraph = pn.getGraph2();
-		bnGraph.addSelectionChangedListener(new GraphSelectionChangedListener() {
+		bnGraph.addSelectionChangedListener(new GraphSelectionChangedAdapter() {
 			@Override
 			public void onNodeSelectionChanged() {
 				if (bnGraph.getSelectedNodeCount() == 1 && pnGraph.getSelectedNodeCount() == 1) {
@@ -628,7 +628,7 @@ public class RuleEditingWindow implements ActionListener {
 				}
 			}
 		});
-		pn.getGraph2().addSelectionChangedListener(new GraphSelectionChangedListener() {
+		pn.getGraph2().addSelectionChangedListener(new GraphSelectionChangedAdapter() {
 			@Override
 			public void onNodeSelectionChanged() {
 				if (bnGraph.getSelectedNodeCount() == 1 && pnGraph.getSelectedNodeCount() == 1) {

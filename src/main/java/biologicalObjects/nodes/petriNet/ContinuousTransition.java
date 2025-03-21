@@ -5,8 +5,7 @@ import java.util.List;
 
 import biologicalElements.ElementDeclarations;
 import biologicalElements.Pathway;
-import graph.jung.graphDrawing.VertexShapes;
-import graph.rendering.shapes.ContinuousTransitionShape;
+import graph.rendering.nodes.ContinuousTransitionShape;
 
 public class ContinuousTransition extends Transition {
 	// private final double delay = 1;
@@ -15,7 +14,6 @@ public class ContinuousTransition extends Transition {
 
 	public ContinuousTransition(final String label, final String name, final Pathway pathway) {
 		super(label, name, ElementDeclarations.continuousTransition, pathway);
-		setDefaultShape(VertexShapes.getContinuousTransitionShape());
 		setDefaultNodeShape(new ContinuousTransitionShape());
 		setColor(Color.WHITE);
 	}

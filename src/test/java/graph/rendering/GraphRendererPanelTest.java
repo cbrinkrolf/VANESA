@@ -10,16 +10,20 @@ import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import configurations.Workspace;
 import graph.Graph;
-import graph.rendering.shapes.RectangleShape;
-import graph.rendering.shapes.RegularPolygonShape;
-import graph.rendering.shapes.RegularStarShape;
-import graph.rendering.shapes.RoundedRectangleShape;
+import graph.annotations.OvalAnnotation;
+import graph.annotations.RectangleAnnotation;
+import graph.annotations.VanesaAnnotation;
+import graph.rendering.nodes.RectangleShape;
+import graph.rendering.nodes.RegularPolygonShape;
+import graph.rendering.nodes.RegularStarShape;
+import graph.rendering.nodes.RoundedRectangleShape;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import transformation.graphElements.ANYPlace;
 import transformation.graphElements.ANYTransition;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.geom.Point2D;
 
 class GraphRendererPanelTest {
@@ -27,7 +31,17 @@ class GraphRendererPanelTest {
 	@Disabled
 	public void test() throws InterruptedException {
 		Workspace.switchToDefaultWorkspace();
-		final Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph = new Graph<>();
+		final Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract, VanesaAnnotation> graph = new Graph<>();
+		RectangleAnnotation a1 = new RectangleAnnotation();
+		a1.setWidth(100);
+		a1.setHeight(50);
+		a1.setColor(Color.CYAN);
+		graph.add(a1, -50, -50);
+		OvalAnnotation a2 = new OvalAnnotation();
+		a2.setRadiusX(20);
+		a2.setRadiusY(50);
+		a2.setColor(Color.DARK_GRAY);
+		graph.add(a2, 50, 50);
 		ContinuousTransition t1 = new ContinuousTransition("t1", "t1", null);
 		DiscreteTransition t2 = new DiscreteTransition("t2", "t2", null);
 		ANYTransition t3 = new ANYTransition("t3", "t3", null);

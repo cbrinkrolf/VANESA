@@ -1,6 +1,6 @@
 package graph;
 
-import graph.rendering.shapes.NodeShape;
+import graph.rendering.nodes.NodeShape;
 
 import java.awt.*;
 

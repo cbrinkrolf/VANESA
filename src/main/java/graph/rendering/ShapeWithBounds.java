@@ -1,22 +1,18 @@
-package graph.rendering.shapes;
+package graph.rendering;
 
-import graph.GraphNode;
 import graph.Rect;
 
-import java.awt.*;
+import java.awt.BasicStroke;
 import java.awt.geom.Point2D;
 
-public abstract class NodeShape {
+public abstract class ShapeWithBounds<T> {
 	protected static final BasicStroke DEFAULT_STROKE = new BasicStroke(3);
 
-	public abstract void paint(final Graphics2D g, final GraphNode node, final Color strokeColor,
-			final Color fillColor);
+	public abstract Rect getBounds(final T element);
 
-	public abstract Rect getBounds(final GraphNode node);
+	public abstract float getBoundsDistance(final T element, final Point2D directionVector);
 
-	public abstract float getBoundsDistance(final GraphNode node, final Point2D directionVector);
-
-	public boolean isMouseInside(final GraphNode node, final Point2D localMousePosition) {
+	public boolean isMouseInside(final T node, final Point2D localMousePosition) {
 		final var distanceFromCenter = Math.sqrt(localMousePosition.getX() * localMousePosition.getX()
 				+ localMousePosition.getY() * localMousePosition.getY());
 		final var boundsDistance = getBoundsDistance(node,

@@ -14,16 +14,15 @@ import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.List;
 
-public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> extends JPanel {
+public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>, A extends GraphAnnotation> extends JPanel {
 	private static final int SATELLITE_BUTTON_SIZE = 20;
 	private static final int MAX_SATELLITE_SIZE = 200;
 	private static final float MIN_ZOOM = 0.001f;
 	private static final int EDGE_START_TIP_OFFSET = 5;
 	private static final int EDGE_END_TIP_OFFSET = 5;
 	private static final Font TOKEN_FONT = new Font("Arial", Font.PLAIN, 12);
-	private static final Font INFO_FONT = new Font("Arial", Font.BOLD, 12);
 
-	private final Graph<V, E> graph;
+	protected final Graph<V, E, A> graph;
 	private final JButton toggleSatelliteViewButton;
 	private final JButton zoomAndCenterButton;
 	private boolean satelliteVisible = true;
@@ -35,9 +34,12 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 	private Point lastMousePosition = null;
 	private Point2D mousePressedStartPosition = null;
 	private Point2D dragStartOffset = null;
+	private final Map<A, Point2D> moveStartAnnotationPositions = new HashMap<>();
 	private final Map<V, Point2D> moveStartNodePositions = new HashMap<>();
+	private A hoveredAnnotation = null;
 	private V hoveredNode = null;
 	private E hoveredEdge = null;
+	private final Set<A> annotationsInsideSelectionShape = new HashSet<>();
 	private final Set<V> nodesInsideSelectionShape = new HashSet<>();
 	private final Set<E> edgesInsideSelectionShape = new HashSet<>();
 	private GraphRendererOperation currentOperation = GraphRendererOperation.NONE;
@@ -48,7 +50,7 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 	private boolean zoomAndCenterNextFrame = false;
 	private int zoomAndCenterNextFramePadding = 0;
 
-	public GraphRendererPanel(final Graph<V, E> graph) {
+	public GraphRendererPanel(final Graph<V, E, A> graph) {
 		this.graph = graph;
 		setLayout(null);
 		toggleSatelliteViewButton = new JButton();
@@ -70,7 +72,7 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 		setBackground(Color.WHITE);
 		addComponentListener(new ComponentAdapter() {
 			@Override
-			public void componentResized(ComponentEvent e) {
+			public void componentResized(final ComponentEvent e) {
 				toggleSatelliteViewButton.setBounds(getWidth() - SATELLITE_BUTTON_SIZE,
 						getHeight() - SATELLITE_BUTTON_SIZE, SATELLITE_BUTTON_SIZE, SATELLITE_BUTTON_SIZE);
 				zoomAndCenterButton.setBounds(getWidth() - SATELLITE_BUTTON_SIZE,
@@ -91,10 +93,11 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 			@Override
 			public void mouseClicked(final MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1) {
-					if (hoveredNode != null) {
+					if (hoveredAnnotation != null) {
+						graph.selectAnnotations(e.isShiftDown(), hoveredAnnotation);
+					} else if (hoveredNode != null) {
 						graph.selectNodes(e.isShiftDown(), hoveredNode);
-					}
-					if (hoveredEdge != null) {
+					} else if (hoveredEdge != null) {
 						graph.selectEdges(e.isShiftDown(), hoveredEdge);
 					}
 				}
@@ -104,8 +107,11 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 			public void mousePressed(final MouseEvent e) {
 				mousePressedStartPosition = e.getPoint();
 				if (e.getButton() == MouseEvent.BUTTON1) {
-					if (hoveredNode != null || hoveredEdge != null) {
-						currentOperation = GraphRendererOperation.NODES_MOVE;
+					if (hoveredAnnotation != null || hoveredNode != null || hoveredEdge != null) {
+						currentOperation = GraphRendererOperation.MOVE;
+						for (final A annotation : graph.getSelectedAnnotations()) {
+							moveStartAnnotationPositions.put(annotation, graph.getAnnotationPosition(annotation));
+						}
 						for (final V node : graph.getSelectedNodes()) {
 							moveStartNodePositions.put(node, graph.getNodePosition(node));
 						}
@@ -124,12 +130,15 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 			@Override
 			public void mouseReleased(final MouseEvent e) {
 				if (currentOperation == GraphRendererOperation.RECTANGLE_SELECTION) {
+					graph.selectAnnotations(true, annotationsInsideSelectionShape);
 					graph.selectNodes(true, nodesInsideSelectionShape);
 					graph.selectEdges(true, edgesInsideSelectionShape);
 				}
+				annotationsInsideSelectionShape.clear();
 				nodesInsideSelectionShape.clear();
 				edgesInsideSelectionShape.clear();
 				currentOperation = GraphRendererOperation.NONE;
+				moveStartAnnotationPositions.clear();
 				moveStartNodePositions.clear();
 				mousePressedStartPosition = null;
 				dragStartOffset = null;
@@ -154,10 +163,15 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 			@Override
 			public void mouseDragged(final MouseEvent e) {
 				lastMousePosition = e.getPoint();
-				if (currentOperation == GraphRendererOperation.NODES_MOVE) {
+				if (currentOperation == GraphRendererOperation.MOVE) {
 					if (mousePressedStartPosition != null) {
 						final var movementX = (e.getX() - mousePressedStartPosition.getX()) / zoom;
 						final var movementY = (e.getY() - mousePressedStartPosition.getY()) / zoom;
+						for (final A annotation : moveStartAnnotationPositions.keySet()) {
+							final var startPosition = moveStartAnnotationPositions.get(annotation);
+							graph.setAnnotationPosition(annotation, new Point2D.Double(startPosition.getX() + movementX,
+									startPosition.getY() + movementY));
+						}
 						for (final V node : moveStartNodePositions.keySet()) {
 							final var startPosition = moveStartNodePositions.get(node);
 							graph.setNodePosition(node, new Point2D.Double(startPosition.getX() + movementX,
@@ -220,6 +234,18 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 
 	public void setScrollSpeed(float scrollSpeed) {
 		this.scrollSpeed = scrollSpeed;
+	}
+
+	public int getLastFps() {
+		return lastFps;
+	}
+
+	public float getZoom() {
+		return zoom;
+	}
+
+	public void setZoom(final float zoom) {
+		this.zoom = Math.max(MIN_ZOOM, zoom);
 	}
 
 	@Override
@@ -302,14 +328,6 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 		if (satelliteVisible) {
 			renderSatelliteView(g2d, minX, minY, maxX, maxY);
 		}
-		// Render info texts
-		g2d.setFont(INFO_FONT);
-		g2d.setColor(Color.RED);
-		g2d.drawString(String.format("Zoom %.3fx", zoom), (float) viewportBounds.getWidth() - 74, 12);
-		g2d.drawString(String.format("FPS %3d", lastFps), (float) viewportBounds.getWidth() - 74, 26);
-		if (mousePosition != null)
-			g2d.drawString(mousePosition.x + "," + mousePosition.y, (float) viewportBounds.getWidth() - 74, 40);
-		g2d.drawString(String.format("Nodes: %s, Edges: %s", graph.getNodeCount(), graph.getEdgeCount()), 4, 12);
 	}
 
 	public void render(final Graphics2D g, final Rectangle viewportBounds) {
@@ -390,7 +408,56 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 		this.hoveredEdge = hoveredEdge;
 		this.edgesInsideSelectionShape.clear();
 		this.edgesInsideSelectionShape.addAll(edgesInsideSelectionShape);
+		// Filter for annotations visible in the viewport and find the top-most annotation the mouse hovers over
+		final List<A> visibleAnnotations = new ArrayList<>();
+		A hoveredAnnotation = null;
+		final List<A> annotationsInsideSelectionShape = new ArrayList<>();
+		for (final A annotation : graph.getAnnotations()) {
+			final var position = transformIfZoomingIn(graph.getAnnotationPosition(annotation));
+			if (selectionRectangle != null) {
+				if (selectionRectangle.contains(position.getX(), position.getY())) {
+					annotationsInsideSelectionShape.add(annotation);
+				}
+			}
+			// Skip annotations outside the viewport
+			final var shape = annotation.getShape();
+			final var bounds = shape.getBounds(annotation);
+			final var localTopLeftX =
+					(position.getX() + bounds.x) * zoomOutFactor + viewportBounds.getCenterX() + offsetX;
+			final var localTopLeftY =
+					(position.getY() + bounds.y) * zoomOutFactor + viewportBounds.getCenterY() + offsetY;
+			if (localTopLeftX + bounds.width * zoomOutFactor < 0 || localTopLeftX > viewportBounds.getWidth()
+					|| localTopLeftY + bounds.height * zoomOutFactor < 0
+					|| localTopLeftY > viewportBounds.getHeight()) {
+				continue;
+			}
+			visibleAnnotations.add(annotation);
+			if (hoveredNode == null && hoveredEdge == null
+					&& currentOperation != GraphRendererOperation.RECTANGLE_SELECTION && mousePosition != null
+					&& shape.isMouseInside(annotation,
+					new Point2D.Double(mousePosition.x - position.getX(), mousePosition.y - position.getY()))) {
+				hoveredAnnotation = annotation;
+			}
+		}
+		this.hoveredAnnotation = hoveredAnnotation;
+		this.annotationsInsideSelectionShape.clear();
+		this.annotationsInsideSelectionShape.addAll(annotationsInsideSelectionShape);
 
+		// Render annotations
+		for (final A annotation : visibleAnnotations) {
+			final var position = transformIfZoomingIn(graph.getAnnotationPosition(annotation));
+			final var shape = annotation.getShape();
+			Color fillColor = annotation.getColor();
+			Color strokeColor = Color.BLACK;
+			if (graph.isSelected(annotation)) {
+				strokeColor = Color.BLUE;
+			} else if (hoveredAnnotation == annotation || annotationsInsideSelectionShape.contains(annotation)) {
+				strokeColor = Color.ORANGE;
+			}
+			g.translate(position.getX(), position.getY());
+			shape.paint(g, annotation, strokeColor, fillColor);
+			g.translate(-position.getX(), -position.getY());
+		}
 		// Render edges
 		for (final E edge : graph.getEdges()) {
 			final var fromShape = edge.getFrom().getNodeShape();
@@ -450,7 +517,7 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 			// Render edge label
 			final String label = edge.getNetworkLabel();
 			final Font labelFont = new Font("Arial", Font.PLAIN, 12); // TODO: from settings
-			if (zoom >= 1 || labelFont.getSize() * zoom >= 6) { // TODO: from settings getMinEdgeFontSize()
+			if (zoom >= 1 || labelFont.getSize() * zoom >= getMinEdgeFontSize()) {
 				final var labelBounds = labelFont.getStringBounds(label, g.getFontRenderContext());
 				AffineTransform affineTransform = new AffineTransform();
 				affineTransform.rotate(Math.atan2(directionVectorForward.y, directionVectorForward.x),
@@ -465,7 +532,6 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 						(int) (halfwayY - labelBounds.getCenterY()));
 			}
 		}
-
 		// Render nodes
 		for (final V node : visibleNodes) {
 			final var position = transformIfZoomingIn(graph.getNodePosition(node));
@@ -484,7 +550,7 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 			// Render token count inside place
 			// TODO: generalize
 			if (node instanceof Place) {
-				if (zoom >= 1 || TOKEN_FONT.getSize() * zoom >= 6) { // TODO: from settings getMinVertexFontSize()
+				if (zoom >= 1 || TOKEN_FONT.getSize() * zoom >= getMinNodeFontSize()) {
 					final String tokens = getPlaceTokensText((Place) node);
 					g.setFont(TOKEN_FONT);
 					g.setColor(Color.BLACK);
@@ -497,7 +563,7 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 			g.setColor(strokeColor);
 			final String label = node.getNetworkLabel();
 			final Font labelFont = new Font("Arial", Font.PLAIN, 12); // TODO: from settings
-			if (zoom >= 1 || labelFont.getSize() * zoom >= 6) { // TODO: from settings getMinVertexFontSize()
+			if (zoom >= 1 || labelFont.getSize() * zoom >= getMinNodeFontSize()) {
 				g.setFont(labelFont);
 				final var labelBounds = labelFont.getStringBounds(label, g.getFontRenderContext());
 				g.drawString(label, (int) (position.getX() + bounds.getMaxX()),
@@ -597,6 +663,14 @@ public class GraphRendererPanel<V extends GraphNode, E extends GraphEdge<V>> ext
 			return null;
 		final var scale = distanceOnLine / directionLength;
 		return new Point2D.Double(lineStart.getX() + direction.x * scale, lineStart.getY() + direction.y * scale);
+	}
+
+	protected int getMinNodeFontSize() {
+		return 6; // TODO: from settings
+	}
+
+	protected int getMinEdgeFontSize() {
+		return 6; // TODO: from settings
 	}
 
 	/**

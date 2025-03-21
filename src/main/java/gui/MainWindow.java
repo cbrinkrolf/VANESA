@@ -22,7 +22,7 @@ import java.util.List;
 import javax.swing.*;
 
 import configurations.Workspace;
-import graph.rendering.shapes.*;
+import graph.rendering.nodes.*;
 import io.OpenDialog;
 import io.SuffixAwareFilter;
 import net.miginfocom.swing.MigLayout;
@@ -38,7 +38,6 @@ import configurations.gui.SettingsPanel;
 import configurations.gui.VisualizationDialog;
 import graph.GraphContainer;
 import graph.eventhandlers.GraphTabListener;
-import graph.jung.graphDrawing.VertexShapes;
 import gui.algorithms.CenterWindow;
 import gui.algorithms.ScreenSize;
 import gui.visualization.VisualizationConfigBeans.Bean;
@@ -198,52 +197,41 @@ public class MainWindow implements ApplicationListener {
 			if (bean.getName().equals(bna.getBiologicalElement())) {
 				switch (shapeBean) {
 				case "ellipse":
-					bna.setDefaultShape(VertexShapes.getEllipse());
 					bna.setNodeShape(new CircleShape());
 					break;
 				case "rectangle":
-					bna.setDefaultShape(VertexShapes.getRectangle());
 					bna.setNodeShape(new RectangleShape());
 					break;
 				case "rounded rectangle":
-					bna.setDefaultShape(VertexShapes.getRoundRectangle());
 					bna.setNodeShape(new RoundedRectangleShape());
 					break;
 				case "triangle":
-					bna.setDefaultShape(VertexShapes.getRegularPolygon(3));
 					bna.setNodeShape(new RegularPolygonShape(3));
 					break;
 				case "pentagon":
-					bna.setDefaultShape(VertexShapes.getRegularPolygon(5));
 					bna.setNodeShape(new RegularPolygonShape(5));
 					break;
 				case "hexagon":
-					bna.setDefaultShape(VertexShapes.getRegularPolygon(6));
 					bna.setNodeShape(new RegularPolygonShape(6));
 					break;
 				case "octagon":
-					bna.setDefaultShape(VertexShapes.getRegularPolygon(8));
 					bna.setNodeShape(new RegularPolygonShape(8));
 					break;
 				case "5 star":
-					bna.setDefaultShape(VertexShapes.getRegularStar(5));
 					bna.setNodeShape(new RegularStarShape(5));
 					break;
 				case "6 star":
-					bna.setDefaultShape(VertexShapes.getRegularStar(6));
 					bna.setNodeShape(new RegularStarShape(6));
 					break;
 				case "7 star":
-					bna.setDefaultShape(VertexShapes.getRegularStar(7));
 					bna.setNodeShape(new RegularStarShape(7));
 					break;
 				case "8 star":
-					bna.setDefaultShape(VertexShapes.getRegularStar(8));
 					bna.setNodeShape(new RegularStarShape(8));
 					break;
 				default:
 					System.out.println(bna.getName() + ": No shape defined! Default shape used!");
-					bna.setDefaultShape(VertexShapes.getEllipse());
+					bna.setDefaultNodeShape(new CircleShape());
 				}
 				bna.setDefaultColor(new Color(bean.getColorRed(), bean.getColorGreen(), bean.getColorBlue()));
 				bna.setDefaultSize(bean.getSizefactor());
