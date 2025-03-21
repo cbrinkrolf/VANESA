@@ -42,7 +42,7 @@ public class TabContentPanel extends JPanel {
 	 * @param tabbedPanel the TabbedPanel for whom this component is the tabs' content component container
 	 */
 	public TabContentPanel(TabbedPanel tabbedPanel) {
-		final StackableLayout layout = new StackableLayout(this, false);
+		final StackableLayout layout = new StackableLayout();
 		setLayout(layout);
 		setOpaque(false);
 		tabbedPanel.addTabListener(new TabAdapter() {

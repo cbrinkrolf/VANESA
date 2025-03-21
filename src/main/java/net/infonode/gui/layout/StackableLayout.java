@@ -27,49 +27,38 @@ import net.infonode.gui.ComponentUtil;
 import java.awt.*;
 
 public class StackableLayout implements LayoutManager2 {
-	private final Container container;
 	private Component component;
-	private final boolean autoShowFirstComponent;
-	private boolean useSelectedComponentSize;
 
-	public StackableLayout(Container container, boolean autoShowFirstComponent) {
-		this.container = container;
-		this.autoShowFirstComponent = autoShowFirstComponent;
-	}
-
-	public void setUseSelectedComponentSize(boolean useSelectedComponentSize) {
-		if (this.useSelectedComponentSize != useSelectedComponentSize) {
-			this.useSelectedComponentSize = useSelectedComponentSize;
-			ComponentUtil.validate(container);
-		}
-	}
-
+	@Override
 	public Dimension maximumLayoutSize(Container target) {
 		return LayoutUtil.add(LayoutUtil.getMinMaximumSize(target.getComponents()), target.getInsets());
 	}
 
+	@Override
 	public void invalidateLayout(Container target) {
 	}
 
+	@Override
 	public float getLayoutAlignmentY(Container target) {
 		return 0;
 	}
 
+	@Override
 	public float getLayoutAlignmentX(Container target) {
 		return 0;
 	}
 
+	@Override
 	public void addLayoutComponent(Component comp, Object constraints) {
-		comp.setVisible(autoShowFirstComponent && comp.getParent().getComponentCount() == 1);
-		if (comp.isVisible()) {
-			component = comp;
-		}
+		comp.setVisible(false);
 	}
 
+	@Override
 	public void addLayoutComponent(String name, Component comp) {
-		addLayoutComponent(comp, null);
+		comp.setVisible(false);
 	}
 
+	@Override
 	public void removeLayoutComponent(Component comp) {
 		if (comp == component) {
 			component = null;
@@ -77,16 +66,17 @@ public class StackableLayout implements LayoutManager2 {
 		comp.setVisible(true);
 	}
 
+	@Override
 	public Dimension preferredLayoutSize(Container parent) {
-		return LayoutUtil.add(useSelectedComponentSize
-				? component == null ? new Dimension(0, 0) : component.getPreferredSize()
-				: LayoutUtil.getMaxPreferredSize(parent.getComponents()), parent.getInsets());
+		return LayoutUtil.add(LayoutUtil.getMaxPreferredSize(parent.getComponents()), parent.getInsets());
 	}
 
+	@Override
 	public Dimension minimumLayoutSize(Container parent) {
 		return new Dimension(0, 0);
 	}
 
+	@Override
 	public void layoutContainer(Container parent) {
 		Insets parentInsets = parent.getInsets();
 		Dimension size = LayoutUtil.getInteriorSize(parent);
@@ -103,13 +93,12 @@ public class StackableLayout implements LayoutManager2 {
 		if (component == c) {
 			return;
 		}
-		final Component oldComponent = component;
-		component = c;
-		boolean hasFocus = oldComponent != null && LayoutUtil.isDescendingFrom(
-				KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner(), oldComponent);
-		if (oldComponent != null) {
-			oldComponent.setVisible(false);
+		boolean hasFocus = component != null && LayoutUtil.isDescendingFrom(
+				KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner(), component);
+		if (component != null) {
+			component.setVisible(false);
 		}
+		component = c;
 		if (component != null) {
 			component.setVisible(true);
 			if (hasFocus) {
@@ -117,5 +106,4 @@ public class StackableLayout implements LayoutManager2 {
 			}
 		}
 	}
-
 }

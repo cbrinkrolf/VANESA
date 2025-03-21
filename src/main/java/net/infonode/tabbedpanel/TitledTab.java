@@ -33,7 +33,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.PanelUI;
 
 import net.infonode.gui.InsetsUtil;
-import net.infonode.gui.layout.StackableLayout;
 import net.infonode.tabbedpanel.border.TabAreaLineBorder;
 import net.infonode.tabbedpanel.border.TabHighlightBorder;
 
@@ -61,7 +60,7 @@ public class TitledTab extends Tab {
 	private static final PanelUI UI = new PanelUI() {
 	};
 
-	private class StatePanel extends JPanel {
+	private static class StatePanel extends JPanel {
 		private final JPanel panel = new JPanel(new BorderLayout());
 		private final JPanel titleComponentPanel = new JPanel(new BorderLayout());
 		private final JLabel label = new JLabel();
@@ -78,20 +77,29 @@ public class TitledTab extends Tab {
 			add(panel, BorderLayout.CENTER);
 		}
 
-		public void setTitleComponent(JComponent titleComponent) {
-			JComponent oldTitleComponent = this.titleComponent;
-			this.titleComponent = null;
-			if (oldTitleComponent != null && oldTitleComponent.getParent() == titleComponentPanel)
-				titleComponentPanel.remove(oldTitleComponent);
+		public void setTitleComponent(final JComponent titleComponent) {
+			if (this.titleComponent != null && this.titleComponent.getParent() == titleComponentPanel) {
+				titleComponentPanel.remove(this.titleComponent);
+			}
 			this.titleComponent = titleComponent;
-			updateLayout();
+			if (titleComponent != null) {
+				panel.remove(titleComponentPanel);
+				panel.add(titleComponentPanel, BorderLayout.EAST);
+				titleComponentPanel.setBorder(new EmptyBorder(0, UIManager.getInt("TabbedPane.textIconGap"), 0, 0));
+				panel.revalidate();
+			} else {
+				panel.remove(titleComponentPanel);
+				titleComponentPanel.removeAll();
+				panel.revalidate();
+			}
 		}
 
 		public void activateTitleComponent() {
 			if (titleComponent != null) {
 				if (titleComponent.getParent() != titleComponentPanel) {
-					if (titleComponent.getParent() != null)
+					if (titleComponent.getParent() != null) {
 						titleComponent.getParent().remove(titleComponent);
+					}
 					titleComponentPanel.add(titleComponent, BorderLayout.CENTER);
 				}
 			} else {
@@ -99,55 +107,25 @@ public class TitledTab extends Tab {
 			}
 		}
 
-		public void activate() {
-			remove(panel);
-			eventPanel.add(panel, BorderLayout.CENTER);
-			add(eventPanel, BorderLayout.CENTER);
-		}
-
-		public void deactivate() {
-			remove(eventPanel);
-			eventPanel.remove(panel);
-			add(panel, BorderLayout.CENTER);
-		}
-
+		@Override
 		public Dimension getPreferredSize() {
 			activateTitleComponent();
-
-			return getAdjustedSize(super.getPreferredSize());
+			return super.getPreferredSize();
 		}
 
+		@Override
 		public Dimension getMinimumSize() {
 			activateTitleComponent();
-
-			return getAdjustedSize(super.getMinimumSize());
+			return super.getMinimumSize();
 		}
 
+		@Override
 		public Dimension getMaximumSize() {
 			activateTitleComponent();
 			return super.getMaximumSize();
 		}
 
-		private Dimension getAdjustedSize(Dimension d) {
-			return d;
-		}
-
-		private void updateLayout() {
-			if (titleComponent != null) {
-				panel.remove(titleComponentPanel);
-				panel.add(titleComponentPanel, BorderLayout.EAST);
-				titleComponentPanel.setBorder(new EmptyBorder(0, UIManager.getInt("TabbedPane.textIconGap"), 0, 0));
-
-				panel.revalidate();
-			} else {
-				panel.remove(titleComponentPanel);
-				titleComponentPanel.removeAll();
-
-				panel.revalidate();
-			}
-		}
-
-		public void setBorders(Border outerBorder, Border innerBorder) {
+		public void setBorders(final Border outerBorder, final Border innerBorder) {
 			setBorder(outerBorder);
 			panel.setBorder(innerBorder);
 		}
@@ -178,34 +156,21 @@ public class TitledTab extends Tab {
 		}
 	}
 
-	private final JPanel eventPanel = new JPanel(new BorderLayout()) {
-		public boolean contains(int x, int y) {
-			return getComponentCount() > 0 && getComponent(0).contains(x, y);
-		}
-
-		public boolean inside(int x, int y) {
-			return getComponentCount() > 0 && getComponent(0).inside(x, y);
-		}
-	};
-
-	public boolean contains(int x, int y) {
-		Point p = SwingUtilities.convertPoint(this, new Point(x, y), eventPanel);
-		return eventPanel.contains(p.x, p.y);
-	}
-
-	public boolean inside(int x, int y) {
-		Point p = SwingUtilities.convertPoint(this, new Point(x, y), eventPanel);
-		return eventPanel.inside(p.x, p.y);
-	}
-
-	private final StatePanel normalStatePanel;
-	private final StatePanel highlightedStatePanel;
-	private final StatePanel disabledStatePanel;
-
+	private final StatePanel statePanel = new StatePanel();
+	private final Color normalStateForegroundColor;
+	private final Color highlightedStateForegroundColor;
+	private final Color disabledStateForegroundColor;
+	private final Color normalStateBackgroundColor;
+	private final Color highlightedStateBackgroundColor;
+	private final Color disabledStateBackgroundColor;
+	private final Border normalStateOuterBorder;
+	private final Border normalStateInnerBorder;
+	private final Border highlightedStateOuterBorder;
+	private final Border highlightedStateInnerBorder;
+	private final Border disabledStateOuterBorder;
+	private final Border disabledStateInnerBorder;
 	private ArrayList<MouseListener> mouseListeners;
 	private ArrayList<MouseMotionListener> mouseMotionListeners;
-	private final StackableLayout layout;
-	private StatePanel currentStatePanel;
 
 	/**
 	 * Constructs a TitledTab with a text, icon, content component and title component.
@@ -213,10 +178,8 @@ public class TitledTab extends Tab {
 	 * @param text             text or null for no text. The text will be applied to the normal state properties
 	 * @param icon             icon or null for no icon. The icon will be applied to the normal state properties
 	 * @param contentComponent content component or null for no content component
-	 * @param titleComponent   title component or null for no title component. The title component will be applied to
-	 *                         all the states
 	 */
-	public TitledTab(String text, Icon icon, JComponent contentComponent, JComponent titleComponent) {
+	public TitledTab(final String text, final Icon icon, final JComponent contentComponent) {
 		super(contentComponent);
 		super.setOpaque(false);
 
@@ -230,121 +193,74 @@ public class TitledTab extends Tab {
 			}
 		});
 
-		Insets notRaised = new Insets(0, 0, 2, 0);
-		Border normalBorder = new EmptyBorder(notRaised);
-
-		Border normalBorder2 = new TabAreaLineBorder();
-		Border highlightedBorder = new CompoundBorder(new TabAreaLineBorder(),
+		final Border normalBorder = new EmptyBorder(new Insets(0, 0, 2, 0));
+		final Border normalBorder2 = new TabAreaLineBorder();
+		final Border highlightedBorder = new CompoundBorder(new TabAreaLineBorder(),
 				new TabHighlightBorder(TabbedUIDefaults.getHighlight(), true));
+		final Insets maxInsets = InsetsUtil.max(getBorderInsets(normalBorder2), getBorderInsets(highlightedBorder));
+		final Insets normalInsets = TabbedUIDefaults.getTabInsets();
+		final int normalLowered = Math.min(normalInsets.top, 2);
+		normalStateForegroundColor = TabbedUIDefaults.getNormalStateForeground();
+		highlightedStateForegroundColor = TabbedUIDefaults.getNormalStateForeground();
+		disabledStateForegroundColor = TabbedUIDefaults.getDisabledForeground();
+		normalStateBackgroundColor = TabbedUIDefaults.getNormalStateBackground();
+		highlightedStateBackgroundColor = TabbedUIDefaults.getHighlightedStateBackground();
+		disabledStateBackgroundColor = TabbedUIDefaults.getDisabledBackground();
+		normalStateOuterBorder = normalBorder;
+		normalStateInnerBorder = getInnerBorder(normalBorder2, normalInsets, -normalLowered, maxInsets);
+		highlightedStateOuterBorder = null;
+		highlightedStateInnerBorder = getInnerBorder(highlightedBorder, normalInsets, 2 - normalLowered, maxInsets);
+		disabledStateOuterBorder = normalBorder;
+		disabledStateInnerBorder = getInnerBorder(normalBorder2, normalInsets, -normalLowered, maxInsets);
 
-		Insets maxInsets = InsetsUtil.max(getBorderInsets(normalBorder2), getBorderInsets(highlightedBorder));
-		Insets normalInsets = TabbedUIDefaults.getTabInsets();
-
-		int normalLowered = Math.min(normalInsets.top, 2);
-		Border innerNormalBorder = getInnerBorder(normalBorder2, normalInsets, -normalLowered, maxInsets);
-		Border innerHighlightBorder = getInnerBorder(highlightedBorder, normalInsets, 2 - normalLowered, maxInsets);
-		Border innerDisabledBorder = getInnerBorder(normalBorder2, normalInsets, -normalLowered, maxInsets);
-
-		normalStatePanel = new StatePanel();
-		normalStatePanel.setForegroundColor(TabbedUIDefaults.getNormalStateForeground());
-		normalStatePanel.setBackgroundColor(TabbedUIDefaults.getNormalStateBackground());
-		normalStatePanel.setBorders(normalBorder, innerNormalBorder);
-
-		highlightedStatePanel = new StatePanel();
-		highlightedStatePanel.setForegroundColor(TabbedUIDefaults.getNormalStateForeground());
-		highlightedStatePanel.setBackgroundColor(TabbedUIDefaults.getHighlightedStateBackground());
-		highlightedStatePanel.setBorders(null, innerHighlightBorder);
-
-		disabledStatePanel = new StatePanel();
-		disabledStatePanel.setForegroundColor(TabbedUIDefaults.getDisabledForeground());
-		disabledStatePanel.setBackgroundColor(TabbedUIDefaults.getDisabledBackground());
-		disabledStatePanel.setBorders(normalBorder, innerDisabledBorder);
-
-		layout = new StackableLayout(this, true) {
-			public void layoutContainer(Container parent) {
-				super.layoutContainer(parent);
-				StatePanel visibleStatePanel = (StatePanel) getVisibleComponent();
-				visibleStatePanel.activateTitleComponent();
-			}
-		};
-
-		setLayout(layout);
-
-		add(normalStatePanel);
-		add(highlightedStatePanel);
-		add(disabledStatePanel);
-
+		setLayout(new BorderLayout());
+		add(statePanel, BorderLayout.CENTER);
 		setText(text);
 		setIcon(icon);
-		setTitleComponent(titleComponent);
-
-		eventPanel.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {
-				updateFocus(TabSelectTrigger.MOUSE_PRESS);
-			}
-
-			public void mouseReleased(MouseEvent e) {
-				updateFocus(TabSelectTrigger.MOUSE_RELEASE);
-			}
-
-			private void updateFocus(TabSelectTrigger trigger) {
-				if (isEnabled() && getTabbedPanel() != null && TabSelectTrigger.MOUSE_PRESS == trigger) {
-					Component focusedComponent = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
-
-					if (focusedComponent instanceof TitledTab
-							&& ((TitledTab) focusedComponent).getTabbedPanel() == getTabbedPanel())
-						requestFocusInWindow();
-					else if (isSelected() || TabbedUtils.getParentTabbedPanel(focusedComponent) != getTabbedPanel())
-						requestFocusInWindow();
-				}
-			}
-		});
-
-		setEventComponent(eventPanel);
 
 		MouseListener mouseListener = new MouseListener() {
 			public void mouseClicked(MouseEvent e) {
 				if (mouseListeners != null) {
 					MouseEvent event = convertMouseEvent(e);
-					Object[] l = mouseListeners.toArray();
-					for (int i = 0; i < l.length; i++)
-						((MouseListener) l[i]).mouseClicked(event);
+					final var listeners = new ArrayList<>(mouseListeners);
+					for (final var l : listeners)
+						l.mouseClicked(event);
 				}
 			}
 
 			public void mousePressed(MouseEvent e) {
 				if (mouseListeners != null) {
 					MouseEvent event = convertMouseEvent(e);
-					Object[] l = mouseListeners.toArray();
-					for (int i = 0; i < l.length; i++)
-						((MouseListener) l[i]).mousePressed(event);
+					final var listeners = new ArrayList<>(mouseListeners);
+					for (final var l : listeners)
+						l.mousePressed(event);
 				}
 			}
 
 			public void mouseReleased(MouseEvent e) {
 				if (mouseListeners != null) {
 					MouseEvent event = convertMouseEvent(e);
-					Object[] l = mouseListeners.toArray();
-					for (int i = 0; i < l.length; i++)
-						((MouseListener) l[i]).mouseReleased(event);
+					final var listeners = new ArrayList<>(mouseListeners);
+					for (final var l : listeners)
+						l.mouseReleased(event);
 				}
 			}
 
 			public void mouseEntered(MouseEvent e) {
 				if (mouseListeners != null) {
 					MouseEvent event = convertMouseEvent(e);
-					Object[] l = mouseListeners.toArray();
-					for (int i = 0; i < l.length; i++)
-						((MouseListener) l[i]).mouseEntered(event);
+					final var listeners = new ArrayList<>(mouseListeners);
+					for (final var l : listeners)
+						l.mouseEntered(event);
 				}
 			}
 
 			public void mouseExited(MouseEvent e) {
 				if (mouseListeners != null) {
 					MouseEvent event = convertMouseEvent(e);
-					Object[] l = mouseListeners.toArray();
-					for (int i = 0; i < l.length; i++)
-						((MouseListener) l[i]).mouseExited(event);
+					final var listeners = new ArrayList<>(mouseListeners);
+					for (final var l : listeners)
+						l.mouseExited(event);
 				}
 			}
 		};
@@ -353,27 +269,24 @@ public class TitledTab extends Tab {
 			public void mouseDragged(MouseEvent e) {
 				if (mouseMotionListeners != null) {
 					MouseEvent event = convertMouseEvent(e);
-					Object[] l = mouseMotionListeners.toArray();
-					for (int i = 0; i < l.length; i++)
-						((MouseMotionListener) l[i]).mouseDragged(event);
+					final var listeners = new ArrayList<>(mouseMotionListeners);
+					for (final var l : listeners)
+						l.mouseDragged(event);
 				}
 			}
 
 			public void mouseMoved(MouseEvent e) {
 				if (mouseMotionListeners != null) {
 					MouseEvent event = convertMouseEvent(e);
-					Object[] l = mouseMotionListeners.toArray();
-					for (int i = 0; i < l.length; i++)
-						((MouseMotionListener) l[i]).mouseMoved(event);
+					final var listeners = new ArrayList<>(mouseMotionListeners);
+					for (final var l : listeners)
+						l.mouseMoved(event);
 				}
 			}
 		};
-
-		eventPanel.addMouseListener(mouseListener);
-		eventPanel.addMouseMotionListener(mouseMotionListener);
-
+		statePanel.addMouseListener(mouseListener);
+		statePanel.addMouseMotionListener(mouseMotionListener);
 		setFocusableComponent(this);
-		layout.setUseSelectedComponentSize(false);
 		updateCurrentStatePanel();
 	}
 
@@ -386,9 +299,7 @@ public class TitledTab extends Tab {
 	 * @param titleComponent the title component or null for no title component
 	 */
 	public void setTitleComponent(JComponent titleComponent) {
-		normalStatePanel.setTitleComponent(titleComponent);
-		highlightedStatePanel.setTitleComponent(titleComponent);
-		disabledStatePanel.setTitleComponent(titleComponent);
+		statePanel.setTitleComponent(titleComponent);
 	}
 
 	/**
@@ -399,6 +310,7 @@ public class TitledTab extends Tab {
 	 *
 	 * @param highlighted true for highlight, otherwise false
 	 */
+	@Override
 	public void setHighlighted(boolean highlighted) {
 		super.setHighlighted(highlighted);
 		updateCurrentStatePanel();
@@ -416,6 +328,7 @@ public class TitledTab extends Tab {
 	 *
 	 * @param enabled true for enabled, otherwise false
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 		updateCurrentStatePanel();
@@ -427,7 +340,7 @@ public class TitledTab extends Tab {
 	 * @return the text or null if no text
 	 */
 	public String getText() {
-		return normalStatePanel.getText();
+		return statePanel.getText();
 	}
 
 	/**
@@ -436,9 +349,7 @@ public class TitledTab extends Tab {
 	 * @param text the text or null for no text
 	 */
 	public void setText(String text) {
-		normalStatePanel.setText(text);
-		highlightedStatePanel.setText(text);
-		disabledStatePanel.setText(text);
+		statePanel.setText(text);
 	}
 
 	/**
@@ -447,7 +358,7 @@ public class TitledTab extends Tab {
 	 * @return the icon or null if no icon
 	 */
 	public Icon getIcon() {
-		return normalStatePanel.getIcon();
+		return statePanel.getIcon();
 	}
 
 	/**
@@ -456,9 +367,7 @@ public class TitledTab extends Tab {
 	 * @param icon the icon or null for no icon
 	 */
 	public void setIcon(Icon icon) {
-		normalStatePanel.setIcon(icon);
-		highlightedStatePanel.setIcon(icon);
-		disabledStatePanel.setIcon(icon);
+		statePanel.setIcon(icon);
 	}
 
 	/**
@@ -470,8 +379,9 @@ public class TitledTab extends Tab {
 	 * @see #getText
 	 * @since ITP 1.1.0
 	 */
+	@Override
 	public String toString() {
-		return getText();
+		return statePanel.getText();
 	}
 
 	/**
@@ -479,9 +389,11 @@ public class TitledTab extends Tab {
 	 *
 	 * @param l the MouseListener
 	 */
+	@Override
 	public synchronized void addMouseListener(MouseListener l) {
-		if (mouseListeners == null)
+		if (mouseListeners == null) {
 			mouseListeners = new ArrayList<>(2);
+		}
 		mouseListeners.add(l);
 	}
 
@@ -490,12 +402,13 @@ public class TitledTab extends Tab {
 	 *
 	 * @param l the MouseListener to remove
 	 */
+	@Override
 	public synchronized void removeMouseListener(MouseListener l) {
 		if (mouseListeners != null) {
 			mouseListeners.remove(l);
-
-			if (mouseListeners.isEmpty())
+			if (mouseListeners.isEmpty()) {
 				mouseListeners = null;
+			}
 		}
 	}
 
@@ -504,17 +417,12 @@ public class TitledTab extends Tab {
 	 *
 	 * @return the mouse listeners
 	 */
+	@Override
 	public synchronized MouseListener[] getMouseListeners() {
-		MouseListener[] listeners = new MouseListener[0];
-
 		if (mouseListeners != null) {
-			Object[] l = mouseListeners.toArray();
-			listeners = new MouseListener[l.length];
-			for (int i = 0; i < l.length; i++)
-				listeners[i] = (MouseListener) l[i];
+			return mouseListeners.toArray(new MouseListener[0]);
 		}
-
-		return listeners;
+		return new MouseListener[0];
 	}
 
 	/**
@@ -522,10 +430,11 @@ public class TitledTab extends Tab {
 	 *
 	 * @param l the MouseMotionListener
 	 */
+	@Override
 	public synchronized void addMouseMotionListener(MouseMotionListener l) {
-		if (mouseMotionListeners == null)
+		if (mouseMotionListeners == null) {
 			mouseMotionListeners = new ArrayList<>(2);
-
+		}
 		mouseMotionListeners.add(l);
 	}
 
@@ -534,12 +443,13 @@ public class TitledTab extends Tab {
 	 *
 	 * @param l the MouseMotionListener to remove
 	 */
+	@Override
 	public synchronized void removeMouseMotionListener(MouseMotionListener l) {
 		if (mouseMotionListeners != null) {
 			mouseMotionListeners.remove(l);
-
-			if (mouseMotionListeners.isEmpty())
+			if (mouseMotionListeners.isEmpty()) {
 				mouseMotionListeners = null;
+			}
 		}
 	}
 
@@ -548,47 +458,37 @@ public class TitledTab extends Tab {
 	 *
 	 * @return the mouse motion listeners
 	 */
+	@Override
 	public synchronized MouseMotionListener[] getMouseMotionListeners() {
-		MouseMotionListener[] listeners = new MouseMotionListener[0];
-
 		if (mouseMotionListeners != null) {
-			Object[] l = mouseMotionListeners.toArray();
-			listeners = new MouseMotionListener[l.length];
-			for (int i = 0; i < l.length; i++)
-				listeners[i] = (MouseMotionListener) l[i];
+			return mouseMotionListeners.toArray(new MouseMotionListener[0]);
 		}
-
-		return listeners;
+		return new MouseMotionListener[0];
 	}
 
-	private Insets getBorderInsets(Border border) {
+	private Insets getBorderInsets(final Border border) {
 		return border == null ? InsetsUtil.EMPTY_INSETS : border.getBorderInsets(this);
 	}
 
-	private Border getInnerBorder(Border border, Insets insets, int raised, Insets maxInsets) {
-		if (maxInsets != null)
-			insets = InsetsUtil.add(insets, InsetsUtil.sub(maxInsets, getBorderInsets(border)));
-
-		Border innerBorder = new EmptyBorder(InsetsUtil.add(insets, new Insets(raised, 0, 0, 0)));
-		return border == null ? innerBorder : new CompoundBorder(border, innerBorder);
+	private Border getInnerBorder(final Border border, Insets insets, final int raised, final Insets maxInsets) {
+		insets = InsetsUtil.add(insets, InsetsUtil.sub(maxInsets, getBorderInsets(border)));
+		return new CompoundBorder(border, new EmptyBorder(InsetsUtil.add(insets, new Insets(raised, 0, 0, 0))));
 	}
 
 	private void updateCurrentStatePanel() {
-		StatePanel newStatePanel = normalStatePanel;
-		if (!isEnabled())
-			newStatePanel = disabledStatePanel;
-		else if (isHighlighted())
-			newStatePanel = highlightedStatePanel;
-
-		eventPanel.setToolTipText(newStatePanel.getToolTipText());
-
-		if (currentStatePanel != newStatePanel) {
-			if (currentStatePanel != null)
-				currentStatePanel.deactivate();
-			currentStatePanel = newStatePanel;
-			currentStatePanel.activate();
+		if (!isEnabled()) {
+			statePanel.setForegroundColor(disabledStateForegroundColor);
+			statePanel.setBackgroundColor(disabledStateBackgroundColor);
+			statePanel.setBorders(disabledStateOuterBorder, disabledStateInnerBorder);
+		} else if (isHighlighted()) {
+			statePanel.setForegroundColor(highlightedStateForegroundColor);
+			statePanel.setBackgroundColor(highlightedStateBackgroundColor);
+			statePanel.setBorders(highlightedStateOuterBorder, highlightedStateInnerBorder);
+		} else {
+			statePanel.setForegroundColor(normalStateForegroundColor);
+			statePanel.setBackgroundColor(normalStateBackgroundColor);
+			statePanel.setBorders(normalStateOuterBorder, normalStateInnerBorder);
 		}
-		layout.showComponent(currentStatePanel);
 	}
 
 	private MouseEvent convertMouseEvent(MouseEvent e) {
@@ -597,11 +497,14 @@ public class TitledTab extends Tab {
 				e.getClickCount(), !e.isConsumed() && e.isPopupTrigger(), e.getButton());
 	}
 
+	@Override
 	public void setUI(PanelUI ui) {
-		if (getUI() != UI)
+		if (getUI() != UI) {
 			super.setUI(UI);
+		}
 	}
 
+	@Override
 	public void updateUI() {
 		setUI(UI);
 	}

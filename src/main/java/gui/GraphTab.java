@@ -11,7 +11,7 @@ public class GraphTab extends TitledTab {
 	private static final ImageIcon petriNetworkIcon = ImagePath.getInstance().getImageIcon("petriNetworkTiny.png");
 
 	public GraphTab(final String name, final GraphZoomScrollPane viewer) {
-		super(name, null, viewer, null);
+		super(name, null, viewer);
 		setTitleComponent(new CloseButton(this));
 	}
 
