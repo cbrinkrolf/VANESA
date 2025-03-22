@@ -569,25 +569,25 @@ public class RuleEditingWindow implements ActionListener {
 		// panel.add(new JSeparator(JSeparator.VERTICAL), "growy, gap 5");
 		panel.add(new JLabel(), "gap 10");
 
-		JButton adjustDown = new ToolBarButton(imagePath.getImageIcon("adjustDown.png"));
+		JButton adjustDown = new ToolBarButton(imagePath.getImageIcon("nodeAdjustDown.svg"));
 		adjustDown.setToolTipText("Adjust Selected Nodes To Lowest Node");
 		adjustDown.setActionCommand("adjustDown");
 		adjustDown.addActionListener(listener);
 		panel.add(adjustDown);
 
-		JButton adjustLeft = new ToolBarButton(imagePath.getImageIcon("adjustLeft.png"));
+		JButton adjustLeft = new ToolBarButton(imagePath.getImageIcon("nodeAdjustLeft.svg"));
 		adjustLeft.setToolTipText("Adjust Selected Nodes To Left");
 		adjustLeft.setActionCommand("adjustLeft");
 		adjustLeft.addActionListener(listener);
 		panel.add(adjustLeft);
 
-		JButton adjustHorizontalSpace = new ToolBarButton(imagePath.getImageIcon("adjustHorizontalSpace.png"));
+		JButton adjustHorizontalSpace = new ToolBarButton(imagePath.getImageIcon("nodeAdjustHorizontalSpace.svg"));
 		adjustHorizontalSpace.setToolTipText("Adjust Horizontal Space of Selected Nodes");
 		adjustHorizontalSpace.setActionCommand("adjustHorizontalSpace");
 		adjustHorizontalSpace.addActionListener(listener);
 		panel.add(adjustHorizontalSpace);
 
-		JButton adjustVerticalSpace = new ToolBarButton(imagePath.getImageIcon("adjustVerticalSpace.png"));
+		JButton adjustVerticalSpace = new ToolBarButton(imagePath.getImageIcon("nodeAdjustVerticalSpace.svg"));
 		adjustVerticalSpace.setToolTipText("Adjust Vertical Space of Selected Nodes");
 		adjustVerticalSpace.setActionCommand("adjustVerticalSpace");
 		adjustVerticalSpace.addActionListener(listener);
