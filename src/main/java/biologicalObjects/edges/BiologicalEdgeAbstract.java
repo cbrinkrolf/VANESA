@@ -67,6 +67,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		this.directed = directed;
 	}
 
+	@Override
 	public boolean isVisible() {
 		return visible;
 	}
@@ -85,6 +86,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		this.description = description;
 	}
 
+	@Override
 	public String getComments() {
 		return comments;
 	}
@@ -102,6 +104,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		this.defaultColor = defaultColor;
 	}
 
+	@Override
 	public Color getColor() {
 		return color;
 	}
@@ -111,6 +114,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		this.color = color;
 	}
 
+	@Override
 	public String getBiologicalElement() {
 		return biologicalElement;
 	}
@@ -119,6 +123,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		this.biologicalElement = biologicalElement;
 	}
 
+	@Override
 	public Shape getShape() {
 		return shape;
 	}
@@ -128,6 +133,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		this.shape = shape;
 	}
 
+	@Override
 	public boolean hasKEGGNode() {
 		return hasKEGGNode;
 	}
@@ -137,6 +143,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		this.hasKEGGNode = hasKEGGNode;
 	}
 
+	@Override
 	public boolean hasBrendaNode() {
 		return hasBrendaNode;
 	}
@@ -146,6 +153,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		this.hasBrendaNode = hasBrendaNode;
 	}
 
+	@Override
 	public Set<String> getLabelSet() {
 		return labelSet;
 	}
@@ -155,10 +163,12 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		this.labelSet = labelSet;
 	}
 
+	@Override
 	public List<Parameter> getParameters() {
 		return parameters;
 	}
 
+	@Override
 	public List<Parameter> getParametersSortedAlphabetically() {
 		Map<String, Parameter> map = new HashMap<>();
 		for (Parameter p : getParameters()) {
@@ -241,11 +251,13 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		setLabel(this.function);
 	}
 
+	@Override
 	public int getID() {
 		return ID;
 	}
 
 	// should only be used when loading a file with a network
+	@Override
 	public void setID(int id, Pathway pw) throws IDAlreadyExistException {
 		if (ID != id) {
 			set = pw.getIdSet();
@@ -257,6 +269,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		}
 	}
 
+	@Override
 	public void setID(Pathway pw) {
 		set = pw.getIdSet();
 		// set id to the highest current id plus one
@@ -279,14 +292,17 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		}
 	}
 
+	@Override
 	public String getNetworklabel() {
 		return getCorrectLabel(GraphSettings.getInstance().getEdgeLabel());
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public void setName(String name) {
 		this.name = name.trim();
 		if (StringUtils.isEmpty(label)) {
@@ -294,10 +310,12 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		}
 	}
 
+	@Override
 	public String getLabel() {
 		return label;
 	}
 
+	@Override
 	public void setLabel(String label) {
 		labelSet.remove(this.label);
 		this.label = label.trim();
@@ -307,18 +325,22 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		}
 	}
 
+	@Override
 	public boolean isEdge() {
 		return true;
 	}
 
+	@Override
 	public boolean isVertex() {
 		return false;
 	}
 
+	@Override
 	public void addLabel(String label) {
 		this.labelSet.add(label);
 	}
 
+	@Override
 	public void addLabel(Set<String> labels) {
 		this.labelSet.addAll(labels);
 	}
@@ -327,6 +349,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		this.labelSet.remove(label);
 	}
 
+	@Override
 	public void resetAppearance() {
 	}
 

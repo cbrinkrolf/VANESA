@@ -257,12 +257,8 @@ public class JSBMLInput {
 						if (elSub != null) {
 							label = elSub.getAttributeValue("label");
 						}
-						bea = BiologicalEdgeAbstractFactory.create(biologicalElement, null);
+						bea = BiologicalEdgeAbstractFactory.create(biologicalElement, from, to, label, name);
 						bea.setDirected(true);
-						bea.setFrom(from);
-						bea.setTo(to);
-						bea.setLabel(label);
-						bea.setName(name);
 
 						elSub = reacAnnotation.getChild("Parameters", null);
 						// elSubSub = elSub.getChild("x_Coordinate", null);
@@ -372,12 +368,12 @@ public class JSBMLInput {
 							label = elSub.getAttributeValue("Label");
 						}
 					}
-					bna = BiologicalNodeAbstractFactory.create(biologicalElement, null);
+					bna = BiologicalNodeAbstractFactory.create(biologicalElement);
 					if (reverseEngineering) {
 						if (bna instanceof Place) {
-							bna = BiologicalNodeAbstractFactory.create(Elementdeclerations.metabolite, null);
+							bna = BiologicalNodeAbstractFactory.create(Elementdeclerations.metabolite);
 						} else if (bna instanceof Transition) {
-							bna = BiologicalNodeAbstractFactory.create(Elementdeclerations.enzyme, null);
+							bna = BiologicalNodeAbstractFactory.create(Elementdeclerations.enzyme);
 						}
 					}
 					bna.setLabel(label);

@@ -847,15 +847,12 @@ public class RuleEditingWindow implements ActionListener {
 	}
 
 	private void populateGraph() {
-
 		// for BN
 		// put nodes
-		RuleNode rn;
-		BiologicalNodeAbstract bna;
-		Map<String, BiologicalNodeAbstract> nameToBN = new HashMap<String, BiologicalNodeAbstract>();
+		Map<String, BiologicalNodeAbstract> nameToBN = new HashMap<>();
 		for (int i = 0; i < rule.getBiologicalNodes().size(); i++) {
-			rn = rule.getBiologicalNodes().get(i);
-			bna = BiologicalNodeAbstractFactory.create(rn.getType(), null);
+			RuleNode rn = rule.getBiologicalNodes().get(i);
+			BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(rn.getType());
 			bna.setName(rn.getName());
 			bna.setLabel(rn.getName());
 			nameToBN.put(bna.getName(), bna);
@@ -867,16 +864,12 @@ public class RuleEditingWindow implements ActionListener {
 		}
 
 		// put edges
-		BiologicalEdgeAbstract bea;
-		RuleEdge re;
-		Map<RuleEdge, BiologicalEdgeAbstract> edgesMap = new HashMap<RuleEdge, BiologicalEdgeAbstract>();
+		Map<RuleEdge, BiologicalEdgeAbstract> edgesMap = new HashMap<>();
 		for (int i = 0; i < rule.getBiologicalEdges().size(); i++) {
-			re = rule.getBiologicalEdges().get(i);
-			bea = BiologicalEdgeAbstractFactory.create(re.getType(), null);
-			bea.setFrom(nameToBN.get(re.getFrom().getName()));
-			bea.setTo(nameToBN.get(re.getTo().getName()));
-			bea.setLabel(re.getName());
-			bea.setName(re.getName());
+			RuleEdge re = rule.getBiologicalEdges().get(i);
+			BiologicalEdgeAbstract bea = BiologicalEdgeAbstractFactory.create(re.getType(),
+					nameToBN.get(re.getFrom().getName()), nameToBN.get(re.getTo().getName()), re.getName(),
+					re.getName());
 			bea.setDirected(re.isDirected());
 			bn.addEdge(bea);
 			edgesMap.put(re, bea);
@@ -884,10 +877,10 @@ public class RuleEditingWindow implements ActionListener {
 		bn.updateMyGraph();
 
 		// for PN
-		Map<String, BiologicalNodeAbstract> nameToPN = new HashMap<String, BiologicalNodeAbstract>();
+		Map<String, BiologicalNodeAbstract> nameToPN = new HashMap<>();
 		for (int i = 0; i < rule.getPetriNodes().size(); i++) {
-			rn = rule.getPetriNodes().get(i);
-			bna = BiologicalNodeAbstractFactory.create(rn.getType(), null);
+			RuleNode rn = rule.getPetriNodes().get(i);
+			BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(rn.getType());
 			bna.setName(rn.getName());
 			bna.setLabel(rn.getName());
 			nameToPN.put(bna.getName(), bna);
@@ -900,12 +893,10 @@ public class RuleEditingWindow implements ActionListener {
 
 		// put edges
 		for (int i = 0; i < rule.getPetriEdges().size(); i++) {
-			re = rule.getPetriEdges().get(i);
-			bea = BiologicalEdgeAbstractFactory.create(re.getType(), null);
-			bea.setFrom(nameToPN.get(re.getFrom().getName()));
-			bea.setTo(nameToPN.get(re.getTo().getName()));
-			bea.setLabel(re.getName());
-			bea.setName(re.getName());
+			RuleEdge re = rule.getPetriEdges().get(i);
+			BiologicalEdgeAbstract bea = BiologicalEdgeAbstractFactory.create(re.getType(),
+					nameToPN.get(re.getFrom().getName()), nameToPN.get(re.getTo().getName()), re.getName(),
+					re.getName());
 			bea.setDirected(true);
 			pn.addEdge(bea);
 			// parameterMapping.put(bea, new HashMap<String, String>());
@@ -915,13 +906,9 @@ public class RuleEditingWindow implements ActionListener {
 		}
 		pn.updateMyGraph();
 
-		String bn;
-		String pn;
-		Iterator<RuleNode> it = rule.getBnToPnMapping().keySet().iterator();
-		while (it.hasNext()) {
-			rn = it.next();
-			bn = rn.getName();
-			pn = rule.getBnToPnMapping().get(rn).getName();
+		for (RuleNode ruleNode : rule.getBnToPnMapping().keySet()) {
+			String bn = ruleNode.getName();
+			String pn = rule.getBnToPnMapping().get(ruleNode).getName();
 			bnToPn.put(nameToBN.get(bn), nameToPN.get(pn));
 		}
 

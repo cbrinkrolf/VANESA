@@ -335,9 +335,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                                 bea = new Glycosylation("+g", "", bna1, bna2);
                                 break;
                             default:
-                                bea = BiologicalEdgeAbstractFactory.create(edgeType, null);
-                                bea.setFrom(bna1);
-                                bea.setTo(bna2);
+                                bea = BiologicalEdgeAbstractFactory.create(edgeType, bna1, bna2, "", "");
                                 break;
                         }
                         bea.setDirected(true);

@@ -142,7 +142,7 @@ public class Pathway implements Cloneable {
 
 	public BiologicalNodeAbstract addVertex(String name, String label, String elementDeclaration, String compartment,
 			Point2D p) {
-		BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(elementDeclaration, null);
+		BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(elementDeclaration);
 		bna.setName(name);
 		bna.setLabel(label);
 		this.getCompartmentManager().setCompartment(bna, this.getCompartmentManager().getCompartment(compartment));
@@ -199,11 +199,7 @@ public class Pathway implements Cloneable {
 
 	public BiologicalEdgeAbstract addEdge(String label, String name, BiologicalNodeAbstract from,
 			BiologicalNodeAbstract to, String element, boolean directed) {
-		BiologicalEdgeAbstract bea = BiologicalEdgeAbstractFactory.create(element, null);
-		bea.setLabel(label);
-		bea.setName(name);
-		bea.setFrom(from);
-		bea.setTo(to);
+		BiologicalEdgeAbstract bea = BiologicalEdgeAbstractFactory.create(element, from, to, label, name);
 		bea.setDirected(directed);
 		if (element.equals(Elementdeclerations.pnArc)) {
 			((PNArc) bea).setProbability(1);

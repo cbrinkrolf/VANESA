@@ -235,9 +235,7 @@ public class KGMLReader extends BaseReader<Pathway> {
                             bea = new Glycosylation("+g", "", bna1, bna2);
                             break;
                         default:
-                            bea = BiologicalEdgeAbstractFactory.create(subtype.Name, null);
-                            bea.setFrom(bna1);
-                            bea.setTo(bna2);
+                            bea = BiologicalEdgeAbstractFactory.create(subtype.Name, bna1, bna2, "", "");
                             break;
                     }
                     bea.setDirected(true);
