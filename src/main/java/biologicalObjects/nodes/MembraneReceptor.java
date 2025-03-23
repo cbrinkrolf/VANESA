@@ -3,9 +3,8 @@ package biologicalObjects.nodes;
 import biologicalElements.Elementdeclerations;
 
 public class MembraneReceptor extends Receptor {
-	public MembraneReceptor(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.membraneReceptor);
-		attributeSetter(this.getClass().getSimpleName(), this);
+	public MembraneReceptor(final String label, final String name) {
+		super(label, name, Elementdeclerations.membraneReceptor);
+		attributeSetter(getClass().getSimpleName(), this);
 	}
 }

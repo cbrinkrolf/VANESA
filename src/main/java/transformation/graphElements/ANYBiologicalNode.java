@@ -4,10 +4,8 @@ import biologicalElements.Elementdeclerations;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class ANYBiologicalNode extends BiologicalNodeAbstract {
-
-	public ANYBiologicalNode(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.anyBNA);
-		attributeSetter(this.getClass().getSimpleName(), this);
+	public ANYBiologicalNode(final String label, final String name) {
+		super(label, name, Elementdeclerations.anyBNA);
+		attributeSetter(getClass().getSimpleName(), this);
 	}
 }

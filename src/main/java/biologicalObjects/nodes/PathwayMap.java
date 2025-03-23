@@ -7,10 +7,9 @@ public class PathwayMap extends BiologicalNodeAbstract {
 	private boolean specification;
 	private Pathway pathwayLink = null;
 
-	public PathwayMap(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.pathwayMap);
-		attributeSetter(this.getClass().getSimpleName(), this);
+	public PathwayMap(final String label, final String name) {
+		super(label, name, Elementdeclerations.pathwayMap);
+		attributeSetter(getClass().getSimpleName(), this);
 	}
 
 	public boolean isSpecification() {

@@ -23,8 +23,7 @@ public abstract class Place extends PNNode {
 	private int conflictStrategy = 0;
 
 	protected Place(final String label, final String name, final String biologicalElement, final boolean isDiscrete) {
-		super(label, name);
-		setBiologicalElement(biologicalElement);
+		super(label, name, biologicalElement);
 		setDiscrete(isDiscrete);
 		if (label.isEmpty())
 			setLabel(name);

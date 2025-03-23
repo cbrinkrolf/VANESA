@@ -3,9 +3,8 @@ package biologicalObjects.nodes;
 import biologicalElements.Elementdeclerations;
 
 public class CompoundNode extends BiologicalNodeAbstract {
-    public CompoundNode(String label, String name) {
-        super(label, name);
-        setBiologicalElement(Elementdeclerations.compound);
-        attributeSetter(this.getClass().getSimpleName(), this);
-    }
+	public CompoundNode(final String label, final String name) {
+		super(label, name, Elementdeclerations.compound);
+		attributeSetter(getClass().getSimpleName(), this);
+	}
 }

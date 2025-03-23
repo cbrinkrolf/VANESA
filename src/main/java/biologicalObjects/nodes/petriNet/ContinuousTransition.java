@@ -11,10 +11,9 @@ public class ContinuousTransition extends Transition {
 	// scalar or scalar function for maximum speed
 	private String maximalSpeed = "1";
 
-	public ContinuousTransition(String label, String name) {
-		super(label, name);
+	public ContinuousTransition(final String label, final String name) {
+		super(label, name, Elementdeclerations.continuousTransition);
 		setDefaultShape(VertexShapes.getContinuousTransitionShape());
-		setBiologicalElement(Elementdeclerations.continuousTransition);
 		setColor(Color.WHITE);
 	}
 

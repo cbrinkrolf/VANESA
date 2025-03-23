@@ -2,10 +2,9 @@ package biologicalObjects.nodes;
 
 import biologicalElements.Elementdeclerations;
 
-public class Drug extends BiologicalNodeAbstract{
-	public Drug(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.drug);
-		attributeSetter(this.getClass().getSimpleName(), this);
+public class Drug extends BiologicalNodeAbstract {
+	public Drug(final String label, final String name) {
+		super(label, name, Elementdeclerations.drug);
+		attributeSetter(getClass().getSimpleName(), this);
 	}
 }

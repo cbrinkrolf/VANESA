@@ -8,11 +8,11 @@ public abstract class Transition extends PNNode {
 	private String firingCondition = "true";// "time>9.8";
 	private boolean knockedOut = false;
 
-	public Transition(String label, String name) {
-		super(label, name);
-		if (label.equals(""))
+	protected Transition(final String label, final String name, final String biologicalElement) {
+		super(label, name, biologicalElement);
+		if (label.isEmpty())
 			setLabel(name);
-		if (name.equals(""))
+		if (name.isEmpty())
 			setName(label);
 	}
 

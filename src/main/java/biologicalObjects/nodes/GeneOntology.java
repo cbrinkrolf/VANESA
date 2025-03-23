@@ -2,10 +2,9 @@ package biologicalObjects.nodes;
 
 import biologicalElements.Elementdeclerations;
 
-public class GeneOntology extends BiologicalNodeAbstract{
-	public GeneOntology(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.go);
-		attributeSetter(this.getClass().getSimpleName(), this);
+public class GeneOntology extends BiologicalNodeAbstract {
+	public GeneOntology(final String label, final String name) {
+		super(label, name, Elementdeclerations.go);
+		attributeSetter(getClass().getSimpleName(), this);
 	}
 }

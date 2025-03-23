@@ -11,16 +11,17 @@ public class Gene extends BiologicalNodeAbstract implements NodeWithNTSequence {
 	private boolean hasProteins = false;
 	private boolean hasEnzymes = false;
 
-	public Gene(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.gene);
-		attributeSetter(this.getClass().getSimpleName(), this);
+	public Gene(final String label, final String name) {
+		super(label, name, Elementdeclerations.gene);
+		attributeSetter(getClass().getSimpleName(), this);
 	}
 
+	@Override
 	public String getNtSequence() {
 		return ntSequence;
 	}
 
+	@Override
 	public void setNtSequence(String ntSequence) {
 		this.ntSequence = ntSequence;
 	}

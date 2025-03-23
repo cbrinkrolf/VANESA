@@ -8,10 +8,9 @@ public class SRNA extends RNA {
 	private String tarbaseEnsemble = "";
 	private String tarbaseAccession = "";
 
-	public SRNA(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.sRNA);
-		attributeSetter(this.getClass().getSimpleName(), this);
+	public SRNA(final String label, final String name) {
+		super(label, name, Elementdeclerations.sRNA);
+		attributeSetter(getClass().getSimpleName(), this);
 	}
 
 	public String getTarbaseDS() {

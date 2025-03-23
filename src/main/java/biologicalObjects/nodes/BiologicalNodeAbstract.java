@@ -40,7 +40,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	private String comments = "";
 	private Color color = Color.LIGHT_GRAY;
 	private Color defaultColor = Color.LIGHT_GRAY;
-	private String BiologicalElement = "";
+	private final String biologicalElement;
 	private Shape shape = VertexShapes.getEllipse();
 	private Shape defaultShape = VertexShapes.getEllipse();
 	private boolean hasKEGGNode = false;
@@ -73,20 +73,19 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	private double concentrationMax = Double.MAX_VALUE;
 	private double concentrationStart = 1;
 
-	public BiologicalNodeAbstract(String label, String name) {
+	protected BiologicalNodeAbstract(final String label, final String name) {
+		this(label, name, "");
+	}
+
+	protected BiologicalNodeAbstract(final String label, final String name, final String biologicalElement) {
 		super(name, GraphInstance.getPathway());
 		super.setName(name);
 		this.setLabel(label);
 		this.labelSet.add(label);
-		//
-		// setLabel(label.toLowerCase());
-		// setName(name.toLowerCase());
-		// setVertex(vertex);
+		this.biologicalElement = biologicalElement;
 		if (GraphInstance.getPathway() != null) {
 			setIsPetriNet(GraphInstance.getPathway().isPetriNet());
 		}
-		// values.put(1, 0);
-		// setShape(shapes.getEllipse());
 	}
 
 	public void delete() {
@@ -742,11 +741,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	public String getBiologicalElement() {
-		return BiologicalElement;
-	}
-
-	protected void setBiologicalElement(String biologicalElement) {
-		BiologicalElement = biologicalElement;
+		return biologicalElement;
 	}
 
 	public Shape getShape() {

@@ -2,11 +2,9 @@ package biologicalObjects.nodes;
 
 import biologicalElements.Elementdeclerations;
 
-
 public class Metabolite extends BiologicalNodeAbstract {
-    public Metabolite(String label, String name) {
-        super(label, name);
-        setBiologicalElement(Elementdeclerations.metabolite);
-        attributeSetter(this.getClass().getSimpleName(), this);
-    }
+	public Metabolite(final String label, final String name) {
+		super(label, name, Elementdeclerations.metabolite);
+		attributeSetter(getClass().getSimpleName(), this);
+	}
 }

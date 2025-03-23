@@ -3,9 +3,8 @@ package biologicalObjects.nodes;
 import biologicalElements.Elementdeclerations;
 
 public class Domain extends BiologicalNodeAbstract {
-	public Domain(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.domain);
-		attributeSetter(this.getClass().getSimpleName(), this);
+	public Domain(final String label, final String name) {
+		super(label, name, Elementdeclerations.domain);
+		attributeSetter(getClass().getSimpleName(), this);
 	}
 }

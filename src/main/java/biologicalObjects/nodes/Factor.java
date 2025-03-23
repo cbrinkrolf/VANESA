@@ -3,9 +3,8 @@ package biologicalObjects.nodes;
 import biologicalElements.Elementdeclerations;
 
 public class Factor extends BiologicalNodeAbstract {
-    public Factor(String label, String name) {
-        super(label, name);
-        setBiologicalElement(Elementdeclerations.factor);
-        attributeSetter(this.getClass().getSimpleName(), this);
-    }
+	public Factor(final String label, final String name) {
+		super(label, name, Elementdeclerations.factor);
+		attributeSetter(getClass().getSimpleName(), this);
+	}
 }

@@ -1,28 +1,38 @@
 package biologicalObjects.nodes;
 
+import biologicalElements.Elementdeclerations;
+
 import java.util.List;
 
 public class RNA extends BiologicalNodeAbstract implements NodeWithNTSequence, NodeWithLogFC {
 	private String ntSequence = "";
 	private Double logFC = 0.0;
 
-	public RNA(String label, String name) {
-		super(label, name);
+	public RNA(final String label, final String name) {
+		super(label, name, Elementdeclerations.rna);
 		attributeSetter(this.getClass().getSimpleName(), this);
 	}
 
+	protected RNA(final String label, final String name, final String biologicalElement) {
+		super(label, name, biologicalElement);
+	}
+
+	@Override
 	public String getNtSequence() {
 		return ntSequence;
 	}
 
+	@Override
 	public void setNtSequence(String ntSequence) {
 		this.ntSequence = ntSequence;
 	}
 
+	@Override
 	public Double getLogFC() {
 		return logFC;
 	}
 
+	@Override
 	public void setLogFC(Double logFC) {
 		this.logFC = logFC;
 	}
@@ -34,6 +44,7 @@ public class RNA extends BiologicalNodeAbstract implements NodeWithNTSequence, N
 		return list;
 	}
 
+	@Override
 	public String getTransformationParameterValue(String parameter) {
 		switch (parameter) {
 		case "logFC":
