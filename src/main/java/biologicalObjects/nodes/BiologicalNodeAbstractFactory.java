@@ -26,7 +26,7 @@ public class BiologicalNodeAbstractFactory {
 
 		switch (elementDeclaration) {
 		case Elementdeclerations.collector:
-			newBNA = new Collector(name, label);
+			newBNA = new Collector(label, name);
 			break;
 		case Elementdeclerations.complex:
 			newBNA = new Complex(label, name);
