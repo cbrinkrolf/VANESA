@@ -7,19 +7,19 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.PlainDocument;
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.regex.Pattern;
 
-public class JIntTextField extends JTextField {
-	private static final Pattern UINT_PATTERN = Pattern.compile("\\+?[0-9]*");
-	private static final Pattern INT_PATTERN = Pattern.compile("[+\\-]?[0-9]*");
+public class JDecimalTextField extends JTextField {
+	private static final Pattern UDECIMAL_PATTERN = Pattern.compile("\\+?([0-9]+\\.)?[0-9]*");
+	private static final Pattern DECIMAL_PATTERN = Pattern.compile("[+\\-]?([0-9]+\\.)?[0-9]*");
 
 	private final Pattern pattern;
 	private final boolean allowNegative;
 
-	public JIntTextField(final int columns, final boolean allowNegative) {
+	public JDecimalTextField(final int columns, final boolean allowNegative) {
 		super(columns);
-		this.pattern = allowNegative ? INT_PATTERN : UINT_PATTERN;
+		this.pattern = allowNegative ? DECIMAL_PATTERN : UDECIMAL_PATTERN;
 		this.allowNegative = allowNegative;
 		setHorizontalAlignment(RIGHT);
 		((PlainDocument) getDocument()).setDocumentFilter(new DocumentFilter() {
@@ -46,61 +46,61 @@ public class JIntTextField extends JTextField {
 		});
 	}
 
-	public JIntTextField(final boolean allowNegative) {
+	public JDecimalTextField(final boolean allowNegative) {
 		this(0, allowNegative);
 	}
 
-	public JIntTextField(final int columns) {
+	public JDecimalTextField(final int columns) {
 		this(columns, false);
 	}
 
-	public JIntTextField() {
+	public JDecimalTextField() {
 		this(0, false);
 	}
 
-	public Integer getValue() {
+	public Float getValue() {
 		return getValue(null);
 	}
 
-	public Integer getValue(final Integer fallback) {
+	public Float getValue(final Float fallback) {
 		final String text = getText();
 		return StringUtils.isEmpty(text) || (text.length() == 1 && (text.charAt(0) == '+') || text.charAt(0) == '-')
 				? fallback
-				: Integer.parseInt(text);
+				: Float.parseFloat(text);
 	}
 
-	public Long getLongValue() {
-		return getLongValue(null);
+	public Double getDoubleValue() {
+		return getDoubleValue(null);
 	}
 
-	public Long getLongValue(final Long fallback) {
+	public Double getDoubleValue(final Double fallback) {
 		final String text = getText();
 		return StringUtils.isEmpty(text) || (text.length() == 1 && (text.charAt(0) == '+') || text.charAt(0) == '-')
 				? fallback
-				: Long.parseLong(text);
+				: Double.parseDouble(text);
 	}
 
-	public BigInteger getBigIntegerValue() {
-		return getBigIntegerValue(null);
+	public BigDecimal getBigDecimalValue() {
+		return getBigDecimalValue(null);
 	}
 
-	public BigInteger getBigIntegerValue(final BigInteger fallback) {
+	public BigDecimal getBigDecimalValue(final BigDecimal fallback) {
 		final String text = getText();
 		return StringUtils.isEmpty(text) || (text.length() == 1 && (text.charAt(0) == '+') || text.charAt(0) == '-')
 				? fallback
-				: new BigInteger(text);
+				: new BigDecimal(text);
 	}
 
-	public void setValue(final int value) {
+	public void setValue(final float value) {
 		setText(value >= 0 || allowNegative ? String.valueOf(value) : "");
 	}
 
-	public void setValue(final long value) {
+	public void setValue(final double value) {
 		setText(value >= 0 || allowNegative ? String.valueOf(value) : "");
 	}
 
-	public void setValue(final BigInteger value) {
-		setText(value != null && (value.signum() >= 0 || allowNegative) ? value.toString() : "");
+	public void setValue(final BigDecimal value) {
+		setText(value != null && (value.signum() >= 0 || allowNegative) ? value.toPlainString() : "");
 	}
 
 	@Override

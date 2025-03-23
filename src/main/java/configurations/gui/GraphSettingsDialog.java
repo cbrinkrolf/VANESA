@@ -8,8 +8,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
 
 import biologicalElements.Pathway;
 import configurations.Settings;
@@ -17,7 +15,6 @@ import configurations.Workspace;
 import gui.JFontChooserButton;
 
 import configurations.GraphSettings;
-import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.JIntTextField;
 import net.miginfocom.swing.MigLayout;
@@ -60,10 +57,8 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 	private JCheckBox useDefaultTransformers;
 	private JCheckBox useDefaultTransformersSatellite;
 
-	private JSpinner minVertexLabelFontSize;
-	private JSpinner minEdgeLabelFontSize;
-
-	private final GraphContainer con = GraphContainer.getInstance();
+	private JIntTextField minVertexLabelFontSize;
+	private JIntTextField minEdgeLabelFontSize;
 
 	public GraphSettingsDialog() {
 		super();
@@ -132,7 +127,7 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 				opacitySlider, () -> opacitySlider.setValue(255));
 
 		addSetting("Pixel offset for edge picking", "How close the mouse needs to click in order to select edges",
-				pixelOffset, () -> pixelOffset.setText("3"));
+				pixelOffset, () -> pixelOffset.setValue(3));
 
 		final JPanel vertexFontPanel = new JPanel(new MigLayout("ins 0, left, fill", "[][][grow]"));
 		vertexFontPanel.setBackground(null);
@@ -192,15 +187,15 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 				"Use default transformers to visualize the satellite view of the graph (faster)",
 				useDefaultTransformersSatellite, () -> useDefaultTransformersSatellite.setSelected(false));
 
-		minVertexLabelFontSize = new JSpinner(new SpinnerNumberModel(6, 0, 100, 1));
+		minVertexLabelFontSize = new JIntTextField();
 		addSetting("Minimal font size of node labels",
 				"Minimal font size of node labels that define if node labels are drawn or not", minVertexLabelFontSize,
-				() -> minVertexLabelFontSize.getModel().setValue(6));
+				() -> minVertexLabelFontSize.setValue(6));
 
-		minEdgeLabelFontSize = new JSpinner(new SpinnerNumberModel(6, 0, 100, 1));
+		minEdgeLabelFontSize = new JIntTextField();
 		addSetting("Minimal font size of edge labels",
 				"Minimal font size of edge labels that define if edge labels are drawn or not", minEdgeLabelFontSize,
-				() -> minEdgeLabelFontSize.getModel().setValue(6));
+				() -> minEdgeLabelFontSize.setValue(6));
 	}
 
 	@Override
@@ -258,8 +253,8 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 			vertexFontChooser.setDefaultFont(pathway.getGraph().getVisualizationViewer().getFont());
 			edgeFontChooser.setDefaultFont(pathway.getGraph().getVisualizationViewer().getFont());
 		}
-		minVertexLabelFontSize.getModel().setValue(graphSettings.getMinVertexFontSize());
-		minEdgeLabelFontSize.getModel().setValue(graphSettings.getMinEdgeFontSize());
+		minVertexLabelFontSize.setValue(graphSettings.getMinVertexFontSize());
+		minEdgeLabelFontSize.setValue(graphSettings.getMinEdgeFontSize());
 	}
 
 	@Override
@@ -298,12 +293,11 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 			} else {
 				graphSettings.setEdgeFont(null);
 			}
-			graphSettings.setMinVertexFontSize(
-					((SpinnerNumberModel) minVertexLabelFontSize.getModel()).getNumber().intValue());
-			graphSettings.setMinEdgeFontSize(((SpinnerNumberModel) minEdgeLabelFontSize.getModel()).getNumber().intValue());
+			graphSettings.setMinVertexFontSize(minVertexLabelFontSize.getValue(6));
+			graphSettings.setMinEdgeFontSize(minEdgeLabelFontSize.getValue(6));
 			graphSettings.setDrawEdges(showEdgesCheckBox.isSelected());
 			graphSettings.setEdgeOpacity(opacitySlider.getValue());
-			graphSettings.setPixelOffset(Integer.parseInt(pixelOffset.getText()));
+			graphSettings.setPixelOffset(pixelOffset.getValue(3));
 			graphSettings.setDefaultTransformers(useDefaultTransformers.isSelected());
 			graphSettings.setDefaultTransformersSatellite(useDefaultTransformersSatellite.isSelected());
 			settings.setOmitPaintInvisibleNodes(omitInvisibleNodes.isSelected());
