@@ -5,8 +5,8 @@ import biologicalElements.Elementdeclerations;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class Dephosphorylation extends BiologicalEdgeAbstract {
-	public Dephosphorylation(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
-		super(label, name, from, to);
-		setBiologicalElement(Elementdeclerations.dephosphorylationEdge);
+	public Dephosphorylation(final String label, final String name, final BiologicalNodeAbstract from,
+			final BiologicalNodeAbstract to) {
+		super(label, name, from, to, Elementdeclerations.dephosphorylationEdge);
 	}
 }

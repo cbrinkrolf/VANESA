@@ -5,8 +5,8 @@ import biologicalElements.Elementdeclerations;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class Glycosylation extends BiologicalEdgeAbstract {
-	public Glycosylation(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
-		super(label, name, from, to);
-		setBiologicalElement(Elementdeclerations.glycosylationEdge);
+	public Glycosylation(final String label, final String name, final BiologicalNodeAbstract from,
+			final BiologicalNodeAbstract to) {
+		super(label, name, from, to, Elementdeclerations.glycosylationEdge);
 	}
 }

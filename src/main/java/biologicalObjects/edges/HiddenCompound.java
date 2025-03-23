@@ -4,8 +4,8 @@ import biologicalElements.Elementdeclerations;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class HiddenCompound extends BiologicalEdgeAbstract {
-	public HiddenCompound(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
-		super(label, name, from, to);
-		setBiologicalElement(Elementdeclerations.hiddenCompoundEdge);
+	public HiddenCompound(final String label, final String name, final BiologicalNodeAbstract from,
+			final BiologicalNodeAbstract to) {
+		super(label, name, from, to, Elementdeclerations.hiddenCompoundEdge);
 	}
 }

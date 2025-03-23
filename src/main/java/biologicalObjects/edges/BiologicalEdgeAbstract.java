@@ -32,7 +32,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	private String comments = "";
 	private Color defaultColor = Color.GRAY;
 	private Color color = Color.GRAY;
-	private String biologicalElement = "";
+	private final String biologicalElement;
 	private Shape shape;
 	private boolean hasKEGGNode = false;
 	private boolean hasBrendaNode = false;
@@ -43,7 +43,8 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	private BiologicalNodeAbstract from;
 	private BiologicalNodeAbstract to;
 
-	public BiologicalEdgeAbstract(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
+	public BiologicalEdgeAbstract(final String label, final String name, final BiologicalNodeAbstract from,
+			final BiologicalNodeAbstract to, final String biologicalElement) {
 		this.label = label;
 		this.name = name;
 		if (StringUtils.isBlank(label)) {
@@ -57,6 +58,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		// setLabel(label.toLowerCase());
 		this.from = from;
 		this.to = to;
+		this.biologicalElement = biologicalElement;
 	}
 
 	public boolean isDirected() {
@@ -117,10 +119,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	@Override
 	public String getBiologicalElement() {
 		return biologicalElement;
-	}
-
-	protected void setBiologicalElement(String biologicalElement) {
-		this.biologicalElement = biologicalElement;
 	}
 
 	@Override

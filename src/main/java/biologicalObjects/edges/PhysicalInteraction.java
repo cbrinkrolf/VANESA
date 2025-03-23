@@ -4,8 +4,8 @@ import biologicalElements.Elementdeclerations;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class PhysicalInteraction extends BiologicalEdgeAbstract {
-	public PhysicalInteraction(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
-		super(label, name, from, to);
-		setBiologicalElement(Elementdeclerations.physicalInteraction);
+	public PhysicalInteraction(final String label, final String name, final BiologicalNodeAbstract from,
+			final BiologicalNodeAbstract to) {
+		super(label, name, from, to, Elementdeclerations.physicalInteraction);
 	}
 }
