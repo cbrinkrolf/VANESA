@@ -63,11 +63,7 @@ public interface GraphElementAbstract extends GraphicalElementAbstract {
 
 	List<Parameter> getParametersSortedAlphabetically();
 
-	void setParameters(List<Parameter> parameters);
-
 	Set<String> getLabelSet();
-
-	void setLabelSet(Set<String> labelSet);
 
 	void addLabel(String label);
 

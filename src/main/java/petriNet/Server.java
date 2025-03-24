@@ -106,6 +106,9 @@ public class Server {
 		return serverSocket.accept();
 	}
 
+	/**
+	 * OM server side code reference: https://github.com/OpenModelica/OpenModelica/blob/master/OMCompiler/SimulationRuntime/c/simulation/results/simulation_result_ia.cpp
+	 */
 	private void readData(final DataInputStream socket) throws IOException {
 		final byte[] idLengthBuffer = new byte[5];
 		socket.readFully(idLengthBuffer, 0, 5);
@@ -157,8 +160,8 @@ public class Server {
 						for (int b = 0; b < bools; b++) {
 							values.add(bb.get());
 						}
-						final String[] sValues = (new String(buffer, expectedPayloadSize, length - expectedPayloadSize))
-								.split(NAME_SEPARATOR);
+						final String[] sValues = (new String(buffer, expectedPayloadSize,
+								length - expectedPayloadSize)).split(NAME_SEPARATOR);
 						Collections.addAll(values, sValues);
 						setData(name2index, values);
 					}

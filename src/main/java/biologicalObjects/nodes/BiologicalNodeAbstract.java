@@ -46,8 +46,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	private Shape defaultShape = VertexShapes.getEllipse();
 	private boolean hasKEGGNode = false;
 	private boolean hasBrendaNode = false;
-	private Set<String> labelSet = new HashSet<>();
-	private List<Parameter> parameters = new ArrayList<>();
+	private final Set<String> labelSet = new HashSet<>();
+	private final List<Parameter> parameters = new ArrayList<>();
 	// private Set<BiologicalNodeAbstract> border = new HashSet<>();
 	// private Set<BiologicalNodeAbstract> environment = new HashSet<>();
 	// private Set<BiologicalNodeAbstract> predefinedEnvironment = new HashSet<>();
@@ -188,7 +188,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	 */
 	public static BiologicalNodeAbstract coarse(Set<BiologicalNodeAbstract> nodes, Integer id, String label,
 			BiologicalNodeAbstract rootNode) {
-
 		return coarse(nodes, id, label, rootNode, true);
 	}
 
@@ -271,7 +270,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	 */
 	private static boolean isCoarsingAllowed(boolean isPetriNet, Set<BiologicalNodeAbstract> vertices) {
 		BiologicalNodeAbstract parentNode = null;
-
 		if (vertices.iterator().hasNext()) {
 			parentNode = vertices.iterator().next().getParentNode();
 		}
@@ -370,10 +368,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	public void updateHierarchicalAttributes() {
-		updateConnectingEdges();
-	}
-
-	private void updateConnectingEdges() {
 		if (!isCoarseNode()) {
 			return;
 		}
@@ -393,11 +387,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	 * @author tloka
 	 */
 	public void makeCoarseShape() {
-		Shape coarseShape;
-		if (getRootNode() == null)
-			coarseShape = shape;
-		else
-			coarseShape = getRootNode().getShape();
+		Shape coarseShape = getRootNode() == null ? shape : getRootNode().getShape();
 		coarseShape = VertexShapes.makeCoarse(coarseShape);
 		setDefaultShape(coarseShape);
 		setShape(coarseShape);
@@ -493,27 +483,27 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		for (BiologicalNodeAbstract node : getVertices().keySet()) {
 			System.out.println(node.getLabel());
 		}
-		System.out.println("");
+		System.out.println();
 		System.out.println("All Edges:");
 		for (BiologicalEdgeAbstract edge : getAllEdges()) {
 			System.out.println(edge.getFrom().getLabel() + "->" + edge.getTo().getLabel());
 		}
-		System.out.println("");
+		System.out.println();
 		System.out.println("Border: ");
 		for (BiologicalNodeAbstract bnode : getBorder()) {
 			System.out.println(bnode.getLabel());
 		}
-		System.out.println("");
+		System.out.println();
 		System.out.println("Environment: ");
 		for (BiologicalNodeAbstract bnode : getEnvironment()) {
 			System.out.println(bnode.getLabel());
 		}
-		System.out.println("");
+		System.out.println();
 		System.out.println("Connecting Edges:");
 		for (BiologicalEdgeAbstract edge : getConnectingEdges()) {
 			System.out.println(edge.getFrom().getLabel() + "->" + edge.getTo().getLabel());
 		}
-		System.out.println("");
+		System.out.println();
 	}
 
 	/**
@@ -587,12 +577,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	public Collection<BiologicalNodeAbstract> getChildrenNodes() {
 		Set<BiologicalNodeAbstract> childrenNodes = new HashSet<>();
 		Set<BiologicalNodeAbstract> done = new HashSet<>();
-		BiologicalNodeAbstract currentNode;
 		for (BiologicalNodeAbstract n : getLeafNodes()) {
 			if (done.contains(n)) {
 				continue;
 			}
-			currentNode = n;
+			BiologicalNodeAbstract currentNode = n;
 			while (currentNode.getParentNode() != null) {
 				if (currentNode.getParentNode() == this) {
 					childrenNodes.add(currentNode);
@@ -650,10 +639,12 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		this.parentNode = parentNode;
 	}
 
+	@Override
 	public String getOrganism() {
 		return organism;
 	}
 
+	@Override
 	public void setOrganism(String organism) {
 		this.organism = organism;
 	}
@@ -674,70 +665,82 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		this.refs = refs;
 	}
 
+	@Override
 	public boolean isVisible() {
 		return isVisible;
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		isVisible = visible;
 	}
 
+	@Override
 	public String getComments() {
 		return comments;
 	}
 
+	@Override
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
 
+	@Override
 	public Color getColor() {
 		return color;
 	}
 
+	@Override
 	public void setColor(Color color) {
 		this.color = color;
 	}
 
+	@Override
 	public String getBiologicalElement() {
 		return biologicalElement;
 	}
 
+	@Override
 	public Shape getShape() {
 		return shape;
 	}
 
+	@Override
 	public void setShape(Shape shape) {
 		this.shape = shape;
 	}
 
+	@Override
 	public boolean hasKEGGNode() {
 		return hasKEGGNode;
 	}
 
+	@Override
 	public void setHasKEGGNode(boolean hasKEGGNode) {
 		this.hasKEGGNode = hasKEGGNode;
 	}
 
+	@Override
 	public boolean hasBrendaNode() {
 		return hasBrendaNode;
 	}
 
+	@Override
 	public void setHasBrendaNode(boolean hasBrendaNode) {
 		this.hasBrendaNode = hasBrendaNode;
 	}
 
+	@Override
 	public Set<String> getLabelSet() {
 		return labelSet;
 	}
 
-	public void setLabelSet(Set<String> labelSet) {
-		this.labelSet = labelSet;
-	}
-
+	@Override
 	public List<Parameter> getParameters() {
 		return parameters;
 	}
 
+	@Override
 	public List<Parameter> getParametersSortedAlphabetically() {
 		Map<String, Parameter> map = new HashMap<>();
 		for (Parameter p : getParameters()) {
@@ -751,10 +754,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			sortedList.add(map.get(name));
 		}
 		return sortedList;
-	}
-
-	public void setParameters(List<Parameter> parameters) {
-		this.parameters = parameters;
 	}
 
 	public NodeStateChanged getNodeStateChanged() {
@@ -914,24 +913,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		return deleted;
 	}
 
-	/*
-	 * public Vertex getVertex() { return vertex; }
-	 *
-	 * public void setVertex(Vertex vertex) { this.vertex = vertex; if (vertex !=
-	 * null) { sbml.setVertex(vertex.toString()); } }
-	 */
-
-	/*
-	 * public int getAnimationValue(int time) { return values.get(time); }
-	 *
-	 * public void setAnimationValue(int time, int value) { values.put(time, value);
-	 * }
-	 *
-	 * public void removeAnimationValue(int time) { values.remove(time); }
-	 *
-	 * public int getAnimationSteps() { return values.size(); }
-	 */
-
 	public void setCoarseNodesize() {
 		if (isCoarseNode()) {
 			setNodeSize(defaultNodeSize + Math.log(getLeafNodes().size()) / Math.log(100));
@@ -1070,11 +1051,13 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		this.logicalReference = null;
 	}
 
+	@Override
 	public int getID() {
 		return ID;
 	}
 
 	// should only be used when loading a file with a network
+	@Override
 	public void setID(int id, Pathway pw) throws IDAlreadyExistException {
 		if (ID != id) {
 			set = pw.getIdSet();
@@ -1087,6 +1070,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		}
 	}
 
+	@Override
 	public void setID(Pathway pw) {
 		setID(false, pw);
 	}
@@ -1113,30 +1097,35 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		}
 	}
 
+	@Override
 	public String getNetworklabel() {
 		return getCorrectLabel(GraphSettings.getInstance().getNodeLabel());
 	}
 
+	@Override
 	public String getLabel() {
 		return label;
 	}
 
+	@Override
 	public void setLabel(String label) {
 		// this.label = FormularSafety.replace(label);
 		this.label = label.trim();
 		labelSet.remove(this.label);
 		// this.label = label;
 		labelSet.add(this.label);
-		if (getName().length() == 0) {
+		if (getName().isEmpty()) {
 			setName(this.label);
 		}
 		// this.networklabel = label;
 	}
 
+	@Override
 	public boolean isEdge() {
 		return false;
 	}
 
+	@Override
 	public boolean isVertex() {
 		return true;
 	}
@@ -1152,10 +1141,12 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		return null;
 	}
 
+	@Override
 	public void addLabel(String label) {
 		labelSet.add(label);
 	}
 
+	@Override
 	public void addLabel(Set<String> labels) {
 		labelSet.addAll(labels);
 	}
@@ -1224,6 +1215,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		return connectingEdges;
 	}
 
+	@Override
 	public void resetAppearance() {
 		this.shape = defaultShape;
 		this.color = defaultColor;

@@ -36,8 +36,8 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	private Shape shape;
 	private boolean hasKEGGNode = false;
 	private boolean hasBrendaNode = false;
-	private Set<String> labelSet = new HashSet<>();
-	private List<Parameter> parameters = new ArrayList<>();
+	private final Set<String> labelSet = new HashSet<>();
+	private final List<Parameter> parameters = new ArrayList<>();
 	private String function = "1";
 
 	private BiologicalNodeAbstract from;
@@ -157,11 +157,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	}
 
 	@Override
-	public void setLabelSet(Set<String> labelSet) {
-		this.labelSet = labelSet;
-	}
-
-	@Override
 	public List<Parameter> getParameters() {
 		return parameters;
 	}
@@ -180,11 +175,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 			sortedList.add(map.get(name));
 		}
 		return sortedList;
-	}
-
-	@Override
-	public void setParameters(List<Parameter> parameters) {
-		this.parameters = parameters;
 	}
 
 	public BiologicalNodeAbstract getFrom() {

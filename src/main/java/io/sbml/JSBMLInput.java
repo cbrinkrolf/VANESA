@@ -261,7 +261,6 @@ public class JSBMLInput {
 
 						elSub = reacAnnotation.getChild("Parameters", null);
 						// elSubSub = elSub.getChild("x_Coordinate", null);
-						ArrayList<Parameter> parameters = new ArrayList<>();
 						if (elSub != null) {
 							for (int j = 0; j < elSub.getChildren().size(); j++) {
 								Element elSubSub = elSub.getChildren().get(j);
@@ -272,10 +271,9 @@ public class JSBMLInput {
 								if (elSubSub.getChild("Unit", null) != null) {
 									unit = elSubSub.getChild("Unit", null).getAttributeValue("Unit");
 								}
-								parameters.add(new Parameter(pname, value, unit));
+								bea.getParameters().add(new Parameter(pname, value, unit));
 							}
 						}
-						bea.setParameters(parameters);
 
 						elSub = reacAnnotation.getChild("Probability", null);
 						String attr;
@@ -516,7 +514,6 @@ public class JSBMLInput {
 					}
 					elSub = specAnnotation.getChild("Parameters", null);
 					// elSubSub = elSub.getChild("x_Coordinate", null);
-					ArrayList<Parameter> parameters = new ArrayList<>();
 					for (int j = 0; j < elSub.getChildren().size(); j++) {
 						elSubSub = elSub.getChildren().get(j);
 						String pname = elSubSub.getChild("Name", null).getAttributeValue("Name");
@@ -525,9 +522,8 @@ public class JSBMLInput {
 						if (elSubSub.getChild("Unit", null) != null) {
 							unit = elSubSub.getChild("Unit", null).getAttributeValue("Unit");
 						}
-						parameters.add(new Parameter(pname, value, unit));
+						bna.getParameters().add(new Parameter(pname, value, unit));
 					}
-					bna.setParameters(parameters);
 				}
 			}
 			// test which annotations are set only if bna was created above set id and
@@ -807,15 +803,9 @@ public class JSBMLInput {
 			break;
 		case "knockedOut":
 			if (bna instanceof DynamicNode) {
-				((DynamicNode) bna).setKnockedOut(false);
-				if (value != null && value.equals("true")) {
-					((DynamicNode) bna).setKnockedOut(true);
-				}
+				((DynamicNode) bna).setKnockedOut("true".equals(value));
 			} else if (bna instanceof Transition) {
-				((Transition) bna).setKnockedOut(false);
-				if (value != null && value.equals("true")) {
-					((Transition) bna).setKnockedOut(true);
-				}
+				((Transition) bna).setKnockedOut("true".equals(value));
 			}
 			break;
 		case "NtSequence":

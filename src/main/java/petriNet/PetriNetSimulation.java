@@ -80,7 +80,7 @@ public class PetriNetSimulation implements ActionListener {
 	private String selectedPNlibVersion;
 
 	private List<File> customSimLibs;
-	private Pathway pw;
+	private final Pathway pw;
 	private final MainWindow w;
 
 	private String simId;
@@ -105,9 +105,9 @@ public class PetriNetSimulation implements ActionListener {
 	};
 	// for the simulation results export of protected variables, necessary to detect
 	// actual firing of stochastic transitions
-	private boolean exportPrtoectedVariables = true;
+	private boolean exportProtectedVariables = true;
 
-	private String customeExecutable = "";// "_omcQ_27D15_5FCPM_5FPN_2Esbml_27.exe";
+	private String customExecutable = "";// "_omcQ_27D15_5FCPM_5FPN_2Esbml_27.exe";
 
 	// CHRIS refactored version of threads for simulation needs to be tested and
 	// evaluated. maybe show more hints / error messages
@@ -159,8 +159,8 @@ public class PetriNetSimulation implements ActionListener {
 		final double tolerance = menu.getTolerance();
 
 		if (menu.isUseCustomExecutableSelected()) {
-			customeExecutable = menu.getCustomExecutableName();
-			simName = pathSim.resolve(customeExecutable).toFile().getAbsolutePath();
+			customExecutable = menu.getCustomExecutableName();
+			simName = pathSim.resolve(customExecutable).toFile().getAbsolutePath();
 		}
 
 		boolean shortModelNameChanged = !(shortModelName == menu.isUseShortNamesSelected());
@@ -347,7 +347,7 @@ public class PetriNetSimulation implements ActionListener {
 					// String program = "_omcQuot_556E7469746C6564";
 					logAndShow("override statement: " + override);
 					if (noEmmit) {
-						if (exportPrtoectedVariables) {
+						if (exportProtectedVariables) {
 							pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port, "-noEventEmit",
 									"-lv=LOG_STATS", "-emit_protected");
 						} else {
@@ -355,7 +355,7 @@ public class PetriNetSimulation implements ActionListener {
 									"-lv=LOG_STATS");
 						}
 					} else {
-						if (exportPrtoectedVariables) {
+						if (exportProtectedVariables) {
 							pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port, "-lv=LOG_STATS",
 									"-emit_protected");
 						} else {
