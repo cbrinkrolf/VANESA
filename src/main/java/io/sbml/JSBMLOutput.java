@@ -287,7 +287,7 @@ public class JSBMLOutput {
 			el.addChild(elSub);
 		}
 
-		if (pathway.getGroups().size() != 0) {
+		if (pathway.getGroups().size() > 0) {
 			XMLNode groups = new XMLNode(new XMLNode(new XMLTriple("listOfGroups", "", ""), new XMLAttributes()));
 			XMLNode groupSub;
 			for (Group group : pathway.getGroups()) {

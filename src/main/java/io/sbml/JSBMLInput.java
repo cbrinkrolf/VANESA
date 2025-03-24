@@ -139,7 +139,6 @@ public class JSBMLInput {
 			}
 			Group tmp = new Group(nodesList);
 			for (BiologicalNodeAbstract biologicalNodeAbstract : nodesList) {
-				biologicalNodeAbstract.setInGroup(true);
 				biologicalNodeAbstract.addGroup(tmp);
 			}
 			pathway.getGroups().add(tmp);

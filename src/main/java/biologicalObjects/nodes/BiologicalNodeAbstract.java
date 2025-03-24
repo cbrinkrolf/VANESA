@@ -59,10 +59,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	private Point2D parentNodeDistance = new Point2D.Double(0, 0);
 	private boolean deleted = false;
 
-	private boolean inGroup = false;
-
 	private List<Group> groups = new ArrayList<>();
-	// private Set<Group> group = new HashSet<>();
 
 	private Color plotColor = null;
 	private boolean discrete = false;
@@ -800,19 +797,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	public boolean isInGroup() {
-		return inGroup;
-	}
-
-	public void setInGroup(boolean inGroup) {
-		this.inGroup = inGroup;
+		return !groups.isEmpty();
 	}
 
 	public List<Group> getGroups() {
 		return groups;
-	}
-
-	public void setGroups(List<Group> groups) {
-		this.groups = groups;
 	}
 
 	public Color getPlotColor() {
@@ -1406,11 +1395,15 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		}
 	}
 
-	public void addGroup(Group group) {
-		this.groups.add(group);
+	public void addGroup(final Group group) {
+		groups.add(group);
 	}
 
-	public Group getbiggestGroup() {
+	public void removeGroup(final Group group) {
+		groups.remove(group);
+	}
+
+	public Group getBiggestGroup() {
 		Group bigG = null;
 		for (Group g : groups) {
 			if (bigG == null || g.size() > bigG.size()) {

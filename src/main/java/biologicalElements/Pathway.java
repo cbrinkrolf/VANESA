@@ -1078,7 +1078,6 @@ public class Pathway implements Cloneable {
 			Group group = new Group(nodes);
 			groups.add(group);
 			for (BiologicalNodeAbstract nextNode : vv.getPickedVertexState().getPicked()) {
-				nextNode.setInGroup(true);
 				nextNode.addGroup(group);
 			}
 		} else {
@@ -1095,7 +1094,7 @@ public class Pathway implements Cloneable {
 			Iterator<BiologicalNodeAbstract> it = vv.getPickedVertexState().getPicked().iterator();
 			BiologicalNodeAbstract nextNode = it.next();
 			if (nextNode.isInGroup()) {
-				for (BiologicalNodeAbstract node : nextNode.getbiggestGroup()) {
+				for (BiologicalNodeAbstract node : nextNode.getBiggestGroup()) {
 					graph.getVisualizationViewer().getPickedVertexState().pick(node, true);
 				}
 			}
@@ -1110,7 +1109,7 @@ public class Pathway implements Cloneable {
 		Iterator<BiologicalNodeAbstract> iter = vv.getPickedVertexState().getPicked().iterator();
 		boolean deletegroup = true;
 		BiologicalNodeAbstract firstNode = iter.next();
-		Group groupToDelete = firstNode.getbiggestGroup();
+		Group groupToDelete = firstNode.getBiggestGroup();
 		// Checks if all selected nodes are of the same group
 		for (BiologicalNodeAbstract bnaNode : vv.getPickedVertexState().getPicked()) {
 			if (!bnaNode.getGroups().contains(groupToDelete)) {
@@ -1121,11 +1120,7 @@ public class Pathway implements Cloneable {
 		// if all selected are from same group, delete group
 		Iterator<BiologicalNodeAbstract> it = vv.getPickedVertexState().getPicked().iterator();
 		while (it.hasNext() && deletegroup) {
-			BiologicalNodeAbstract nextNode = it.next();
-			if (nextNode.getGroups().size() == 1) {
-				nextNode.setInGroup(false);
-			}
-			nextNode.getGroups().remove(groupToDelete);
+			it.next().removeGroup(groupToDelete);
 		}
 		if (groupToDelete != null && deletegroup) {
 			groups.remove(groupToDelete);
