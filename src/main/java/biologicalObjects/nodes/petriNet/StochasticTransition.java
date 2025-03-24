@@ -18,7 +18,7 @@ public class StochasticTransition extends Transition {
 	private double b = 1; // max
 	private double c = 0.5; // most likely value
 	private double mu = 0.5; // expected value
-	private double sigma = 1.0 / 4; // standard deviation
+	private double sigma = 0.25; // standard deviation
 	private List<Integer> events = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
 	private List<Double> probabilities = new ArrayList<>(Arrays.asList(0.25, 0.25, 0.25, 0.25));
 
@@ -33,7 +33,7 @@ public class StochasticTransition extends Transition {
 	}
 
 	public void setDistribution(String distribution) {
-		if (StochasticDistribution.distributionSet.contains(distribution)) {
+		if (StochasticDistribution.isValid(distribution)) {
 			this.distribution = distribution;
 		} else {
 			System.err.println("Given distribution: \"" + distribution + "\" is not supported!)");

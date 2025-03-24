@@ -5,7 +5,6 @@ import java.util.List;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import graph.GraphInstance;
 import gui.PopUpDialog;
 import util.FormulaSafety;
 
@@ -18,7 +17,7 @@ public abstract class PNNode extends BiologicalNodeAbstract {
 
 	@Override
 	public void setName(String name) {
-		Pathway pw = GraphInstance.getPathway();
+		Pathway pw = getParent();
 		if (pw != null && pw.containsVertex(this) && pw.getAllNodeNames().contains(name)) {
 			if (pw.getNodeByName(name).getClass().equals(this.getClass())) {
 				BiologicalNodeAbstract node = pw.getNodeByName(name);

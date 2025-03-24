@@ -27,6 +27,18 @@ public class PNArc extends BiologicalEdgeAbstract {
 		setFunction(edgeFunction);
 	}
 
+	/**
+	 * PN arcs are always directed.
+	 */
+	@Override
+	public boolean isDirected() {
+		return true;
+	}
+
+	@Override
+	public void setDirected(boolean directed) {
+	}
+
 	public double getPassingTokens() {
 		return new FunctionParser().parse(getFunction());
 	}

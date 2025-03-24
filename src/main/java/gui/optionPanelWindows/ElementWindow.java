@@ -546,8 +546,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 						StochasticTransition trans = (StochasticTransition) ab;
 						// Create the combo box, select item at index 4.
 						// Indices start at 0, so 4 specifies the pig.
-						JComboBox<String> distributionList = new JComboBox<>(
-								StochasticDistribution.distributionList.toArray(new String[0]));
+						JComboBox<String> distributionList = new JComboBox<>(StochasticDistribution.distributions);
 						distributionList.setSelectedItem(trans.getDistribution());
 						distributionList.setName("distributionList");
 						distributionList.addItemListener(pwl);
@@ -970,14 +969,12 @@ public class ElementWindow implements ActionListener, ItemListener {
 			for (BiologicalNodeAbstract node : pw.getGraph().getJungGraph().getNeighbors(bna)) {
 				node.setVisible(!hide);
 			}
-
 		} else if ("changeEdgeDirection".equals(event) && ab.isEdge()) {
 			PNArc edge = (PNArc) ab;
 			PNArc newEdge = new PNArc(edge.getTo(), edge.getFrom(), edge.getLabel(), edge.getName(),
 					edge.getBiologicalElement(), edge.getFunction());
 			newEdge.setPriority(edge.getPriority());
 			newEdge.setProbability(edge.getProbability());
-			newEdge.setDirected(true);
 			pw.removeElement(edge);
 			pw.addEdge(newEdge);
 			pw.updateMyGraph();

@@ -54,7 +54,7 @@ public class PetriNetVertexDialog {
 	public PetriNetVertexDialog(String petriElement, Pathway pw) {
 		this.pw = pw;
 		this.petriElement = petriElement;
-		distributionList = new JComboBox<>(StochasticDistribution.distributionList.toArray(new String[0]));
+		distributionList = new JComboBox<>(StochasticDistribution.distributions);
 
         final JPanel panel = new JPanel(new MigLayout("", "[left]"));
 		panel.add(new JLabel("Name"), "span 2, gaptop 2 ");

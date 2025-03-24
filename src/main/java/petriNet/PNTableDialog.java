@@ -10,7 +10,6 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -41,7 +40,6 @@ import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
 public class PNTableDialog extends JDialog implements ActionListener {
-
 	private static final long serialVersionUID = 1L;
 	private final JXTable table = new JXTable();
 	private final BiologicalNodeAbstract[] bnas;
@@ -123,9 +121,6 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		DefaultTableModel model = new DefaultTableModel(rows,
 				new String[] { "Name", "Label", "Token", "TokenMax", "TokenMin", "TokenStart", "Type", "Delay",
 						"Distribution" }) {
-			/**
-			 *
-			 */
 			private static final long serialVersionUID = 1L;
 
 			public Class<?> getColumnClass(int columnIndex) {
@@ -133,8 +128,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 					return String.class;
 				else if (columnIndex == 6 || columnIndex == 8)
 					return JComboBox.class;
-				else
-					return Double.class;
+				return Double.class;
 			}
 
 			public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -143,8 +137,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 				else if (bnas[rowIndex] instanceof Transition && (columnIndex == 2 || columnIndex == 3
 						|| columnIndex == 4 || columnIndex == 5))
 					return false;
-				else
-					return true;
+				return true;
 			}
 
 			public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
@@ -163,14 +156,14 @@ public class PNTableDialog extends JDialog implements ActionListener {
 
 		table.setModel(model);
 		TableColumn myColumn = table.getColumnModel().getColumn(6);
-		JComboBox<String> comboEditor = new JComboBox<String>();
+		JComboBox<String> comboEditor = new JComboBox<>();
 		comboEditor.addItem(Elementdeclerations.discretePlace);
 		comboEditor.addItem(Elementdeclerations.continuousPlace);
 		comboEditor.addItem(Elementdeclerations.discreteTransition);
 		comboEditor.addItem(Elementdeclerations.continuousTransition);
 		comboEditor.addItem(Elementdeclerations.stochasticTransition);
 		myColumn.setCellEditor(new DefaultCellEditor(comboEditor));
-		JComboBox<String> comboEditor2 = new JComboBox<String>();
+		JComboBox<String> comboEditor2 = new JComboBox<>();
 		comboEditor2.addItem("norm");
 		comboEditor2.addItem("exp");
 		table.getColumnModel().getColumn(8).setCellEditor(new DefaultCellEditor(comboEditor2));
@@ -189,25 +182,17 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		DefaultTableModel model2 = new DefaultTableModel(rows2,
 				new String[] { "Name", "Label", "Start", "End", "Function", "Lower Boundary", "UpperBoundary",
 						"Activation Probability" }) {
-			/**
-			 *
-			 */
 			private static final long serialVersionUID = 1L;
 
 			public Class<?> getColumnClass(int columnIndex) {
 				if (columnIndex == 0 || columnIndex == 1 || columnIndex == 2 || columnIndex == 3 || columnIndex == 4)
 					return String.class;
-				else
-					return Double.class;
+				return Double.class;
 			}
 
 			public boolean isCellEditable(int rowIndex, int columnIndex) {
-				if (columnIndex == 2 || columnIndex == 3)
-					return false;
-				else
-					return true;
+				return columnIndex != 2 && columnIndex != 3;
 			}
-
 		};
 		final JXTable table2 = new JXTable();
 		table2.setModel(model2);
@@ -225,31 +210,16 @@ public class PNTableDialog extends JDialog implements ActionListener {
 
 		final JPanel dialogPanel = new JPanel(new MigLayout());
 
-		final JPanel p1 = new JPanel();
-		p1.setLayout(new MigLayout());
-		p1.add(new JLabel("Nodes:"));
-		p1.add(new JSeparator(), "span, growx, gaptop 10");
-		p1.add(sp);
-
-		final JPanel p2 = new JPanel();
-		p2.setLayout(new MigLayout());
-		p2.add(new JLabel("Edges:"));
-		p2.add(new JSeparator(), "span, growx, gaptop 10");
-		p2.add(sp2);
-
-		// dialogPanel.add(new JLabel("Nodes:"));
-		// dialogPanel.add(new JSeparator());
-		// dialogPanel.add(new JLabel("Edges:"));
-		// dialogPanel.add(new JSeparator(), "span, growx, gaptop 10");
-		// dialogPanel.add(sp, "span 4, growx");
-		// dialogPanel.add(sp2, "span 4, growx");
-
-		dialogPanel.add(p1);
-		dialogPanel.add(p2);
+		final JPanel nodesPanel = new JPanel(new MigLayout("ins 0"));
+		nodesPanel.add(sp);
+		dialogPanel.add(nodesPanel);
+		final JPanel edgesPanel = new JPanel(new MigLayout("ins 0"));
+		edgesPanel.add(sp2);
+		dialogPanel.add(edgesPanel);
 		// JPanel selectPanel = new JPanel();
 		final JTabbedPane tp = new JTabbedPane();
-		tp.addTab("Nodes", p1);
-		tp.addTab("Edges", p2);
+		tp.addTab("Nodes", nodesPanel);
+		tp.addTab("Edges", edgesPanel);
 		// dialogPanel.add(selectPanel, "span,gaptop 1,align right,wrap");
 		// dialogPanel.add(new JSeparator(), "span, growx, gaptop 10");
 		dialogPanel.add(tp);
@@ -260,12 +230,11 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		dialogPanel.add(submit);
 
 		setContentPane(dialogPanel);
-		setTitle("Edit PN-Elements...");
+		setTitle("Bulk Edit PN-Elements");
 		setResizable(false);
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-
 		pack();
-		this.setLocationRelativeTo(MainWindow.getInstance().getFrame());
+		setLocationRelativeTo(MainWindow.getInstance().getFrame());
 	}
 
 	@Override
