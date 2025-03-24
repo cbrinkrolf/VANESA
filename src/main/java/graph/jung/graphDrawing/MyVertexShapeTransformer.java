@@ -10,7 +10,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 public class MyVertexShapeTransformer implements Function<BiologicalNodeAbstract, Shape> {
 	@Override
 	public Shape apply(BiologicalNodeAbstract bna) {
-		return AffineTransform.getScaleInstance(bna.getNodesize(), bna.getNodesize())
+		return AffineTransform.getScaleInstance(bna.getNodeSize(), bna.getNodeSize())
 				.createTransformedShape(bna.getShape());
 	}
 }

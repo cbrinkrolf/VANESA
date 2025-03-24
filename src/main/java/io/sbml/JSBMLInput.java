@@ -726,7 +726,7 @@ public class JSBMLInput {
 			if (reverseEngineering) {
 				break;
 			}
-			bna.setNodesize(Double.parseDouble(value));
+			bna.setNodeSize(Double.parseDouble(value));
 			break;
 		case "Comments":
 			bna.setComments(value);

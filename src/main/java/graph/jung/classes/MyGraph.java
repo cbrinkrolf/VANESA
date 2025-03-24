@@ -1353,7 +1353,7 @@ public class MyGraph {
 					final BiologicalNodeAbstract bna = (BiologicalNodeAbstract) c.element;
 					final Shape shape = bna.getShape();
 					if (shape != null) {
-						bounds = VanesaUtility.scaleRectangle(shape.getBounds(), bna.getNodesize());
+						bounds = VanesaUtility.scaleRectangle(shape.getBounds(), bna.getNodeSize());
 					}
 				}
 				Point2D pos = vv.getGraphLayout().apply(c.element);

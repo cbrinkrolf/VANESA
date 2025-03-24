@@ -27,8 +27,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public abstract class BiologicalNodeAbstract extends Pathway implements GraphElementAbstract {
 	private KEGGNode KEGGnode;
-	private double nodesize = 1;
-	private double defaultNodesize = 1;
+	private double nodeSize = 1;
+	private double defaultNodeSize = 1;
 	private BiologicalNodeAbstract parentNode;
 	private String organism = "";
 	private DefaultMutableTreeNode treeNode;
@@ -58,13 +58,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	private boolean markedAsCoarseNode = false;
 	private Point2D parentNodeDistance = new Point2D.Double(0, 0);
 	private boolean deleted = false;
-
-	private List<Group> groups = new ArrayList<>();
-
+	private final List<Group> groups = new ArrayList<>();
 	private Color plotColor = null;
 	private boolean discrete = false;
-
-	// BNA has constant value
 	private boolean constant = false;
 	private double concentration = 1;
 	private double concentrationMin = 0.0;
@@ -78,11 +74,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	protected BiologicalNodeAbstract(final String label, final String name, final String biologicalElement) {
 		super(name, GraphInstance.getPathway());
 		super.setName(name);
-		this.setLabel(label);
-		this.labelSet.add(label);
+		setLabel(label);
+		labelSet.add(label);
 		this.biologicalElement = biologicalElement;
-		if (GraphInstance.getPathway() != null) {
-			setIsPetriNet(GraphInstance.getPathway().isPetriNet());
+		if (getParent() != null) {
+			setIsPetriNet(getParent().isPetriNet());
 		}
 	}
 
@@ -641,12 +637,12 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		return bna;
 	}
 
-	public double getNodesize() {
-		return nodesize;
+	public double getNodeSize() {
+		return nodeSize;
 	}
 
-	public void setNodesize(double nodesize) {
-		this.nodesize = nodesize;
+	public void setNodeSize(double nodeSize) {
+		this.nodeSize = nodeSize;
 	}
 
 	public BiologicalNodeAbstract getParentNode() {
@@ -886,13 +882,13 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		KEGGnode = node;
 	}
 
-	public double getDefaultNodesize() {
-		return defaultNodesize;
+	public double getDefaultNodeSize() {
+		return defaultNodeSize;
 	}
 
-	public void setDefaultNodesize(double defaultNodesize) {
-		this.defaultNodesize = defaultNodesize;
-		this.setNodesize(defaultNodesize);
+	public void setDefaultNodeSize(double defaultNodeSize) {
+		this.defaultNodeSize = defaultNodeSize;
+		this.setNodeSize(defaultNodeSize);
 	}
 
 	public Shape getDefaultShape() {
@@ -941,7 +937,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 	public void setCoarseNodesize() {
 		if (isCoarseNode()) {
-			setNodesize(defaultNodesize + Math.log(getLeafNodes().size()) / Math.log(100));
+			setNodeSize(defaultNodeSize + Math.log(getLeafNodes().size()) / Math.log(100));
 		}
 	}
 
@@ -1234,7 +1230,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	public void resetAppearance() {
 		this.shape = defaultShape;
 		this.color = defaultColor;
-		this.nodesize = defaultNodesize;
+		this.nodeSize = defaultNodeSize;
 	}
 
 	public Set<BiologicalNodeAbstract> getLeafNodes() {
@@ -1355,11 +1351,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		@Override
 		public int hashCode() {
 			final int prime = 31;
-			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			long temp;
-			temp = Double.doubleToLongBits(doublevalue);
-			result = prime * result + (int) (temp ^ (temp >>> 32));
+			int result = getOuterType().hashCode();
+			result = prime * result + Double.hashCode(doublevalue);
 			result = prime * result + ((name == null) ? 0 : name.hashCode());
 			result = prime * result + ((stringvalue == null) ? 0 : stringvalue.hashCode());
 			result = prime * result + type.getId();

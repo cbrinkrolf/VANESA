@@ -29,7 +29,7 @@ public abstract class Place extends PNNode {
 			setLabel(name);
 		if (name.isEmpty())
 			setName(label);
-		setDefaultNodesize(2);
+		setDefaultNodeSize(2);
 		setDefaultColor(Color.WHITE);
 	}
 

@@ -52,7 +52,6 @@ import gui.LabelToDataMappingWindow.InputFormatException;
 import gui.MainWindow;
 import gui.PopUpDialog;
 import gui.tables.MyTable;
-import gui.visualization.PreRenderManager;
 import io.OpenDialog;
 import io.SaveDialog;
 import io.SuffixAwareFilter;
@@ -200,9 +199,6 @@ public class MenuListener implements ActionListener {
 		case datamining:
 			datamining();
 			break;
-		case rendererSettings:
-			rendererSettings();
-			break;
 		case createDoc:
 			new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.PN_DOC }, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 			break;
@@ -245,12 +241,6 @@ public class MenuListener implements ActionListener {
 	private static void datamining() {
 		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			new SmacofView();
-		}
-	}
-
-	private static void rendererSettings() {
-		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
-			PreRenderManager.getInstance();
 		}
 	}
 

@@ -236,7 +236,7 @@ public class MainWindow implements ApplicationListener {
 				Color colorBean = new Color(bean.getColorRed(), bean.getColorGreen(), bean.getColorBlue());
 				bna.setDefaultColor(colorBean);
 				double nodeSizeBean = bean.getSizefactor();
-				bna.setDefaultNodesize(nodeSizeBean);
+				bna.setDefaultNodeSize(nodeSizeBean);
 			}
 		}
 		if (doResetAppearance) {

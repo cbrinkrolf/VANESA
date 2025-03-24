@@ -341,7 +341,7 @@ public class JSBMLOutput {
 		// Save attributes that every node has
 		XMLNode el = new XMLNode(new XMLNode(new XMLTriple("spec", "", ""), new XMLAttributes()));
 		el.addChild(createElSub(oneNode.getLabel(), "label"));
-		el.addChild(createElSub(String.valueOf(oneNode.getNodesize()), "Nodesize"));
+		el.addChild(createElSub(String.valueOf(oneNode.getNodeSize()), "Nodesize"));
 		el.addChild(createElSub(oneNode.getBiologicalElement(), "BiologicalElement"));
 		// Point2D p = pathway.getGraph().getVertexLocation(oneNode);
 		// if(oneNode.getParentNode()!=null){

@@ -88,7 +88,6 @@ public class MainMenuBar extends JMenuBar {
 		JMenuItem visualizationSettingsMenuItem = createMenuItem("Visualization Settings",
 				MenuActionCommands.visualizationSettings);
 		JMenuItem generalSettingsMenuItem = createMenuItem("General Settings", MenuActionCommands.settings);
-		JMenuItem rendererSettingsMenuItem = createMenuItem("Renderer Settings", MenuActionCommands.rendererSettings);
 		JMenuItem graphSettingsMenuItem = createMenuItem("Graph Settings", MenuActionCommands.graphSettings);
 
 		JMenuItem generateRandomGraphMenuItem = createMenuItem("Generate Random Graph", MenuActionCommands.mathGraph);
@@ -143,7 +142,6 @@ public class MainMenuBar extends JMenuBar {
 		settings.add(generalSettingsMenuItem);
 		settings.add(graphSettingsMenuItem);
 		settings.add(visualizationSettingsMenuItem);
-		settings.add(rendererSettingsMenuItem);
 		settings.add(new JSeparator());
 		settings.add(createMenuItem("Open Workspace Folder...",
 				() -> VanesaUtility.openFolderInExplorer(Workspace.getCurrent().getPath())));
