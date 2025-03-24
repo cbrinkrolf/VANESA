@@ -10,7 +10,7 @@ public class SRNA extends RNA {
 
 	public SRNA(final String label, final String name) {
 		super(label, name, Elementdeclerations.sRNA);
-		attributeSetter(getClass().getSimpleName(), this);
+		attributeSetter();
 	}
 
 	public String getTarbaseDS() {

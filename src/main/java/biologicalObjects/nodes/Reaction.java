@@ -10,7 +10,7 @@ public class Reaction extends BiologicalNodeAbstract implements DynamicNode {
 
 	public Reaction(final String label, final String name) {
 		super(label, name, Elementdeclerations.reaction);
-		attributeSetter(getClass().getSimpleName(), this);
+		attributeSetter();
 	}
 
 	@Override

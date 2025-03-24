@@ -5,7 +5,7 @@ import biologicalElements.Elementdeclerations;
 public class Receptor extends Protein {
 	public Receptor(final String label, final String name) {
 		super(label, name, Elementdeclerations.receptor);
-		attributeSetter(getClass().getSimpleName(), this);
+		attributeSetter();
 	}
 
 	protected Receptor(final String label, final String name, final String biologicalElement) {

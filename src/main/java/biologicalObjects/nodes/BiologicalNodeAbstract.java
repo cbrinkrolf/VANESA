@@ -23,6 +23,7 @@ import graph.jung.classes.MyGraph;
 import graph.jung.graphDrawing.VertexShapes;
 import graph.layouts.Circle;
 import gui.MainWindow;
+import org.apache.commons.lang3.StringUtils;
 
 public abstract class BiologicalNodeAbstract extends Pathway implements GraphElementAbstract {
 	private KEGGNode KEGGnode;
@@ -112,67 +113,34 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		deleted = true;
 	}
 
-	/*
-	 * private boolean stringsEqualAndAreNotEmpty(String s1, String s2) { return
-	 * s1.length() > 0 && s2.length() > 0 && s1.equalsIgnoreCase(s2); }
-	 */
-
-	/**
-	 * checks if the given BiologicalNodeAbstract is equal to this one nodes are
-	 * equal if name OR label match (also when name matches the label of the other
-	 * node)
-	 */
-	/*
-	 * public boolean equals(Object o) {
-	 * 
-	 * if (!(o instanceof BiologicalNodeAbstract)) { return super.equals(o); }
-	 * 
-	 * BiologicalNodeAbstract bna = (BiologicalNodeAbstract) o;
-	 * 
-	 * String name = this.getName(); String label = this.getLabel();
-	 * 
-	 * String name2 = bna.getName(); String label2 = bna.getLabel();
-	 * 
-	 * return stringsEqualAndAreNotEmpty(name,name2) //||
-	 * stringsEqualAndAreNotEmpty(name,label2) //||
-	 * stringsEqualAndAreNotEmpty(label,name2) ||
-	 * stringsEqualAndAreNotEmpty(label,label2); }
-	 */
-	public void attributeSetter(String className, BiologicalNodeAbstract bna) {
-		MainWindow.getInstance().nodeAttributeChanger(bna, false);
+	public void attributeSetter() {
+		MainWindow.getInstance().nodeAttributeChanger(this, false);
 	}
 
 	private String getCorrectLabel(Integer type) {
-		if ((getLabel().length() == 0 || getLabel().equals(" "))
-				&& (getName().length() == 0 || getName().equals(" "))) {
+		if (StringUtils.isBlank(getLabel()) && StringUtils.isBlank(getName())) {
 			return "";
-		} else {
-			if (type == GraphSettings.SHOW_LABEL) {
-				// if (getLabel().equals("1") && this instanceof BiologicalEdgeAbstract) {
-				// return "";
-				// }
-				if (getLabel().length() == 0 || getLabel().equals(" ")) {
-					return getName();
-				} else {
-					return getLabel();
-				}
-			} else if (type == GraphSettings.SHOW_NAME) {
-				if (getName().length() == 0 || getName().equals(" ")) {
-					return getLabel();
-				} else {
-					return getName();
-				}
-			} else if (type == GraphSettings.SHOW_LABEL_AND_NAME) {
-				if (getName().length() == 0 || getName().equals(" ")) {
-					return getLabel();
-				} else if (getLabel().length() == 0 || getLabel().equals(" ")) {
-					return getName();
-				} else {
-					return getLabel() + "  -|-  " + getName();
-				}
-			} else if (type == GraphSettings.SHOW_NONE) {
-				return "";
+		}
+		if (type == GraphSettings.SHOW_LABEL) {
+			if (StringUtils.isBlank(getLabel())) {
+				return getName();
 			}
+			return getLabel();
+		}
+		if (type == GraphSettings.SHOW_NAME) {
+			if (StringUtils.isBlank(getName())) {
+				return getLabel();
+			}
+			return getName();
+		}
+		if (type == GraphSettings.SHOW_LABEL_AND_NAME) {
+			if (StringUtils.isBlank(getName())) {
+				return getLabel();
+			}
+			if (StringUtils.isBlank(getLabel())) {
+				return getName();
+			}
+			return getLabel() + "  -|-  " + getName();
 		}
 		return "";
 	}

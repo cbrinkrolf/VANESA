@@ -10,7 +10,7 @@ public class DNA extends BiologicalNodeAbstract implements NodeWithNTSequence, N
 
 	public DNA(final String label, final String name) {
 		super(label, name, Elementdeclerations.dna);
-		attributeSetter(getClass().getSimpleName(), this);
+		attributeSetter();
 	}
 
 	@Override

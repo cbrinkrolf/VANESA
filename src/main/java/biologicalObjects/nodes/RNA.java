@@ -10,7 +10,7 @@ public class RNA extends BiologicalNodeAbstract implements NodeWithNTSequence, N
 
 	public RNA(final String label, final String name) {
 		super(label, name, Elementdeclerations.rna);
-		attributeSetter(this.getClass().getSimpleName(), this);
+		attributeSetter();
 	}
 
 	protected RNA(final String label, final String name, final String biologicalElement) {

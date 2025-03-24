@@ -9,7 +9,7 @@ public class PathwayMap extends BiologicalNodeAbstract {
 
 	public PathwayMap(final String label, final String name) {
 		super(label, name, Elementdeclerations.pathwayMap);
-		attributeSetter(getClass().getSimpleName(), this);
+		attributeSetter();
 	}
 
 	public boolean isSpecification() {

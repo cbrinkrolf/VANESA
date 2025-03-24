@@ -10,7 +10,7 @@ public class Enzyme extends Protein implements DynamicNode {
 
 	public Enzyme(final String label, final String name) {
 		super(label, name, Elementdeclerations.enzyme);
-		attributeSetter(getClass().getSimpleName(), this);
+		attributeSetter();
 	}
 
 	public String getMaximalSpeed() {

@@ -8,6 +8,6 @@ public class ANYPlace extends Place {
 	public ANYPlace(final String label, final String name) {
 		super(label, name, Elementdeclerations.place, true);
 		setDefaultShape(VertexShapes.makeCoarse(VertexShapes.getEllipse()));
-		attributeSetter(this.getClass().getSimpleName(), this);
+		attributeSetter();
 	}
 }

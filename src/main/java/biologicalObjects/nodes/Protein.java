@@ -7,7 +7,7 @@ public class Protein extends BiologicalNodeAbstract {
 
 	public Protein(final String label, final String name) {
 		super(label, name, Elementdeclerations.protein);
-		attributeSetter(getClass().getSimpleName(), this);
+		attributeSetter();
 	}
 
 	protected Protein(final String label, final String name, final String biologicalElement) {

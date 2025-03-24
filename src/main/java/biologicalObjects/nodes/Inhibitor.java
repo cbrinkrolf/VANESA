@@ -5,6 +5,6 @@ import biologicalElements.Elementdeclerations;
 public class Inhibitor extends BiologicalNodeAbstract {
 	public Inhibitor(final String label, final String name) {
 		super(label, name, Elementdeclerations.inhibitor);
-		attributeSetter(getClass().getSimpleName(), this);
+		attributeSetter();
 	}
 }

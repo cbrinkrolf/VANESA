@@ -13,7 +13,7 @@ public class Gene extends BiologicalNodeAbstract implements NodeWithNTSequence {
 
 	public Gene(final String label, final String name) {
 		super(label, name, Elementdeclerations.gene);
-		attributeSetter(getClass().getSimpleName(), this);
+		attributeSetter();
 	}
 
 	@Override
