@@ -111,7 +111,7 @@ public class TxtInput {
                         label = getLabelName(first)[0];
                         name = getLabelName(first)[1];
                     }
-                    Protein p = new Protein(label, name);
+                    Protein p = new Protein(label, name, pw);
 					/*MicroArrayAttributes microArray = new MicroArrayAttributes();
 					Double foldchange = Double.valueOf(next);
 					microArray.setFoldschange(foldchange);
@@ -145,13 +145,13 @@ public class TxtInput {
                 //no microarray FC data
                 String label = getLabelName(line)[0];
                 String name = getLabelName(line)[1];
-                Protein p = new Protein(label, name);
+                Protein p = new Protein(label, name, pw);
                 pw.addVertex(p, new Point2D.Double(10, 10));
                 //pw.getGraph().moveVertex(p.getVertex(), 10, 10);
                 mapping.put(p.getLabel(), p);
             }
         } else {
-            Protein p = new Protein(line.trim(), line.trim());
+            Protein p = new Protein(line.trim(), line.trim(), pw);
             pw.addVertex(p, new Point2D.Double(10, 10));
             //pw.getGraph().moveVertex(p.getVertex(), 10, 10);
             mapping.put(p.getLabel(), p);

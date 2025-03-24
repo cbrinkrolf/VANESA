@@ -173,28 +173,28 @@ public class KGMLReader extends BaseReader<Pathway> {
                     if (label != null) {
                         node.setNodeLabel(label);
                     }
-                    bna = new DNA(node.getNodeLabel(), node.getKEGGentryName());
+                    bna = new DNA(node.getNodeLabel(), node.getKEGGentryName(), pw);
                     break;
                 case "compound":
                     // TODO: node.setNodeLabel(set[9]);
-                    bna = new Metabolite(node.getNodeLabel(), node.getKEGGentryName());
+                    bna = new Metabolite(node.getNodeLabel(), node.getKEGGentryName(), pw);
                     break;
                 case "ortholog":
-                    bna = new OrthologGroup(node.getNodeLabel(), node.getKEGGentryName());
+                    bna = new OrthologGroup(node.getNodeLabel(), node.getKEGGentryName(), pw);
                     break;
                 case "map":
                     // TODO: node.setNodeLabel(set[10]);
-                    bna = new PathwayMap(node.getNodeLabel(), node.getKEGGentryName());
+                    bna = new PathwayMap(node.getNodeLabel(), node.getKEGGentryName(), pw);
                     break;
                 case "enzyme":
-                    bna = new Enzyme(node.getNodeLabel(), node.getKEGGentryName());
+                    bna = new Enzyme(node.getNodeLabel(), node.getKEGGentryName(), pw);
                     break;
                 case "other":
                 case "undefined":
-                    bna = new Other(node.getNodeLabel(), node.getKEGGentryName());
+                    bna = new Other(node.getNodeLabel(), node.getKEGGentryName(), pw);
                     break;
                 case "group":
-                    bna = new Complex("Complex", "");
+                    bna = new Complex("Complex", "", pw);
                     break;
             }
             if (bna != null) {

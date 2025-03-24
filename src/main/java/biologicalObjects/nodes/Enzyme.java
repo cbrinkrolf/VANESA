@@ -3,13 +3,14 @@ package biologicalObjects.nodes;
 import java.util.List;
 
 import biologicalElements.Elementdeclerations;
+import biologicalElements.Pathway;
 
 public class Enzyme extends Protein implements DynamicNode {
 	private String maximalSpeed = "1";
 	private boolean knockedOut = false;
 
-	public Enzyme(final String label, final String name) {
-		super(label, name, Elementdeclerations.enzyme);
+	public Enzyme(final String label, final String name, final Pathway parent) {
+		super(label, name, Elementdeclerations.enzyme, parent);
 		attributeSetter();
 	}
 

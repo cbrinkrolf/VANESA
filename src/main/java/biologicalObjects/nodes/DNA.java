@@ -3,13 +3,14 @@ package biologicalObjects.nodes;
 import java.util.List;
 
 import biologicalElements.Elementdeclerations;
+import biologicalElements.Pathway;
 
 public class DNA extends BiologicalNodeAbstract implements NodeWithNTSequence, NodeWithLogFC {
 	private String ntSequence = "";
 	private Double logFC = 0.0;
 
-	public DNA(final String label, final String name) {
-		super(label, name, Elementdeclerations.dna);
+	public DNA(final String label, final String name, final Pathway parent) {
+		super(label, name, Elementdeclerations.dna, parent);
 		attributeSetter();
 	}
 

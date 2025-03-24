@@ -766,16 +766,16 @@ public class Transformator {
 
 		switch (type) {
 		case continuousPlace:
-			pn = new ContinuousPlace(defaultPName, defaultPName);
+			pn = new ContinuousPlace(defaultPName, defaultPName, petriNet);
 			break;
 		case continuousTransition:
-			pn = new ContinuousTransition(defaultTName, defaultTName);
+			pn = new ContinuousTransition(defaultTName, defaultTName, petriNet);
 			break;
 		case discretePlace:
-			pn = new DiscretePlace(defaultPName, defaultPName);
+			pn = new DiscretePlace(defaultPName, defaultPName, petriNet);
 			break;
 		case discreteTransition:
-			pn = new DiscreteTransition(defaultTName, defaultTName);
+			pn = new DiscreteTransition(defaultTName, defaultTName, petriNet);
 			break;
 		}
 		if (pn != null) {

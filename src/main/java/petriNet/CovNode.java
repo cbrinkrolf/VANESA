@@ -2,14 +2,15 @@ package petriNet;
 
 import java.awt.Color;
 
+import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.jung.graphDrawing.VertexShapes;
 
 public class CovNode extends BiologicalNodeAbstract {
 	private CovList tokenList;
 
-	public CovNode(String label, String name, int numberPlaces) {
-		super(label, name);
+	public CovNode(final String label, final String name, final Pathway parent, final int numberPlaces) {
+		super(label, name, "", parent);
 		setShape(VertexShapes.getEllipse());
 		setColor(Color.WHITE);
 		tokenList = new CovList(numberPlaces);

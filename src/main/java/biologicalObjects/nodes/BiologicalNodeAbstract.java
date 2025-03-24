@@ -67,18 +67,15 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	private double concentrationMax = Double.MAX_VALUE;
 	private double concentrationStart = 1;
 
-	protected BiologicalNodeAbstract(final String label, final String name) {
-		this(label, name, "");
-	}
-
-	protected BiologicalNodeAbstract(final String label, final String name, final String biologicalElement) {
-		super(name, GraphInstance.getPathway());
+	protected BiologicalNodeAbstract(final String label, final String name, final String biologicalElement,
+			final Pathway parent) {
+		super(name, parent);
 		super.setName(name);
 		setLabel(label);
 		labelSet.add(label);
 		this.biologicalElement = biologicalElement;
-		if (getParent() != null) {
-			setIsPetriNet(getParent().isPetriNet());
+		if (parent != null) {
+			setIsPetriNet(parent.isPetriNet());
 		}
 	}
 
@@ -156,14 +153,14 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		}
 		for (BiologicalEdgeAbstract e : node.getConnectingEdges()) {
 			if (e.getFrom() != node) {
-				Pathway neighborParent = e.getFrom().getParentNode() == null ? node.getRootPathway()
-						: e.getFrom().getParentNode();
+				Pathway neighborParent =
+						e.getFrom().getParentNode() == null ? node.getRootPathway() : e.getFrom().getParentNode();
 				node.addVertex(e.getFrom(), neighborParent.getGraph().getVertexLocation(e.getFrom()));
 				// node.getPredefinedEnvironment().add(e.getFrom());
 				e.getFrom().removeConnectingEdge(e);
 			} else if (e.getTo() != node) {
-				Pathway neighborParent = e.getTo().getParentNode() == null ? node.getRootPathway()
-						: e.getTo().getParentNode();
+				Pathway neighborParent =
+						e.getTo().getParentNode() == null ? node.getRootPathway() : e.getTo().getParentNode();
 				node.addVertex(e.getTo(), neighborParent.getGraph().getVertexLocation(e.getTo()));
 				// node.getPredefinedEnvironment().add(e.getTo());
 				e.getTo().removeConnectingEdge(e);
@@ -461,7 +458,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			BiologicalNodeAbstract bna = BiologicalNodeAbstract.coarse(innerNodes, getID(), getLabel());
 			setGraph(bna.getGraph());
 			GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
-//			bna.printAllHierarchicalAttributes();
+			//			bna.printAllHierarchicalAttributes();
 		}
 	}
 
@@ -575,18 +572,18 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	 *
 	 * @return The internal nodes excluding environment nodes.
 	 */
-//	public Collection<BiologicalNodeAbstract> getInnerNodes(){
-//		Collection<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
-//		if(getVertices().isEmpty()){
-//			return innerNodes;
-//		}
-//		for(BiologicalNodeAbstract node : getVertices().keySet()){
-//			if(!getEnvironment().contains(node.getCurrentShownParentNode(getGraph()))){
-//				innerNodes.add(node);
-//			}
-//		}
-//		return innerNodes;
-//	}
+	//	public Collection<BiologicalNodeAbstract> getInnerNodes(){
+	//		Collection<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
+	//		if(getVertices().isEmpty()){
+	//			return innerNodes;
+	//		}
+	//		for(BiologicalNodeAbstract node : getVertices().keySet()){
+	//			if(!getEnvironment().contains(node.getCurrentShownParentNode(getGraph()))){
+	//				innerNodes.add(node);
+	//			}
+	//		}
+	//		return innerNodes;
+	//	}
 	public Collection<BiologicalNodeAbstract> getChildrenNodes() {
 		Set<BiologicalNodeAbstract> childrenNodes = new HashSet<>();
 		Set<BiologicalNodeAbstract> done = new HashSet<>();
@@ -617,13 +614,13 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	public boolean isCoarseNode() {
 		if (!getVertices().isEmpty())
 			return true;
-//		if(getInnerNodes().isEmpty()){
-//			return false;
-//		}
-//		if(getGraph(false)==null){
-//			return false;
-//		}
-//		return true;
+		//		if(getInnerNodes().isEmpty()){
+		//			return false;
+		//		}
+		//		if(getGraph(false)==null){
+		//			return false;
+		//		}
+		//		return true;
 		return false;
 	}
 
@@ -919,19 +916,19 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 	/*
 	 * public Vertex getVertex() { return vertex; }
-	 * 
+	 *
 	 * public void setVertex(Vertex vertex) { this.vertex = vertex; if (vertex !=
 	 * null) { sbml.setVertex(vertex.toString()); } }
 	 */
 
 	/*
 	 * public int getAnimationValue(int time) { return values.get(time); }
-	 * 
+	 *
 	 * public void setAnimationValue(int time, int value) { values.put(time, value);
 	 * }
-	 * 
+	 *
 	 * public void removeAnimationValue(int time) { values.remove(time); }
-	 * 
+	 *
 	 * public int getAnimationSteps() { return values.size(); }
 	 */
 

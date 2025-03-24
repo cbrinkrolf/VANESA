@@ -1,6 +1,7 @@
 package biologicalObjects.nodes;
 
 import biologicalElements.Elementdeclerations;
+import biologicalElements.Pathway;
 
 import java.util.List;
 
@@ -8,13 +9,13 @@ public class RNA extends BiologicalNodeAbstract implements NodeWithNTSequence, N
 	private String ntSequence = "";
 	private Double logFC = 0.0;
 
-	public RNA(final String label, final String name) {
-		super(label, name, Elementdeclerations.rna);
+	public RNA(final String label, final String name, final Pathway parent) {
+		super(label, name, Elementdeclerations.rna, parent);
 		attributeSetter();
 	}
 
-	protected RNA(final String label, final String name, final String biologicalElement) {
-		super(label, name, biologicalElement);
+	protected RNA(final String label, final String name, final String biologicalElement, final Pathway parent) {
+		super(label, name, biologicalElement, parent);
 	}
 
 	@Override

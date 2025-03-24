@@ -7,8 +7,8 @@ public class PathwayMap extends BiologicalNodeAbstract {
 	private boolean specification;
 	private Pathway pathwayLink = null;
 
-	public PathwayMap(final String label, final String name) {
-		super(label, name, Elementdeclerations.pathwayMap);
+	public PathwayMap(final String label, final String name, final Pathway parent) {
+		super(label, name, Elementdeclerations.pathwayMap, parent);
 		attributeSetter();
 	}
 

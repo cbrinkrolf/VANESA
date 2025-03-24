@@ -852,7 +852,7 @@ public class RuleEditingWindow implements ActionListener {
 		Map<String, BiologicalNodeAbstract> nameToBN = new HashMap<>();
 		for (int i = 0; i < rule.getBiologicalNodes().size(); i++) {
 			RuleNode rn = rule.getBiologicalNodes().get(i);
-			BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(rn.getType());
+			BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(bn, rn.getType());
 			bna.setName(rn.getName());
 			bna.setLabel(rn.getName());
 			nameToBN.put(bna.getName(), bna);
@@ -880,7 +880,7 @@ public class RuleEditingWindow implements ActionListener {
 		Map<String, BiologicalNodeAbstract> nameToPN = new HashMap<>();
 		for (int i = 0; i < rule.getPetriNodes().size(); i++) {
 			RuleNode rn = rule.getPetriNodes().get(i);
-			BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(rn.getType());
+			BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(pn, rn.getType());
 			bna.setName(rn.getName());
 			bna.setLabel(rn.getName());
 			nameToPN.put(bna.getName(), bna);

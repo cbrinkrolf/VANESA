@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.List;
 
 import biologicalElements.Elementdeclerations;
+import biologicalElements.Pathway;
 import graph.jung.graphDrawing.VertexShapes;
 
 public class ContinuousTransition extends Transition {
@@ -11,8 +12,8 @@ public class ContinuousTransition extends Transition {
 	// scalar or scalar function for maximum speed
 	private String maximalSpeed = "1";
 
-	public ContinuousTransition(final String label, final String name) {
-		super(label, name, Elementdeclerations.continuousTransition);
+	public ContinuousTransition(final String label, final String name, final Pathway parent) {
+		super(label, name, Elementdeclerations.continuousTransition, parent);
 		setDefaultShape(VertexShapes.getContinuousTransitionShape());
 		setColor(Color.WHITE);
 	}

@@ -162,7 +162,7 @@ public class GraphMLReader extends BaseReader<Pathway> {
 		if (p.x != 0 || p.y != 0) {
 			hasSeenPositions = true;
 		}
-		BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(label);
+		BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(pw, label);
 		try {
 			bna.setID(id, pw);
 		} catch (IDAlreadyExistException e) {

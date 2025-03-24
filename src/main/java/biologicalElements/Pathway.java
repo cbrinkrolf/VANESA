@@ -142,10 +142,10 @@ public class Pathway implements Cloneable {
 
 	public BiologicalNodeAbstract addVertex(String name, String label, String elementDeclaration, String compartment,
 			Point2D p) {
-		BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(elementDeclaration);
+		BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(this, elementDeclaration);
 		bna.setName(name);
 		bna.setLabel(label);
-		this.getCompartmentManager().setCompartment(bna, this.getCompartmentManager().getCompartment(compartment));
+		getCompartmentManager().setCompartment(bna, getCompartmentManager().getCompartment(compartment));
 		if (isBNA()) {
 			Pathway parent = ((BiologicalNodeAbstract) this).getParentNode() == null ? getRootPathway()
 					: ((BiologicalNodeAbstract) this).getParentNode();
@@ -551,8 +551,8 @@ public class Pathway implements Cloneable {
 					updateMyGraph();
 					// newBNA = bna.clone();
 					// newBNA = new Other(bna.getName(), bna.getLabel());
-					BiologicalNodeAbstract newBNA = BiologicalNodeAbstractFactory.create(bna.getBiologicalElement(),
-							bna);
+					BiologicalNodeAbstract newBNA = BiologicalNodeAbstractFactory.create(this,
+							bna.getBiologicalElement(), bna);
 					newBNA.setID(this);
 					newBNA.setRefs(new HashSet<>());
 					newBNA.setLogicalReference(bna);

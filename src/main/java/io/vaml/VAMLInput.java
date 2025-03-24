@@ -456,30 +456,30 @@ public class VAMLInput {
 		}
 		BiologicalNodeAbstract bna = null;
 		if (biologicalElement.equals(Elementdeclerations.enzyme)) {
-			bna = new Enzyme(label, name);
+			bna = new Enzyme(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.others)) {
-			bna = new Other(label, name);
+			bna = new Other(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.complex)) {
-			bna = new Complex(label, name);
+			bna = new Complex(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.degraded)) {
-			bna = new Degraded(label, name);
+			bna = new Degraded(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.dna)) {
-			bna = new DNA(label, name);
+			bna = new DNA(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.homodimerFormation)) {
-			bna = new HomodimerFormation(label, name);
+			bna = new HomodimerFormation(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.ligandBinding)) {
-			bna = new LigandBinding(label, name);
+			bna = new LigandBinding(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.membraneChannel)) {
-			bna = new MembraneChannel(label, name);
+			bna = new MembraneChannel(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.membraneReceptor)) {
-			bna = new Receptor(label, name);
+			bna = new Receptor(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.mRNA)) {
-			bna = new MRNA(label, name);
+			bna = new MRNA(label, name, pw);
 			((MRNA) bna).setNtSequence(node.getAttribute("NtSequence").getValue());
 		} else if (biologicalElement.equals(Elementdeclerations.orthologGroup)) {
-			bna = new OrthologGroup(label, name);
+			bna = new OrthologGroup(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.pathwayMap)) {
-			bna = new PathwayMap(label, name);
+			bna = new PathwayMap(label, name, pw);
 			if (pathway != null) {
 				try {
 					File f = new File("Temp");
@@ -497,47 +497,47 @@ public class VAMLInput {
 				}
 			}
 		} else if (biologicalElement.equals(Elementdeclerations.inhibitor)) {
-			bna = new Inhibitor(label, name);
+			bna = new Inhibitor(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.protein)) {
-			bna = new Protein(label, name);
+			bna = new Protein(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.receptor)) {
-			bna = new Receptor(label, name);
+			bna = new Receptor(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.sRNA)) {
-			bna = new SRNA(label, name);
+			bna = new SRNA(label, name, pw);
 			((SRNA) bna).setNtSequence(node.getAttribute("NtSequence").getValue());
 		} else if (biologicalElement.equals(Elementdeclerations.metabolite)) {
-			bna = new Metabolite(label, name);
+			bna = new Metabolite(label, name, pw);
 			// kept for legacy
 		} else if (biologicalElement.equals(Elementdeclerations.smallMolecule)) {
-			bna = new Metabolite(label, name);
+			bna = new Metabolite(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.solubleReceptor)) {
-			bna = new SolubleReceptor(label, name);
+			bna = new SolubleReceptor(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.transcriptionFactor)) {
-			bna = new TranscriptionFactor(label, name);
+			bna = new TranscriptionFactor(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.glycan)) {
-			bna = new Glycan(label, name);
+			bna = new Glycan(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.compound)) {
-			bna = new CompoundNode(label, name);
+			bna = new CompoundNode(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.disease)) {
-			bna = new Disease(label, name);
+			bna = new Disease(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.drug)) {
-			bna = new Drug(label, name);
+			bna = new Drug(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.gene)) {
-			bna = new Gene(label, name);
+			bna = new Gene(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.go)) {
-			bna = new GeneOntology(label, name);
+			bna = new GeneOntology(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.reaction)) {
-			bna = new Reaction(label, name);
+			bna = new Reaction(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.matrix)) {
-			bna = new Matrix(label, name);
+			bna = new Matrix(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.factor)) {
-			bna = new Factor(label, name);
+			bna = new Factor(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.fragment)) {
-			bna = new Fragment(label, name);
+			bna = new Fragment(label, name, pw);
 		} else if (biologicalElement.equals(Elementdeclerations.site)) {
-			bna = new Site(label, name);
+			bna = new Site(label, name, pw);
 		} else if (biologicalElement.equals("Discrete Place")) {
-			bna = new DiscretePlace(label, name);
+			bna = new DiscretePlace(label, name, pw);
 			String token = node.getAttribute("token").getValue();
 			String tokenMin = node.getAttribute("tokenMin").getValue();
 			String tokenMax = node.getAttribute("tokenMax").getValue();
@@ -547,7 +547,7 @@ public class VAMLInput {
 			((Place) bna).setTokenMax(Double.parseDouble(tokenMax));
 			((Place) bna).setTokenStart(Double.parseDouble(tokenStart));
 		} else if (biologicalElement.equals("Continuous Place")) {
-			bna = new ContinuousPlace(label, name);
+			bna = new ContinuousPlace(label, name, pw);
 			String token = node.getAttribute("token").getValue();
 			String tokenMin = node.getAttribute("tokenMin").getValue();
 			String tokenMax = node.getAttribute("tokenMax").getValue();
@@ -557,22 +557,21 @@ public class VAMLInput {
 			((Place) bna).setTokenMax(Double.parseDouble(tokenMax));
 			((Place) bna).setTokenStart(Double.parseDouble(tokenStart));
 		} else if (biologicalElement.equals("Discrete Transition")) {
-			bna = new DiscreteTransition(label, name);
+			bna = new DiscreteTransition(label, name, pw);
 			String delay = node.getAttribute("delay").getValue();
 			((DiscreteTransition) bna).setDelay(delay);
 		} else if (biologicalElement.equals("Continuous Transition")) {
-			bna = new ContinuousTransition(label, name);
+			bna = new ContinuousTransition(label, name, pw);
 			String maximalSpeed = node.getAttribute("maximalSpeed").getValue();
-			if (maximalSpeed == null || maximalSpeed.equals("")) {
+			if (maximalSpeed == null || maximalSpeed.isEmpty()) {
 				maximalSpeed = node.getAttribute("maximumSpeed").getValue();
 			}
 			((ContinuousTransition) bna).setMaximalSpeed(maximalSpeed);
-			if (maximalSpeed == null || maximalSpeed.equals("")) {
-				System.out.println("speed");
+			if (maximalSpeed == null || maximalSpeed.isEmpty()) {
 				((ContinuousTransition) bna).setMaximalSpeed("1");
 			}
 		} else if (biologicalElement.equals("Stochastic Transition")) {
-			bna = new StochasticTransition(label, name);
+			bna = new StochasticTransition(label, name, pw);
 			((StochasticTransition) bna).setDistribution(node.getAttribute("distribution").getValue());
 		}
 		if (bna != null) {

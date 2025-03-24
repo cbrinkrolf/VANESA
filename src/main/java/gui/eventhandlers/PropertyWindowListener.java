@@ -251,11 +251,11 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 				}
 			}
 			if (DiscreteTransition.class.getName().equals(selectedItem))
-				newT = new DiscreteTransition(t.getLabel(), t.getName());
+				newT = new DiscreteTransition(t.getLabel(), t.getName(), pw);
 			else if (ContinuousTransition.class.getName().equals(selectedItem))
-				newT = new ContinuousTransition(t.getLabel(), t.getName());
+				newT = new ContinuousTransition(t.getLabel(), t.getName(), pw);
 			else if (StochasticTransition.class.getName().equals(selectedItem))
-				newT = new StochasticTransition(t.getLabel(), t.getName());
+				newT = new StochasticTransition(t.getLabel(), t.getName(), pw);
 			if (newT != null) {
 				// newT.setCompartment(pw.getCompartmentManager().getCompartment(t));
 				pw.addVertex(newT, new Point());
@@ -277,9 +277,9 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 
 			Place newP;
 			if ("discrete".equals(((JComboBox<?>) event.getSource()).getSelectedItem())) {
-				newP = new DiscretePlace(p.getLabel(), p.getName());
+				newP = new DiscretePlace(p.getLabel(), p.getName(), pw);
 			} else {
-				newP = new ContinuousPlace(p.getLabel(), p.getName());
+				newP = new ContinuousPlace(p.getLabel(), p.getName(), pw);
 			}
 			pw.addVertex(newP, new Point());
 			newP.setToken(p.getToken());

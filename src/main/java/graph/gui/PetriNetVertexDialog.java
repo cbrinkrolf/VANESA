@@ -165,7 +165,7 @@ public class PetriNetVertexDialog {
 
 		BiologicalNodeAbstract createdNode = null;
 		if (petriElement.equals(Elementdeclerations.discretePlace)) {
-			final Place p = new DiscretePlace(name.getText().trim(), name.getText().trim());
+			final Place p = new DiscretePlace(name.getText().trim(), name.getText().trim(), pw);
 			if (!pw.isHeadless()) {
 				// number = (Number) token.getValue();
 				// if (number != null) {
@@ -187,7 +187,7 @@ public class PetriNetVertexDialog {
 			}
 			createdNode = p;
 		} else if (petriElement.equals(Elementdeclerations.continuousPlace)) {
-			final Place p = new ContinuousPlace(name.getText().trim(), name.getText().trim());
+			final Place p = new ContinuousPlace(name.getText().trim(), name.getText().trim(), pw);
 			if (!pw.isHeadless()) {
 				// number = (Number) token.getValue();
 				// if (number != null) {
@@ -209,30 +209,30 @@ public class PetriNetVertexDialog {
 			}
 			createdNode = p;
 		} else if (petriElement.equals(Elementdeclerations.place)) {
-			createdNode = new ANYPlace(name.getText().trim(), name.getText().trim());
+			createdNode = new ANYPlace(name.getText().trim(), name.getText().trim(), pw);
 		} else if (petriElement.equals(Elementdeclerations.discreteTransition)) {
-			DiscreteTransition t = new DiscreteTransition(name.getText().trim(), name.getText().trim());
+			DiscreteTransition t = new DiscreteTransition(name.getText().trim(), name.getText().trim(), pw);
 			if (!pw.isHeadless()) {
 				t.setDelay(delay.getText().trim());
 				t.setFiringCondition(firingCondition.getText().trim());
 			}
 			createdNode = t;
 		} else if (petriElement.equals(Elementdeclerations.continuousTransition)) {
-			ContinuousTransition t = new ContinuousTransition(name.getText().trim(), name.getText().trim());
+			ContinuousTransition t = new ContinuousTransition(name.getText().trim(), name.getText().trim(), pw);
 			if (!pw.isHeadless()) {
 				t.setFiringCondition(firingCondition.getText().trim());
 				t.setMaximalSpeed(maxSpeed.getText().trim());
 			}
 			createdNode = t;
 		} else if (petriElement.equals(Elementdeclerations.stochasticTransition)) {
-			StochasticTransition t = new StochasticTransition(name.getText().trim(), name.getText().trim());
+			StochasticTransition t = new StochasticTransition(name.getText().trim(), name.getText().trim(), pw);
 			if (!pw.isHeadless()) {
 				t.setDistribution(distributionList.getSelectedItem().toString());
 				t.setFiringCondition(firingCondition.getText().trim());
 			}
 			createdNode = t;
 		} else if (petriElement.equals(Elementdeclerations.transition)) {
-			createdNode = new ANYTransition(name.getText().trim(), name.getText().trim());
+			createdNode = new ANYTransition(name.getText().trim(), name.getText().trim(), pw);
 		}
 
 		if (createdNode != null) {

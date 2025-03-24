@@ -1,6 +1,7 @@
 package biologicalObjects.nodes;
 
 import biologicalElements.Elementdeclerations;
+import biologicalElements.Pathway;
 import biologicalObjects.nodes.petriNet.ContinuousPlace;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscretePlace;
@@ -12,103 +13,104 @@ import transformation.graphElements.ANYPlace;
 import transformation.graphElements.ANYTransition;
 
 public class BiologicalNodeAbstractFactory {
-	public static BiologicalNodeAbstract create(final String type) {
-		return create(type, null);
+	public static BiologicalNodeAbstract create(final Pathway parent, final String type) {
+		return create(parent, type, null);
 	}
 
 	// creating new object with attributes of given bna (could be null)
-	public static BiologicalNodeAbstract create(final String type, final BiologicalNodeAbstract bna) {
+	public static BiologicalNodeAbstract create(final Pathway parent, final String type,
+			final BiologicalNodeAbstract bna) {
 		final String name = bna != null ? bna.getName() : "";
 		final String label = bna != null ? bna.getLabel() : "";
 		switch (type) {
 		case Elementdeclerations.collector:
-			return new Collector(label, name);
+			return new Collector(label, name, parent);
 		case Elementdeclerations.complex:
-			return new Complex(label, name);
+			return new Complex(label, name, parent);
 		case Elementdeclerations.compound:
-			return new CompoundNode(label, name);
+			return new CompoundNode(label, name, parent);
 		case Elementdeclerations.degraded:
-			return new Degraded(label, name);
+			return new Degraded(label, name, parent);
 		case Elementdeclerations.disease:
-			return new Disease(label, name);
+			return new Disease(label, name, parent);
 		case Elementdeclerations.dna:
-			return fill(new DNA(label, name), bna);
+			return fill(new DNA(label, name, parent), bna);
 		case Elementdeclerations.domain:
-			return new Domain(label, name);
+			return new Domain(label, name, parent);
 		case Elementdeclerations.drug:
-			return new Drug(label, name);
+			return new Drug(label, name, parent);
 		case Elementdeclerations.enzyme:
-			return new Enzyme(label, name);
+			return new Enzyme(label, name, parent);
 		case Elementdeclerations.exon:
-			return new Exon(label, name);
+			return new Exon(label, name, parent);
 		case Elementdeclerations.factor:
-			return new Factor(label, name);
+			return new Factor(label, name, parent);
 		case Elementdeclerations.fragment:
-			return new Fragment(label, name);
+			return new Fragment(label, name, parent);
 		case Elementdeclerations.gene:
-			return new Gene(label, name);
+			return new Gene(label, name, parent);
 		case Elementdeclerations.glycan:
-			return new Glycan(label, name);
+			return new Glycan(label, name, parent);
 		case Elementdeclerations.homodimerFormation:
-			return new HomodimerFormation(label, name);
+			return new HomodimerFormation(label, name, parent);
 		case Elementdeclerations.inhibitor:
-			return new Inhibitor(label, name);
+			return new Inhibitor(label, name, parent);
 		case Elementdeclerations.ligandBinding:
-			return new LigandBinding(label, name);
+			return new LigandBinding(label, name, parent);
 		case Elementdeclerations.matrix:
-			return new Matrix(label, name);
+			return new Matrix(label, name, parent);
 		case Elementdeclerations.membraneChannel:
-			return new MembraneChannel(label, name);
+			return new MembraneChannel(label, name, parent);
 		case Elementdeclerations.membraneReceptor:
-			return new MembraneReceptor(label, name);
+			return new MembraneReceptor(label, name, parent);
 		case Elementdeclerations.mRNA:
-			return fill(new MRNA(label, name), bna);
+			return fill(new MRNA(label, name, parent), bna);
 		case Elementdeclerations.miRNA:
-			return fill(new MIRNA(label, name), bna);
+			return fill(new MIRNA(label, name, parent), bna);
 		case Elementdeclerations.lncRNA:
-			return fill(new LNCRNA(label, name), bna);
+			return fill(new LNCRNA(label, name, parent), bna);
 		case Elementdeclerations.orthologGroup:
-			return new OrthologGroup(label, name);
+			return new OrthologGroup(label, name, parent);
 		case Elementdeclerations.pathwayMap:
-			return fill(new PathwayMap(label, name), bna);
+			return fill(new PathwayMap(label, name, parent), bna);
 		case Elementdeclerations.protein:
-			return new Protein(label, name);
+			return new Protein(label, name, parent);
 		case Elementdeclerations.reaction:
-			return new Reaction(label, name);
+			return new Reaction(label, name, parent);
 		case Elementdeclerations.receptor:
-			return new Receptor(label, name);
+			return new Receptor(label, name, parent);
 		case Elementdeclerations.rna:
-			return new RNA(label, name);
+			return new RNA(label, name, parent);
 		case Elementdeclerations.site:
-			return new Site(label, name);
+			return new Site(label, name, parent);
 		case Elementdeclerations.smallMolecule: // kept for legacy
 		case Elementdeclerations.metabolite:
-			return new Metabolite(label, name);
+			return new Metabolite(label, name, parent);
 		case Elementdeclerations.solubleReceptor:
-			return new SolubleReceptor(label, name);
+			return new SolubleReceptor(label, name, parent);
 		case Elementdeclerations.sRNA:
-			return fill(new SRNA(label, name), bna);
+			return fill(new SRNA(label, name, parent), bna);
 		case Elementdeclerations.transcriptionFactor:
-			return new TranscriptionFactor(label, name);
+			return new TranscriptionFactor(label, name, parent);
 		case Elementdeclerations.discretePlace:
-			return fill(new DiscretePlace(label, name), bna);
+			return fill(new DiscretePlace(label, name, parent), bna);
 		case Elementdeclerations.continuousPlace:
-			return fill(new ContinuousPlace(label, name), bna);
+			return fill(new ContinuousPlace(label, name, parent), bna);
 		case Elementdeclerations.discreteTransition:
-			return fill(new DiscreteTransition(label, name), bna);
+			return fill(new DiscreteTransition(label, name, parent), bna);
 		case Elementdeclerations.continuousTransition:
-			return fill(new ContinuousTransition(label, name), bna);
+			return fill(new ContinuousTransition(label, name, parent), bna);
 		case Elementdeclerations.stochasticTransition:
-			return fill(new StochasticTransition(label, name), bna);
+			return fill(new StochasticTransition(label, name, parent), bna);
 		case Elementdeclerations.anyBNA:
-			return new ANYBiologicalNode(label, name);
+			return new ANYBiologicalNode(label, name, parent);
 		case Elementdeclerations.place:
-			return new ANYPlace(label, name);
+			return new ANYPlace(label, name, parent);
 		case Elementdeclerations.transition:
-			return new ANYTransition(label, name);
+			return new ANYTransition(label, name, parent);
 		case Elementdeclerations.others:
 		default:
-			return new Other(label, name);
+			return new Other(label, name, parent);
 		}
 	}
 

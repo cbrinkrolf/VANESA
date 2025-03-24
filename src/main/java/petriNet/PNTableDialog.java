@@ -327,13 +327,13 @@ public class PNTableDialog extends JDialog implements ActionListener {
 							table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6)));
 					if (table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6)).equals(
 							Elementdeclerations.discreteTransition) && !(t instanceof DiscreteTransition)) {
-						newT = new DiscreteTransition(t.getLabel(), t.getName());
+						newT = new DiscreteTransition(t.getLabel(), t.getName(), pw);
 					} else if (table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6))
 							.equals(Elementdeclerations.stochasticTransition) && !(t instanceof StochasticTransition)) {
-						newT = new StochasticTransition(t.getLabel(), t.getName());
+						newT = new StochasticTransition(t.getLabel(), t.getName(), pw);
 					} else if (table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6))
 							.equals(Elementdeclerations.continuousTransition) && !(t instanceof ContinuousTransition)) {
-						newT = new ContinuousTransition(t.getLabel(), t.getName());
+						newT = new ContinuousTransition(t.getLabel(), t.getName(), pw);
 					}
 					if (newT != null) {
 						// newT.setCompartment(t.getCompartment());

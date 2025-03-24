@@ -80,13 +80,13 @@ public class KeggSearch {
             Pathway newPW = new CreatePathway("Overview Pathway").getPathway();
             List<BiologicalNodeAbstract> bnas = new ArrayList<>();
             if (StringUtils.isNotBlank(enzyme))
-                bnas.add(new Enzyme(enzyme, enzyme));
+                bnas.add(new Enzyme(enzyme, enzyme, newPW));
             if (StringUtils.isNotBlank(gene))
-                bnas.add(new Gene(gene, gene));
+                bnas.add(new Gene(gene, gene, newPW));
             if (StringUtils.isNotBlank(compound))
-                bnas.add(new Metabolite(compound, compound));
+                bnas.add(new Metabolite(compound, compound, newPW));
             for (KeggPathway s : results) {
-                PathwayMap map = new PathwayMap(s.name, s.id);
+                PathwayMap map = new PathwayMap(s.name, s.id, newPW);
                 map = (PathwayMap) newPW.addVertex(map, new Point(0, 0));
                 for (BiologicalNodeAbstract bna : bnas) {
                     bna = newPW.addVertex(bna, new Point(0, 0));

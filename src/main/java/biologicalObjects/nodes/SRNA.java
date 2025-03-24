@@ -1,6 +1,7 @@
 package biologicalObjects.nodes;
 
 import biologicalElements.Elementdeclerations;
+import biologicalElements.Pathway;
 
 public class SRNA extends RNA {
 	private String tarbaseDS = "";
@@ -8,8 +9,8 @@ public class SRNA extends RNA {
 	private String tarbaseEnsemble = "";
 	private String tarbaseAccession = "";
 
-	public SRNA(final String label, final String name) {
-		super(label, name, Elementdeclerations.sRNA);
+	public SRNA(final String label, final String name, final Pathway parent) {
+		super(label, name, Elementdeclerations.sRNA, parent);
 		attributeSetter();
 	}
 

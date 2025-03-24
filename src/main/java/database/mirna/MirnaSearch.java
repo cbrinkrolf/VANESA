@@ -120,7 +120,7 @@ public class MirnaSearch {
                 if (bnas.containsKey(mature.name)) {
                     tmp = bnas.get(mature.name);
                 } else {
-                    tmp = new MIRNA(mature.name, mature.name);
+                    tmp = new MIRNA(mature.name, mature.name, pw);
                     addVertexOnCircle(pw, bna, tmp);
                     bnas.put(mature.name, tmp);
                     counterNodes++;
@@ -172,7 +172,7 @@ public class MirnaSearch {
                 if (bnas.containsKey(mature.name)) {
                     tmp = bnas.get(mature.name);
                 } else {
-                    tmp = new MIRNA(mature.name, mature.name);
+                    tmp = new MIRNA(mature.name, mature.name, pw);
                     addVertexOnCircle(pw, bna, tmp);
                     bnas.put(mature.name, tmp);
                     counterNodes++;
@@ -219,7 +219,7 @@ public class MirnaSearch {
                 if (bnas.containsKey(sourceGene.name)) {
                     tmp = bnas.get(label);
                 } else {
-                    tmp = new DNA(label, sourceGene.name != null ? sourceGene.name : label);
+                    tmp = new DNA(label, sourceGene.name != null ? sourceGene.name : label, pw);
                     addVertexOnCircle(pw, bna, tmp);
                     bnas.put(label, tmp);
                     counterNodes++;
@@ -266,7 +266,7 @@ public class MirnaSearch {
                 if (bnas.containsKey(label)) {
                     tmp = bnas.get(label);
                 } else {
-                    tmp = new DNA(label, targetGene.name != null ? targetGene.name : label);
+                    tmp = new DNA(label, targetGene.name != null ? targetGene.name : label, pw);
                     addVertexOnCircle(pw, bna, tmp);
                     bnas.put(label, tmp);
                     counterNodes++;

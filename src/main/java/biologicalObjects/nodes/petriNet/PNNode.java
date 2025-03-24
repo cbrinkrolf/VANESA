@@ -10,8 +10,8 @@ import gui.PopUpDialog;
 import util.FormulaSafety;
 
 public abstract class PNNode extends BiologicalNodeAbstract {
-	protected PNNode(final String label, final String name, final String biologicalElement) {
-		super(label, name, biologicalElement);
+	protected PNNode(final String label, final String name, final String biologicalElement, final Pathway parent) {
+		super(label, name, biologicalElement, parent);
 		setLabel(label);
 		setName(name);
 	}

@@ -38,7 +38,7 @@ public class Cov {
 		sourcePathway = GraphInstance.getPathway();
 		createMatrices();
 		targetPathway = new CreatePathway().getPathway();
-		root = new CovNode("label", "name", numberPlaces);
+		root = new CovNode("label", "name", targetPathway, numberPlaces);
 		double[] tmp = new double[start.size()];
 		for (int i = 0; i < start.size(); i++) {
 			tmp[i] = this.start.get(i);
@@ -117,7 +117,7 @@ public class Cov {
 							}
 						}
 						if (!found) {
-							final CovNode n = new CovNode("label2", "name2", numberPlaces);
+							final CovNode n = new CovNode("label2", "name2", targetPathway, numberPlaces);
 							n.setTokenList(tmp.clone());
 							targetPathway.addVertex(n, new Point(i * 10, i * i * 30));
 							final String edgeName = idToNameTransition.get(i);
@@ -132,7 +132,7 @@ public class Cov {
 
 					// wenn Markierung noch nicht im Graph
 					if (!found) {
-						CovNode n = new CovNode("label2", "name2", numberPlaces);
+						CovNode n = new CovNode("label2", "name2", targetPathway, numberPlaces);
 						n.setTokenList(tmp);
 						if (!parent.getTokenList().toString().equals(tmp.toString())) {
 							targetPathway.addVertex(n, new Point(i * 10, i * i * 30));

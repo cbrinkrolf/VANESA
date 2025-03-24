@@ -2,9 +2,11 @@ package biologicalObjects.nodes.petriNet;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import biologicalElements.Elementdeclerations;
+import biologicalElements.Pathway;
 import graph.jung.graphDrawing.VertexShapes;
 import gui.PopUpDialog;
 import util.StochasticDistribution;
@@ -17,21 +19,13 @@ public class StochasticTransition extends Transition {
 	private double c = 0.5; // most likely value
 	private double mu = 0.5; // expected value
 	private double sigma = 1.0 / 4; // standard deviation
-	private List<Integer> events = new ArrayList<>();
-	private List<Double> probabilities = new ArrayList<>();
+	private List<Integer> events = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
+	private List<Double> probabilities = new ArrayList<>(Arrays.asList(0.25, 0.25, 0.25, 0.25));
 
-	public StochasticTransition(final String label, final String name) {
-		super(label, name, Elementdeclerations.stochasticTransition);
+	public StochasticTransition(final String label, final String name, final Pathway parent) {
+		super(label, name, Elementdeclerations.stochasticTransition, parent);
 		setDefaultShape(VertexShapes.getDiscreteTransitionShape());
 		setDefaultColor(Color.DARK_GRAY);
-		events.add(1);
-		events.add(2);
-		events.add(3);
-		events.add(4);
-		probabilities.add(1.0 / 4);
-		probabilities.add(1.0 / 4);
-		probabilities.add(1.0 / 4);
-		probabilities.add(1.0 / 4);
 	}
 
 	public String getDistribution() {

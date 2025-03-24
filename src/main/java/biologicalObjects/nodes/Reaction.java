@@ -3,13 +3,14 @@ package biologicalObjects.nodes;
 import java.util.List;
 
 import biologicalElements.Elementdeclerations;
+import biologicalElements.Pathway;
 
 public class Reaction extends BiologicalNodeAbstract implements DynamicNode {
 	private String maximalSpeed = "1";
 	private boolean knockedOut = false;
 
-	public Reaction(final String label, final String name) {
-		super(label, name, Elementdeclerations.reaction);
+	public Reaction(final String label, final String name, final Pathway parent) {
+		super(label, name, Elementdeclerations.reaction, parent);
 		attributeSetter();
 	}
 

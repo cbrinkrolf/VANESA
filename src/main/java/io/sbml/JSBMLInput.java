@@ -350,7 +350,7 @@ public class JSBMLInput {
 				name = "";
 			}
 			String label = name;
-			BiologicalNodeAbstract bna = new Other(label, name);
+			BiologicalNodeAbstract bna = new Other(label, name, pathway);
 			Point2D.Double p = new Point2D.Double(0.0, 0.0);
 			Element annotation = species.getChild("annotation", null);
 			if (annotation != null) {
@@ -367,12 +367,12 @@ public class JSBMLInput {
 							label = elSub.getAttributeValue("Label");
 						}
 					}
-					bna = BiologicalNodeAbstractFactory.create(biologicalElement);
+					bna = BiologicalNodeAbstractFactory.create(pathway, biologicalElement);
 					if (reverseEngineering) {
 						if (bna instanceof Place) {
-							bna = BiologicalNodeAbstractFactory.create(Elementdeclerations.metabolite);
+							bna = BiologicalNodeAbstractFactory.create(pathway, Elementdeclerations.metabolite);
 						} else if (bna instanceof Transition) {
-							bna = BiologicalNodeAbstractFactory.create(Elementdeclerations.enzyme);
+							bna = BiologicalNodeAbstractFactory.create(pathway, Elementdeclerations.enzyme);
 						}
 					}
 					bna.setLabel(label);
