@@ -64,6 +64,11 @@ import java.util.*;
  *     </li>
  * </ul>
  * <hr>
+ * General notes:
+ * <ul>
+ *     <li>Transitions without any arcs still receive concession and fire</li>
+ * </ul>
+ * <hr>
  * TODO:
  * <ul>
  *     <li>Evaluate time constraints of firingConditions and prevent jumping over emerging concessions based on time</li>
