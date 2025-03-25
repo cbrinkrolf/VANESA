@@ -17,6 +17,60 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 
+/**
+ * Simulator for extended, timed, functional, discrete Petri Nets with capacities.
+ * <hr>
+ * For each marking of the net, all transitions are evaluated for concession, by...
+ * <ul>
+ *     <li>...checking if the transition is not knocked out</li>
+ *     <li>...checking if the transition's firingCondition evaluates to true</li>
+ *     <li>...checking if places connected via test arcs hold equal or more tokens than evaluated by the arc's function</li>
+ *     <li>...checking if places connected via inhibitor arcs hold less tokens than evaluated by the arc's function</li>
+ *     <li>
+ *         ...checking if source places connected via regular arcs hold equal or more tokens than evaluated by the arc's
+ *         function and that the removal of tokens doesn't violate the place's <em>[minTokens, maxTokens]</em> range,
+ *         if the place is not constant.
+ *     </li>
+ *     <li>
+ *         ...checking if the addition of tokens evaluated by the arc's function to target places don't violate the
+ *         place's <em>[minTokens, maxTokens]</em>, if the place is not constant.
+ *     </li>
+ * </ul>
+ * <hr>
+ * Functions for arc weights, delays, and firingConditions are evaluated with the following parameters:
+ * <ul>
+ *     <li>User-defined parameters of the arc/transition in the case of arc weights and delays</li>
+ *     <li>The <em>time</em> parameter for transition firingConditions</li>
+ *     <li>The number of tokens for each place in the current marking using the place's name as parameter key</li>
+ * </ul>
+ * <hr>
+ * The process of simulation is implemented as follows:
+ * <ul>
+ *     <li>Initialize start marking using tokenStart property of places and the defined start time (default: 0)</li>
+ *     <li>Find all transitions that have concession in the current marking with the same, smallest delay</li>
+ *     <li>
+ *         Select one of these transitions at random and fire it. When branching is allowed, each of them is fired
+ *         creating branching markings.
+ *     </li>
+ *     <li>
+ *         Firing a transition removes the requested tokens from the source places that are not constant and connected
+ *         via regular arcs and produces tokens in the target places that are not constant and connected via regular
+ *         arcs.
+ *     </li>
+ *     <li>
+ *         After a transition fired, the new marking's time is advanced by the transition's delay. All previous
+ *         concessions are retained if they still have concession and their delays are advanced as well. Those that
+ *         don't have concession anymore are removed. Transitions that newly gained concession are added.
+ *     </li>
+ * </ul>
+ * <hr>
+ * TODO:
+ * <ul>
+ *     <li>Evaluate time constraints of firingConditions and prevent jumping over emerging concessions based on time</li>
+ *     <li>Handle conflict resolution strategy of places and arc priorities/probabilities</li>
+ *     <li>Stochastic transitions</li>
+ * </ul>
+ */
 public class DiscreteSimulator {
 	private final List<DiscretePlace> places = new ArrayList<>();
 	private final List<DiscreteTransition> transitions = new ArrayList<>();
@@ -127,22 +181,24 @@ public class DiscreteSimulator {
 			final BigInteger[] putativeTokens = new BigInteger[placeTokens.length];
 			System.arraycopy(placeTokens, 0, putativeTokens, 0, placeTokens.length);
 			boolean valid = true;
-			// TODO: probability and priority for arcs
-			// Validate pre-conditions (test and inhibition arcs)
+			// Validate pre-conditions (test and inhibition arcs or constant places)
 			for (final var arc : transitionSources.get(transition)) {
-				if (arc.isRegularArc()) {
+				if (arc.isRegularArc() && !arc.getFrom().isConstant()) {
 					continue;
 				}
 				final DiscretePlace place = (DiscretePlace) arc.getFrom();
 				final int placeIndex = places.indexOf(place);
 				final var requestedTokens = evaluateFunction(placeTokens, arc, arc.getFunction(), arc.getParameters());
 				if (putativeTokens[placeIndex].compareTo(requestedTokens) >= 0) {
+					// If enough tokens are available and the arc is an inhibitor arc, validation fails
 					if (arc.isInhibitorArc()) {
 						valid = false;
 						break;
 					}
 				} else {
-					if (arc.isTestArc()) {
+					// If not enough tokens are available and the arc is either a test arc or a regular arc and the
+					// connected place constant, validation fails
+					if (arc.isTestArc() || (arc.isRegularArc() && arc.getFrom().isConstant())) {
 						valid = false;
 						break;
 					}
@@ -150,7 +206,7 @@ public class DiscreteSimulator {
 			}
 			// Validate normal incoming arcs
 			for (final var arc : transitionSources.get(transition)) {
-				if (!arc.isRegularArc()) {
+				if (!arc.isRegularArc() || arc.getTo().isConstant()) {
 					continue;
 				}
 				final DiscretePlace place = (DiscretePlace) arc.getFrom();
@@ -169,7 +225,7 @@ public class DiscreteSimulator {
 			if (valid) {
 				// Validate normal outgoing arcs
 				for (final var arc : transitionTargets.get(transition)) {
-					if (!arc.isRegularArc()) {
+					if (!arc.isRegularArc() || arc.getTo().isConstant()) {
 						continue;
 					}
 					final DiscretePlace place = (DiscretePlace) arc.getTo();
@@ -252,6 +308,9 @@ public class DiscreteSimulator {
 	}
 
 	public void step() throws SimulationException {
+		if (openMarkings.isEmpty()) {
+			return;
+		}
 		final var markingsToProcess = new ArrayList<>(openMarkings);
 		openMarkings.clear();
 		for (final var marking : markingsToProcess) {
@@ -288,8 +347,8 @@ public class DiscreteSimulator {
 		final BigInteger[] placeTokens = new BigInteger[places.size()];
 		System.arraycopy(marking.placeTokens, 0, placeTokens, 0, placeTokens.length);
 		for (final var arc : transitionSources.get(transition)) {
-			// Test and inhibition arcs don't destroy tokens
-			if (!arc.isRegularArc()) {
+			// Test and inhibition arcs as well as constant places don't destroy tokens
+			if (!arc.isRegularArc() || arc.getTo().isConstant()) {
 				continue;
 			}
 			final DiscretePlace place = (DiscretePlace) arc.getFrom();
@@ -299,7 +358,8 @@ public class DiscreteSimulator {
 			placeTokens[placeIndex] = placeTokens[placeIndex].subtract(requestedTokens);
 		}
 		for (final var arc : transitionTargets.get(transition)) {
-			if (!arc.isRegularArc()) {
+			// In the malformed case of non-regular arcs and constant places don't produce tokens
+			if (!arc.isRegularArc() || arc.getTo().isConstant()) {
 				continue;
 			}
 			final DiscretePlace place = (DiscretePlace) arc.getTo();
@@ -339,7 +399,9 @@ public class DiscreteSimulator {
 		final var newMarking = new Marking(newTime, placeTokens,
 				concessions.stream().sorted(Comparator.comparing(o -> o.delay)).toArray(Concession[]::new));
 		markings.add(newMarking);
-		openMarkings.add(newMarking);
+		if (!newMarking.isDead()) {
+			openMarkings.add(newMarking);
+		}
 		firingEdges.add(new FiringEdge(marking, newMarking, transition));
 	}
 
