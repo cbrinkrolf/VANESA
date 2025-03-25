@@ -11,6 +11,7 @@ import com.ezylang.evalex.EvaluationException;
 import com.ezylang.evalex.Expression;
 import com.ezylang.evalex.parser.ParseException;
 import graph.gui.Parameter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -42,6 +43,16 @@ public class DiscreteSimulator {
 	}
 
 	public DiscreteSimulator(final Collection<BiologicalNodeAbstract> nodes,
+			final Collection<BiologicalEdgeAbstract> edges) throws SimulationException {
+		this(nodes, edges, 42, false);
+	}
+
+	public DiscreteSimulator(final Collection<BiologicalNodeAbstract> nodes,
+			final Collection<BiologicalEdgeAbstract> edges, final long seed) throws SimulationException {
+		this(nodes, edges, seed, false);
+	}
+
+	public DiscreteSimulator(final Collection<BiologicalNodeAbstract> nodes,
 			final Collection<BiologicalEdgeAbstract> edges, final long seed, final boolean allowBranching)
 			throws SimulationException {
 		this.seed = seed;
@@ -67,10 +78,10 @@ public class DiscreteSimulator {
 				}
 			}
 		}
-		initialize();
+		initialize(BigDecimal.ZERO);
 	}
 
-	private void initialize() throws SimulationException {
+	private void initialize(final BigDecimal startTime) throws SimulationException {
 		random.setSeed(seed);
 		markings.clear();
 		openMarkings.clear();
@@ -81,22 +92,42 @@ public class DiscreteSimulator {
 			final var place = places.get(i);
 			placeTokens[i] = BigInteger.valueOf((long) place.getTokenStart());
 		}
-		final var startMarking = new Marking(BigDecimal.valueOf(0), placeTokens, determineConcession(placeTokens));
+		final var startMarking = new Marking(startTime, placeTokens, determineConcession(startTime, placeTokens));
 		markings.add(startMarking);
 		openMarkings.add(startMarking);
 	}
 
-	private Concession[] determineConcession(final BigInteger[] placeTokens) throws SimulationException {
+	private Concession[] determineConcession(final BigDecimal time, final BigInteger[] placeTokens)
+			throws SimulationException {
+		final List<Parameter> globalParameters = new ArrayList<>();
+		globalParameters.add(new Parameter("time", time.doubleValue(), ""));
 		final List<Concession> concessions = new ArrayList<>();
 		for (final var transition : transitions) {
 			if (transition.isKnockedOut()) {
 				continue;
 			}
+			final String firingCondition = transition.getFiringCondition();
+			if (StringUtils.isNotBlank(firingCondition)) {
+				if ("false".equalsIgnoreCase(firingCondition)) {
+					continue;
+				} else if (!"true".equalsIgnoreCase(firingCondition)) {
+					final var firingConditionExpression = createExpression(placeTokens, firingCondition,
+							globalParameters);
+					try {
+						if (!firingConditionExpression.evaluate().getBooleanValue()) {
+							continue;
+						}
+					} catch (EvaluationException | ParseException e) {
+						throw new SimulationException(String.format(
+								"Failed to evaluate firingCondition function for transition '%s' (%s): %s",
+								transition.getName(), transition.getLabel(), firingCondition), e);
+					}
+				}
+			}
 			final BigInteger[] putativeTokens = new BigInteger[placeTokens.length];
 			System.arraycopy(placeTokens, 0, putativeTokens, 0, placeTokens.length);
 			boolean valid = true;
 			// TODO: probability and priority for arcs
-			// TODO: firingCondition for transition
 			// Validate pre-conditions (test and inhibition arcs)
 			for (final var arc : transitionSources.get(transition)) {
 				if (arc.isRegularArc()) {
@@ -117,7 +148,7 @@ public class DiscreteSimulator {
 					}
 				}
 			}
-			// Validate normal arcs
+			// Validate normal incoming arcs
 			for (final var arc : transitionSources.get(transition)) {
 				if (!arc.isRegularArc()) {
 					continue;
@@ -136,7 +167,11 @@ public class DiscreteSimulator {
 				}
 			}
 			if (valid) {
+				// Validate normal outgoing arcs
 				for (final var arc : transitionTargets.get(transition)) {
+					if (!arc.isRegularArc()) {
+						continue;
+					}
 					final DiscretePlace place = (DiscretePlace) arc.getTo();
 					final int placeIndex = places.indexOf(place);
 					final var producedTokens = evaluateFunction(placeTokens, arc, arc.getFunction(),
@@ -152,6 +187,7 @@ public class DiscreteSimulator {
 					}
 				}
 				if (valid) {
+					// If all validations succeeded, evaluate the transition's delay and store the concession
 					final var expression = createExpression(placeTokens, transition.getDelay(),
 							transition.getParameters());
 					try {
@@ -199,6 +235,22 @@ public class DiscreteSimulator {
 		}
 	}
 
+	public void simulateUntil(final BigDecimal endTime) throws SimulationException {
+		while (!isDead() && endTime.compareTo(getMaxTime()) > 0) {
+			step();
+		}
+	}
+
+	public BigDecimal getMaxTime() {
+		BigDecimal result = markings.get(0).time;
+		for (final var marking : markings) {
+			if (marking.time.compareTo(result) > 0) {
+				result = marking.time;
+			}
+		}
+		return result;
+	}
+
 	public void step() throws SimulationException {
 		final var markingsToProcess = new ArrayList<>(openMarkings);
 		openMarkings.clear();
@@ -232,9 +284,11 @@ public class DiscreteSimulator {
 
 	private void fireTransition(final Marking marking, final DiscreteTransition transition, final BigDecimal delay)
 			throws SimulationException {
+		final BigDecimal newTime = marking.time.add(delay);
 		final BigInteger[] placeTokens = new BigInteger[places.size()];
 		System.arraycopy(marking.placeTokens, 0, placeTokens, 0, placeTokens.length);
 		for (final var arc : transitionSources.get(transition)) {
+			// Test and inhibition arcs don't destroy tokens
 			if (!arc.isRegularArc()) {
 				continue;
 			}
@@ -255,7 +309,7 @@ public class DiscreteSimulator {
 			placeTokens[placeIndex] = placeTokens[placeIndex].add(producedTokens);
 		}
 		// Determine new markings concessions and delays considering previous concession delays
-		final Concession[] newConcessions = determineConcession(placeTokens);
+		final Concession[] newConcessions = determineConcession(newTime, placeTokens);
 		final List<Concession> concessions = new ArrayList<>();
 		// First, retain all transitions that still have concession and reduce their delay
 		for (final var concession : marking.concessionsOrderedByDelay) {
@@ -282,7 +336,7 @@ public class DiscreteSimulator {
 			}
 		}
 		// Create the new marking
-		final var newMarking = new Marking(marking.time.add(delay), placeTokens,
+		final var newMarking = new Marking(newTime, placeTokens,
 				concessions.stream().sorted(Comparator.comparing(o -> o.delay)).toArray(Concession[]::new));
 		markings.add(newMarking);
 		openMarkings.add(newMarking);
@@ -311,6 +365,18 @@ public class DiscreteSimulator {
 
 	public Collection<FiringEdge> getEdges() {
 		return firingEdges;
+	}
+
+	public boolean isDead() {
+		return openMarkings.isEmpty();
+	}
+
+	public long getSeed() {
+		return seed;
+	}
+
+	public boolean isAllowBranching() {
+		return allowBranching;
 	}
 
 	public static class Marking {
