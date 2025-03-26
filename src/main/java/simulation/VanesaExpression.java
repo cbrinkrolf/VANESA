@@ -5,7 +5,10 @@ import com.ezylang.evalex.Expression;
 import com.ezylang.evalex.parser.ASTNode;
 import com.ezylang.evalex.parser.ParseException;
 import com.ezylang.evalex.parser.Token;
+import graph.gui.Parameter;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -16,6 +19,35 @@ public class VanesaExpression extends Expression {
 
 	public VanesaExpression(final VanesaExpression expression) throws ParseException {
 		super(expression);
+	}
+
+	public VanesaExpression with(final List<Parameter> parameters) {
+		if (parameters != null) {
+			for (final var parameter : parameters) {
+				with(parameter.getName(), BigDecimal.valueOf(parameter.getValue()));
+			}
+		}
+		return this;
+	}
+
+	public String reduce(final List<Parameter> parameters) throws ParseException {
+		String lastExpressionString = getExpressionString();
+		boolean reduced = true;
+		while (reduced) {
+			reduced = false;
+			final var expression = new VanesaExpression(lastExpressionString);
+			if (parameters != null) {
+				for (final Parameter invariant : parameters) {
+					expression.with(invariant.getName(), invariant.getValue());
+				}
+			}
+			final var reducedExpressionString = visit(expression, expression.getAbstractSyntaxTree(), 0);
+			if (!reducedExpressionString.equals(lastExpressionString)) {
+				lastExpressionString = reducedExpressionString;
+				reduced = true;
+			}
+		}
+		return lastExpressionString;
 	}
 
 	public String reduce(final Map.Entry<String, Object>[] invariants) throws ParseException {

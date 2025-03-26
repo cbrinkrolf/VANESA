@@ -260,7 +260,7 @@ class DiscreteSimulatorTest {
 		simulator.step();
 		assertEquals(2, simulator.getMarkings().size());
 		assertEquals(1, simulator.getEdges().size());
-		assertEquals(t1, simulator.getEdges().iterator().next().transition);
+		assertEquals(t1, simulator.getEdges().iterator().next().transition.transition);
 		final var markingTimeline = getMarkingTimeline(simulator);
 		assertFalse(markingTimeline[0].isDead());
 		assertEquals(BigInteger.ONE, simulator.getTokens(markingTimeline[0], p1));

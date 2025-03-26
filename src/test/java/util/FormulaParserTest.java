@@ -1,8 +1,7 @@
-package prettyFormula;
+package util;
 
 import com.ezylang.evalex.parser.ParseException;
 import org.junit.jupiter.api.Test;
-import util.FormulaParser;
 
 import static org.junit.jupiter.api.Assertions.*;
 

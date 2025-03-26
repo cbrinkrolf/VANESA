@@ -6,9 +6,7 @@ import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
-import biologicalObjects.nodes.petriNet.Transition;
 import com.ezylang.evalex.EvaluationException;
-import com.ezylang.evalex.Expression;
 import com.ezylang.evalex.parser.ParseException;
 import graph.gui.Parameter;
 import org.apache.commons.lang3.StringUtils;
@@ -76,14 +74,9 @@ import java.util.*;
  *     <li>Stochastic transitions</li>
  * </ul>
  */
-public class DiscreteSimulator {
+public class DiscreteSimulator extends Simulator {
 	private final List<DiscretePlace> places = new ArrayList<>();
-	private final List<DiscreteTransition> transitions = new ArrayList<>();
-	private final Map<DiscreteTransition, List<PNArc>> transitionSources = new HashMap<>();
-	private final Map<DiscreteTransition, List<PNArc>> transitionTargets = new HashMap<>();
-	private final Random random = new Random();
-	private final long seed;
-	private final boolean allowBranching;
+	private final Map<DiscreteTransition, TransitionDetails> transitions = new HashMap<>();
 	private final List<Marking> markings = new ArrayList<>();
 	private final List<Marking> openMarkings = new ArrayList<>();
 	private final List<FiringEdge> firingEdges = new ArrayList<>();
@@ -114,26 +107,23 @@ public class DiscreteSimulator {
 	public DiscreteSimulator(final Collection<BiologicalNodeAbstract> nodes,
 			final Collection<BiologicalEdgeAbstract> edges, final long seed, final boolean allowBranching)
 			throws SimulationException {
-		this.seed = seed;
-		this.allowBranching = allowBranching;
+		super(seed, allowBranching);
 		// Collect places and transitions
 		for (final var node : nodes) {
 			if (node instanceof DiscretePlace) {
 				places.add((DiscretePlace) node);
 			} else if (node instanceof DiscreteTransition) {
 				final DiscreteTransition t = (DiscreteTransition) node;
-				transitions.add(t);
-				transitionSources.put(t, new ArrayList<>());
-				transitionTargets.put(t, new ArrayList<>());
+				transitions.put(t, new TransitionDetails(t));
 			}
 		}
 		// Collect all transition source and target places
 		for (final var edge : edges) {
 			if (edge instanceof PNArc) {
 				if (edge.getFrom() instanceof DiscretePlace && edge.getTo() instanceof DiscreteTransition) {
-					transitionSources.get((DiscreteTransition) edge.getTo()).add((PNArc) edge);
+					transitions.get((DiscreteTransition) edge.getTo()).sources.add((PNArc) edge);
 				} else if (edge.getFrom() instanceof DiscreteTransition && edge.getTo() instanceof DiscretePlace) {
-					transitionTargets.get((DiscreteTransition) edge.getFrom()).add((PNArc) edge);
+					transitions.get((DiscreteTransition) edge.getFrom()).targets.add((PNArc) edge);
 				}
 			}
 		}
@@ -158,20 +148,18 @@ public class DiscreteSimulator {
 
 	private Concession[] determineConcession(final BigDecimal time, final BigInteger[] placeTokens)
 			throws SimulationException {
-		final List<Parameter> globalParameters = new ArrayList<>();
-		globalParameters.add(new Parameter("time", time.doubleValue(), ""));
 		final List<Concession> concessions = new ArrayList<>();
-		for (final var transition : transitions) {
-			if (transition.isKnockedOut()) {
+		for (final var transition : transitions.values()) {
+			if (transition.transition.isKnockedOut()) {
 				continue;
 			}
-			final String firingCondition = transition.getFiringCondition();
-			if (StringUtils.isNotBlank(firingCondition)) {
-				if ("false".equalsIgnoreCase(firingCondition)) {
+			if (StringUtils.isNotBlank(transition.firingCondition)) {
+				if ("false".equalsIgnoreCase(transition.firingCondition)) {
 					continue;
-				} else if (!"true".equalsIgnoreCase(firingCondition)) {
-					final var firingConditionExpression = createExpression(placeTokens, firingCondition,
-							globalParameters);
+				} else if (!"true".equalsIgnoreCase(transition.firingCondition)) {
+					final var firingConditionExpression = createExpression(places, placeTokens,
+							transition.firingCondition, transition.transition.getParameters());
+					firingConditionExpression.with("time", time);
 					try {
 						if (!firingConditionExpression.evaluate().getBooleanValue()) {
 							continue;
@@ -179,7 +167,8 @@ public class DiscreteSimulator {
 					} catch (EvaluationException | ParseException e) {
 						throw new SimulationException(String.format(
 								"Failed to evaluate firingCondition function for transition '%s' (%s): %s",
-								transition.getName(), transition.getLabel(), firingCondition), e);
+								transition.transition.getName(), transition.transition.getLabel(),
+								transition.firingCondition), e);
 					}
 				}
 			}
@@ -187,7 +176,7 @@ public class DiscreteSimulator {
 			System.arraycopy(placeTokens, 0, putativeTokens, 0, placeTokens.length);
 			boolean valid = true;
 			// Validate pre-conditions (test and inhibition arcs or constant places)
-			for (final var arc : transitionSources.get(transition)) {
+			for (final var arc : transition.sources) {
 				if (arc.isRegularArc() && !arc.getFrom().isConstant()) {
 					continue;
 				}
@@ -210,7 +199,7 @@ public class DiscreteSimulator {
 				}
 			}
 			// Validate normal incoming arcs
-			for (final var arc : transitionSources.get(transition)) {
+			for (final var arc : transition.sources) {
 				if (!arc.isRegularArc() || arc.getTo().isConstant()) {
 					continue;
 				}
@@ -229,7 +218,7 @@ public class DiscreteSimulator {
 			}
 			if (valid) {
 				// Validate normal outgoing arcs
-				for (final var arc : transitionTargets.get(transition)) {
+				for (final var arc : transition.targets) {
 					if (!arc.isRegularArc() || arc.getTo().isConstant()) {
 						continue;
 					}
@@ -249,31 +238,17 @@ public class DiscreteSimulator {
 				}
 				if (valid) {
 					// If all validations succeeded, evaluate the transition's delay and store the concession
-					final var expression = createExpression(placeTokens, transition.getDelay(),
-							transition.getParameters());
-					try {
-						final var result = expression.evaluate();
-						final BigDecimal delay = result.getNumberValue();
-						concessions.add(new Concession(transition, delay));
-					} catch (EvaluationException | ParseException e) {
-						throw new SimulationException(
-								String.format("Failed to evaluate delay function for transition '%s' (%s): %s",
-										transition.getName(), transition.getLabel(), transition.getDelay()), e);
-					}
+					final BigDecimal delay = transition.getDelay(places, placeTokens);
+					concessions.add(new Concession(transition, delay));
 				}
 			}
 		}
 		return concessions.stream().sorted(Comparator.comparing(o -> o.delay)).toArray(Concession[]::new);
 	}
 
-	private Expression createExpression(final BigInteger[] placeTokens, final String function,
-			final List<Parameter> parameters) {
-		final var expression = new Expression(function, VanesaExpressionConfiguration.EXPRESSION_CONFIGURATION);
-		if (parameters != null) {
-			for (final var parameter : parameters) {
-				expression.with(parameter.getName(), BigDecimal.valueOf(parameter.getValue()));
-			}
-		}
+	private static VanesaExpression createExpression(final List<DiscretePlace> places, final BigInteger[] placeTokens,
+			final String function, final List<Parameter> parameters) {
+		final var expression = new VanesaExpression(function).with(parameters);
 		for (int i = 0; i < placeTokens.length; i++) {
 			expression.with(places.get(i).getName(), placeTokens[i]);
 		}
@@ -282,7 +257,7 @@ public class DiscreteSimulator {
 
 	private BigInteger evaluateFunction(final BigInteger[] placeTokens, final PNArc arc, final String function,
 			final List<Parameter> parameters) throws SimulationException {
-		final var expression = createExpression(placeTokens, function, parameters);
+		final var expression = createExpression(places, placeTokens, function, parameters);
 		try {
 			final var result = expression.evaluate();
 			final BigDecimal producedTokens = result.getNumberValue();
@@ -346,12 +321,12 @@ public class DiscreteSimulator {
 		}
 	}
 
-	private void fireTransition(final Marking marking, final DiscreteTransition transition, final BigDecimal delay)
+	private void fireTransition(final Marking marking, final TransitionDetails transition, final BigDecimal delay)
 			throws SimulationException {
 		final BigDecimal newTime = marking.time.add(delay);
 		final BigInteger[] placeTokens = new BigInteger[places.size()];
 		System.arraycopy(marking.placeTokens, 0, placeTokens, 0, placeTokens.length);
-		for (final var arc : transitionSources.get(transition)) {
+		for (final var arc : transition.sources) {
 			// Test and inhibition arcs as well as constant places don't destroy tokens
 			if (!arc.isRegularArc() || arc.getTo().isConstant()) {
 				continue;
@@ -362,7 +337,7 @@ public class DiscreteSimulator {
 					arc.getParameters());
 			placeTokens[placeIndex] = placeTokens[placeIndex].subtract(requestedTokens);
 		}
-		for (final var arc : transitionTargets.get(transition)) {
+		for (final var arc : transition.targets) {
 			// In the malformed case of non-regular arcs and constant places don't produce tokens
 			if (!arc.isRegularArc() || arc.getTo().isConstant()) {
 				continue;
@@ -415,7 +390,7 @@ public class DiscreteSimulator {
 	}
 
 	public Collection<DiscreteTransition> getTransitions() {
-		return transitions;
+		return transitions.keySet();
 	}
 
 	public Collection<Marking> getMarkings() {
@@ -466,20 +441,73 @@ public class DiscreteSimulator {
 	public static class FiringEdge {
 		public final Marking from;
 		public final Marking to;
-		public final Transition transition;
+		public final TransitionDetails transition;
 
-		public FiringEdge(final Marking from, final Marking marking, final Transition transition) {
+		public FiringEdge(final Marking from, final Marking marking, final TransitionDetails transition) {
 			this.from = from;
 			to = marking;
 			this.transition = transition;
 		}
 	}
 
+	public static class TransitionDetails {
+		/**
+		 * All arcs from places to this transition
+		 */
+		final List<PNArc> sources = new ArrayList<>();
+		/**
+		 * All arcs from this transition to places
+		 */
+		final List<PNArc> targets = new ArrayList<>();
+		final DiscreteTransition transition;
+		final String firingCondition;
+		private BigDecimal fixedDelay;
+
+		private TransitionDetails(final DiscreteTransition transition) {
+			this.transition = transition;
+			// If possible, reduce the firingCondition function for faster subsequent calculations
+			String reducedFiringCondition;
+			try {
+				reducedFiringCondition = new VanesaExpression(transition.getFiringCondition()).reduce(
+						transition.getParameters());
+			} catch (ParseException e) {
+				reducedFiringCondition = transition.getFiringCondition();
+			}
+			firingCondition = reducedFiringCondition;
+			// If the delay function has no token dependencies, evaluate it and cache the result
+			try {
+				final var delayExpression = new VanesaExpression(transition.getDelay());
+				delayExpression.with(transition.getParameters());
+				if (delayExpression.getUndefinedVariables().isEmpty()) {
+					fixedDelay = delayExpression.evaluate().getNumberValue();
+				}
+			} catch (EvaluationException | ParseException ignored) {
+				fixedDelay = null;
+			}
+		}
+
+		public BigDecimal getDelay(final List<DiscretePlace> places, final BigInteger[] placeTokens)
+				throws SimulationException {
+			if (fixedDelay != null) {
+				return fixedDelay;
+			}
+			final var expression = createExpression(places, placeTokens, transition.getDelay(),
+					transition.getParameters());
+			try {
+				return expression.evaluate().getNumberValue();
+			} catch (EvaluationException | ParseException e) {
+				throw new SimulationException(
+						String.format("Failed to evaluate delay function for transition '%s' (%s): %s",
+								transition.getName(), transition.getLabel(), transition.getDelay()), e);
+			}
+		}
+	}
+
 	public static class Concession {
-		public final DiscreteTransition transition;
+		public final TransitionDetails transition;
 		public final BigDecimal delay;
 
-		public Concession(final DiscreteTransition transition, final BigDecimal delay) {
+		public Concession(final TransitionDetails transition, final BigDecimal delay) {
 			this.transition = transition;
 			this.delay = delay;
 		}
