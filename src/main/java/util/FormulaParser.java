@@ -12,7 +12,7 @@ import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
-import simulation.VanesaExpressionConfiguration;
+import simulation.VanesaExpression;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -88,7 +88,7 @@ public class FormulaParser {
 	 * @throws ParseException When parsing the LaTeX formula failed.
 	 */
 	public static String parseToLatex(final String formula) throws ParseException {
-		final var expression = new Expression(formula, VanesaExpressionConfiguration.EXPRESSION_CONFIGURATION);
+		final var expression = new VanesaExpression(formula);
 		return visit(expression.getAbstractSyntaxTree());
 	}
 

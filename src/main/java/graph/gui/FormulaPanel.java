@@ -7,8 +7,8 @@ import com.ezylang.evalex.Expression;
 import gui.PopUpDialog;
 import net.miginfocom.swing.MigLayout;
 import org.scilab.forge.jlatexmath.ParseException;
+import simulation.VanesaExpression;
 import util.FormulaParser;
-import simulation.VanesaExpressionConfiguration;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -154,8 +154,7 @@ public class FormulaPanel extends JPanel {
 	}
 
 	private Expression createExpression() {
-		final var expression = new Expression(textField.getText(),
-				VanesaExpressionConfiguration.EXPRESSION_CONFIGURATION);
+		final var expression = new VanesaExpression(textField.getText());
 		for (final BiologicalNodeAbstract bna : pathway.getAllGraphNodes()) {
 			if (!bna.isLogical()) {
 				// Dummy value to make the variable name known
