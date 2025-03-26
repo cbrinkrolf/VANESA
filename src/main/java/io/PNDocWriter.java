@@ -23,7 +23,7 @@ import graph.jung.classes.MyGraph;
 import org.apache.batik.ext.awt.image.codec.png.PNGEncodeParam;
 import org.apache.batik.ext.awt.image.codec.png.PNGImageEncoder;
 import org.apache.commons.lang3.StringUtils;
-import prettyFormula.FormulaParser;
+import util.FormulaParser;
 
 public class PNDocWriter extends BaseWriter<Pathway> {
 	public PNDocWriter(final File file) {

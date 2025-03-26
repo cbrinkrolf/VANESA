@@ -23,10 +23,9 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.util.ArrayList;
 
 public class ParameterWindow implements DocumentListener {
-	private final JFrame frame;
+	private final JFrame frame = new JFrame("Parameters");
 	private final JPanel panel;
 	private final JTextField name = new JTextField("");
 	private final Pathway pw = GraphInstance.getPathway();
@@ -35,7 +34,6 @@ public class ParameterWindow implements DocumentListener {
 	private final JButton add;
 	private final GraphElementAbstract gea;
 	private FormulaPanel fp;
-	private final JTextPane formula;
 	private boolean editMode = false;
 
 	private JComboBox<String> kineticsComboBox;
@@ -49,44 +47,13 @@ public class ParameterWindow implements DocumentListener {
 	private static final String KINETIC_LAW_OF_MASS_ACTION = "Law of mass action";
 
 	public ParameterWindow(GraphElementAbstract gea) {
-		frame = new JFrame("Parameters");
 		isFunctionBuilder = gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract
 				|| gea instanceof ContinuousTransition || gea instanceof DiscreteTransition;
 		if (isFunctionBuilder) {
 			frame.setTitle("Function Builder");
 		}
-
 		this.gea = gea;
 		panel = new JPanel(new MigLayout("fill, wrap", "[grow]", "[][]12[]12[]12[]12[grow, top]"));
-		formula = new JTextPane();
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				new AutoSuggester(formula, frame, null, Color.WHITE.brighter(), Color.BLUE, Color.RED, 0.75f) {
-					@Override
-					boolean wordTyped(String typedWord) {
-						// create list for dictionary this in your case might be done via calling a
-						// method which queries db and returns results as arraylist
-						ArrayList<String> words = new ArrayList<>();
-						for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
-							if (!bna.isLogical()) {
-								if (!words.contains(bna.getName())) {
-									words.add(bna.getName());
-								}
-							}
-						}
-						for (Parameter p : gea.getParameters()) {
-							if (!words.contains(p.getName())) {
-								words.add(p.getName());
-							}
-						}
-						setDictionary(words);
-						return super.wordTyped(typedWord);
-					}
-				};
-			}
-		});
-
 		if (isFunctionBuilder) {
 			String function = "";
 			if (gea instanceof DynamicNode) {
@@ -98,7 +65,8 @@ public class ParameterWindow implements DocumentListener {
 			} else if (gea instanceof DiscreteTransition) {
 				function = ((DiscreteTransition) gea).getDelay();
 			}
-			fp = new FormulaPanel(formula, function);
+			fp = new FormulaPanel(function, gea, pw, frame);
+			fp.addChangedListener(this::repaintPanel);
 		}
 		name.getDocument().addDocumentListener(this);
 		add = new JButton("add");
@@ -410,8 +378,9 @@ public class ParameterWindow implements DocumentListener {
 			}
 			recentRev = buttonRev.isSelected();
 			recentComboBoxIndex = kineticsComboBox.getSelectedIndex();
-			formula.setText(equation);
-			formula.requestFocus();
+			if (fp != null) {
+				fp.setFormula(equation);
+			}
 		}
 	}
 }
