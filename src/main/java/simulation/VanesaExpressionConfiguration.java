@@ -28,7 +28,7 @@ public class VanesaExpressionConfiguration {
 
 	@FunctionParameter(name = "a")
 	@FunctionParameter(name = "b")
-	private static class AndFunction extends AbstractFunction {
+	static class AndFunction extends AbstractFunction {
 		@Override
 		public EvaluationValue evaluate(Expression expression, Token functionToken,
 				EvaluationValue... parameterValues) {
@@ -40,7 +40,7 @@ public class VanesaExpressionConfiguration {
 
 	@FunctionParameter(name = "a")
 	@FunctionParameter(name = "b")
-	private static class OrFunction extends AbstractFunction {
+	static class OrFunction extends AbstractFunction {
 		@Override
 		public EvaluationValue evaluate(Expression expression, Token functionToken,
 				EvaluationValue... parameterValues) {
@@ -51,7 +51,7 @@ public class VanesaExpressionConfiguration {
 	}
 
 	@FunctionParameter(name = "value")
-	private static class NotFunction extends AbstractFunction {
+	static class NotFunction extends AbstractFunction {
 		@Override
 		public EvaluationValue evaluate(Expression expression, Token functionToken,
 				EvaluationValue... parameterValues) {

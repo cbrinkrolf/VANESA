@@ -23,6 +23,10 @@ class VanesaExpressionTest {
 		assertReduction("true", "true");
 		assertReduction("and(true, false)", "false");
 		assertReduction("and(true, (1+4)>2)", "true");
+		assertReduction("and(true, a>2)", "a>2");
+		assertReduction("and(false, a>2)", "false");
+		assertReduction("or(true, a>2)", "true");
+		assertReduction("or(false, a>2)", "a>2");
 	}
 
 	private void assertReduction(final String source, final String target) throws ParseException {

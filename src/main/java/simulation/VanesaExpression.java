@@ -88,6 +88,31 @@ public class VanesaExpression extends Expression {
 		case POSTFIX_OPERATOR:
 			return visit(expression, node.getParameters().get(0), depth + 1) + token.getValue();
 		case FUNCTION:
+			if (token.getFunctionDefinition() instanceof VanesaExpressionConfiguration.AndFunction) {
+				final var a = visit(expression, node.getParameters().get(0), depth + 1);
+				final var b = visit(expression, node.getParameters().get(1), depth + 1);
+				if ("false".equals(a) || "false".equals(b)) {
+					return "false";
+				}
+				if ("true".equals(a)) {
+					return b;
+				}
+				if ("true".equals(b)) {
+					return a;
+				}
+			} else if (token.getFunctionDefinition() instanceof VanesaExpressionConfiguration.OrFunction) {
+				final var a = visit(expression, node.getParameters().get(0), depth + 1);
+				final var b = visit(expression, node.getParameters().get(1), depth + 1);
+				if ("true".equals(a) || "true".equals(b)) {
+					return "true";
+				}
+				if ("false".equals(a)) {
+					return b;
+				}
+				if ("false".equals(b)) {
+					return a;
+				}
+			}
 			return token.getValue() + "(" + node.getParameters().stream().map(t -> visit(expression, t, depth + 1))
 					.collect(Collectors.joining(",")) + ")";
 		case FUNCTION_PARAM_START:
