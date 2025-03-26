@@ -23,7 +23,6 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 public class ParameterWindow implements DocumentListener {
@@ -44,23 +43,21 @@ public class ParameterWindow implements DocumentListener {
 	private JRadioButton buttonIrrev;
 	private boolean recentRev = false;
 	private int recentComboBoxIndex = 0;
-	private boolean isFunctionBuilder = false;
+	private final boolean isFunctionBuilder;
 
 	private static final String KINETIC_CONVENIENCE = "Convenience kinetic";
 	private static final String KINETIC_LAW_OF_MASS_ACTION = "Law of mass action";
 
 	public ParameterWindow(GraphElementAbstract gea) {
 		frame = new JFrame("Parameters");
-
-		if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract || gea instanceof ContinuousTransition
-				|| gea instanceof DiscreteTransition) {
-			isFunctionBuilder = true;
+		isFunctionBuilder = gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract
+				|| gea instanceof ContinuousTransition || gea instanceof DiscreteTransition;
+		if (isFunctionBuilder) {
 			frame.setTitle("Function Builder");
 		}
 
 		this.gea = gea;
-		MigLayout layout = new MigLayout("", "[left]");
-		panel = new JPanel(layout);
+		panel = new JPanel(new MigLayout("fill, wrap", "[grow]", "[][]12[]12[]12[]12[grow, top]"));
 		formula = new JTextPane();
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -91,7 +88,6 @@ public class ParameterWindow implements DocumentListener {
 		});
 
 		if (isFunctionBuilder) {
-			PropertyChangeListener pcListener = evt -> frame.pack();
 			String function = "";
 			if (gea instanceof DynamicNode) {
 				function = ((DynamicNode) gea).getMaximalSpeed();
@@ -99,12 +95,10 @@ public class ParameterWindow implements DocumentListener {
 				function = ((BiologicalEdgeAbstract) gea).getFunction();
 			} else if (gea instanceof ContinuousTransition) {
 				function = ((ContinuousTransition) gea).getMaximalSpeed();
-			} else if(gea instanceof DiscreteTransition){
+			} else if (gea instanceof DiscreteTransition) {
 				function = ((DiscreteTransition) gea).getDelay();
 			}
-			fp = new FormulaPanel(formula, function, pcListener);
-			fp.setVisible(true);
-			panel.add(fp);
+			fp = new FormulaPanel(formula, function);
 		}
 		name.getDocument().addDocumentListener(this);
 		add = new JButton("add");
@@ -115,6 +109,7 @@ public class ParameterWindow implements DocumentListener {
 		okButton.addActionListener(e -> onOkClicked());
 		repaintPanel();
 		JOptionPane optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE);
+		optionPane.setPreferredSize(new Dimension(600, 600));
 		optionPane.setOptions(new JButton[] { okButton, cancel });
 		frame.setAlwaysOnTop(false);
 		frame.setContentPane(optionPane);
@@ -163,7 +158,7 @@ public class ParameterWindow implements DocumentListener {
 					t.setMaximalSpeed(formula);
 					changed = true;
 				}
-			} else if(gea instanceof DiscreteTransition){
+			} else if (gea instanceof DiscreteTransition) {
 				DiscreteTransition t = (DiscreteTransition) gea;
 				String orgClean = t.getDelay().replaceAll("\\s", "");
 				if (!orgClean.equals(formulaClean)) {
@@ -250,17 +245,16 @@ public class ParameterWindow implements DocumentListener {
 	}
 
 	private void listParameters() {
-		panel.add(new JLabel("Name"), "span 1, gaptop 2");
-		panel.add(new JLabel("Value"), "span 1, gapright 4");
-		panel.add(new JLabel("Unit"), "span 1, gapright 4, wrap");
+		final JPanel parametersListPanel = new JPanel(new MigLayout("ins 0, fill, wrap 7", "[][grow][][][][][]"));
+		parametersListPanel.add(new JLabel("Name"));
+		parametersListPanel.add(new JLabel("Value"));
+		parametersListPanel.add(new JLabel("Unit"), "wrap");
 		for (int i = 0; i < gea.getParameters().size(); i++) {
 			final int parameterIdx = i;
 			Parameter p = gea.getParameters().get(i);
-			panel.add(new JLabel(p.getName()), "span 1, gaptop 2");
-
-			panel.add(new JLabel(p.getValue() + ""), "span 1, gapright 4");
-
-			panel.add(new JLabel(p.getUnit()), "span 1, gapright 4");
+			parametersListPanel.add(new JLabel(p.getName()));
+			parametersListPanel.add(new JLabel(p.getValue() + ""));
+			parametersListPanel.add(new JLabel(p.getUnit()));
 
 			JButton edit = new JButton("✎");
 			edit.addActionListener(e -> onParameterEditClicked(parameterIdx));
@@ -279,27 +273,14 @@ public class ParameterWindow implements DocumentListener {
 			JButton down = new JButton("↓");
 			down.addActionListener(e -> onParameterDownClicked(parameterIdx));
 			down.setToolTipText("move down");
-			if (gea.getParameters().size() > 1) {
-				if (i == 0) {
-					panel.add(down, "skip, span 1");
-				} else if (i == gea.getParameters().size() - 1) {
-					panel.add(up, "span 1, gapright 4");
-				} else {
-					panel.add(up, "span 1, gapright 4");
-					panel.add(down, "span 1");
-				}
-			}
-			if (i == gea.getParameters().size() - 1) {
-				panel.add(edit, "skip, span 1");
-			} else {
-				panel.add(edit, "span 1");
-			}
-			if (gea.getParameters().size() == 1) {
-				panel.add(del, "wrap");
-			} else {
-				panel.add(del, "span 1, wrap");
-			}
+			up.setEnabled(i > 0);
+			down.setEnabled(i < gea.getParameters().size() - 1);
+			parametersListPanel.add(up);
+			parametersListPanel.add(down);
+			parametersListPanel.add(edit);
+			parametersListPanel.add(del);
 		}
+		panel.add(parametersListPanel, "growx");
 	}
 
 	private void onParameterEditClicked(int idx) {
@@ -336,11 +317,10 @@ public class ParameterWindow implements DocumentListener {
 	private void repaintPanel() {
 		panel.removeAll();
 		if (isFunctionBuilder) {
-			panel.add(fp, "span 20, wrap");
+			panel.add(fp, "growx");
 		}
 		if (gea instanceof DynamicNode || gea instanceof ContinuousTransition) {
-			MigLayout layout = new MigLayout("", "[left]");
-			JPanel kineticsPanel = new JPanel(layout);
+			JPanel kineticsPanel = new JPanel(new MigLayout("ins 0, fill, wrap 4", "[grow][][][]"));
 			kineticsComboBox = new JComboBox<>();
 			kineticsComboBox.addItem(KINETIC_CONVENIENCE);
 			kineticsComboBox.addItem(KINETIC_LAW_OF_MASS_ACTION);
@@ -362,27 +342,26 @@ public class ParameterWindow implements DocumentListener {
 			JButton generateKinetic = new JButton("generate");
 			generateKinetic.setToolTipText("Generates equation for selected kinetic");
 			generateKinetic.addActionListener(e -> onGenerateKineticClicked());
-			kineticsPanel.add(generateKinetic, "wrap");
+			kineticsPanel.add(generateKinetic);
 			JButton setValues = new JButton("Open kinetic parameters browser");
 			setValues.setToolTipText("Browse kinetic parameters (km and kcat), currently based on BRENDA");
 			setValues.addActionListener(e -> onSetValuesClicked());
-			kineticsPanel.add(setValues, "wrap");
-			panel.add(kineticsPanel, "span 7, wrap");
+			kineticsPanel.add(setValues);
+			panel.add(kineticsPanel, "growx");
 		}
-		panel.add(new JSeparator(), "span, growx, gaptop 7 ");
+		panel.add(new JSeparator(), "growx");
 
-		panel.add(new JLabel("Name:"), "span 1, gaptop 2 ");
-		panel.add(name, "span,wrap,growx ,gap 10, gaptop 2");
-
-		panel.add(new JLabel("Value:"), "span 1, gapright 4");
-		panel.add(value, "span,wrap,growx ,gap 10, gaptop 2");
-
-		panel.add(new JLabel("Unit:"), "span 1, gapright 4");
-		panel.add(unit, "span,wrap,growx ,gap 10, gaptop 2");
-
-		panel.add(add, "wrap");
-		panel.add(new JSeparator(), "span, growx, gaptop 7 ");
-		this.listParameters();
+		final JPanel newParameterPanel = new JPanel(new MigLayout("ins 0, fill, wrap 2", "[][grow]"));
+		newParameterPanel.add(new JLabel("Name:"));
+		newParameterPanel.add(name, "growx");
+		newParameterPanel.add(new JLabel("Value:"));
+		newParameterPanel.add(value, "growx");
+		newParameterPanel.add(new JLabel("Unit:"));
+		newParameterPanel.add(unit, "growx");
+		newParameterPanel.add(add);
+		panel.add(newParameterPanel, "growx");
+		panel.add(new JSeparator(), "growx");
+		listParameters();
 		panel.repaint();
 		frame.pack();
 	}
