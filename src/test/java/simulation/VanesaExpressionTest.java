@@ -3,6 +3,7 @@ package simulation;
 import com.ezylang.evalex.parser.ParseException;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,7 +31,7 @@ class VanesaExpressionTest {
 	}
 
 	private void assertReduction(final String source, final String target) throws ParseException {
-		assertEquals(target, new VanesaExpression(source).reduce(null));
+		assertEquals(target, new VanesaExpression(source).reduce(new ArrayList<>()));
 	}
 
 	private void assertReduction(final String source, final String target, final Map.Entry<String, Object>[] invariants)
