@@ -8,7 +8,7 @@ import gui.PopUpDialog;
 import net.miginfocom.swing.MigLayout;
 import org.scilab.forge.jlatexmath.ParseException;
 import simulation.VanesaExpression;
-import util.FormulaParser;
+import util.FormulaToLatexConverter;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -128,7 +128,14 @@ public class FormulaPanel extends JPanel {
 				createMissingParametersButton.setEnabled(false);
 			}
 			try {
-				final BufferedImage image = FormulaParser.parseToImage(textField.getText());
+				final Set<String> latexTextVariables = new HashSet<>();
+				for (final BiologicalNodeAbstract bna : pathway.getAllGraphNodes()) {
+					if (!bna.isLogical()) {
+						latexTextVariables.add(bna.getName());
+					}
+				}
+				final BufferedImage image = FormulaToLatexConverter.parseToImage(textField.getText(),
+						latexTextVariables);
 				formulaDisplay.setIcon(new ImageIcon(image));
 			} catch (ParseException ignored) {
 				formulaDisplay.setIcon(null);
@@ -179,7 +186,14 @@ public class FormulaPanel extends JPanel {
 		int returnVal = fileChooser.showSaveDialog(textField);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			try {
-				FormulaParser.saveToSVG(textField.getText(), fileChooser.getSelectedFile());
+				final Set<String> latexTextVariables = new HashSet<>();
+				for (final BiologicalNodeAbstract bna : pathway.getAllGraphNodes()) {
+					if (!bna.isLogical()) {
+						latexTextVariables.add(bna.getName());
+					}
+				}
+				FormulaToLatexConverter.saveToSVG(textField.getText(), fileChooser.getSelectedFile(),
+						latexTextVariables);
 				PopUpDialog.getInstance().show("Information", "File saved");
 			} catch (com.ezylang.evalex.parser.ParseException | IOException | ParseException e) {
 				PopUpDialog.getInstance().show("Information", "Exporting formula failed");

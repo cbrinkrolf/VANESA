@@ -8,9 +8,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -23,7 +22,7 @@ import graph.jung.classes.MyGraph;
 import org.apache.batik.ext.awt.image.codec.png.PNGEncodeParam;
 import org.apache.batik.ext.awt.image.codec.png.PNGImageEncoder;
 import org.apache.commons.lang3.StringUtils;
-import util.FormulaParser;
+import util.FormulaToLatexConverter;
 
 public class PNDocWriter extends BaseWriter<Pathway> {
 	public PNDocWriter(final File file) {
@@ -46,6 +45,12 @@ public class PNDocWriter extends BaseWriter<Pathway> {
 		}
 
 		final MyGraph graph = pw.getGraph(false);
+		final Set<String> latexTextVariables = new HashSet<>();
+		for (final BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
+			if (!bna.isLogical()) {
+				latexTextVariables.add(bna.getName());
+			}
+		}
 
 		final Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
 		writer.write("<!doctype html>\n");
@@ -140,7 +145,9 @@ public class PNDocWriter extends BaseWriter<Pathway> {
 				}
 				writer.write("\\)\n");
 				writer.write("      <hr>\n");
-				writer.write("      \\(f = " + FormulaParser.parseToLatex(t.getMaximalSpeed()) + "\\)\n");
+				writer.write("      \\(f = ");
+				writer.write(FormulaToLatexConverter.parseToLatex(t.getMaximalSpeed(), latexTextVariables));
+				writer.write("\\)\n");
 				final List<Parameter> parameters = t.getParameters();
 				if (parameters.size() > 0) {
 					writer.write("      <table class=\"table table-sm table-striped\">\n");
@@ -179,7 +186,8 @@ public class PNDocWriter extends BaseWriter<Pathway> {
 		writer.write("      emphasis: { edgeLabel: { show: true, color: 'red', formatter: '{c}' } },\n");
 		writer.write(
 				"      label: { show: true, color: 'red', fontSize: 14, fontWeight: 'bold', textBorderColor: 'white', textBorderWidth: 2 },\n");
-		writer.write("      edgeLabel: { show: false, color: 'red', fontSize: 14, fontWeight: 'bold', textBorderColor: 'white', textBorderWidth: 2 },\n");
+		writer.write(
+				"      edgeLabel: { show: false, color: 'red', fontSize: 14, fontWeight: 'bold', textBorderColor: 'white', textBorderWidth: 2 },\n");
 		writer.write("      edgeSymbol: ['none', 'arrow'],\n");
 		writer.write("      lineStyle: { width: 3 },\n");
 		writer.write("      symbolSize: symbolSize,\n");

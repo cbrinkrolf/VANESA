@@ -19,9 +19,10 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public class FormulaParser {
+public class FormulaToLatexConverter {
 	/**
 	 * Parses a mathematical formula like "(a+b)/c" to a pretty image and saves it as an SVG file.
 	 *
@@ -30,17 +31,18 @@ public class FormulaParser {
 	 * @throws ParseException When parsing the LaTeX formula failed.
 	 * @throws IOException    When writing the file failed.
 	 */
-	public static void saveToSVG(String formula, File file) throws ParseException, IOException {
-		String latexFormula = FormulaParser.parseToLatex(formula);
-		TeXIcon icon = FormulaParser.getTeXIcon(latexFormula);
-		DOMImplementation domImpl = SVGDOMImplementation.getDOMImplementation();
-		Document document = domImpl.createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null);
-		SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(document);
-		SVGGraphics2D g2 = new SVGGraphics2D(ctx, true);
+	public static void saveToSVG(final String formula, final File file, final Set<String> textVariables)
+			throws ParseException, IOException {
+		final String latexFormula = FormulaToLatexConverter.parseToLatex(formula, textVariables);
+		final TeXIcon icon = FormulaToLatexConverter.getTeXIcon(latexFormula);
+		final DOMImplementation domImpl = SVGDOMImplementation.getDOMImplementation();
+		final Document document = domImpl.createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null);
+		final SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(document);
+		final SVGGraphics2D g2 = new SVGGraphics2D(ctx, true);
 		g2.setSVGCanvasSize(new Dimension(icon.getIconWidth(), icon.getIconHeight()));
 		icon.paintIcon(null, g2, 0, 0);
-		try (FileOutputStream svgs = new FileOutputStream(file)) {
-			Writer out = new OutputStreamWriter(svgs, StandardCharsets.UTF_8);
+		try (final FileOutputStream svgs = new FileOutputStream(file)) {
+			final Writer out = new OutputStreamWriter(svgs, StandardCharsets.UTF_8);
 			g2.stream(out, false);
 			svgs.flush();
 		}
@@ -53,12 +55,14 @@ public class FormulaParser {
 	 * @return An image object containing the rendered formula.
 	 * @throws ParseException When parsing the LaTeX formula failed.
 	 */
-	public static BufferedImage parseToImage(String formula) throws ParseException {
-		String latexFormula = FormulaParser.parseToLatex(formula);
-		TeXIcon icon = FormulaParser.getTeXIcon(latexFormula);
+	public static BufferedImage parseToImage(final String formula, final Set<String> textVariables)
+			throws ParseException {
+		final String latexFormula = FormulaToLatexConverter.parseToLatex(formula, textVariables);
+		final TeXIcon icon = FormulaToLatexConverter.getTeXIcon(latexFormula);
 		// now create an actual image of the rendered equation
-		BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2 = image.createGraphics();
+		final BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(),
+				BufferedImage.TYPE_INT_ARGB);
+		final Graphics2D g2 = image.createGraphics();
 		g2.setColor(Color.white);
 		g2.fillRect(0, 0, icon.getIconWidth(), icon.getIconHeight());
 		icon.paintIcon(null, g2, 0, 0);
@@ -68,13 +72,13 @@ public class FormulaParser {
 	/**
 	 * Renders a valid LaTeX math formula to an icon.
 	 *
-	 * @param formula Valid LaTeX formula.
+	 * @param latexText Valid LaTeX formula.
 	 * @return Rendered Icon.
 	 */
-	private static TeXIcon getTeXIcon(final String formula) {
-		TeXFormula latexFormula = new TeXFormula(formula);
+	private static TeXIcon getTeXIcon(final String latexText) {
+		final TeXFormula latexFormula = new TeXFormula(latexText);
 		// render the formula to an icon of the same size as the formula.
-		TeXIcon icon = latexFormula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 20);
+		final TeXIcon icon = latexFormula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 20);
 		// insert a border
 		icon.setInsets(new Insets(5, 5, 5, 5));
 		return icon;
@@ -87,9 +91,9 @@ public class FormulaParser {
 	 * @return The formula parsed to a small subset of LaTeX.
 	 * @throws ParseException When parsing the LaTeX formula failed.
 	 */
-	public static String parseToLatex(final String formula) throws ParseException {
+	public static String parseToLatex(final String formula, final Set<String> textVariables) throws ParseException {
 		final var expression = new VanesaExpression(formula);
-		return visit(expression.getAbstractSyntaxTree());
+		return visit(textVariables, expression.getAbstractSyntaxTree(), 0);
 	}
 
 	/**
@@ -99,25 +103,27 @@ public class FormulaParser {
 	 * @return The formula parsed to a small subset of LaTeX.
 	 * @throws ParseException When parsing the LaTeX formula failed.
 	 */
-	public static String parseToLatex(final Expression expression) throws ParseException {
-		return visit(expression.getAbstractSyntaxTree());
+	public static String parseToLatex(final Expression expression, final Set<String> textVariables)
+			throws ParseException {
+		return visit(textVariables, expression.getAbstractSyntaxTree(), 0);
 	}
 
 	/**
 	 * Parses a mathematical formula like "(a+b)/c" to valid math LaTeX.
 	 *
-	 * @param rootNode The root node of a formula AST.
+	 * @param rootNode      The root node of a formula AST.
+	 * @param textVariables Variable names that should be converted to \text{} and ignore underscores.
 	 * @return The formula parsed to a small subset of LaTeX.
 	 */
-	public static String parseToLatex(final ASTNode rootNode) {
-		return visit(rootNode);
+	public static String parseToLatex(final ASTNode rootNode, final Set<String> textVariables) {
+		return visit(textVariables, rootNode, 0);
 	}
 
-	private static String visit(final ASTNode node) {
-		return visit(node, 0);
+	private static String visit(final Set<String> textVariables, final ASTNode node) {
+		return visit(textVariables, node, 0);
 	}
 
-	private static String visit(final ASTNode node, final int depth) {
+	private static String visit(final Set<String> textVariables, final ASTNode node, final int depth) {
 		final Token token = node.getToken();
 		switch (token.getType()) {
 		case BRACE_OPEN:
@@ -132,6 +138,9 @@ public class FormulaParser {
 			return token.getValue();
 		case VARIABLE_OR_CONSTANT:
 			final String variable = token.getValue();
+			if ((textVariables != null && textVariables.contains(variable))) {
+				return "\\text{" + variable + "}";
+			}
 			if (!variable.contains("_")) {
 				return variable;
 			}
@@ -148,8 +157,8 @@ public class FormulaParser {
 			}
 			return variableLatex.toString();
 		case INFIX_OPERATOR:
-			final var operand1 = visit(node.getParameters().get(0), depth + 1);
-			final var operand2 = visit(node.getParameters().get(1), depth + 1);
+			final var operand1 = visit(textVariables, node.getParameters().get(0), depth + 1);
+			final var operand2 = visit(textVariables, node.getParameters().get(1), depth + 1);
 			if ("/".equals(token.getValue())) {
 				return String.format("\\frac{%s}{%s}", operand1, operand2);
 			}
@@ -165,27 +174,27 @@ public class FormulaParser {
 			return operand1 + token.getValue() + operand2;
 		case PREFIX_OPERATOR:
 			if ("+".equals(token.getValue())) {
-				return visit(node.getParameters().get(0), depth + 1);
+				return visit(textVariables, node.getParameters().get(0), depth + 1);
 			}
 			if ("-".equals(token.getValue())) {
-				return "\\left(-" + visit(node.getParameters().get(0), depth + 1) + "\\right)";
+				return "\\left(-" + visit(textVariables, node.getParameters().get(0), depth + 1) + "\\right)";
 			}
-			return token.getValue() + visit(node.getParameters().get(0), depth + 1);
+			return token.getValue() + visit(textVariables, node.getParameters().get(0), depth + 1);
 		case POSTFIX_OPERATOR:
-			return visit(node.getParameters().get(0), depth + 1) + token.getValue();
+			return visit(textVariables, node.getParameters().get(0), depth + 1) + token.getValue();
 		case FUNCTION:
 			if ("sqrt".equalsIgnoreCase(token.getValue())) {
-				return "\\sqrt{" + visit(node.getParameters().get(0), depth + 1) + "}";
+				return "\\sqrt{" + visit(textVariables, node.getParameters().get(0), depth + 1) + "}";
 			} else if ("sin".equalsIgnoreCase(token.getValue()) || "cos".equalsIgnoreCase(token.getValue())
 					|| "tan".equalsIgnoreCase(token.getValue()) || "abs".equalsIgnoreCase(token.getValue())) {
-				return "\\" + token.getValue().toLowerCase(Locale.ROOT) + "{\\left(" + visit(
+				return "\\" + token.getValue().toLowerCase(Locale.ROOT) + "{\\left(" + visit(textVariables,
 						node.getParameters().get(0), depth + 1) + "\\right)}";
 			} else if ("min".equalsIgnoreCase(token.getValue()) || "max".equalsIgnoreCase(token.getValue())) {
 				return "\\" + token.getValue().toLowerCase(Locale.ROOT) + "{\\left(" + node.getParameters().stream()
-						.map(p -> visit(p, depth + 1)).collect(Collectors.joining(",")) + "\\right)}";
+						.map(p -> visit(textVariables, p, depth + 1)).collect(Collectors.joining(",")) + "\\right)}";
 			}
 			return token.getValue().toLowerCase(Locale.ROOT) + "{\\left(" + node.getParameters().stream().map(
-					p -> visit(p, depth + 1)).collect(Collectors.joining(",")) + "\\right)}";
+					p -> visit(textVariables, p, depth + 1)).collect(Collectors.joining(",")) + "\\right)}";
 		case FUNCTION_PARAM_START:
 			// TODO
 			break;
