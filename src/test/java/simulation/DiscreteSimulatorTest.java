@@ -479,7 +479,61 @@ class DiscreteSimulatorTest {
 		}
 	}
 
-	// TODO:
-	// test-arcs
-	// inhibition-arcs
+	@Test
+	void singleTransitionWithTestArcTooFewTokens() throws SimulationException {
+		final var p1 = new DiscretePlace("p1", "p1", null);
+		p1.setTokenStart(9);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnTestArc, "10");
+		final var simulator = new DiscreteSimulator(List.of(p1, t1), List.of(arc1));
+		assertTrue(simulator.getStartMarking().isDead());
+	}
+
+	@Test
+	void singleTransitionWithTestArcEnoughTokens() throws SimulationException {
+		final var p1 = new DiscretePlace("p1", "p1", null);
+		p1.setTokenStart(10);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnTestArc, "10");
+		final var simulator = new DiscreteSimulator(List.of(p1, t1), List.of(arc1));
+		simulator.step();
+		simulator.step();
+		final var markingTimeline = simulator.getMarkingTimeline();
+		assertFalse(markingTimeline[0].isDead());
+		assertFalse(markingTimeline[1].isDead());
+		assertFalse(markingTimeline[2].isDead());
+	}
+
+	@Test
+	void singleTransitionWithInhibitionArcTooFewTokens() throws SimulationException {
+		final var p1 = new DiscretePlace("p1", "p1", null);
+		p1.setTokenStart(9);
+		final var p2 = new DiscretePlace("p2", "p2", null);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnInhibitorArc, "10");
+		final var arc2 = new PNArc(t1, p2, "arc2", "arc2", Elementdeclerations.pnArc, "1");
+		final var simulator = new DiscreteSimulator(List.of(p1, p2, t1), List.of(arc1, arc2));
+		simulator.step();
+		simulator.step();
+		final var markingTimeline = simulator.getMarkingTimeline();
+		assertFalse(markingTimeline[0].isDead());
+		assertFalse(markingTimeline[1].isDead());
+		assertFalse(markingTimeline[2].isDead());
+		assertEquals(BigInteger.valueOf(9), simulator.getTokens(markingTimeline[1], p1));
+		assertEquals(BigInteger.valueOf(1), simulator.getTokens(markingTimeline[1], p2));
+		assertEquals(BigInteger.valueOf(9), simulator.getTokens(markingTimeline[2], p1));
+		assertEquals(BigInteger.valueOf(2), simulator.getTokens(markingTimeline[2], p2));
+	}
+
+	@Test
+	void singleTransitionWithInhibitionArcEnoughTokens() throws SimulationException {
+		final var p1 = new DiscretePlace("p1", "p1", null);
+		p1.setTokenStart(10);
+		final var p2 = new DiscretePlace("p2", "p2", null);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnInhibitorArc, "10");
+		final var arc2 = new PNArc(t1, p2, "arc2", "arc2", Elementdeclerations.pnArc, "1");
+		final var simulator = new DiscreteSimulator(List.of(p1, p2, t1), List.of(arc1, arc2));
+		assertTrue(simulator.getStartMarking().isDead());
+	}
 }
