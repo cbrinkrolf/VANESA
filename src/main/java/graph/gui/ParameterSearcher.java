@@ -25,6 +25,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -473,7 +474,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		String value = button.getText().trim();
 		if (value.length() > 0) {
 			try {
-				currentParameter.setValue(Double.parseDouble(value));
+				currentParameter.setValue(new BigDecimal(value));
 				updateValuesPanel();
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -570,7 +571,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		valuesPanel.add(new JLabel(), "wrap");
 		valuesPanel.add(new JLabel("Values:"));
 		for (Parameter p : bna.getParameters()) {
-			valuesPanel.add(new JLabel(p.getValue() + ""));
+			valuesPanel.add(new JLabel(p.getValue().toPlainString()));
 		}
 		valuesPanel.add(new JLabel(), "wrap");
 		valuesPanel.add(new JSeparator(), "span, growx, gaptop 7");

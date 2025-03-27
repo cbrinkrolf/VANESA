@@ -158,7 +158,7 @@ public class PNDocWriter extends BaseWriter<Pathway> {
 					for (Parameter p : parameters) {
 						writer.write("          <tr>");
 						writer.write("<td>" + p.getName() + "</td>");
-						writer.write("<td class=\"text-end\">" + p.getValue() + "</td>");
+						writer.write("<td class=\"text-end\">" + p.getValue().toEngineeringString() + "</td>");
 						writer.write("<td>" + p.getUnit() + "</td>");
 						writer.write("</tr>\n");
 					}

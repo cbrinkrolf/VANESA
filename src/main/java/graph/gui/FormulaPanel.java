@@ -21,6 +21,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -206,7 +207,7 @@ public class FormulaPanel extends JPanel {
 		try {
 			expression.getAbstractSyntaxTree();
 			for (final String name : expression.getUndefinedVariables()) {
-				gea.getParameters().add(new Parameter(name, 0, ""));
+				gea.getParameters().add(new Parameter(name, BigDecimal.ZERO, ""));
 			}
 		} catch (com.ezylang.evalex.parser.ParseException ignored) {
 		}

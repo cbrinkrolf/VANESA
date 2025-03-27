@@ -9,6 +9,7 @@ import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import graph.ChangedFlags;
 import graph.GraphInstance;
+import gui.JDecimalTextField;
 import gui.MainWindow;
 import gui.PopUpDialog;
 import net.miginfocom.swing.MigLayout;
@@ -23,13 +24,14 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.math.BigDecimal;
 
 public class ParameterWindow implements DocumentListener {
 	private final JFrame frame = new JFrame("Parameters");
 	private final JPanel panel;
 	private final JTextField name = new JTextField("");
 	private final Pathway pw = GraphInstance.getPathway();
-	private final JTextField value = new JTextField("");
+	private final JDecimalTextField value = new JDecimalTextField(true);
 	private final JTextField unit = new JTextField("");
 	private final JButton add;
 	private final GraphElementAbstract gea;
@@ -155,16 +157,16 @@ public class ParameterWindow implements DocumentListener {
 					try {
 						// unit did not change
 						if (p.getUnit().equals(unit.getText().trim())) {
-							if (p.getValue() == Double.parseDouble(value.getText().trim())) {
+							if (p.getValue().compareTo(value.getBigDecimalValue(BigDecimal.ZERO)) == 0) {
 								return;
 							} else {
-								p.setValue(Double.parseDouble(value.getText().trim()));
+								p.setValue(value.getBigDecimalValue(BigDecimal.ZERO));
 								pw.handleChangeFlags(ChangedFlags.PARAMETER_CHANGED);
 								pw.getChangedParameters().put(p, gea);
 							}
 						} else {
 							// unit changed
-							p.setValue(Double.parseDouble(value.getText().trim()));
+							p.setValue(value.getBigDecimalValue(BigDecimal.ZERO));
 							p.setUnit(unit.getText().trim());
 							pw.handleChangeFlags(ChangedFlags.NODE_CHANGED);
 						}
@@ -185,7 +187,7 @@ public class ParameterWindow implements DocumentListener {
 		// add new parameter
 		if (name.getText().trim().length() > 0) {
 			try {
-				Parameter p = new Parameter(name.getText().trim(), Double.parseDouble(value.getText().trim()),
+				Parameter p = new Parameter(name.getText().trim(), value.getBigDecimalValue(BigDecimal.ZERO),
 						unit.getText().trim());
 				gea.getParameters().add(p);
 				pw.handleChangeFlags(ChangedFlags.NODE_CHANGED);
@@ -221,7 +223,7 @@ public class ParameterWindow implements DocumentListener {
 			final int parameterIdx = i;
 			Parameter p = gea.getParameters().get(i);
 			parametersListPanel.add(new JLabel(p.getName()));
-			parametersListPanel.add(new JLabel(p.getValue() + ""));
+			parametersListPanel.add(new JLabel(p.getValue().toPlainString()));
 			parametersListPanel.add(new JLabel(p.getUnit()));
 
 			JButton edit = new JButton("✎");
@@ -248,13 +250,13 @@ public class ParameterWindow implements DocumentListener {
 			parametersListPanel.add(edit);
 			parametersListPanel.add(del);
 		}
-		panel.add(new JScrollPane(parametersListPanel), "grow");
+		panel.add(new JScrollPane(parametersListPanel), "growx");
 	}
 
 	private void onParameterEditClicked(int idx) {
 		Parameter p = gea.getParameters().get(idx);
 		name.setText(p.getName());
-		value.setText(p.getValue() + "");
+		value.setValue(p.getValue());
 		unit.setText(p.getUnit());
 		add.setText("Override");
 		editMode = true;
@@ -326,7 +328,7 @@ public class ParameterWindow implements DocumentListener {
 		newParameterPanel.add(value, "growx");
 		newParameterPanel.add(new JLabel("Unit:"));
 		newParameterPanel.add(unit, "growx");
-		newParameterPanel.add(add);
+		newParameterPanel.add(add, "span 2");
 		panel.add(newParameterPanel, "growx");
 		panel.add(new JSeparator(), "growx");
 		listParameters();

@@ -463,7 +463,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 		if (selectedNode.getParameter(param) != null) {
 			Parameter p = selectedNode.getParameter(param);
-			from.setText(p.getValue() + "");
+			from.setText(p.getValue().toPlainString());
 		} else {
 			if (selectedNode instanceof Place) {
 				Place p = (Place) selectedNode;

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -263,10 +264,10 @@ public class JSBMLInput {
 						// elSubSub = elSub.getChild("x_Coordinate", null);
 						if (elSub != null) {
 							for (int j = 0; j < elSub.getChildren().size(); j++) {
-								Element elSubSub = elSub.getChildren().get(j);
-								String pname = elSubSub.getChild("Name", null).getAttributeValue("Name");
-								double value = Double
-										.parseDouble(elSubSub.getChild("Value", null).getAttributeValue("Value"));
+								final Element elSubSub = elSub.getChildren().get(j);
+								final String pname = elSubSub.getChild("Name", null).getAttributeValue("Name");
+								final BigDecimal value = new BigDecimal(
+										elSubSub.getChild("Value", null).getAttributeValue("Value"));
 								String unit = "";
 								if (elSubSub.getChild("Unit", null) != null) {
 									unit = elSubSub.getChild("Unit", null).getAttributeValue("Unit");
@@ -516,8 +517,9 @@ public class JSBMLInput {
 					// elSubSub = elSub.getChild("x_Coordinate", null);
 					for (int j = 0; j < elSub.getChildren().size(); j++) {
 						elSubSub = elSub.getChildren().get(j);
-						String pname = elSubSub.getChild("Name", null).getAttributeValue("Name");
-						double value = Double.parseDouble(elSubSub.getChild("Value", null).getAttributeValue("Value"));
+						final String pname = elSubSub.getChild("Name", null).getAttributeValue("Name");
+						final BigDecimal value = new BigDecimal(
+								elSubSub.getChild("Value", null).getAttributeValue("Value"));
 						String unit = "";
 						if (elSubSub.getChild("Unit", null) != null) {
 							unit = elSubSub.getChild("Unit", null).getAttributeValue("Unit");
@@ -587,15 +589,15 @@ public class JSBMLInput {
 				childrenSet.add(childNode);
 			}
 			Integer id = Integer.parseInt(coarseNode.getAttributeValue("id").split("_")[1]);
-			String rootNode = coarseNode.getAttribute("root", null) == null ? "null"
-					: coarseNode.getAttributeValue("root");
+			String rootNode = coarseNode.getAttribute("root", null) == null ? "null" : coarseNode.getAttributeValue(
+					"root");
 			if (!rootNode.equals("null")) {
 				hierarchyRootNodes.put(id, Integer.parseInt(coarseNode.getAttributeValue("root").split("_")[1]));
 			}
 			hierarchyMap.put(id, childrenSet);
 			coarseNodeLabels.put(id, coarseNode.getAttributeValue("label"));
-			if (coarseNode.getAttributeValue("opened") != null
-					&& coarseNode.getAttributeValue("opened").equals("true")) {
+			if (coarseNode.getAttributeValue("opened") != null && coarseNode.getAttributeValue("opened").equals(
+					"true")) {
 				openedCoarseNodes.add(id);
 			}
 		}

@@ -75,7 +75,7 @@ public class JDecimalTextField extends JTextField {
 
 	public Double getDoubleValue(final Double fallback) {
 		final String text = getText();
-		return StringUtils.isEmpty(text) || (text.length() == 1 && (text.charAt(0) == '+') || text.charAt(0) == '-')
+		return StringUtils.isEmpty(text) || (text.length() == 1 && (text.charAt(0) == '+' || text.charAt(0) == '-'))
 				? fallback
 				: Double.parseDouble(text);
 	}
@@ -86,7 +86,7 @@ public class JDecimalTextField extends JTextField {
 
 	public BigDecimal getBigDecimalValue(final BigDecimal fallback) {
 		final String text = getText();
-		return StringUtils.isEmpty(text) || (text.length() == 1 && (text.charAt(0) == '+') || text.charAt(0) == '-')
+		return StringUtils.isEmpty(text) || (text.length() == 1 && (text.charAt(0) == '+' || text.charAt(0) == '-'))
 				? fallback
 				: new BigDecimal(text);
 	}

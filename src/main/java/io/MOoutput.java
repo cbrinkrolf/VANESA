@@ -222,7 +222,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 					if (p.getUnit().length() > 0) {
 						parametersSB.append("(final unit=\"").append(p.getUnit()).append("\")");
 					}
-					parametersSB.append(" = ").append(p.getValue()).append(";").append(ENDL);
+					parametersSB.append(" = ").append(p.getValue().toPlainString()).append(";").append(ENDL);
 				}
 				// functions and parameters at arcs belong to the corresponding transition
 				if (bna instanceof Transition) {
@@ -238,7 +238,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 							if (p.getUnit().length() > 0) {
 								parametersSB.append("(final unit=\"").append(p.getUnit()).append("\")");
 							}
-							parametersSB.append(" = ").append(p.getValue()).append(";").append(ENDL);
+							parametersSB.append(" = ").append(p.getValue().toPlainString()).append(";").append(ENDL);
 						}
 					}
 

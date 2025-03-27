@@ -7,7 +7,6 @@ import com.ezylang.evalex.parser.ParseException;
 import com.ezylang.evalex.parser.Token;
 import graph.gui.Parameter;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,7 +23,7 @@ public class VanesaExpression extends Expression {
 	public VanesaExpression with(final List<Parameter> parameters) {
 		if (parameters != null) {
 			for (final var parameter : parameters) {
-				with(parameter.getName(), BigDecimal.valueOf(parameter.getValue()));
+				with(parameter.getName(), parameter.getValue());
 			}
 		}
 		return this;

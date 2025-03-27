@@ -362,7 +362,7 @@ public class JSBMLOutput {
 		for (Parameter param : oneNode.getParameters()) {
 			XMLNode elSubSub = new XMLNode(new XMLNode(new XMLTriple("Parameter", "", ""), new XMLAttributes()));
 			elSubSub.addChild(createElSub(param.getName(), "Name"));
-			elSubSub.addChild(createElSub(param.getValue() + "", "Value"));
+			elSubSub.addChild(createElSub(param.getValue().toPlainString(), "Value"));
 			elSubSub.addChild(createElSub(param.getUnit(), "Unit"));
 			elParameters.addChild(elSubSub);
 		}
@@ -635,7 +635,7 @@ public class JSBMLOutput {
 		for (Parameter param : oneEdge.getParameters()) {
 			XMLNode elSubSub = new XMLNode(new XMLNode(new XMLTriple("Parameter", "", ""), new XMLAttributes()));
 			elSubSub.addChild(createElSub(param.getName(), "Name"));
-			elSubSub.addChild(createElSub(param.getValue() + "", "Value"));
+			elSubSub.addChild(createElSub(param.getValue().toPlainString(), "Value"));
 			elSubSub.addChild(createElSub(param.getUnit(), "Unit"));
 			elParameters.addChild(elSubSub);
 		}

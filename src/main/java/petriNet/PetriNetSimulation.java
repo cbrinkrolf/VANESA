@@ -306,7 +306,8 @@ public class PetriNetSimulation implements ActionListener {
 							// System.out.println(gea.getName());
 							if (gea instanceof BiologicalNodeAbstract) {
 								bna = (BiologicalNodeAbstract) gea;
-								override += ",'_" + bna.getName() + "_" + param.getName() + "'=" + param.getValue();
+								override += ",'_" + bna.getName() + "_" + param.getName() + "'=" +
+										param.getValue().toPlainString();
 							} else {
 								// CHRIS override parameters of edges
 							}

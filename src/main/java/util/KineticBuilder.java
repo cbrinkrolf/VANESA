@@ -1,5 +1,6 @@
 package util;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -58,18 +59,18 @@ public class KineticBuilder {
 			name = getBNARef(bea.getFrom()).getName();
 			sb.append("* (1 + (").append(name).append(" / kA_").append(name);
 			sb.append("))");
-			addParameter(bna, "kA_" + name, 1, "mmol/l");
+			addParameter(bna, "kA_" + name, BigDecimal.ONE, "mmol/l");
 		}
 		// relative inhibitors
 		for (BiologicalEdgeAbstract bea : inhibRelativeEdges) {
 			name = getBNARef(bea.getFrom()).getName();
 			sb.append("* (kI_").append(name).append(" / (kI_").append(name);
 			sb.append(" + ").append(name).append("))");
-			addParameter(bna, "kI_" + name, 1, "mmol/l");
+			addParameter(bna, "kI_" + name, BigDecimal.ONE, "mmol/l");
 		}
 		// numerator
 		sb.append(" * ( v_f");
-		addParameter(bna, "v_f", 1, "1/s");
+		addParameter(bna, "v_f", BigDecimal.ONE, "1/s");
 		int substrates = 0;
 		int products = 0;
 		for (BiologicalEdgeAbstract bea : substrateEdges) {
@@ -88,13 +89,13 @@ public class KineticBuilder {
 			}
 			name = getBNARef(bea.getFrom()).getName();
 			sb.append(name).append(" / km_").append(name);
-			addParameter(bna, "km_" + name, 1, "mmol/l");
+			addParameter(bna, "km_" + name, BigDecimal.ONE, "mmol/l");
 			if (weight > 1) {
 				sb.append(")^").append(weight);
 			}
 		}
 		sb.append(" - v_r ");
-		addParameter(bna, "v_r", 0.1, "1/s");
+		addParameter(bna, "v_r", new BigDecimal("0.1"), "1/s");
 		for (BiologicalEdgeAbstract bea : productEdges) {
 			int weight = 1;
 			products++;
@@ -113,7 +114,7 @@ public class KineticBuilder {
 			}
 			name = getBNARef(bea.getTo()).getName();
 			sb.append(name).append(" / km_").append(name);
-			addParameter(bna, "km_" + name, 1, "mmol/l");
+			addParameter(bna, "km_" + name, BigDecimal.ONE, "mmol/l");
 			if (weight > 1) {
 				sb.append(")^").append(weight);
 			}
@@ -223,18 +224,18 @@ public class KineticBuilder {
 			name = getBNARef(bea.getFrom()).getName();
 			sb.append("* (1 + (").append(name).append(" / kA_").append(name);
 			sb.append("))");
-			addParameter(bna, "kA_" + name, 1, "mmol/l");
+			addParameter(bna, "kA_" + name, BigDecimal.ONE, "mmol/l");
 		}
 		// relative inhibitors
 		for (BiologicalEdgeAbstract bea : inhibRelativeEdges) {
 			name = getBNARef(bea.getFrom()).getName();
 			sb.append("* (kI_").append(name).append(" / (kI_").append(name);
 			sb.append(" + ").append(name).append("))");
-			addParameter(bna, "kI_" + name, 1, "mmol/l");
+			addParameter(bna, "kI_" + name, BigDecimal.ONE, "mmol/l");
 		}
 		// numerator
 		sb.append(" * ( v_f");
-		addParameter(bna, "v_f", 1, "1/s");
+		addParameter(bna, "v_f", BigDecimal.ONE, "1/s");
 		int substrates = 0;
 		for (BiologicalEdgeAbstract bea : substrateEdges) {
 			int weight = 1;
@@ -252,7 +253,7 @@ public class KineticBuilder {
 			}
 			name = getBNARef(bea.getFrom()).getName();
 			sb.append(name).append(" / km_").append(name);
-			addParameter(bna, "km_" + name, 1, "mmol/l");
+			addParameter(bna, "km_" + name, BigDecimal.ONE, "mmol/l");
 			if (weight > 1) {
 				sb.append(")^").append(weight);
 			}
@@ -308,7 +309,7 @@ public class KineticBuilder {
 		Collection<BiologicalEdgeAbstract> productEdges = getDirectedOutEdges(bna, pw, true);
 
 		sb.append("v_f");
-		addParameter(bna, "v_f", 1, "1/s");
+		addParameter(bna, "v_f", BigDecimal.ONE, "1/s");
 		for (BiologicalEdgeAbstract bea : substrateEdges) {
 			int weight = 1;
 			if (bea.getLabel().length() > 0) {
@@ -319,14 +320,14 @@ public class KineticBuilder {
 				}
 			}
 			sb.append(" * ");
-			
+
 			sb.append(getBNARef(bea.getFrom()).getName());
 			if (weight > 1) {
 				sb.append("^").append(weight);
 			}
 		}
 		sb.append(" - v_r ");
-		addParameter(bna, "v_r", 0.1, "1/s");
+		addParameter(bna, "v_r", new BigDecimal("0.1"), "1/s");
 		for (BiologicalEdgeAbstract bea : productEdges) {
 			int weight = 1;
 			if (bea.getLabel().length() > 0) {
@@ -346,7 +347,7 @@ public class KineticBuilder {
 		}
 		return sb.toString();
 	}
-	
+
 	public static String createLawOfMassActionKineticIrreversible(BiologicalNodeAbstract bna, Pathway pw) {
 
 		StringBuilder sb = new StringBuilder();
@@ -359,7 +360,7 @@ public class KineticBuilder {
 		Collection<BiologicalEdgeAbstract> substrateEdges = getDirectedInEdges(bna, pw, true);
 
 		sb.append("v_f");
-		addParameter(bna, "v_f", 1, "1/s");
+		addParameter(bna, "v_f", BigDecimal.ONE, "1/s");
 		for (BiologicalEdgeAbstract bea : substrateEdges) {
 			int weight = 1;
 			if (bea.getLabel().length() > 0) {
@@ -370,7 +371,7 @@ public class KineticBuilder {
 				}
 			}
 			sb.append(" * ");
-			
+
 			sb.append(getBNARef(bea.getFrom()).getName());
 			if (weight > 1) {
 				sb.append("^").append(weight);
@@ -379,7 +380,8 @@ public class KineticBuilder {
 		return sb.toString();
 	}
 
-	private static void addParameter(BiologicalNodeAbstract bna, String name, double value, String unit) {
+	private static void addParameter(final BiologicalNodeAbstract bna, final String name, final BigDecimal value,
+			final String unit) {
 		if (bna.getParameter(name) == null) {
 			bna.getParameters().add(new Parameter(name, value, unit));
 		}
@@ -415,7 +417,8 @@ public class KineticBuilder {
 					e.printStackTrace();
 					PopUpDialog.getInstance().show("Parsing Error",
 							"Edge label cannot be parsed as an integer: " + bea.getLabel() + "\r\n" + "Edge from: "
-									+ getBNARef(bea.getFrom()).getName() + " to " + getBNARef(bea.getTo()).getName() + "\\r\\n");
+									+ getBNARef(bea.getFrom()).getName() + " to " + getBNARef(bea.getTo()).getName()
+									+ "\\r\\n");
 					continue;
 				}
 			}
@@ -423,7 +426,7 @@ public class KineticBuilder {
 		}
 		return filteredEdges;
 	}
-	
+
 	private static BiologicalNodeAbstract getBNARef(BiologicalNodeAbstract bna) {
 		if (bna.isLogical()) {
 			return bna.getLogicalReference();

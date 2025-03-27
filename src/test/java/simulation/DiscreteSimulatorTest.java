@@ -318,9 +318,9 @@ class DiscreteSimulatorTest {
 		p2.setTokenStart(0);
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1 + k");
-		arc1.getParameters().add(new Parameter("k", 2, ""));
+		arc1.getParameters().add(new Parameter("k", BigDecimal.valueOf(2), ""));
 		final var arc2 = new PNArc(t1, p2, "arc2", "arc2", Elementdeclerations.pnArc, "m + 3");
-		arc2.getParameters().add(new Parameter("m", 2, ""));
+		arc2.getParameters().add(new Parameter("m", BigDecimal.valueOf(2), ""));
 		final var simulator = new DiscreteSimulator(List.of(p1, p2, t1), List.of(arc1, arc2));
 		simulator.step();
 		final var markingTimeline = simulator.getMarkingTimeline();
