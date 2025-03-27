@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,7 +59,7 @@ class DiscreteSimulatorTest {
 		p1.setTokenStart(10);
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1");
-		final var simulator = new DiscreteSimulator(Arrays.asList(p1, t1), List.of(arc1));
+		final var simulator = new DiscreteSimulator(List.of(p1, t1), List.of(arc1));
 		for (int i = 0; i < 10; i++) {
 			simulator.step();
 		}
@@ -82,7 +81,7 @@ class DiscreteSimulatorTest {
 		p1.setTokenStart(10);
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "p1");
-		final var simulator = new DiscreteSimulator(Arrays.asList(p1, t1), List.of(arc1));
+		final var simulator = new DiscreteSimulator(List.of(p1, t1), List.of(arc1));
 		for (int i = 0; i < 4; i++) {
 			simulator.step();
 		}
@@ -103,7 +102,7 @@ class DiscreteSimulatorTest {
 		final var p1 = new DiscretePlace("p1", "p1", null);
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var arc1 = new PNArc(t1, p1, "arc1", "arc1", Elementdeclerations.pnArc, "1");
-		final var simulator = new DiscreteSimulator(Arrays.asList(p1, t1), List.of(arc1));
+		final var simulator = new DiscreteSimulator(List.of(p1, t1), List.of(arc1));
 		for (int i = 0; i < 10; i++) {
 			simulator.step();
 		}
@@ -125,7 +124,7 @@ class DiscreteSimulatorTest {
 		p1.setTokenStart(1);
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var arc1 = new PNArc(t1, p1, "arc1", "arc1", Elementdeclerations.pnArc, "p1");
-		final var simulator = new DiscreteSimulator(Arrays.asList(p1, t1), List.of(arc1));
+		final var simulator = new DiscreteSimulator(List.of(p1, t1), List.of(arc1));
 		for (int i = 0; i < 4; i++) {
 			simulator.step();
 		}
@@ -148,7 +147,7 @@ class DiscreteSimulatorTest {
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "2");
 		final var arc2 = new PNArc(t1, p1, "arc2", "arc2", Elementdeclerations.pnArc, "3");
-		final var simulator = new DiscreteSimulator(Arrays.asList(p1, t1), Arrays.asList(arc1, arc2));
+		final var simulator = new DiscreteSimulator(List.of(p1, t1), List.of(arc1, arc2));
 		for (int i = 0; i < 4; i++) {
 			simulator.step();
 		}
@@ -175,7 +174,7 @@ class DiscreteSimulatorTest {
 		arc1.setPriority(2);
 		final var arc2 = new PNArc(t2, p1, "arc2", "arc2", Elementdeclerations.pnArc, "1");
 		arc2.setPriority(1);
-		final var simulator = new DiscreteSimulator(Arrays.asList(p1, t1, t2), Arrays.asList(arc1, arc2));
+		final var simulator = new DiscreteSimulator(List.of(p1, t1, t2), List.of(arc1, arc2));
 		while (!simulator.isDead()) {
 			simulator.step();
 		}
@@ -216,8 +215,8 @@ class DiscreteSimulatorTest {
 		final var arc7 = new PNArc(t3, p3, "arc7", "arc7", Elementdeclerations.pnArc, "1");
 		final var arc8 = new PNArc(t4, p4, "arc8", "arc8", Elementdeclerations.pnArc, "1");
 		final var arc9 = new PNArc(t5, p5, "arc9", "arc9", Elementdeclerations.pnArc, "1");
-		final var simulator = new DiscreteSimulator(Arrays.asList(t1, p1, t2, p2, t3, p3, t4, p4, t5, p5),
-				Arrays.asList(arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8, arc9));
+		final var simulator = new DiscreteSimulator(List.of(t1, p1, t2, p2, t3, p3, t4, p4, t5, p5),
+				List.of(arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8, arc9));
 		for (int i = 0; i < 10; i++) {
 			simulator.step();
 		}
@@ -252,7 +251,7 @@ class DiscreteSimulatorTest {
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1");
 		final var arc2 = new PNArc(t1, p2, "arc2", "arc2", Elementdeclerations.pnArc, "1");
-		final var simulator = new DiscreteSimulator(Arrays.asList(p1, p2, t1), Arrays.asList(arc1, arc2));
+		final var simulator = new DiscreteSimulator(List.of(p1, p2, t1), List.of(arc1, arc2));
 		assertEquals(1, simulator.getMarkings().size());
 		assertEquals(0, simulator.getEdges().size());
 		simulator.step();
@@ -276,7 +275,7 @@ class DiscreteSimulatorTest {
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1");
 		final var arc2 = new PNArc(t1, p2, "arc2", "arc2", Elementdeclerations.pnArc, "2");
-		final var simulator = new DiscreteSimulator(Arrays.asList(p1, p2, t1), Arrays.asList(arc1, arc2));
+		final var simulator = new DiscreteSimulator(List.of(p1, p2, t1), List.of(arc1, arc2));
 		for (int i = 0; i < 10; i++) {
 			simulator.step();
 		}
@@ -300,7 +299,7 @@ class DiscreteSimulatorTest {
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1 + 2");
 		final var arc2 = new PNArc(t1, p2, "arc2", "arc2", Elementdeclerations.pnArc, "2 + 3");
-		final var simulator = new DiscreteSimulator(Arrays.asList(p1, p2, t1), Arrays.asList(arc1, arc2));
+		final var simulator = new DiscreteSimulator(List.of(p1, p2, t1), List.of(arc1, arc2));
 		simulator.step();
 		final var markingTimeline = simulator.getMarkingTimeline();
 		assertTrue(markingTimeline.length > 1);
@@ -322,7 +321,7 @@ class DiscreteSimulatorTest {
 		arc1.getParameters().add(new Parameter("k", 2, ""));
 		final var arc2 = new PNArc(t1, p2, "arc2", "arc2", Elementdeclerations.pnArc, "m + 3");
 		arc2.getParameters().add(new Parameter("m", 2, ""));
-		final var simulator = new DiscreteSimulator(Arrays.asList(p1, p2, t1), Arrays.asList(arc1, arc2));
+		final var simulator = new DiscreteSimulator(List.of(p1, p2, t1), List.of(arc1, arc2));
 		simulator.step();
 		final var markingTimeline = simulator.getMarkingTimeline();
 		assertTrue(markingTimeline.length > 1);
@@ -344,7 +343,7 @@ class DiscreteSimulatorTest {
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1 + p3");
 		final var arc2 = new PNArc(t1, p2, "arc2", "arc2", Elementdeclerations.pnArc, "p3 + 3");
-		final var simulator = new DiscreteSimulator(Arrays.asList(p1, p2, p3, t1), Arrays.asList(arc1, arc2));
+		final var simulator = new DiscreteSimulator(List.of(p1, p2, p3, t1), List.of(arc1, arc2));
 		simulator.step();
 		final var markingTimeline = simulator.getMarkingTimeline();
 		assertTrue(markingTimeline.length > 1);
@@ -362,7 +361,7 @@ class DiscreteSimulatorTest {
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		t1.setDelay("1 + 2");
 		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1");
-		final var simulator = new DiscreteSimulator(Arrays.asList(p1, t1), List.of(arc1));
+		final var simulator = new DiscreteSimulator(List.of(p1, t1), List.of(arc1));
 		simulator.step();
 		simulator.step();
 		final var markingTimeline = simulator.getMarkingTimeline();
@@ -381,7 +380,7 @@ class DiscreteSimulatorTest {
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1 - p2");
 		final var arc2 = new PNArc(t1, p2, "arc2", "arc2", Elementdeclerations.pnArc, "1");
-		final var simulator = new DiscreteSimulator(Arrays.asList(p1, p2, t1), Arrays.asList(arc1, arc2));
+		final var simulator = new DiscreteSimulator(List.of(p1, p2, t1), List.of(arc1, arc2));
 		simulator.step();
 		simulator.step();
 		simulator.step();
@@ -399,7 +398,7 @@ class DiscreteSimulatorTest {
 		p1.setTokenStart(0);
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var arc1 = new PNArc(t1, p1, "arc1", "arc1", Elementdeclerations.pnArc, "1");
-		final var simulator = new DiscreteSimulator(Arrays.asList(p1, t1), List.of(arc1));
+		final var simulator = new DiscreteSimulator(List.of(p1, t1), List.of(arc1));
 		simulator.step();
 		simulator.step();
 		simulator.step();
@@ -416,7 +415,7 @@ class DiscreteSimulatorTest {
 		p1.setTokenStart(0);
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var arc1 = new PNArc(t1, p1, "arc1", "arc1", Elementdeclerations.pnArc, "1/0");
-		assertThrows(SimulationException.class, () -> new DiscreteSimulator(Arrays.asList(p1, t1), List.of(arc1)));
+		assertThrows(SimulationException.class, () -> new DiscreteSimulator(List.of(p1, t1), List.of(arc1)));
 	}
 
 	@Test
@@ -426,7 +425,7 @@ class DiscreteSimulatorTest {
 		p1.setTokenMin(8);
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1");
-		final var simulator = new DiscreteSimulator(Arrays.asList(p1, t1), List.of(arc1));
+		final var simulator = new DiscreteSimulator(List.of(p1, t1), List.of(arc1));
 		for (int i = 0; i < 2; i++) {
 			simulator.step();
 		}
@@ -444,7 +443,7 @@ class DiscreteSimulatorTest {
 		p1.setTokenMax(2);
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var arc1 = new PNArc(t1, p1, "arc1", "arc1", Elementdeclerations.pnArc, "1");
-		final var simulator = new DiscreteSimulator(Arrays.asList(p1, t1), List.of(arc1));
+		final var simulator = new DiscreteSimulator(List.of(p1, t1), List.of(arc1));
 		for (int i = 0; i < 2; i++) {
 			simulator.step();
 		}
@@ -456,8 +455,31 @@ class DiscreteSimulatorTest {
 		assertEquals(BigInteger.valueOf(2), simulator.getTokens(markingTimeline[2], p1));
 	}
 
+	@Test
+	void singleTransitionWithConstantPlaces() throws SimulationException {
+		final var p1 = new DiscretePlace("p1", "p1", null);
+		p1.setTokenStart(10);
+		p1.setConstant(true);
+		final var p2 = new DiscretePlace("p2", "p2", null);
+		p2.setTokenStart(4);
+		p2.setConstant(true);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1");
+		final var arc2 = new PNArc(t1, p2, "arc2", "arc2", Elementdeclerations.pnArc, "1");
+		final var simulator = new DiscreteSimulator(List.of(p1, p2, t1), List.of(arc1, arc2));
+		for (int i = 0; i < 10; i++) {
+			simulator.step();
+		}
+		final var markingTimeline = simulator.getMarkingTimeline();
+		assertEquals(11, markingTimeline.length);
+		for (final var marking : markingTimeline) {
+			assertFalse(marking.isDead());
+			assertEquals(BigInteger.valueOf(10), simulator.getTokens(marking, p1));
+			assertEquals(BigInteger.valueOf(4), simulator.getTokens(marking, p2));
+		}
+	}
+
 	// TODO:
-	// constant places
 	// test-arcs
 	// inhibition-arcs
 }
