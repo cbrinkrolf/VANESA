@@ -183,6 +183,10 @@ public class DiscreteSimulator extends Simulator {
 				final DiscretePlace place = (DiscretePlace) arc.getFrom();
 				final int placeIndex = places.indexOf(place);
 				final var requestedTokens = evaluateFunction(placeTokens, arc, arc.getFunction(), arc.getParameters());
+				if (requestedTokens.signum() < 0) {
+					valid = false;
+					break;
+				}
 				if (putativeTokens[placeIndex].compareTo(requestedTokens) >= 0) {
 					// If enough tokens are available and the arc is an inhibitor arc, validation fails
 					if (arc.isInhibitorArc()) {
@@ -206,6 +210,10 @@ public class DiscreteSimulator extends Simulator {
 				final DiscretePlace place = (DiscretePlace) arc.getFrom();
 				final int placeIndex = places.indexOf(place);
 				final var requestedTokens = evaluateFunction(placeTokens, arc, arc.getFunction(), arc.getParameters());
+				if (requestedTokens.signum() < 0) {
+					valid = false;
+					break;
+				}
 				final BigInteger newTokens = putativeTokens[placeIndex].subtract(requestedTokens);
 				final BigInteger minTokens = BigInteger.valueOf((long) place.getTokenMin());
 				final BigInteger maxTokens = BigInteger.valueOf((long) place.getTokenMax());
@@ -226,6 +234,10 @@ public class DiscreteSimulator extends Simulator {
 					final int placeIndex = places.indexOf(place);
 					final var producedTokens = evaluateFunction(placeTokens, arc, arc.getFunction(),
 							arc.getParameters());
+					if (producedTokens.signum() < 0) {
+						valid = false;
+						break;
+					}
 					final BigInteger newTokens = putativeTokens[placeIndex].add(producedTokens);
 					final BigInteger minTokens = BigInteger.valueOf((long) place.getTokenMin());
 					final BigInteger maxTokens = BigInteger.valueOf((long) place.getTokenMax());
@@ -237,9 +249,12 @@ public class DiscreteSimulator extends Simulator {
 					}
 				}
 				if (valid) {
-					// If all validations succeeded, evaluate the transition's delay and store the concession
+					// If all validations succeeded, evaluate the transition's delay and store the concession if the
+					// delay is non-negative
 					final BigDecimal delay = transition.getDelay(places, placeTokens);
-					concessions.add(new Concession(transition, delay));
+					if (delay.signum() >= 0) {
+						concessions.add(new Concession(transition, delay));
+					}
 				}
 			}
 		}
