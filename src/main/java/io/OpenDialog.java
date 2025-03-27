@@ -150,9 +150,8 @@ public final class OpenDialog {
 	}
 
 	private static void openSimulationResult(final File file) {
-		final GraphContainer con = GraphContainer.getInstance();
-		if (con.containsPathway()) {
-			final Pathway pathway = GraphInstance.getPathway();
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
 			final PetriNetProperties petriNet = pathway.getPetriPropertiesNet();
 			final SimulationResultController simResController = petriNet.getSimResController();
 			String fileName = file.getName();

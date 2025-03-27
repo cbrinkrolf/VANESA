@@ -204,7 +204,7 @@ public class DiscreteSimulator extends Simulator {
 			}
 			// Validate normal incoming arcs
 			for (final var arc : transition.sources) {
-				if (!arc.isRegularArc() || arc.getTo().isConstant()) {
+				if (!arc.isRegularArc() || arc.getFrom().isConstant()) {
 					continue;
 				}
 				final DiscretePlace place = (DiscretePlace) arc.getFrom();
@@ -343,7 +343,7 @@ public class DiscreteSimulator extends Simulator {
 		System.arraycopy(marking.placeTokens, 0, placeTokens, 0, placeTokens.length);
 		for (final var arc : transition.sources) {
 			// Test and inhibition arcs as well as constant places don't destroy tokens
-			if (!arc.isRegularArc() || arc.getTo().isConstant()) {
+			if (!arc.isRegularArc() || arc.getFrom().isConstant()) {
 				continue;
 			}
 			final DiscretePlace place = (DiscretePlace) arc.getFrom();
