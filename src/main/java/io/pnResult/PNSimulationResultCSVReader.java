@@ -45,8 +45,8 @@ public class PNSimulationResultCSVReader extends BaseReader<SimulationResult> {
 	protected SimulationResult internalRead(final InputStream inputStream) throws IOException {
 		final CsvSchema schema = CsvSchema.emptySchema().withQuoteChar('"').withColumnSeparator(';').withoutHeader();
 		final CsvMapper mapper = new CsvMapper();
-		final MappingIterator<String[]> iterator = mapper.readerForArrayOf(String.class).with(
-				CsvParser.Feature.WRAP_AS_ARRAY).with(schema).readValues(inputStream);
+		final MappingIterator<String[]> iterator = mapper.readerForArrayOf(String.class)
+				.with(CsvParser.Feature.WRAP_AS_ARRAY).with(schema).readValues(inputStream);
 		if (!iterator.hasNext()) {
 			setHasErrors();
 			logger.warn("Simulation result CSV file has no header");
@@ -67,7 +67,7 @@ public class PNSimulationResultCSVReader extends BaseReader<SimulationResult> {
 				if (bna != null) {
 					usedBNAs.add(bna);
 					propertyColumnMap.put(header[i], i);
-				} else {
+				} else if (lastDashIndex != -1) {
 					final int firstDashIndex = header[i].indexOf('-');
 					final String bnaName1 = name.substring(0, firstDashIndex);
 					final String bnaName2 = name.substring(firstDashIndex + 1);
