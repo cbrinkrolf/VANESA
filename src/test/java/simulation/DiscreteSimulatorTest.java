@@ -536,4 +536,51 @@ class DiscreteSimulatorTest {
 		final var simulator = new DiscreteSimulator(List.of(p1, p2, t1), List.of(arc1, arc2));
 		assertTrue(simulator.getStartMarking().isDead());
 	}
+
+	/**
+	 * The idea of this test is that four transitions all gain concession at time=0 with a delay of 1 each.
+	 * As they retain concession at each step, all four transitions must have fired after four simulation steps and
+	 * p2-p5 must have gained one token each.
+	 */
+	@Test
+	void transitionsWithSameDelayAllFire() throws SimulationException {
+		final var p1 = new DiscretePlace("p1", "p1", null);
+		p1.setTokenStart(4);
+		final var p2 = new DiscretePlace("p2", "p2", null);
+		final var p3 = new DiscretePlace("p3", "p3", null);
+		final var p4 = new DiscretePlace("p4", "p4", null);
+		final var p5 = new DiscretePlace("p5", "p5", null);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var t2 = new DiscreteTransition("t2", "t2", null);
+		final var t3 = new DiscreteTransition("t3", "t3", null);
+		final var t4 = new DiscreteTransition("t4", "t4", null);
+		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1");
+		final var arc2 = new PNArc(p1, t2, "arc2", "arc2", Elementdeclerations.pnArc, "1");
+		final var arc3 = new PNArc(p1, t3, "arc3", "arc3", Elementdeclerations.pnArc, "1");
+		final var arc4 = new PNArc(p1, t4, "arc4", "arc4", Elementdeclerations.pnArc, "1");
+		final var arc5 = new PNArc(t1, p2, "arc5", "arc5", Elementdeclerations.pnArc, "1");
+		final var arc6 = new PNArc(t2, p3, "arc6", "arc6", Elementdeclerations.pnArc, "1");
+		final var arc7 = new PNArc(t3, p4, "arc7", "arc7", Elementdeclerations.pnArc, "1");
+		final var arc8 = new PNArc(t4, p5, "arc8", "arc8", Elementdeclerations.pnArc, "1");
+		final var simulator = new DiscreteSimulator(List.of(p1, p2, p3, p4, p5, t1, t2, t3, t4),
+				List.of(arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8));
+		simulator.step();
+		simulator.step();
+		simulator.step();
+		simulator.step();
+		final var markingTimeline = simulator.getMarkingTimeline();
+		assertFalse(markingTimeline[0].isDead());
+		assertFalse(markingTimeline[1].isDead());
+		assertFalse(markingTimeline[2].isDead());
+		assertFalse(markingTimeline[3].isDead());
+		assertTrue(markingTimeline[4].isDead());
+		assertEquals(BigInteger.valueOf(3), simulator.getTokens(markingTimeline[1], p1));
+		assertEquals(BigInteger.valueOf(2), simulator.getTokens(markingTimeline[2], p1));
+		assertEquals(BigInteger.valueOf(1), simulator.getTokens(markingTimeline[3], p1));
+		assertEquals(BigInteger.valueOf(0), simulator.getTokens(markingTimeline[4], p1));
+		assertEquals(BigInteger.valueOf(1), simulator.getTokens(markingTimeline[4], p2));
+		assertEquals(BigInteger.valueOf(1), simulator.getTokens(markingTimeline[4], p3));
+		assertEquals(BigInteger.valueOf(1), simulator.getTokens(markingTimeline[4], p4));
+		assertEquals(BigInteger.valueOf(1), simulator.getTokens(markingTimeline[4], p5));
+	}
 }
