@@ -4,6 +4,8 @@ import biologicalElements.Elementdeclerations;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
+import graph.gui.Parameter;
+
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +32,8 @@ class DiscreteSimulatorTest {
 	}
 
 	/**
-	 * Equivalent to <a href="https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/SinglePD.mo">SinglePD.mo</a>
+	 * Equivalent to <a href=
+	 * "https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/SinglePD.mo">SinglePD.mo</a>
 	 */
 	@Test
 	void pnlibSinglePD() throws SimulationException {
@@ -45,7 +48,8 @@ class DiscreteSimulatorTest {
 	}
 
 	/**
-	 * Equivalent to <a href="https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/SingleTD.mo">SingleTD.mo</a>
+	 * Equivalent to <a href=
+	 * "https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/SingleTD.mo">SingleTD.mo</a>
 	 */
 	@Test
 	void pnlibSingleTD() throws SimulationException {
@@ -60,7 +64,8 @@ class DiscreteSimulatorTest {
 	}
 
 	/**
-	 * Equivalent to <a href="https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/PDtoTD.mo">PDtoTD.mo</a>
+	 * Equivalent to <a href=
+	 * "https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/PDtoTD.mo">PDtoTD.mo</a>
 	 */
 	@Test
 	void pnlibPDtoTD() throws SimulationException {
@@ -81,7 +86,8 @@ class DiscreteSimulatorTest {
 	}
 
 	/**
-	 * Equivalent to <a href="https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/PDtoTDfunction.mo">PDtoTDfunction.mo</a>
+	 * Equivalent to <a href=
+	 * "https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/PDtoTDfunction.mo">PDtoTDfunction.mo</a>
 	 */
 	@Test
 	void pnlibPDtoTDfunction() throws SimulationException {
@@ -102,7 +108,8 @@ class DiscreteSimulatorTest {
 	}
 
 	/**
-	 * Equivalent to <a href="https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/TDtoPD.mo">TDtoPD.mo</a>
+	 * Equivalent to <a href=
+	 * "https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/TDtoPD.mo">TDtoPD.mo</a>
 	 */
 	@Test
 	void pnlibTDtoPD() throws SimulationException {
@@ -122,7 +129,8 @@ class DiscreteSimulatorTest {
 	}
 
 	/**
-	 * Equivalent to <a href="https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/TDtoPDfunction.mo">TDtoPDfunction.mo</a>
+	 * Equivalent to <a href=
+	 * "https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/TDtoPDfunction.mo">TDtoPDfunction.mo</a>
 	 */
 	@Test
 	void pnlibTDtoPDfunction() throws SimulationException {
@@ -143,7 +151,8 @@ class DiscreteSimulatorTest {
 	}
 
 	/**
-	 * Equivalent to <a href="https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/DisLoopAndArcweight.mo">DisLoopAndArcweight.mo</a>
+	 * Equivalent to <a href=
+	 * "https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/DisLoopAndArcweight.mo">DisLoopAndArcweight.mo</a>
 	 */
 	@Test
 	void pnlibDisLoopAndArcweight() throws SimulationException {
@@ -165,7 +174,8 @@ class DiscreteSimulatorTest {
 	}
 
 	/**
-	 * Equivalent to <a href="https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/NoInputConflict.mo">NoInputConflict.mo</a>
+	 * Equivalent to <a href=
+	 * "https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/NoInputConflict.mo">NoInputConflict.mo</a>
 	 */
 	@Test
 	void pnlibNoInputConflict() throws SimulationException {
@@ -189,7 +199,8 @@ class DiscreteSimulatorTest {
 	}
 
 	/**
-	 * Equivalent to <a href="https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/PrioTest.mo">PrioTest.mo</a>
+	 * Equivalent to <a href=
+	 * "https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/PrioTest.mo">PrioTest.mo</a>
 	 */
 	@Disabled("Disabled until priorities are implemented")
 	@Test
@@ -228,23 +239,23 @@ class DiscreteSimulatorTest {
 	}
 
 	// TODO:
-	//  ConflictBeneBaB.mo
-	//  ConflictBeneGreedy.mo
-	//  ConflictBeneQuotient.mo
-	//  ConflictPrio.mo
-	//  ConflictProb.mo
-	//  EightConflictProb.mo
-	//  InputConflictBeneBaB.mo
-	//  InputConflictBeneGreedy.mo
-	//  InputConflictBeneQuotient.mo
-	//  InputConflictPrio.mo
-	//  InputConflictProb.mo
-	//  OutputConflictBeneBaB.mo
-	//  OutputConflictBeneGreedy.mo
-	//  OutputConflictBeneQuotient.mo
-	//  OutputConflictPrio.mo
-	//  OutputConflictProb.mo
-	//  SixConflictProb.mo
+	// ConflictBeneBaB.mo
+	// ConflictBeneGreedy.mo
+	// ConflictBeneQuotient.mo
+	// ConflictPrio.mo
+	// ConflictProb.mo
+	// EightConflictProb.mo
+	// InputConflictBeneBaB.mo
+	// InputConflictBeneGreedy.mo
+	// InputConflictBeneQuotient.mo
+	// InputConflictPrio.mo
+	// InputConflictProb.mo
+	// OutputConflictBeneBaB.mo
+	// OutputConflictBeneGreedy.mo
+	// OutputConflictBeneQuotient.mo
+	// OutputConflictPrio.mo
+	// OutputConflictProb.mo
+	// SixConflictProb.mo
 
 	@Test
 	void simpleTransition() throws SimulationException {
@@ -291,5 +302,75 @@ class DiscreteSimulatorTest {
 		assertTrue(markingTimeline[markingTimeline.length - 1].isDead());
 		assertEquals(BigInteger.ZERO, simulator.getTokens(markingTimeline[markingTimeline.length - 1], p1));
 		assertEquals(BigInteger.valueOf(20), simulator.getTokens(markingTimeline[markingTimeline.length - 1], p2));
+	}
+
+	@Test
+	void singleTransitionWithArcFunctions() throws SimulationException {
+		final var p1 = new DiscretePlace("p1", "p1", null);
+		p1.setTokenStart(10);
+		final var p2 = new DiscretePlace("p2", "p2", null);
+		p2.setConcentrationStart(0);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1 + 2");
+		final var arc2 = new PNArc(t1, p2, "arc2", "arc2", Elementdeclerations.pnArc, "2 + 3");
+		final var simulator = new DiscreteSimulator(Arrays.asList(p1, p2, t1), Arrays.asList(arc1, arc2));
+		assertEquals(1, simulator.getMarkings().size());
+		assertEquals(0, simulator.getEdges().size());
+		simulator.step();
+		final var markingTimeline = getMarkingTimeline(simulator);
+		assertFalse(markingTimeline[1].isDead());
+		assertTrue(markingTimeline.length > 1);
+		assertEquals(BigInteger.valueOf(10), simulator.getTokens(markingTimeline[0], p1));
+		assertEquals(BigInteger.valueOf(7), simulator.getTokens(markingTimeline[1], p1));
+		assertEquals(BigInteger.valueOf(0), simulator.getTokens(markingTimeline[0], p2));
+		assertEquals(BigInteger.valueOf(5), simulator.getTokens(markingTimeline[1], p2));
+	}
+
+	@Test
+	void singleTransitionWithArcFunctionsAndParameter() throws SimulationException {
+		final var p1 = new DiscretePlace("p1", "p1", null);
+		p1.setTokenStart(10);
+		final var p2 = new DiscretePlace("p2", "p2", null);
+		p2.setConcentrationStart(0);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1 + k");
+		arc1.getParameters().add(new Parameter("k", 2, ""));
+		final var arc2 = new PNArc(t1, p2, "arc2", "arc2", Elementdeclerations.pnArc, "m + 3");
+		arc2.getParameters().add(new Parameter("m", 2, ""));
+		final var simulator = new DiscreteSimulator(Arrays.asList(p1, p2, t1), Arrays.asList(arc1, arc2));
+		assertEquals(1, simulator.getMarkings().size());
+		assertEquals(0, simulator.getEdges().size());
+		simulator.step();
+		final var markingTimeline = getMarkingTimeline(simulator);
+		assertFalse(markingTimeline[1].isDead());
+		assertTrue(markingTimeline.length > 1);
+		assertEquals(BigInteger.valueOf(10), simulator.getTokens(markingTimeline[0], p1));
+		assertEquals(BigInteger.valueOf(7), simulator.getTokens(markingTimeline[1], p1));
+		assertEquals(BigInteger.valueOf(0), simulator.getTokens(markingTimeline[0], p2));
+		assertEquals(BigInteger.valueOf(5), simulator.getTokens(markingTimeline[1], p2));
+	}
+
+	@Test
+	void singleTransitionWithArcFunctionsAndVariable() throws SimulationException {
+		final var p1 = new DiscretePlace("p1", "p1", null);
+		p1.setTokenStart(10);
+		final var p2 = new DiscretePlace("p2", "p2", null);
+		p2.setConcentrationStart(0);
+		final var p3 = new DiscretePlace("p3", "p3", null);
+		p3.setTokenStart(2);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1 + p3");
+		final var arc2 = new PNArc(t1, p2, "arc2", "arc2", Elementdeclerations.pnArc, "p3 + 3");
+		final var simulator = new DiscreteSimulator(Arrays.asList(p1, p2, p3, t1), Arrays.asList(arc1, arc2));
+		assertEquals(1, simulator.getMarkings().size());
+		assertEquals(0, simulator.getEdges().size());
+		simulator.step();
+		final var markingTimeline = getMarkingTimeline(simulator);
+		assertFalse(markingTimeline[1].isDead());
+		assertTrue(markingTimeline.length > 1);
+		assertEquals(BigInteger.valueOf(10), simulator.getTokens(markingTimeline[0], p1));
+		assertEquals(BigInteger.valueOf(7), simulator.getTokens(markingTimeline[1], p1));
+		assertEquals(BigInteger.valueOf(0), simulator.getTokens(markingTimeline[0], p2));
+		assertEquals(BigInteger.valueOf(5), simulator.getTokens(markingTimeline[1], p2));
 	}
 }
