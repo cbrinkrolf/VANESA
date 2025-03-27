@@ -436,6 +436,26 @@ public class DiscreteSimulator extends Simulator {
 		return allowBranching;
 	}
 
+	/**
+	 * Return the primary marking timeline without branches (if activated)
+	 */
+	public Marking[] getMarkingTimeline() {
+		final List<Marking> markings = new ArrayList<>();
+		markings.add(getStartMarking());
+		boolean foundNext = true;
+		while (foundNext) {
+			foundNext = false;
+			for (final var edge : firingEdges) {
+				if (edge.from == markings.get(markings.size() - 1)) {
+					markings.add(edge.to);
+					foundNext = true;
+					break;
+				}
+			}
+		}
+		return markings.toArray(new Marking[0]);
+	}
+
 	public static class Marking {
 		public final BigDecimal time;
 		public final BigInteger[] placeTokens;

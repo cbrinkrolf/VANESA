@@ -18,20 +18,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DiscreteSimulatorTest {
-	private DiscreteSimulator.Marking[] getMarkingTimeline(final DiscreteSimulator simulator) {
-		final DiscreteSimulator.Marking[] markings = new DiscreteSimulator.Marking[simulator.getMarkings().size()];
-		markings[0] = simulator.getStartMarking();
-		for (int i = 1; i < markings.length; i++) {
-			for (final var edge : simulator.getEdges()) {
-				if (edge.from == markings[i - 1]) {
-					markings[i] = edge.to;
-					break;
-				}
-			}
-		}
-		return markings;
-	}
-
 	/**
 	 * Equivalent to <a href=
 	 * "https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/SinglePD.mo">SinglePD.mo</a>
@@ -43,7 +29,7 @@ class DiscreteSimulatorTest {
 		for (int i = 0; i < 10; i++) {
 			simulator.step();
 		}
-		final var markingTimeline = getMarkingTimeline(simulator);
+		final var markingTimeline = simulator.getMarkingTimeline();
 		assertEquals(1, markingTimeline.length);
 		assertEquals(0, simulator.getMaxTime().intValue());
 	}
@@ -59,7 +45,7 @@ class DiscreteSimulatorTest {
 		for (int i = 0; i < 10; i++) {
 			simulator.step();
 		}
-		final var markingTimeline = getMarkingTimeline(simulator);
+		final var markingTimeline = simulator.getMarkingTimeline();
 		assertEquals(11, markingTimeline.length);
 		assertEquals(10, simulator.getMaxTime().intValue());
 	}
@@ -78,7 +64,7 @@ class DiscreteSimulatorTest {
 		for (int i = 0; i < 10; i++) {
 			simulator.step();
 		}
-		final var markingTimeline = getMarkingTimeline(simulator);
+		final var markingTimeline = simulator.getMarkingTimeline();
 		assertEquals(11, markingTimeline.length);
 		assertEquals(10, simulator.getMaxTime().intValue());
 		for (int i = 0; i < 11; i++) {
@@ -100,7 +86,7 @@ class DiscreteSimulatorTest {
 		for (int i = 0; i < 4; i++) {
 			simulator.step();
 		}
-		final var markingTimeline = getMarkingTimeline(simulator);
+		final var markingTimeline = simulator.getMarkingTimeline();
 		assertEquals(BigInteger.valueOf(10), simulator.getTokens(markingTimeline[0], p1));
 		assertEquals(BigInteger.valueOf(0), simulator.getTokens(markingTimeline[1], p1));
 		assertEquals(BigInteger.valueOf(0), simulator.getTokens(markingTimeline[2], p1));
@@ -121,7 +107,7 @@ class DiscreteSimulatorTest {
 		for (int i = 0; i < 10; i++) {
 			simulator.step();
 		}
-		final var markingTimeline = getMarkingTimeline(simulator);
+		final var markingTimeline = simulator.getMarkingTimeline();
 		assertEquals(11, markingTimeline.length);
 		assertEquals(10, simulator.getMaxTime().intValue());
 		for (int i = 0; i < 11; i++) {
@@ -143,7 +129,7 @@ class DiscreteSimulatorTest {
 		for (int i = 0; i < 4; i++) {
 			simulator.step();
 		}
-		final var markingTimeline = getMarkingTimeline(simulator);
+		final var markingTimeline = simulator.getMarkingTimeline();
 		assertEquals(BigInteger.valueOf(1), simulator.getTokens(markingTimeline[0], p1));
 		assertEquals(BigInteger.valueOf(2), simulator.getTokens(markingTimeline[1], p1));
 		assertEquals(BigInteger.valueOf(4), simulator.getTokens(markingTimeline[2], p1));
@@ -166,7 +152,7 @@ class DiscreteSimulatorTest {
 		for (int i = 0; i < 4; i++) {
 			simulator.step();
 		}
-		final var markingTimeline = getMarkingTimeline(simulator);
+		final var markingTimeline = simulator.getMarkingTimeline();
 		assertEquals(BigInteger.valueOf(2), simulator.getTokens(markingTimeline[0], p1));
 		assertEquals(BigInteger.valueOf(3), simulator.getTokens(markingTimeline[1], p1));
 		assertEquals(BigInteger.valueOf(4), simulator.getTokens(markingTimeline[2], p1));
@@ -193,7 +179,7 @@ class DiscreteSimulatorTest {
 		while (!simulator.isDead()) {
 			simulator.step();
 		}
-		final var markingTimeline = getMarkingTimeline(simulator);
+		final var markingTimeline = simulator.getMarkingTimeline();
 		assertEquals(2, markingTimeline.length);
 		assertEquals(BigInteger.valueOf(0), simulator.getTokens(markingTimeline[0], p1));
 		assertEquals(BigInteger.valueOf(1), simulator.getTokens(markingTimeline[1], p1));
@@ -235,7 +221,7 @@ class DiscreteSimulatorTest {
 		for (int i = 0; i < 10; i++) {
 			simulator.step();
 		}
-		final var markingTimeline = getMarkingTimeline(simulator);
+		final var markingTimeline = simulator.getMarkingTimeline();
 		// TODO
 	}
 
@@ -273,7 +259,7 @@ class DiscreteSimulatorTest {
 		assertEquals(2, simulator.getMarkings().size());
 		assertEquals(1, simulator.getEdges().size());
 		assertEquals(t1, simulator.getEdges().iterator().next().transition.transition);
-		final var markingTimeline = getMarkingTimeline(simulator);
+		final var markingTimeline = simulator.getMarkingTimeline();
 		assertFalse(markingTimeline[0].isDead());
 		assertEquals(BigInteger.ONE, simulator.getTokens(markingTimeline[0], p1));
 		assertEquals(BigInteger.ZERO, simulator.getTokens(markingTimeline[0], p2));
@@ -296,7 +282,7 @@ class DiscreteSimulatorTest {
 		}
 		assertEquals(11, simulator.getMarkings().size());
 		assertEquals(10, simulator.getEdges().size());
-		final var markingTimeline = getMarkingTimeline(simulator);
+		final var markingTimeline = simulator.getMarkingTimeline();
 		assertFalse(markingTimeline[0].isDead());
 		assertEquals(BigInteger.valueOf(10), simulator.getTokens(markingTimeline[0], p1));
 		assertEquals(BigInteger.ZERO, simulator.getTokens(markingTimeline[0], p2));
@@ -316,7 +302,7 @@ class DiscreteSimulatorTest {
 		final var arc2 = new PNArc(t1, p2, "arc2", "arc2", Elementdeclerations.pnArc, "2 + 3");
 		final var simulator = new DiscreteSimulator(Arrays.asList(p1, p2, t1), Arrays.asList(arc1, arc2));
 		simulator.step();
-		final var markingTimeline = getMarkingTimeline(simulator);
+		final var markingTimeline = simulator.getMarkingTimeline();
 		assertTrue(markingTimeline.length > 1);
 		assertFalse(markingTimeline[1].isDead());
 		assertEquals(BigInteger.valueOf(10), simulator.getTokens(markingTimeline[0], p1));
@@ -338,7 +324,7 @@ class DiscreteSimulatorTest {
 		arc2.getParameters().add(new Parameter("m", 2, ""));
 		final var simulator = new DiscreteSimulator(Arrays.asList(p1, p2, t1), Arrays.asList(arc1, arc2));
 		simulator.step();
-		final var markingTimeline = getMarkingTimeline(simulator);
+		final var markingTimeline = simulator.getMarkingTimeline();
 		assertTrue(markingTimeline.length > 1);
 		assertFalse(markingTimeline[1].isDead());
 		assertEquals(BigInteger.valueOf(10), simulator.getTokens(markingTimeline[0], p1));
@@ -360,7 +346,7 @@ class DiscreteSimulatorTest {
 		final var arc2 = new PNArc(t1, p2, "arc2", "arc2", Elementdeclerations.pnArc, "p3 + 3");
 		final var simulator = new DiscreteSimulator(Arrays.asList(p1, p2, p3, t1), Arrays.asList(arc1, arc2));
 		simulator.step();
-		final var markingTimeline = getMarkingTimeline(simulator);
+		final var markingTimeline = simulator.getMarkingTimeline();
 		assertTrue(markingTimeline.length > 1);
 		assertFalse(markingTimeline[1].isDead());
 		assertEquals(BigInteger.valueOf(10), simulator.getTokens(markingTimeline[0], p1));
@@ -379,7 +365,7 @@ class DiscreteSimulatorTest {
 		final var simulator = new DiscreteSimulator(Arrays.asList(p1, t1), List.of(arc1));
 		simulator.step();
 		simulator.step();
-		final var markingTimeline = getMarkingTimeline(simulator);
+		final var markingTimeline = simulator.getMarkingTimeline();
 		assertTrue(markingTimeline.length > 1);
 		assertEquals(BigDecimal.valueOf(0), markingTimeline[0].time);
 		assertEquals(BigDecimal.valueOf(3), markingTimeline[1].time);
@@ -399,7 +385,7 @@ class DiscreteSimulatorTest {
 		simulator.step();
 		simulator.step();
 		simulator.step();
-		final var markingTimeline = getMarkingTimeline(simulator);
+		final var markingTimeline = simulator.getMarkingTimeline();
 		assertEquals(3, markingTimeline.length);
 		assertFalse(markingTimeline[1].isDead());
 		assertTrue(markingTimeline[2].isDead());
@@ -417,7 +403,7 @@ class DiscreteSimulatorTest {
 		simulator.step();
 		simulator.step();
 		simulator.step();
-		final var markingTimeline = getMarkingTimeline(simulator);
+		final var markingTimeline = simulator.getMarkingTimeline();
 		assertTrue(markingTimeline.length > 1);
 		assertFalse(markingTimeline[3].isDead());
 		assertEquals(BigInteger.valueOf(0), simulator.getTokens(markingTimeline[0], p1));
