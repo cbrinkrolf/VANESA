@@ -177,8 +177,8 @@ public class PetriNetSimulation implements ActionListener {
 		System.out.println("selected: " + menu.isEquationsPerFileSelected());
 		overrideEqPerFile = menu.isEquationsPerFileSelected();
 		if (overrideEqPerFile) {
-			if (eqPerFile != menu.getCustomEqutionsPerFile()) {
-				eqPerFile = menu.getCustomEqutionsPerFile();
+			if (eqPerFile != menu.getCustomEquationsPerFile()) {
+				eqPerFile = menu.getCustomEquationsPerFile();
 				eqPerFileChanged = true;
 			}
 		}
