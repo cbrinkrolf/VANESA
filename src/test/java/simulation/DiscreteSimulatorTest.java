@@ -309,7 +309,7 @@ class DiscreteSimulatorTest {
 		final var p1 = new DiscretePlace("p1", "p1", null);
 		p1.setTokenStart(10);
 		final var p2 = new DiscretePlace("p2", "p2", null);
-		p2.setConcentrationStart(0);
+		p2.setTokenStart(0);
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1 + 2");
 		final var arc2 = new PNArc(t1, p2, "arc2", "arc2", Elementdeclerations.pnArc, "2 + 3");
@@ -329,7 +329,7 @@ class DiscreteSimulatorTest {
 		final var p1 = new DiscretePlace("p1", "p1", null);
 		p1.setTokenStart(10);
 		final var p2 = new DiscretePlace("p2", "p2", null);
-		p2.setConcentrationStart(0);
+		p2.setTokenStart(0);
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1 + k");
 		arc1.getParameters().add(new Parameter("k", 2, ""));
@@ -351,7 +351,7 @@ class DiscreteSimulatorTest {
 		final var p1 = new DiscretePlace("p1", "p1", null);
 		p1.setTokenStart(10);
 		final var p2 = new DiscretePlace("p2", "p2", null);
-		p2.setConcentrationStart(0);
+		p2.setTokenStart(0);
 		final var p3 = new DiscretePlace("p3", "p3", null);
 		p3.setTokenStart(2);
 		final var t1 = new DiscreteTransition("t1", "t1", null);
@@ -366,5 +366,42 @@ class DiscreteSimulatorTest {
 		assertEquals(BigInteger.valueOf(7), simulator.getTokens(markingTimeline[1], p1));
 		assertEquals(BigInteger.valueOf(0), simulator.getTokens(markingTimeline[0], p2));
 		assertEquals(BigInteger.valueOf(5), simulator.getTokens(markingTimeline[1], p2));
+	}
+
+	@Test
+	void singleTransitionAssuringNonNegativeArcWeights() throws SimulationException {
+		final var p1 = new DiscretePlace("p1", "p1", null);
+		p1.setTokenStart(4);
+		final var p2 = new DiscretePlace("p2", "p2", null);
+		p2.setTokenStart(0);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1 + p2");
+		final var arc2 = new PNArc(t1, p2, "arc2", "arc2", Elementdeclerations.pnArc, "1 + p2");
+		final var simulator = new DiscreteSimulator(Arrays.asList(p1, p2, t1), Arrays.asList(arc1, arc2));
+		simulator.step();
+		simulator.step();
+		final var markingTimeline = getMarkingTimeline(simulator);
+		assertTrue(markingTimeline.length > 1);
+		assertFalse(markingTimeline[1].isDead());
+		assertTrue(markingTimeline[2].isDead());
+		assertEquals(BigInteger.valueOf(1), simulator.getTokens(markingTimeline[2], p1));
+		assertEquals(BigInteger.valueOf(3), simulator.getTokens(markingTimeline[2], p2));
+	}
+
+	@Test
+	void activisionSingleTransitionNoPrePlace() throws SimulationException {
+		final var p1 = new DiscretePlace("p2", "p2", null);
+		p1.setTokenStart(0);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var arc1 = new PNArc(t1, p1, "arc2", "arc2", Elementdeclerations.pnArc, "1");
+		final var simulator = new DiscreteSimulator(Arrays.asList(p1, t1), Arrays.asList(arc1));
+		simulator.step();
+		simulator.step();
+		simulator.step();
+		final var markingTimeline = getMarkingTimeline(simulator);
+		assertTrue(markingTimeline.length > 1);
+		assertFalse(markingTimeline[3].isDead());
+		assertEquals(BigInteger.valueOf(0), simulator.getTokens(markingTimeline[0], p1));
+		assertEquals(BigInteger.valueOf(3), simulator.getTokens(markingTimeline[3], p1));
 	}
 }
