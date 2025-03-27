@@ -248,7 +248,7 @@ public class ParameterWindow implements DocumentListener {
 			parametersListPanel.add(edit);
 			parametersListPanel.add(del);
 		}
-		panel.add(parametersListPanel, "growx");
+		panel.add(new JScrollPane(parametersListPanel), "grow");
 	}
 
 	private void onParameterEditClicked(int idx) {
