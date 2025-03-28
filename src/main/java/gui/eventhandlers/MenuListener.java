@@ -388,9 +388,8 @@ public class MenuListener implements ActionListener {
 	}
 
 	private static void loadModResult() {
-		final GraphContainer con = GraphContainer.getInstance();
-		Pathway pw = GraphInstance.getPathway();
-		if (con.containsPathway()) {
+		final Pathway pw = GraphInstance.getPathway();
+		if (pw != null) {
 			if (!pw.hasGotAtLeastOneElement()) {
 				PopUpDialog.getInstance().show("Error", "Network is empty.");
 				return;
@@ -886,9 +885,9 @@ public class MenuListener implements ActionListener {
 			int indexA = 0;
 			int indexY = 0;
 			int outputIndex = 0;
-			for (int row = rows; --row >= 0;) {
+			for (int row = rows; --row >= 0; ) {
 				double sum = 0;
-				for (int i = indexA, j = indexY, column = columns; --column >= 0;) {
+				for (int i = indexA, j = indexY, column = columns; --column >= 0; ) {
 					sum += elements[i] * other.elements[j];
 					i++;
 					j++;

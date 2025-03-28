@@ -1,18 +1,14 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,12 +23,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import configurations.Workspace;
-import io.SuffixAwareFilter;
+import gui.simulation.SimulationResultsListPanel;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import biologicalElements.Pathway;
@@ -40,9 +35,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.gui.Parameter;
-import io.SaveDialog;
-import net.miginfocom.swing.MigLayout;
-import petriNet.SimulationResult;
 import util.MyJFormattedTextField;
 import util.MyNumberFormat;
 
@@ -86,15 +78,13 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	private final MyJFormattedTextField intervalsTxt;
 	private final JLabel solversLbl = new JLabel("Solver:");
 
-	// northUp.setLayout(new GridLayout(1,5));
-	// northDown.setLayout();
 	private final JComboBox<String> solvers = new JComboBox<>();
 	private final JLabel toleranceLbl = new JLabel("Tolerance:");
 	private final MyJFormattedTextField tolerance;
 	private final JLabel simLibLbl = new JLabel("Simulation library:");
 	private final JComboBox<String> simLibs = new JComboBox<>();
 	private int lastLibsIdx = 0;
-	private final JPanel west = new JPanel();
+	private final SimulationResultsListPanel simulationResultsList = new SimulationResultsListPanel(textArea);
 	private final JCheckBox forceRebuild = new JCheckBox("force rebuild");
 
 	private final JLabel seedLbl = new JLabel("Seed:");
@@ -121,8 +111,6 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	private String parameterName;
 	private String parameterNameShort;
 
-	private HashMap<JTextField, SimulationResult> text2sim;
-
 	private final JCheckBox useShortModelName = new JCheckBox("use short model name");
 	private final JCheckBox useCustomExecutable = new JCheckBox("use executable:");
 	private final JTextField executableTxt = new JTextField();
@@ -138,9 +126,9 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 	public SimMenu(Pathway pw, ActionListener listener, List<String> pnLibVersions, List<File> customLibs) {
 		this.pw = pw;
-		this.setTitle("VANESA - simulation setup");
 		this.pnLibVersions = pnLibVersions;
 		this.customLibs = customLibs;
+		setTitle("VANESA - Simulation Setup");
 
 		start.setActionCommand("start");
 		start.addActionListener(listener);
@@ -290,27 +278,19 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		basicOptionsPanel.add(advancedOptions);
 		basicOptionsPanel.add(devOptions);
 
-		// advancedOptionsPanel.add(parametrizedPanel);
-
 		add(north, BorderLayout.NORTH);
-		// north.setLayout(new GridLayout(4, 1));
 		north.setLayout(new BoxLayout(north, BoxLayout.Y_AXIS));
 		north.add(controlsPanel);
 		north.add(basicOptionsPanel);
-		// north.add(northDown);
-		// north.add(parametrizedPanel);
-		west.setLayout(new MigLayout());
 
 		revalidateAdvancedPanel();
 		updateSimulationResults();
 
-		// textArea.setAutoscrolls(true);
 		JScrollPane scrollPane = new JScrollPane(textArea);
 		add(scrollPane, BorderLayout.CENTER);
 		setIconImages(MainWindow.getInstance().getFrame().getIconImages());
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		// this.add(textArea, BorderLayout.SOUTH);
-		add(west, BorderLayout.WEST);
+		add(simulationResultsList, BorderLayout.WEST);
 		pack();
 		setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		setVisible(true);
@@ -335,7 +315,6 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 			parametrizedPanel.add(intervalSize);
 			parametrizedPanel.add(new JLabel("values:"));
 			parametrizedPanel.add(numbers);
-
 		} else {
 			parametrizedPanel.setSize(1, 1);
 			north.remove(parametrizedPanel);
@@ -568,92 +547,8 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	}
 
 	public void updateSimulationResults() {
-		silentMode = true;
-		west.removeAll();
-		text2sim = new HashMap<>();
-		west.add(new JSeparator(), "growx, span, wrap");
-
-		final JCheckBox all = new JCheckBox("active");
-		all.setToolTipText("de-/select all");
-		all.addItemListener(e -> onDeSelectAll(all.isSelected()));
-
-		west.add(all);
-		// CHRIS implement delete all action
-		west.add(new JLabel("simulation name"));
-		west.add(new JLabel(""));
-		west.add(new JLabel(""));
-		west.add(new JLabel(""));
-		west.add(new JLabel(""));
-		west.add(new JLabel(""), "wrap");
-
-		final List<SimulationResult> results = pw.getPetriPropertiesNet().getSimResController().getAll();
-
-		for (int i = 0; i < results.size(); i++) {
-			JCheckBox box = new JCheckBox();
-			box.setActionCommand(i + "");
-			box.addItemListener(this);
-			box.setSelected(results.get(i).isActive());
-			west.add(box);
-			JButton del = new JButton("del");
-			del.setToolTipText("delete result");
-			del.addActionListener(this);
-			del.setActionCommand("del_" + i);
-
-			JButton log = new JButton("log");
-			log.setToolTipText("show log");
-			log.addActionListener(this);
-			log.setActionCommand("log_" + i);
-
-			JButton detail = new JButton("detailed");
-			detail.setToolTipText("show detailed result");
-			detail.addActionListener(this);
-			detail.setActionCommand("detail_" + i);
-
-			JButton export = new JButton("export");
-			export.setToolTipText("export result");
-			export.addActionListener(this);
-			export.setActionCommand("export_" + i);
-
-			JTextField simName = new JTextField(10);
-			simName.setText(results.get(i).getName());
-			text2sim.put(simName, results.get(i));
-			simName.addFocusListener(new FocusListener() {
-				@Override
-				public void focusLost(FocusEvent e) {
-					if (!simName.getText().trim().equals(text2sim.get(e.getSource()).getName())) {
-						text2sim.get(e.getSource()).setName(simName.getText().trim());
-					}
-				}
-
-				@Override
-				public void focusGained(FocusEvent e) {
-				}
-			});
-			west.add(simName);
-			west.add(log);
-			west.add(detail);
-			west.add(export);
-			west.add(del, "wrap");
-		}
+		simulationResultsList.updateSimulationResults(pw);
 		pack();
-		west.repaint();
-		silentMode = false;
-	}
-
-	private void onDeSelectAll(final boolean selected) {
-		silentMode = true;
-		final Component[] components = west.getComponents();
-		for (final Component component : components) {
-			if (component instanceof JCheckBox) {
-				((JCheckBox) component).setSelected(selected);
-			}
-		}
-		final List<SimulationResult> resList = pw.getPetriPropertiesNet().getSimResController().getAll();
-		for (final SimulationResult result : resList) {
-			result.setActive(selected);
-		}
-		silentMode = false;
-		MainWindow.getInstance().updateSimulationResultView();
 	}
 
 	@Override
@@ -679,24 +574,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().startsWith("del_")) {
-			int idx = Integer.parseInt(e.getActionCommand().substring(4));
-			pw.getPetriPropertiesNet().getSimResController().remove(idx);
-			this.updateSimulationResults();
-		} else if (e.getActionCommand().startsWith("log_")) {
-			int idx = Integer.parseInt(e.getActionCommand().substring(4));
-			this.textArea.setText(pw.getPetriPropertiesNet().getSimResController().getAll().get(idx).getLogMessage()
-					.toString());
-		} else if (e.getActionCommand().startsWith("detail_")) {
-			int idx = Integer.parseInt(e.getActionCommand().substring(7));
-			String simId = pw.getPetriPropertiesNet().getSimResController().getAll().get(idx).getId();
-			new DetailedSimRes(pw, simId);
-		} else if (e.getActionCommand().startsWith("export_")) {
-			int idx = Integer.parseInt(e.getActionCommand().substring(7));
-			String simId = pw.getPetriPropertiesNet().getSimResController().getAll().get(idx).getId();
-			new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.VANESA_SIM_RESULT },
-					SaveDialog.DATA_TYPE_SIMULATION_RESULTS, null, this, simId);
-		} else if ("advancedOptions".equals(e.getActionCommand())) {
+		if ("advancedOptions".equals(e.getActionCommand())) {
 		} else if ("parameterized".equals(e.getActionCommand())) {
 		} else if ("seed".equals(e.getActionCommand())) {
 		} else if ("nodeSelected".equals(e.getActionCommand())) {
