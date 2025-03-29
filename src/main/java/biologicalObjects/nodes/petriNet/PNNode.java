@@ -18,20 +18,22 @@ public abstract class PNNode extends BiologicalNodeAbstract {
 
 	@Override
 	public void setName(String name) {
-		Pathway pw = GraphInstance.getPathway();
-		if (pw != null && pw.containsVertex(this) && pw.getAllNodeNames().contains(name)) {
-			if (pw.getNodeByName(name).getClass().equals(this.getClass())) {
-				BiologicalNodeAbstract node = pw.getNodeByName(name);
-				this.setLogicalReference(node);
-				PopUpDialog.getInstance().show("Name already exists!", "Created logical node instead!");
-			} else {
-				System.out.println(pw.getName());
-				PopUpDialog.getInstance().show("Type mismatch",
-						"Node with same name already exists. Cannot create logical place because of type mismatch: "
-								+ pw.getNodeByName(name).getClass().getSimpleName() + " versus " + this.getClass()
-								.getSimpleName());
+		final Pathway pw = getParent();
+		if (pw != null) {
+			final BiologicalNodeAbstract node = pw.getNodeByName(name);
+			if (pw.containsVertex(this) && node != null && node != this) {
+				if (node.getClass().equals(getClass())) {
+					setLogicalReference(node);
+					PopUpDialog.getInstance().show("Name already exists!", "Created logical node instead!");
+				} else {
+					System.out.println(pw.getName());
+					PopUpDialog.getInstance().show("Type mismatch",
+							"Node with same name already exists. Cannot create logical place because of type mismatch: "
+									+ pw.getNodeByName(name).getClass().getSimpleName() + " versus " + this.getClass()
+									.getSimpleName());
+				}
+				return;
 			}
-			return;
 		}
 		super.setName(FormulaSafety.replace(name));
 	}
