@@ -306,8 +306,8 @@ public class PetriNetSimulation implements ActionListener {
 							// System.out.println(gea.getName());
 							if (gea instanceof BiologicalNodeAbstract) {
 								bna = (BiologicalNodeAbstract) gea;
-								override += ",'_" + bna.getName() + "_" + param.getName() + "'=" +
-										param.getValue().toPlainString();
+								override += ",'_" + bna.getName() + "_" + param.getName() + "'="
+										+ param.getValue().toPlainString();
 							} else {
 								// CHRIS override parameters of edges
 							}
@@ -899,7 +899,7 @@ public class PetriNetSimulation implements ActionListener {
 						compiling = false;
 						waitForServerConnection.start();
 					} else {
-						logAndShow("Compilen was not successful. No executable was generated!");
+						logAndShow("Compiling was not successful. No executable was generated!");
 						compiling = false;
 						stopAction();
 					}

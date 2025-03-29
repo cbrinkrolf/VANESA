@@ -166,7 +166,8 @@ public class SimulationResult {
 			final Series fireTimeS = get(t, SimulationResultController.SIM_FIRE_TIME);
 			final Series delayS = get(t, SimulationResultController.SIM_DELAY);
 			final Series fireS = get(t, SimulationResultController.SIM_FIRE);
-			if (fireTimeS != null && delayS != null && fireS != null) {
+			if (fireTimeS != null && delayS != null && fireS != null && !t.isKnockedOut()) {
+				// TODO dirty hack to exclude knocked out transitions, needs to be improved
 				Double fireTime = fireTimeS.get(0);
 				Double delay = delayS.get(0);
 				int lastIdx = 0;
