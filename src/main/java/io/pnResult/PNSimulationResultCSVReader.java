@@ -69,15 +69,17 @@ public class PNSimulationResultCSVReader extends BaseReader<SimulationResult> {
 					propertyColumnMap.put(header[i], i);
 				} else if (lastDashIndex != -1) {
 					final int firstDashIndex = header[i].indexOf('-');
-					final String bnaName1 = name.substring(0, firstDashIndex);
-					final String bnaName2 = name.substring(firstDashIndex + 1);
-					final BiologicalNodeAbstract bna1 = pathway.getNodeByName(bnaName1);
-					final BiologicalNodeAbstract bna2 = pathway.getNodeByName(bnaName2);
-					if (bna1 != null && bna2 != null) {
-						final BiologicalEdgeAbstract edge = pathway.getEdge(bna1, bna2);
-						if (edge != null) {
-							usedBEAs.add(edge);
-							propertyColumnMap.put(header[i], i);
+					if (firstDashIndex != lastDashIndex) {
+						final String bnaName1 = name.substring(0, firstDashIndex);
+						final String bnaName2 = name.substring(firstDashIndex + 1);
+						final BiologicalNodeAbstract bna1 = pathway.getNodeByName(bnaName1);
+						final BiologicalNodeAbstract bna2 = pathway.getNodeByName(bnaName2);
+						if (bna1 != null && bna2 != null) {
+							final BiologicalEdgeAbstract edge = pathway.getEdge(bna1, bna2);
+							if (edge != null) {
+								usedBEAs.add(edge);
+								propertyColumnMap.put(header[i], i);
+							}
 						}
 					}
 				}

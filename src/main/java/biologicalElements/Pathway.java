@@ -1346,17 +1346,16 @@ public class Pathway implements Cloneable {
 	}
 
 	public void adjustDown(Collection<BiologicalNodeAbstract> nodes) {
-		double maxy = Double.MIN_VALUE;
-		Point2D point;
 		if (nodes.size() > 1) {
-			for (BiologicalNodeAbstract bna : nodes) {
-				point = getGraph().getVertexLocation(bna);
-				if (point.getY() > maxy) {
+			Double maxy = null;
+			for (final BiologicalNodeAbstract bna : nodes) {
+				final Point2D point = getGraph().getVertexLocation(bna);
+				if (maxy == null || point.getY() > maxy) {
 					maxy = point.getY();
 				}
 			}
-			for (BiologicalNodeAbstract bna : nodes) {
-				point = getGraph().getVertexLocation(bna);
+			for (final BiologicalNodeAbstract bna : nodes) {
+				final Point2D point = getGraph().getVertexLocation(bna);
 				point.setLocation(point.getX(), maxy);
 				getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(bna, point);
 			}
@@ -1365,17 +1364,16 @@ public class Pathway implements Cloneable {
 	}
 
 	public void adjustLeft(Collection<BiologicalNodeAbstract> nodes) {
-		double minx = Double.MAX_VALUE;
-		Point2D point;
 		if (nodes.size() > 1) {
-			for (BiologicalNodeAbstract bna : nodes) {
-				point = getGraph().getVertexLocation(bna);
-				if (point.getX() < minx) {
+			Double minx = null;
+			for (final BiologicalNodeAbstract bna : nodes) {
+				final Point2D point = getGraph().getVertexLocation(bna);
+				if (minx == null || point.getX() < minx) {
 					minx = point.getX();
 				}
 			}
-			for (BiologicalNodeAbstract bna : nodes) {
-				point = getGraph().getVertexLocation(bna);
+			for (final BiologicalNodeAbstract bna : nodes) {
+				final Point2D point = getGraph().getVertexLocation(bna);
 				point.setLocation(minx, point.getY());
 				getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(bna, point);
 			}
