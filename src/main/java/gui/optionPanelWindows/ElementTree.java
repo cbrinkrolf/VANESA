@@ -32,7 +32,7 @@ public class ElementTree extends JPanel implements TreeSelectionListener {
 	private DefaultMutableTreeNode root;
 
 	public ElementTree() {
-		setLayout(new MigLayout("ins 0, wrap, fill, debug"));
+		setLayout(new MigLayout("ins 0, wrap, fill"));
 		scrollTree = new JScrollPane();
 		add(scrollTree, "growx, height 200:200:200");
 		final JCheckBox centerPickedCheckbox = new JCheckBox("Center picked element in the viewport");
