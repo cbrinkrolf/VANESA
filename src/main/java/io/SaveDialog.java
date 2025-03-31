@@ -247,15 +247,8 @@ public class SaveDialog {
 	}
 
 	private void writeSBML(final File file) {
-		// create a sbmlOutput object
-		// SBMLoutputNoWS sbmlOutput = new SBMLoutputNoWS(file, new
-		// GraphInstance().getPathway());
-		// if (sbmlOutput.generateSBMLDocument())
-		// JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
-		// sbmlDescription + sbmlOutput.generateSBMLDocument());
-		if (GraphInstance.getPathway().getFile() == null) {
-			GraphInstance.getPathway().setFile(file);
-		}
+		final Pathway pathway = GraphInstance.getPathway();
+		pathway.setFile(file);
 		// CHRIS creation of FileOutputStream overrides file already, even without call
 		// write() method. Document should be generated first, if no errors thrown, then
 		// create FOS and write to file.
