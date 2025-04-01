@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -1381,75 +1382,63 @@ public class Pathway implements Cloneable {
 		saveVertexLocations();
 	}
 
-	public void adjustHorizontalSpace(Collection<BiologicalNodeAbstract> nodes) {
-		double minx = Double.MAX_VALUE;
-		double maxx = Double.MIN_VALUE;
-		HashMap<BiologicalNodeAbstract, Double> map = new HashMap<>();
-		Point2D point;
-		if (nodes.size() > 2) {
-			for (BiologicalNodeAbstract bna : nodes) {
-				point = getGraph().getVertexLocation(bna);
-				if (point.getX() < minx) {
-					minx = point.getX();
-				}
-				if (point.getX() > maxx) {
-					maxx = point.getX();
-				}
-				map.put(bna, point.getX());
+	public void adjustHorizontalSpace(final Collection<BiologicalNodeAbstract> nodes) {
+		if (nodes.size() < 3) {
+			return;
+		}
+		Double minx = null;
+		Double maxx = null;
+		final HashMap<BiologicalNodeAbstract, Double> map = new HashMap<>();
+		for (final BiologicalNodeAbstract bna : nodes) {
+			final Point2D point = getGraph().getVertexLocation(bna);
+			if (minx == null || point.getX() < minx) {
+				minx = point.getX();
 			}
-			List<Double> c = new ArrayList<>(map.values());
-			Collections.sort(c);
-			for (BiologicalNodeAbstract bna : nodes) {
-				int d = c.indexOf(map.get(bna));
-				double newx;
-				if (d == 0) {
-					newx = minx;
-				} else if (d == nodes.size() - 1) {
-					newx = maxx;
-				} else {
-					newx = minx + d * ((Math.abs(maxx - minx)) / (nodes.size() - 1));
-				}
-				point = getGraph().getVertexLocation(bna);
+			if (maxx == null || point.getX() > maxx) {
+				maxx = point.getX();
+			}
+			map.put(bna, point.getX());
+		}
+		final List<Double> c = map.values().stream().sorted().collect(Collectors.toList());
+		for (final BiologicalNodeAbstract bna : nodes) {
+			int d = c.indexOf(map.get(bna));
+			if (d > 0 && d < nodes.size() - 1) {
+				final double newx = minx + d * ((Math.abs(maxx - minx)) / (nodes.size() - 1));
+				final Point2D point = getGraph().getVertexLocation(bna);
 				point.setLocation(newx, point.getY());
 				getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(bna, point);
 			}
-			saveVertexLocations();
 		}
+		saveVertexLocations();
 	}
 
-	public void adjustVerticalSpace(Collection<BiologicalNodeAbstract> nodes) {
-		double miny = Double.MAX_VALUE;
-		double maxy = Double.MIN_VALUE;
-		HashMap<BiologicalNodeAbstract, Double> map = new HashMap<>();
-		Point2D point;
-		if (nodes.size() > 2) {
-			for (BiologicalNodeAbstract bna : nodes) {
-				point = getGraph().getVertexLocation(bna);
-				if (point.getY() < miny) {
-					miny = point.getY();
-				}
-				if (point.getY() > maxy) {
-					maxy = point.getY();
-				}
-				map.put(bna, point.getY());
+	public void adjustVerticalSpace(final Collection<BiologicalNodeAbstract> nodes) {
+		if (nodes.size() < 3) {
+			return;
+		}
+		Double miny = null;
+		Double maxy = null;
+		final HashMap<BiologicalNodeAbstract, Double> map = new HashMap<>();
+		for (final BiologicalNodeAbstract bna : nodes) {
+			final Point2D point = getGraph().getVertexLocation(bna);
+			if (miny == null || point.getY() < miny) {
+				miny = point.getY();
 			}
-			List<Double> c = new ArrayList<>(map.values());
-			Collections.sort(c);
-			for (BiologicalNodeAbstract bna : nodes) {
-				int d = c.indexOf(map.get(bna));
-				double newy;
-				if (d == 0) {
-					newy = miny;
-				} else if (d == nodes.size() - 1) {
-					newy = maxy;
-				} else {
-					newy = miny + d * ((Math.abs(maxy - miny)) / (nodes.size() - 1));
-				}
-				point = getGraph().getVertexLocation(bna);
+			if (maxy == null || point.getY() > maxy) {
+				maxy = point.getY();
+			}
+			map.put(bna, point.getY());
+		}
+		final List<Double> c = map.values().stream().sorted().collect(Collectors.toList());
+		for (final BiologicalNodeAbstract bna : nodes) {
+			int d = c.indexOf(map.get(bna));
+			if (d > 0 && d < nodes.size() - 1) {
+				final double newy = miny + d * ((Math.abs(maxy - miny)) / (nodes.size() - 1));
+				final Point2D point = getGraph().getVertexLocation(bna);
 				point.setLocation(point.getX(), newy);
 				getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(bna, point);
 			}
-			saveVertexLocations();
 		}
+		saveVertexLocations();
 	}
 }
