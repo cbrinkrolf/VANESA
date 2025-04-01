@@ -2,11 +2,11 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +17,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -35,10 +34,8 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.gui.Parameter;
-import util.MyJFormattedTextField;
-import util.MyNumberFormat;
 
-public class SimMenu extends JFrame implements ActionListener, ItemListener {
+public class SimMenu extends JFrame implements ItemListener {
 	private static final long serialVersionUID = 7509509909627902082L;
 	/**
 	 * Solver for 1.20.0 stable release
@@ -73,14 +70,14 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	private final JPanel parametrizedPanel = new JPanel();
 	private final JPanel devOptionsPanel = new JPanel();
 
-	private final MyJFormattedTextField startTxt;
-	private final MyJFormattedTextField stopTxt;
-	private final MyJFormattedTextField intervalsTxt;
+	private final JDecimalTextField startTxt;
+	private final JDecimalTextField stopTxt;
+	private final JIntTextField intervalsTxt;
 	private final JLabel solversLbl = new JLabel("Solver:");
 
 	private final JComboBox<String> solvers = new JComboBox<>();
 	private final JLabel toleranceLbl = new JLabel("Tolerance:");
-	private final MyJFormattedTextField tolerance;
+	private final JDecimalTextField tolerance;
 	private final JLabel simLibLbl = new JLabel("Simulation library:");
 	private final JComboBox<String> simLibs = new JComboBox<>();
 	private int lastLibsIdx = 0;
@@ -88,7 +85,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	private final JCheckBox forceRebuild = new JCheckBox("force rebuild");
 
 	private final JLabel seedLbl = new JLabel("Seed:");
-	private final MyJFormattedTextField seedTxt;
+	private final JIntTextField seedTxt;
 	private final JCheckBox seedChk = new JCheckBox("random");
 
 	private final JCheckBox advancedOptions = new JCheckBox("advanced options");
@@ -103,9 +100,9 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	private final JComboBox<String> selectedNodeBox = new JComboBox<>();
 	private final JComboBox<String> parameterBox = new JComboBox<>();
 
-	private final MyJFormattedTextField from;
-	private final MyJFormattedTextField to;
-	private final MyJFormattedTextField intervalSize;
+	private final JDecimalTextField from;
+	private final JDecimalTextField to;
+	private final JDecimalTextField intervalSize;
 	private final JTextField numbers;
 
 	private String parameterName;
@@ -115,14 +112,12 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	private final JCheckBox useCustomExecutable = new JCheckBox("use executable:");
 	private final JTextField executableTxt = new JTextField();
 	private final JCheckBox useCustomEqPerFile = new JCheckBox("Eq. per file:");
-	private final MyJFormattedTextField eqTxt;
+	private final JIntTextField eqTxt;
 
 	private final List<String> pnLibVersions;
 	private List<File> customLibs;
 
 	private final Pathway pw;
-
-	private boolean silentMode = true;
 
 	public SimMenu(Pathway pw, ActionListener listener, List<String> pnLibVersions, List<File> customLibs) {
 		this.pw = pw;
@@ -135,26 +130,22 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		stop.setActionCommand("stop");
 		stop.addActionListener(listener);
 
-		startTxt = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-		startTxt.setText("0.0");
+		startTxt = new JDecimalTextField();
+		startTxt.setValue(new BigDecimal("0.0"));
 		startTxt.setColumns(5);
-		startTxt.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 		startTxt.setEnabled(false);
 
-		stopTxt = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-		stopTxt.setText("1.0");
+		stopTxt = new JDecimalTextField();
+		stopTxt.setValue(new BigDecimal("1.0"));
 		stopTxt.setColumns(5);
-		stopTxt.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 
-		intervalsTxt = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
-		intervalsTxt.setText("500");
+		intervalsTxt = new JIntTextField();
+		intervalsTxt.setValue(500);
 		intervalsTxt.setColumns(5);
-		intervalsTxt.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 
-		seedTxt = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
-		seedTxt.setText("42");
+		seedTxt = new JIntTextField();
+		seedTxt.setValue(42);
 		seedTxt.setColumns(5);
-		seedTxt.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 
 		textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 
@@ -178,10 +169,9 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 		toleranceLbl.setToolTipText("numerical tolerance of solver, default: 1E-8");
 
-		tolerance = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-		tolerance.setText("0.00000001");
+		tolerance = new JDecimalTextField();
+		tolerance.setValue(new BigDecimal("0.00000001"));
 		tolerance.setColumns(10);
-		tolerance.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 		tolerance.setEnabled(true);
 
 		fillLibsComboBox();
@@ -219,22 +209,19 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		selectedNodeBox.addItemListener(this);
 		parameterBox.addItemListener(this);
 
-		from = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-		from.setText("0.0");
+		from = new JDecimalTextField();
+		from.setValue(new BigDecimal("0.0"));
 		from.setColumns(5);
-		from.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 		from.setEnabled(true);
 
-		to = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-		to.setText("0.0");
+		to = new JDecimalTextField();
+		to.setValue(new BigDecimal("0.0"));
 		to.setColumns(5);
-		to.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 		to.setEnabled(true);
 
-		intervalSize = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-		intervalSize.setText("0.1");
+		intervalSize = new JDecimalTextField();
+		intervalSize.setValue(new BigDecimal("0.1"));
 		intervalSize.setColumns(5);
-		intervalSize.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 		intervalSize.setEnabled(true);
 
 		numbers = new JTextField();
@@ -256,10 +243,9 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		useCustomEqPerFile.setToolTipText(
 				"override number of equations per generated file, larger number will result in less files generated");
 		useCustomEqPerFile.addActionListener(e -> revalidateDevOptionsPanel());
-		eqTxt = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
-		eqTxt.setText("500");
+		eqTxt = new JIntTextField();
+		eqTxt.setValue(500);
 		eqTxt.setColumns(5);
-		eqTxt.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 
 		JPanel controlsPanel = new JPanel();
 		controlsPanel.add(start);
@@ -294,7 +280,6 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		pack();
 		setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		setVisible(true);
-		silentMode = false;
 	}
 
 	private void revalidateParametrizedPanel() {
@@ -478,31 +463,27 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		pack();
 	}
 
-	public double getStartValue() {
-		Number number = (Number) startTxt.getValue();
-		return number != null ? number.doubleValue() : 0.0;
+	public BigDecimal getStartValue() {
+		return startTxt.getBigDecimalValue(BigDecimal.ZERO);
 	}
 
-	public double getStopValue() {
-		Number number = (Number) stopTxt.getValue();
-		return number != null ? number.doubleValue() : 1.0;
+	public BigDecimal getStopValue() {
+		return stopTxt.getBigDecimalValue(BigDecimal.ONE);
 	}
 
 	public int getIntervals() {
-		Number number = (Number) intervalsTxt.getValue();
-		return number != null ? number.intValue() : 500;
+		return intervalsTxt.getValue(500);
 	}
 
 	public String getSolver() {
 		return (String) solvers.getSelectedItem();
 	}
 
-	public double getTolerance() {
-		Number number = (Number) tolerance.getValue();
-		return number != null ? number.doubleValue() : 0.00000001;
+	public BigDecimal getTolerance() {
+		return tolerance.getBigDecimalValue(new BigDecimal("0.00000001"));
 	}
 
-	public void setCustomLibs(List<File> libs) {
+	public void setCustomLibs(final List<File> libs) {
 		customLibs = libs;
 		fillLibsComboBox();
 	}
@@ -553,31 +534,12 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		if (e.getItem() instanceof JCheckBox) {
-			JCheckBox box = (JCheckBox) e.getItem();
-			int i = Integer.parseInt(box.getActionCommand());
-			if (i >= 0) {
-				pw.getPetriPropertiesNet().getSimResController().getAll().get(i).setActive(box.isSelected());
-				if (!silentMode) {
-					MainWindow.getInstance().updateSimulationResultView();
-				}
-			}
-
-		} else if (e.getSource() == selectedNodeBox) {
+		if (e.getSource() == selectedNodeBox) {
 			selectedNode = pw.getNodeByName(selectedNodeBox.getSelectedItem() + "");
 			fillParameterComboBox();
 		} else if (e.getSource() == parameterBox) {
 			fillTextFields();
 			parameterName = parameterBox.getSelectedItem() + "";
-		}
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if ("advancedOptions".equals(e.getActionCommand())) {
-		} else if ("parameterized".equals(e.getActionCommand())) {
-		} else if ("seed".equals(e.getActionCommand())) {
-		} else if ("nodeSelected".equals(e.getActionCommand())) {
 		}
 	}
 
@@ -597,31 +559,30 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		return parameterNameShort;
 	}
 
-	public List<Double> getParameterValues() {
-		// compute values
-		List<Double> parameterValues = new ArrayList<>();
+	public List<BigDecimal> getParameterValues() {
+		final List<BigDecimal> parameterValues = new ArrayList<>();
 		if (numbers.getText().trim().length() > 0) {
-			String[] num = numbers.getText().split(";");
+			final String[] num = numbers.getText().split(";");
 			if (num.length > 0) {
-				for (String s : num) {
+				for (final String s : num) {
 					try {
-						parameterValues.add(Double.parseDouble(s));
+						parameterValues.add(new BigDecimal(s));
 					} catch (Exception e) {
 						PopUpDialog.getInstance().show("Number error", "Given number is not valid: " + s);
 					}
 				}
 			}
 		} else {
-			double start = Double.parseDouble(from.getText().trim());
-			double stop = Double.parseDouble(to.getText().trim());
-			if (stop < start) {
+			final BigDecimal start = from.getBigDecimalValue(BigDecimal.ZERO);
+			final BigDecimal stop = to.getBigDecimalValue(BigDecimal.ZERO);
+			if (stop.compareTo(start) < 0) {
 				return parameterValues;
 			}
 			parameterValues.add(start);
-			double stepsize = Double.parseDouble(intervalSize.getText().trim());
-			double sum = start;
-			while (sum + stepsize < stop) {
-				sum += stepsize;
+			final BigDecimal stepSize = intervalSize.getBigDecimalValue(new BigDecimal("0.1"));
+			BigDecimal sum = start;
+			while (sum.add(stepSize).compareTo(stop) < 0) {
+				sum = sum.add(stepSize);
 				parameterValues.add(sum);
 			}
 			parameterValues.add(stop);

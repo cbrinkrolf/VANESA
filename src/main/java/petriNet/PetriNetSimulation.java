@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;
 import java.nio.file.Path;
@@ -154,9 +155,9 @@ public class PetriNetSimulation implements ActionListener {
 			}
 		}
 		stopped = false;
-		final double stopTime = menu.getStopValue();
+		final BigDecimal stopTime = menu.getStopValue();
 		final int intervals = menu.getIntervals();
-		final double tolerance = menu.getTolerance();
+		final BigDecimal tolerance = menu.getTolerance();
 
 		if (menu.isUseCustomExecutableSelected()) {
 			customExecutable = menu.getCustomExecutableName();
@@ -196,10 +197,10 @@ public class PetriNetSimulation implements ActionListener {
 
 		String message = "Simulation properties: stop=" + stopTime + ", intervals=" + intervals + ", integrator="
 				+ menu.getSolver() + ", tolerance=" + tolerance + ", seed=" + seed + ", forced rebuild="
-				+ menu.isForceRebuild() + ", use short model name=" + String.valueOf(shortModelName)
-				+ ", override equations per file=" + String.valueOf(overrideEqPerFile);
+				+ menu.isForceRebuild() + ", use short model name=" + shortModelName
+				+ ", override equations per file=" + overrideEqPerFile;
 		if (overrideEqPerFile) {
-			message += ", equations per file=" + String.valueOf(eqPerFile);
+			message += ", equations per file=" + eqPerFile;
 		}
 		logAndShow(message);
 
@@ -279,7 +280,7 @@ public class PetriNetSimulation implements ActionListener {
 		w.unBlurUI();
 	}
 
-	private Thread getSimulationThread(double stopTime, int intervals, double tolerance, int seed,
+	private Thread getSimulationThread(BigDecimal stopTime, int intervals, BigDecimal tolerance, int seed,
 			String overrideParameterized, int port) {
 		return new Thread() {
 
@@ -293,21 +294,17 @@ public class PetriNetSimulation implements ActionListener {
 						override += "\"";
 					}
 
-					override += "-override=outputFormat=ia,stopTime=" + stopTime + ",stepSize=" + stopTime / intervals
-							+ ",tolerance=" + tolerance + ",seed=" + seed;
+					override += "-override=outputFormat=ia,stopTime=" + stopTime.toPlainString() + ",stepSize=" +
+							stopTime.divide(BigDecimal.valueOf(intervals), RoundingMode.HALF_UP).toPlainString()
+							+ ",tolerance=" + tolerance.toPlainString() + ",seed=" + seed;
 					System.out.println("parameter changed: " + flags.isParameterChanged());
 					if (flags.isParameterChanged()) {
-						GraphElementAbstract gea;
-						BiologicalNodeAbstract bna;
 						for (Parameter param : pw.getChangedParameters().keySet()) {
-							// System.out.println(param.getName());
-							// System.out.println(param.getValue());
-							gea = pw.getChangedParameters().get(param);
-							// System.out.println(gea.getName());
+							GraphElementAbstract gea = pw.getChangedParameters().get(param);
 							if (gea instanceof BiologicalNodeAbstract) {
-								bna = (BiologicalNodeAbstract) gea;
-								override += ",'_" + bna.getName() + "_" + param.getName() + "'="
-										+ param.getValue().toPlainString();
+								BiologicalNodeAbstract bna = (BiologicalNodeAbstract) gea;
+								override += ",'_" + bna.getName() + "_" + param.getName() + "'=" +
+										param.getValue().toPlainString();
 							} else {
 								// CHRIS override parameters of edges
 							}
@@ -323,7 +320,6 @@ public class PetriNetSimulation implements ActionListener {
 					}
 
 					if (flags.isBoundariesChanged()) {
-						// System.out.println("chaaaaanged");
 						Boundary b;
 						for (Place p : pw.getChangedBoundaries().keySet()) {
 							b = pw.getChangedBoundaries().get(p);
@@ -1005,8 +1001,7 @@ public class PetriNetSimulation implements ActionListener {
 				flags = pw.getChangedFlags("petriNetSim");
 				BiologicalNodeAbstract bna = menu.getSelectedNode();
 				String param = menu.getParameterName();
-				List<Double> list = menu.getParameterValues();
-				double value;
+				List<BigDecimal> list = menu.getParameterValues();
 				PopUpDialog.getInstance().show("Parameterized simulation", "Parameters to be simulated:" + list.size());
 				if (list.isEmpty()) {
 					return;
@@ -1024,44 +1019,41 @@ public class PetriNetSimulation implements ActionListener {
 				// }
 				// (HashMap<Parameter, GraphElementAbstract>)
 				// DeepObjectCopy.clone(pw.getChangedParameters());
-				// System.out.println("parmameter size org: "+parameters.size());
-				String override;
-				Place p;
 				this.menu.started();
 				for (int i = 0; i < list.size(); i++) {
-					override = "";
+					String override = "";
 					// pw.setChangedBoundaries(boundaries);
 					// pw.setChangedInitialValues(initialValues);
 					// pw.setChangedParameters(parameters);
 					// System.out.println("--------------parameter size: "+parameters.size());
 
-					value = list.get(i);
+					final BigDecimal value = list.get(i);
 					simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
-							+ System.nanoTime() + "_" + value;
+							+ System.nanoTime() + "_" + value.toPlainString();
 
 					System.out.println(value);
 
 					if (bna instanceof Place) {
-						p = (Place) bna;
+						final Place p = (Place) bna;
 						switch (param) {
 						case "token min":
 							// flags.setBoundariesChanged(true);
 							// b = new Boundary();
 							// b.setLowerBoundary(value);
 							// pw.getChangedBoundaries().put((Place) bna, b);
-							override += ",'" + p.getName() + "'.min" + getMarksOrTokens(p) + "=" + value;
+							override += ",'" + p.getName() + "'.min" + getMarksOrTokens(p) + "=" + value.toPlainString();
 							break;
 						case "token max":
 							// flags.setBoundariesChanged(true);
 							// b = new Boundary();
 							// b.setUpperBoundary(value);
 							// pw.getChangedBoundaries().put((Place) bna, b);
-							override += ",'" + p.getName() + "'.max" + getMarksOrTokens(p) + "=" + value;
+							override += ",'" + p.getName() + "'.max" + getMarksOrTokens(p) + "=" + value.toPlainString();
 							break;
 						case "token start":
 							// flags.setInitialValueChanged(true);
 							// pw.getChangedInitialValues().put((Place) bna, value);
-							override += ",'" + p.getName() + "'.start" + getMarksOrTokens(p) + "=" + value;
+							override += ",'" + p.getName() + "'.start" + getMarksOrTokens(p) + "=" + value.toPlainString();
 							break;
 						}
 					} else if (bna instanceof Transition) {
@@ -1069,7 +1061,7 @@ public class PetriNetSimulation implements ActionListener {
 							// Parameter p = bna.getParameter(param);
 							// flags.setParameterChanged(true);
 							// pw.getChangedParameters().put(new Parameter(param, value, p.getUnit()), bna);
-							override += ",'_" + bna.getName() + "_" + param + "'=" + value;
+							override += ",'_" + bna.getName() + "_" + param + "'=" + value.toPlainString();
 						} else {
 							PopUpDialog.getInstance().show("Error",
 									"The parameter for parameterized simulation could not be found: " + param);
@@ -1079,28 +1071,26 @@ public class PetriNetSimulation implements ActionListener {
 					}
 					// rounding name up to 4 decimals
 					pw.getPetriPropertiesNet().getSimResController().get(simId)
-							.setName(bna.getName() + "_" + param + "=" + Math.round(value * 1000) / 1000.0 + "");
-					this.logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
+							.setName(bna.getName() + "_" + param + "=" + (Math.round(value.doubleValue() * 1000) / 1000.0));
+					logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
 					menu.clearText();
 					menu.addText(logMessage.toString());
-					this.runOMCIA(port++, override);
+					runOMCIA(port++, override);
 
 					try {
-						Thread.sleep(100);
-						while (!stopped) {
+						do {
 							Thread.sleep(100);
-						}
+						} while (!stopped);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
 				System.out.println("eeeeeeend of param sim");
 			}
-
 		} else if (event.getActionCommand().equals("stop")) {
 			System.out.println("stopped by clicking stop");
 			logMessage.append("Compiling / Simulation stopped by user!");
-			this.stopAction();
+			stopAction();
 		}
 	}
 
