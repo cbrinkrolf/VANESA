@@ -4,13 +4,13 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
@@ -163,11 +163,11 @@ public class MOoutput extends BaseWriter<Pathway> {
 		// globalSeed influences stochastic transitions and conflict solving strategy:
 		// probability
 
-		String omitOpenModelicaAnnimations = "animateHazardFunc = false, animateMarking = false, animatePlace = false, animatePutFireTime = false, animateSpeed = false, animateTIarc = false, animateTransition = false, animateWeightTIarc = false,";
+		String omitOpenModelicaAnimations = "animateHazardFunc = false, animateMarking = false, animatePlace = false, animatePutFireTime = false, animateSpeed = false, animateTIarc = false, animateTransition = false, animateWeightTIarc = false,";
 
-		sb.append("parameter Integer seed = " + seed + ";").append(ENDL);
+		sb.append("parameter Integer seed = ").append(seed).append(";").append(ENDL);
 		sb.append(INDENT).append("inner ").append(PNlibSettings).append(" settings(")
-				.append(omitOpenModelicaAnnimations).append("showTokenFlow = true, globalSeed=seed)").append(ENDL)
+				.append(omitOpenModelicaAnimations).append("showTokenFlow = true, globalSeed=seed)").append(ENDL)
 				.append("annotation(Placement(visible=true, transformation(origin={").append(minX - 30).append(", ")
 				.append(maxY + 30).append("}, extent={{-20, -20}, {20, 20}}, rotation=0)));").append(ENDL);
 		// }
@@ -262,53 +262,32 @@ public class MOoutput extends BaseWriter<Pathway> {
 	}
 
 	private void buildNodes(Pathway pw, List<BiologicalNodeAbstract> nodes) {
-		String biologicalElement;
-		int in;
-		int out;
-		Iterator<BiologicalNodeAbstract> refIt;
-		BiologicalNodeAbstract node;
-		// String attr;
-		Place place;
-		String start;
-		String min;
-		String max;
-		StochasticTransition st;
-		List<Integer> events;
-		List<Double> probs;
-		DiscreteTransition dt;
-		ContinuousTransition ct;
-		String speed;
-		String delay;
-		Transition t;
-		StringBuilder attr = new StringBuilder();
-		for (BiologicalNodeAbstract bna : nodes) {
+		final StringBuilder attr = new StringBuilder();
+		for (final BiologicalNodeAbstract bna : nodes) {
 			attr.setLength(0);
-
 			if (!bna.isLogical() && bna instanceof PNNode) {
-				biologicalElement = bna.getBiologicalElement();
+				final String biologicalElement = bna.getBiologicalElement();
 				// double km = Double.NaN, kcat = Double.NaN;
 				// String ec = "";
-
-				in = pw.getGraph().getJungGraph().getInEdges(bna).size();
-				out = pw.getGraph().getJungGraph().getOutEdges(bna).size();
-
+				int in = pw.getGraph().getJungGraph().getInEdges(bna).size();
+				int out = pw.getGraph().getJungGraph().getOutEdges(bna).size();
 				if (bna.getRefs().size() > 0) {
-					refIt = bna.getRefs().iterator();
-					while (refIt.hasNext()) {
-						node = refIt.next();
+					for (final BiologicalNodeAbstract node : bna.getRefs()) {
 						in += pw.getGraph().getJungGraph().getInEdges(node).size();
 						out += pw.getGraph().getJungGraph().getOutEdges(node).size();
 					}
-
 				}
 				if (biologicalElement.equals(Elementdeclerations.discretePlace)) {
-					place = (Place) bna;
-					attr.append("startTokens=" + (int) place.getTokenStart() + ", minTokens="
-							+ (int) place.getTokenMin() + ", maxTokens=" + (int) place.getTokenMax());
+					final Place place = (Place) bna;
+					attr.append("startTokens=").append((int) place.getTokenStart()).append(", minTokens=").append(
+							(int) place.getTokenMin()).append(", maxTokens=").append((int) place.getTokenMax());
 					// places = places.concat(getPlaceString(getModelicaString(place), bna, atr, in,
 					// out));
 				} else if (biologicalElement.equals(Elementdeclerations.continuousPlace)) {
-					place = (Place) bna;
+					final Place place = (Place) bna;
+					final String start;
+					final String min;
+					final String max;
 					if (colored) {
 						start = "{0.0, " + place.getTokenStart() + "}";
 						min = "{" + place.getTokenMin() + ", " + place.getTokenMin() + "}";
@@ -318,20 +297,19 @@ public class MOoutput extends BaseWriter<Pathway> {
 						min = String.valueOf(place.getTokenMin());
 						max = String.valueOf(place.getTokenMax());
 					}
-
 					// CHRIS units
-					attr.append("startMarks(final unit=\"mmol\")=" + start + " ,minMarks(final unit=\"mmol\")=" + min
-							+ " ,maxMarks(final unit=\"mmol\")=" + max + " ,t(final unit=\"mmol\")");
+					attr.append("startMarks(final unit=\"mmol\")=").append(start);
+					attr.append(" ,minMarks(final unit=\"mmol\")=").append(min);
+					attr.append(" ,maxMarks(final unit=\"mmol\")=").append(max);
+					attr.append(" ,t(final unit=\"mmol\")");
 					if (place.getConflictingOutEdges().size() > 1) {
-
 						// priority is default
 						if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PROB) {
 							attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
-							attr.append(", enablingProbOut={" + this.outProb.get(place.getName()) + "}");
+							attr.append(", enablingProbOut={").append(outProb.get(place.getName())).append("}");
 						} else if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PRIO) {
-							attr.append(", enablingPrioOut={" + this.outPrio.get(place.getName()) + "}");
+							attr.append(", enablingPrioOut={").append(outPrio.get(place.getName())).append("}");
 						}
-						// System.out.println(atr);
 					}
 					// places =
 					// places.concat(getPlaceString(getModelicaString(place),
@@ -339,9 +317,8 @@ public class MOoutput extends BaseWriter<Pathway> {
 					// System.out.println(place.getName() + " conflicting edges:
 					// " + place.getConflictingOutEdges().size());
 				} else if (biologicalElement.equals(Elementdeclerations.stochasticTransition)) {
-
-					st = (StochasticTransition) bna;
-					attr.append("distributionType = " + distrPackage);
+					final StochasticTransition st = (StochasticTransition) bna;
+					attr.append("distributionType = ").append(distrPackage);
 					switch (st.getDistribution()) {
 					case StochasticDistribution.distributionExponential:
 						attr.append("Exponential");
@@ -359,10 +336,14 @@ public class MOoutput extends BaseWriter<Pathway> {
 						attr.append("Discrete");
 						break;
 					}
-					attr.append(", h = " + st.getH() + ", a = " + st.getA() + ", b = " + st.getB() + ", c = "
-							+ st.getC() + ", mu = " + st.getMu() + ", sigma = " + st.getSigma() + ", ");
-					attr.append("E = {");
-					events = st.getEvents();
+					attr.append(", h = ").append(st.getH());
+					attr.append(", a = ").append(st.getA());
+					attr.append(", b = ").append(st.getB());
+					attr.append(", c = ").append(st.getC());
+					attr.append(", mu = ").append(st.getMu());
+					attr.append(", sigma = ").append(st.getSigma());
+					attr.append(", E = {");
+					final List<Integer> events = st.getEvents();
 					for (int i = 0; i < events.size(); i++) {
 						if (i > 0) {
 							attr.append(", ");
@@ -370,7 +351,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 						attr.append(events.get(i));
 					}
 					attr.append("}, P = {");
-					probs = st.getProbabilities();
+					final List<Double> probs = st.getProbabilities();
 					for (int i = 0; i < probs.size(); i++) {
 						if (i > 0) {
 							attr.append(", ");
@@ -378,44 +359,36 @@ public class MOoutput extends BaseWriter<Pathway> {
 						attr.append(probs.get(i));
 					}
 					attr.append("}");
-
 					// places = places.concat(getTransitionString(bna,
 					// getModelicaString(t), bna.getName(), atr, in, out));
-
 				} else if (biologicalElement.equals(Elementdeclerations.discreteTransition)) {
-
-					dt = (DiscreteTransition) bna;
-					delay = this.replaceAll(dt.getDelay(), dt.getParameters(), dt.getName(), false);
-					attr.append("delay=" + delay);
+					final DiscreteTransition dt = (DiscreteTransition) bna;
+					final String delay = replaceAll(dt.getDelay(), dt.getParameters(), dt.getName(), false);
+					attr.append("delay=").append(delay);
 					// places = places.concat(getTransitionString(bna,
 					// getModelicaString(t), bna.getName(), atr, in, out));
-
 				} else if (biologicalElement.equals(Elementdeclerations.continuousTransition)) {
-					ct = (ContinuousTransition) bna;
+					final ContinuousTransition ct = (ContinuousTransition) bna;
 					// System.out.println(ct.getMaximalSpeed());
-					speed = this.replaceAll(ct.getMaximalSpeed(), ct.getParameters(), ct.getName(), false);
-					// System.out.println(speed);
+					final String speed = replaceAll(ct.getMaximalSpeed(), ct.getParameters(), ct.getName(), false);
 					// if (ct.isKnockedOut()) {
 					// attr.append("maximumSpeed(final unit=\"mmol/min\")=0/*" + speed + "*/");
 					// } else {
-					attr.append("maximumSpeed=" + speed);
+					attr.append("maximumSpeed=").append(speed);
 					// }
-
-					// System.out.println("atr");
 					// places = places.concat(getTransitionString(bna,
 					// getModelicaString(t), bna.getName(), atr, in, out));
 				}
 
 				if (bna instanceof Place) {
-
 				} else if (bna instanceof Transition) {
-					t = (Transition) bna;
+					final Transition t = (Transition) bna;
 					String firingCondition = t.getFiringCondition();
 					if (t.isKnockedOut()) {
 						firingCondition = "false";
 					}
 					if (t.getFiringCondition().length() > 0) {
-						attr.append(", firingCon=" + firingCondition);
+						attr.append(", firingCon=").append(firingCondition);
 					}
 				}
 				componentsSB.append(getTransitionString(pw, bna, getModelicaString(bna), bna.getName(), attr, in, out));
@@ -429,40 +402,41 @@ public class MOoutput extends BaseWriter<Pathway> {
 		StringBuilder weight = new StringBuilder();
 		for (BiologicalEdgeAbstract bea : pw.getAllEdgesSortedByID()) {
 			weight.setLength(0);
-			String fromString = vertex2name.get(this.resolveReference(bea.getFrom()));
-			String toString = vertex2name.get(this.resolveReference(bea.getTo()));
+			String fromString = vertex2name.get(resolveReference(bea.getFrom()));
+			String toString = vertex2name.get(resolveReference(bea.getTo()));
 			if (bea instanceof PNArc) {
 				PNArc e = (PNArc) bea;
 				// Edge Place -> Transition
 				if (e.getFrom() instanceof Place) {
 					if (colored) {
 						if (marked.contains(e.getFrom())) {
-							weight.append("g1('" + resolveReference(e.getFrom()).getName() + "'.color)");
+							weight.append("g1('").append(resolveReference(e.getFrom()).getName()).append("'.color)");
 						} else {
-							weight.append("{0, " + this.getModelicaEdgeFunction(e) + "}/*" + fromString + "*/");
+							weight.append("{0, ").append(getModelicaEdgeFunction(e)).append("}/*").append(fromString)
+									.append("*/");
 						}
 					} else {
-						weight.append(this.getModelicaEdgeFunction(e));
+						weight.append(getModelicaEdgeFunction(e));
 					}
 
-					if (this.inWeights.containsKey(toString)) {
-						this.inWeights.put(toString, inWeights.get(toString) + ", " + weight);
+					if (inWeights.containsKey(toString)) {
+						inWeights.put(toString, inWeights.get(toString) + ", " + weight);
 					} else {
-						this.inWeights.put(toString, weight.toString());
+						inWeights.put(toString, weight.toString());
 					}
 
 					if (!(e.getTo() instanceof ContinuousTransition)) {
 						int prio = e.getPriority();
-						if (this.outPrio.containsKey(fromString)) {
-							this.outPrio.put(fromString, outPrio.get(fromString) + ", " + prio);
+						if (outPrio.containsKey(fromString)) {
+							outPrio.put(fromString, outPrio.get(fromString) + ", " + prio);
 						} else {
-							this.outPrio.put(fromString, String.valueOf(prio));
+							outPrio.put(fromString, String.valueOf(prio));
 						}
 						double prob = e.getProbability();
-						if (this.outProb.containsKey(fromString)) {
-							this.outProb.put(fromString, outProb.get(fromString) + ", " + prob);
+						if (outProb.containsKey(fromString)) {
+							outProb.put(fromString, outProb.get(fromString) + ", " + prob);
 						} else {
-							this.outProb.put(fromString, String.valueOf(prob));
+							outProb.put(fromString, String.valueOf(prob));
 						}
 					}
 
@@ -535,27 +509,27 @@ public class MOoutput extends BaseWriter<Pathway> {
 
 	private String createInhibitoryArc(Pathway pw, String fromString, String toString, PNArc e) {
 		inhibitCount++;
-		String result = INDENT + PNlibIA + " inhibitorArc" + inhibitCount + "(testValue="
-				+ this.getModelicaEdgeFunction(e) + ");" + ENDL;
-		edgesSB.append(INDENT + "connect('" + fromString + "'.outTransition["
-				+ (actualOutEdges.get(fromString).indexOf(e.getTo()) + 1) + "]," + "inhibitorArc" + inhibitCount
-				+ ".inPlace);" + ENDL);
-		edgesSB.append(INDENT + "connect(" + "inhibitorArc" + inhibitCount + ".outTransition,'" + toString
-				+ "'.inPlaces[" + (actualInEdges.get(toString).indexOf(e.getFrom()) + 1) + "]) "
-				+ this.getFromToAnnotation(pw, e.getFrom(), e.getTo()) + ";" + ENDL);
+		String result = INDENT + PNlibIA + " inhibitorArc" + inhibitCount + "(testValue=" + getModelicaEdgeFunction(e)
+				+ ");" + ENDL;
+		edgesSB.append(INDENT + "connect('").append(fromString).append("'.outTransition[").append(
+				actualOutEdges.get(fromString).indexOf(e.getTo()) + 1).append("],").append("inhibitorArc").append(
+				inhibitCount).append(".inPlace);").append(ENDL);
+		edgesSB.append(INDENT + "connect(" + "inhibitorArc").append(inhibitCount).append(".outTransition,'").append(
+				toString).append("'.inPlaces[").append(actualInEdges.get(toString).indexOf(e.getFrom()) + 1).append(
+				"]) ").append(getFromToAnnotation(pw, e.getFrom(), e.getTo())).append(";").append(ENDL);
 		return result;
 	}
 
 	private String createTestArc(Pathway pw, String fromString, String toString, PNArc e) {
 		testArcCount++;
-		String result = INDENT + PNlibTA + " testArc" + testArcCount + "(testValue=" + this.getModelicaEdgeFunction(e)
-				+ ");" + ENDL;
-		edgesSB.append(INDENT + "connect('" + fromString + "'.outTransition["
-				+ (actualOutEdges.get(fromString).indexOf(e.getTo()) + 1) + "]," + "testArc" + testArcCount
-				+ ".inPlace);" + ENDL);
-		edgesSB.append(INDENT + "connect(" + "testArc" + testArcCount + ".outTransition,'" + toString + "'.inPlaces["
-				+ (actualInEdges.get(toString).indexOf(e.getFrom()) + 1) + "]) "
-				+ this.getFromToAnnotation(pw, e.getFrom(), e.getTo()) + ";" + ENDL);
+		String result = INDENT + PNlibTA + " testArc" + testArcCount + "(testValue=" + getModelicaEdgeFunction(e) + ");"
+				+ ENDL;
+		edgesSB.append(INDENT + "connect('").append(fromString).append("'.outTransition[").append(
+				actualOutEdges.get(fromString).indexOf(e.getTo()) + 1).append("],").append("testArc").append(
+				testArcCount).append(".inPlace);").append(ENDL);
+		edgesSB.append(INDENT + "connect(" + "testArc").append(testArcCount).append(".outTransition,'").append(toString)
+				.append("'.inPlaces[").append(actualInEdges.get(toString).indexOf(e.getFrom()) + 1).append("]) ")
+				.append(getFromToAnnotation(pw, e.getFrom(), e.getTo())).append(";").append(ENDL);
 		return result;
 	}
 
@@ -574,14 +548,8 @@ public class MOoutput extends BaseWriter<Pathway> {
 		if (this.outWeights.containsKey(name)) {
 			outNumbers = this.outWeights.get(name);
 		}
-		String in = ",arcWeightIn={" + inNumbers + "}";
-		String out = ",arcWeightOut={" + outNumbers + "}";
-		if (inNumbers.length() == 0) {
-			in = "";
-		}
-		if (outNumbers.length() == 0) {
-			out = "";
-		}
+		final String in = inNumbers.isEmpty() ? "" : ",arcWeightIn={" + inNumbers + "}";
+		final String out = outNumbers.isEmpty() ? "" : ",arcWeightOut={" + outNumbers + "}";
 		return INDENT + element + " '" + bna.getName() + "'(nIn=" + inEdges + ", nOut=" + outEdges + ", "
 				+ attr.toString() + in + out + ") " + getPlacementAnnotation(pw, bna) + ";" + ENDL;
 	}
@@ -592,7 +560,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 		String result = INDENT + "connect('" + from + "'.outPlaces["
 				+ (actualOutEdges.get(from).indexOf(bea.getTo()) + 1) + "], '" + to + "'.inTransition["
 				+ (actualInEdges.get(to).indexOf(bea.getFrom()) + 1) + "]) "
-				+ this.getFromToAnnotation(pw, bea.getFrom(), bea.getTo()) + ";"
+				+ getFromToAnnotation(pw, bea.getFrom(), bea.getTo()) + ";"
 				// +" annotation(Line(points = {{"
 				// +Math.floor(scale*(fromPoint.getX()+xshift)+10)+","
 				// +Math.floor(scale*(-(fromPoint.getY()+yshift))+((numOutEdges.get(from)-1)*pinabstand/2-(actualOutEdges.get(from))*pinabstand))+"},{"
@@ -600,7 +568,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 				// +Math.floor(scale*(-(toPoint.
 				// getY()+yshift))+((numInEdges.get(to)-1)*pinabstand/2-(actualInEdges.get(to))*pinabstand))+"}}));"
 				+ ENDL;
-		this.bea2resultkey.put(bea,
+		bea2resultkey.put(bea,
 				"'" + to + "'.tokenFlow.inflow[" + (actualInEdges.get(to).indexOf(bea.getFrom()) + 1) + "]");
 
 		// actualInEdges.get(to).add(bea.getTo());
@@ -614,7 +582,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 		String result = INDENT + "connect('" + from + "'.outTransition["
 				+ (actualOutEdges.get(from).indexOf(bea.getTo()) + 1) + "], '" + to + "'.inPlaces["
 				+ (actualInEdges.get(to).indexOf(bea.getFrom()) + 1) + "]) "
-				+ this.getFromToAnnotation(pw, bea.getFrom(), bea.getTo()) + ";"
+				+ getFromToAnnotation(pw, bea.getFrom(), bea.getTo()) + ";"
 				// +" annotation(Line(points = {{"
 				// +Math.floor(scale*(fromPoint.getX()+xshift)+19)+","
 				// +Math.floor(scale*(-(fromPoint.getY()+yshift))+((numOutEdges.get(from)-1)*pinabstand/2-(actualOutEdges.get(from))*pinabstand))+"},{"
@@ -622,7 +590,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 				// +Math.floor(scale*(-(toPoint.
 				// getY()+yshift))+((numInEdges.get(to)-1)*pinabstand/2-(actualInEdges.get(to))*pinabstand))+"}}));"
 				+ ENDL;
-		this.bea2resultkey.put(bea,
+		bea2resultkey.put(bea,
 				"'" + from + "'.tokenFlow.outflow[" + (actualOutEdges.get(from).indexOf(bea.getTo()) + 1) + "]");
 		// actualInEdges.get(to).add(bea.getTo());
 		// actualOutEdges.get(from).add(bea.getFrom());
@@ -635,9 +603,8 @@ public class MOoutput extends BaseWriter<Pathway> {
 	}
 
 	private String replaceAll(String function, List<Parameter> params, String nodePrefix, boolean isEdge) {
-
-		String mFunction = this.replaceParameters(function, params, nodePrefix, isEdge);
-		mFunction = this.replaceNames(mFunction);
+		String mFunction = replaceParameters(function, params, nodePrefix, isEdge);
+		mFunction = replaceNames(mFunction);
 		return mFunction;
 	}
 
@@ -739,16 +706,9 @@ public class MOoutput extends BaseWriter<Pathway> {
 	}
 
 	private String replaceNames(String function) {
-		StringBuilder mFunction = new StringBuilder(function);
-		String name = "";
+		final StringBuilder mFunction = new StringBuilder(function);
 		// Character c;
 		// Character l;
-		Character r;
-		boolean check;
-		int index = 0;
-		int idxNew = 0;
-		String insert;
-
 		// replace places
 		Pathway pw = GraphInstance.getPathway();
 		if (!pw.isPetriNet() && pw.getTransformationInformation() != null
@@ -767,38 +727,28 @@ public class MOoutput extends BaseWriter<Pathway> {
 			}
 		}
 
-		Collections.sort(names, new StringLengthComparator());
-		// Character c;
-		// System.out.println("drin");
-		index = 0;
-		idxNew = 0;
-
+		names.sort(new StringLengthComparator());
 		for (int i = 0; i < names.size(); i++) {
 			// check = false;
-			index = 0;
-			name = names.get(i);
+			int index = 0;
+			String name = names.get(i);
 			while (mFunction.indexOf(name, index) >= 0) {
-				check = false;
-				idxNew = mFunction.indexOf(name, index);
+				int idxNew = mFunction.indexOf(name, index);
 				if (mFunction.length() >= idxNew + name.length()) {
+					Character r;
 					if (mFunction.length() > idxNew + name.length()) {
 						r = mFunction.charAt(idxNew + name.length());
 					} else {
 						r = ' ';
 					}
-					if (idxNew == 0) {
-						check = true;
-					} else {
-						check = CHARS.contains(mFunction.charAt(idxNew - 1));
-					}
-
+					final boolean check = idxNew == 0 || CHARS.contains(mFunction.charAt(idxNew - 1));
 					/*
 					 * if (idxNew > 0) { if (chars.contains(mFunction.charAt(idxNew - 1))) { check =
 					 * true; } } else { check = true; }
 					 */
 					if (check && CHARS.contains(r)) {
 						// mFunction = mFunction.replaceFirst(name, mNames.get(name));
-						insert = "'" + referenceMapping.get(name) + "'.t";
+						String insert = "'" + referenceMapping.get(name) + "'.t";
 						mFunction.replace(idxNew, idxNew + name.length(), insert);
 
 						// mFunction.insert(idxNew + name.length(), ".t");
@@ -817,45 +767,29 @@ public class MOoutput extends BaseWriter<Pathway> {
 
 	private String replaceParameters(String function, List<Parameter> params, String nodePrefix, boolean isEdge) {
 		StringBuilder mFunction = new StringBuilder(function);
-
 		// replace parameters
-		ArrayList<String> paramNames = new ArrayList<>();
-
-		for (int i = 0; i < params.size(); i++) {
-			paramNames.add(params.get(i).getName());
-		}
-
-		Collections.sort(paramNames, new StringLengthComparator());
-
-		String name = "";
+		List<String> paramNames = params.stream().map(Parameter::getName).sorted(new StringLengthComparator())
+				.collect(Collectors.toList());
 		// Character c;
 		// Character l;
-		Character r;
-		boolean check;
-		int index = 0;
-		int idxNew = 0;
-		String insert;
 		for (int i = 0; i < paramNames.size(); i++) {
-			index = 0;
-			name = paramNames.get(i);
+			int index = 0;
+			String name = paramNames.get(i);
 			while (mFunction.indexOf(name, index) >= 0) {
-				check = false;
-				idxNew = mFunction.indexOf(name, index);
+				int idxNew = mFunction.indexOf(name, index);
 				if (mFunction.length() >= idxNew + name.length()) {
+					char r;
 					if (mFunction.length() > idxNew + name.length()) {
 						r = mFunction.charAt(idxNew + name.length());
 					} else {
 						// Parameter is last term of function
 						r = ' ';
 					}
-					if (idxNew == 0) {
-						check = true;
-					} else {
-						check = CHARS.contains(mFunction.charAt(idxNew - 1));
-					}
+					final boolean check = idxNew == 0 || CHARS.contains(mFunction.charAt(idxNew - 1));
 					// if (!Character.isDigit(c) && !Character.isAlphabetic(c))
 					// {
 					if (check && CHARS.contains(r)) {
+						String insert;
 						// mFunction = mFunction.replaceFirst(name, mNames.get(name));
 						if (isEdge) {
 							// parameters of arcs (assigned to transitions), start with double underscores
@@ -898,7 +832,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 
 	private BiologicalNodeAbstract resolveReference(BiologicalNodeAbstract bna) {
 		if (bna.isLogical()) {
-			return this.resolveReference(bna.getLogicalReference());
+			return resolveReference(bna.getLogicalReference());
 		}
 		return bna;
 	}
