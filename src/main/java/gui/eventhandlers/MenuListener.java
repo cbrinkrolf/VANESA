@@ -1,5 +1,6 @@
 package gui.eventhandlers;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -14,11 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.xml.stream.XMLStreamException;
 
 import biologicalElements.Pathway;
@@ -51,6 +48,7 @@ import gui.LabelToDataMappingWindow;
 import gui.LabelToDataMappingWindow.InputFormatException;
 import gui.MainWindow;
 import gui.PopUpDialog;
+import gui.simulation.DiscreteSimulationPanel;
 import gui.tables.MyTable;
 import io.OpenDialog;
 import io.SaveDialog;
@@ -192,6 +190,9 @@ public class MenuListener implements ActionListener {
 			break;
 		case simulate:
 			simulate();
+			break;
+		case simulateDiscrete:
+			simulateDiscrete();
 			break;
 		case dataMappingColor:
 			DataMappingColorMVC.createDataMapping();
@@ -365,12 +366,12 @@ public class MenuListener implements ActionListener {
 		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			Pathway pw = GraphInstance.getPathway();
 			SuffixAwareFilter[] filters;
-			if (Workspace.getCurrentSettings().getDefaultImageExportFormat()
-					.equals(ComponentImageWriter.IMAGE_TYPE_SVG)) {
+			if (Workspace.getCurrentSettings().getDefaultImageExportFormat().equals(
+					ComponentImageWriter.IMAGE_TYPE_SVG)) {
 				filters = new SuffixAwareFilter[] { SuffixAwareFilter.SVG, SuffixAwareFilter.PNG,
 						SuffixAwareFilter.PDF };
-			} else if (Workspace.getCurrentSettings().getDefaultImageExportFormat()
-					.equals(ComponentImageWriter.IMAGE_TYPE_PDF)) {
+			} else if (Workspace.getCurrentSettings().getDefaultImageExportFormat().equals(
+					ComponentImageWriter.IMAGE_TYPE_PDF)) {
 				filters = new SuffixAwareFilter[] { SuffixAwareFilter.PDF, SuffixAwareFilter.PNG,
 						SuffixAwareFilter.SVG };
 			} else {
@@ -384,6 +385,21 @@ public class MenuListener implements ActionListener {
 	private static void simulate() {
 		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			GraphInstance.getPathway().getPetriNetSimulation().showMenu();
+		}
+	}
+
+	private static void simulateDiscrete() {
+		final Pathway pw = GraphInstance.getPathway();
+		if (pw != null) {
+			final var frame = new JFrame("VANESA - Discrete Simulation");
+			frame.setContentPane(new DiscreteSimulationPanel(pw));
+			frame.setMinimumSize(new Dimension(800, 400));
+			frame.setPreferredSize(new Dimension(800, 400));
+			frame.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
+			frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			frame.setLocationRelativeTo(MainWindow.getInstance().getFrame());
+			frame.pack();
+			frame.setVisible(true);
 		}
 	}
 

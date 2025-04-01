@@ -130,12 +130,12 @@ public class SimMenu extends JFrame implements ItemListener {
 		stop.setActionCommand("stop");
 		stop.addActionListener(listener);
 
-		startTxt = new JDecimalTextField();
+		startTxt = new JDecimalTextField(false);
 		startTxt.setValue(new BigDecimal("0.0"));
 		startTxt.setColumns(5);
 		startTxt.setEnabled(false);
 
-		stopTxt = new JDecimalTextField();
+		stopTxt = new JDecimalTextField(false);
 		stopTxt.setValue(new BigDecimal("1.0"));
 		stopTxt.setColumns(5);
 
@@ -599,8 +599,7 @@ public class SimMenu extends JFrame implements ItemListener {
 	}
 
 	public int getGlobalSeed() {
-		Number number = (Number) seedTxt.getValue();
-		return number != null ? number.intValue() : 42;
+		return seedTxt.getValue(42);
 	}
 
 	public boolean isUseShortNamesSelected() {
@@ -622,7 +621,6 @@ public class SimMenu extends JFrame implements ItemListener {
 
 	// TODO not in use, yet
 	public int getCustomEquationsPerFile() {
-		Number number = (Number) eqTxt.getValue();
-		return number != null ? Math.max(0, number.intValue()) : 0;
+		return eqTxt.getValue(0);
 	}
 }

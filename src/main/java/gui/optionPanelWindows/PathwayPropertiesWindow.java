@@ -89,7 +89,7 @@ public class PathwayPropertiesWindow extends JPanel implements ItemListener {
 		add(color, "width 60:60:60");
 
 		final JButton add = new JButton("add");
-		add.setBackground(VanesaUtility.POSITIVE_BUTTON_COLOR);
+		add.setBackground(VanesaUtility.POSITIVE_COLOR);
 		add.addActionListener(e -> addCompartment());
 		add(add, "width 60:60:60");
 
@@ -116,7 +116,7 @@ public class PathwayPropertiesWindow extends JPanel implements ItemListener {
 			});
 			add(color, "width 60:60:60");
 			final JButton del = new JButton("delete");
-			del.setBackground(VanesaUtility.NEGATIVE_BUTTON_COLOR);
+			del.setBackground(VanesaUtility.NEGATIVE_COLOR);
 			del.setActionCommand("del_" + c.getName());
 			del.addActionListener(e -> {
 				pw.getCompartmentManager().remove(c);

@@ -839,7 +839,6 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 			if (simIds.contains(simId)) {
 				continue;
 			}
-			System.out.println("adding");
 			addSimulationToChart(simId);
 			try {
 				updateData(simId, false);

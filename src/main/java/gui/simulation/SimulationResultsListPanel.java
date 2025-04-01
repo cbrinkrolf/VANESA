@@ -7,6 +7,8 @@ import io.SaveDialog;
 import io.SuffixAwareFilter;
 import net.miginfocom.swing.MigLayout;
 import petriNet.SimulationResult;
+import petriNet.SimulationResultController;
+import util.VanesaUtility;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,36 +21,50 @@ public class SimulationResultsListPanel extends JPanel {
 	private final JTextArea logTextArea;
 	private boolean triggerUIUpdate = true;
 	private final HashMap<JTextField, SimulationResult> text2sim = new HashMap<>();
+	private final JPanel resultsListPanel = new JPanel(new MigLayout("ins 0, fillx, wrap 6"));
+	private final JScrollPane resultsListScrollPanel;
+
+	private Pathway currentPathway;
 
 	public SimulationResultsListPanel(final JTextArea logTextArea) {
-		super(new MigLayout("fillx, wrap 6"));
+		super(new MigLayout("fill, wrap", "", "[][grow, align top]"));
 		this.logTextArea = logTextArea;
+
+		final JPanel headerPanel = new JPanel(new MigLayout("ins 0, fillx", "[][][grow]"));
+
+		final JButton activateAllButton = new JButton("Activate All");
+		activateAllButton.setToolTipText("Set all simulation results as active");
+		activateAllButton.addActionListener(e -> onDeSelectAll(true));
+
+		final JButton deactivateAllButton = new JButton("Deactivate All");
+		deactivateAllButton.setToolTipText("Set all simulation results as inactive");
+		deactivateAllButton.addActionListener(e -> onDeSelectAll(false));
+
+		final JButton delAllButton = new JButton("Delete All");
+		delAllButton.setBackground(VanesaUtility.NEGATIVE_COLOR);
+		delAllButton.setToolTipText("Delete all results");
+		delAllButton.addActionListener(e -> onDeleteAllClicked());
+
+		headerPanel.add(activateAllButton);
+		headerPanel.add(deactivateAllButton);
+		headerPanel.add(delAllButton, "right");
+
+		add(headerPanel, "growx");
+		resultsListScrollPanel = new JScrollPane(resultsListPanel);
+		resultsListScrollPanel.setBorder(null);
+		resultsListScrollPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		resultsListScrollPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		add(resultsListScrollPanel, "grow");
 	}
 
 	public void updateSimulationResults(final Pathway pathway) {
+		currentPathway = pathway;
 		final List<SimulationResult> results = pathway.getPetriPropertiesNet().getSimResController().getAll();
 
 		triggerUIUpdate = false;
 		text2sim.clear();
-		removeAll();
-
-		final JCheckBox activateAllCheckBox = new JCheckBox("active");
-		activateAllCheckBox.setToolTipText("de-/select all");
-		activateAllCheckBox.setSelected(results.stream().allMatch(SimulationResult::isActive));
-		activateAllCheckBox.addItemListener(e -> onDeSelectAll(pathway, activateAllCheckBox.isSelected()));
-
-		add(activateAllCheckBox);
-		add(new JLabel("Simulation Name"), "span 3");
-
-		final JButton delAllButton = new JButton("Delete All");
-		delAllButton.setToolTipText("Delete all results");
-		delAllButton.addActionListener(e -> {
-			for (final SimulationResult simulationResult : results) {
-				pathway.getPetriPropertiesNet().getSimResController().remove(simulationResult);
-			}
-			updateSimulationResults(pathway);
-		});
-		add(delAllButton, "span 2, right");
+		resultsListPanel.removeAll();
+		resultsListScrollPanel.setVisible(!results.isEmpty());
 
 		for (final SimulationResult simulationResult : results) {
 			final JCheckBox activationCheckBox = new JCheckBox();
@@ -59,9 +75,9 @@ public class SimulationResultsListPanel extends JPanel {
 				}
 			});
 			activationCheckBox.setSelected(simulationResult.isActive());
-			add(activationCheckBox);
 
 			final JButton del = new JButton("del");
+			del.setBackground(VanesaUtility.NEGATIVE_COLOR);
 			del.setToolTipText("Delete result");
 			del.addActionListener(e -> {
 				pathway.getPetriPropertiesNet().getSimResController().remove(simulationResult);
@@ -93,27 +109,49 @@ public class SimulationResultsListPanel extends JPanel {
 					}
 				}
 			});
-			add(simName);
-			add(log);
-			add(detailsButton);
-			add(exportButton);
-			add(del);
+
+			resultsListPanel.add(activationCheckBox);
+			resultsListPanel.add(simName);
+			resultsListPanel.add(log);
+			resultsListPanel.add(detailsButton);
+			resultsListPanel.add(exportButton);
+			resultsListPanel.add(del);
 		}
 		triggerUIUpdate = true;
+		revalidate();
+		repaint();
 	}
 
-	private void onDeSelectAll(final Pathway pathway, final boolean selected) {
+	private void onDeSelectAll(final boolean selected) {
+		if (currentPathway == null) {
+			return;
+		}
 		triggerUIUpdate = false;
 		for (final Component component : getComponents()) {
 			if (component instanceof JCheckBox) {
 				((JCheckBox) component).setSelected(selected);
 			}
 		}
-		final List<SimulationResult> resList = pathway.getPetriPropertiesNet().getSimResController().getAll();
+		final List<SimulationResult> resList = currentPathway.getPetriPropertiesNet().getSimResController().getAll();
 		for (final SimulationResult result : resList) {
 			result.setActive(selected);
 		}
 		triggerUIUpdate = true;
+		updateSimulationResults(currentPathway);
 		MainWindow.getInstance().updateSimulationResultView();
+	}
+
+	private void onDeleteAllClicked() {
+		if (currentPathway == null) {
+			return;
+		}
+		triggerUIUpdate = false;
+		final SimulationResultController controller = currentPathway.getPetriPropertiesNet().getSimResController();
+		final List<SimulationResult> results = controller.getAll();
+		for (final SimulationResult simulationResult : results) {
+			controller.remove(simulationResult);
+		}
+		triggerUIUpdate = true;
+		updateSimulationResults(currentPathway);
 	}
 }

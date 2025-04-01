@@ -991,11 +991,11 @@ public class PetriNetSimulation implements ActionListener {
 			if (!menu.isParameterized()) {
 				simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
 						+ System.nanoTime();
-				this.logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
+				logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
 				menu.clearText();
 				menu.addText(logMessage.toString());
-				this.menu.started();
-				this.runOMCIA(port);
+				menu.started();
+				runOMCIA(port);
 			} else {
 				// CHRIS needs to be checked again
 				flags = pw.getChangedFlags("petriNetSim");
@@ -1100,9 +1100,9 @@ public class PetriNetSimulation implements ActionListener {
 
 	private void stopAction() {
 		System.out.println("stop");
-		this.buildSuccess = false;
-		this.stopped = true;
-		this.menu.stopped();
+		buildSuccess = false;
+		stopped = true;
+		menu.stopped();
 		if (s != null && s.isRunning()) {
 			s.stop();
 		}
@@ -1111,7 +1111,7 @@ public class PetriNetSimulation implements ActionListener {
 			menu.setTime("compiling / simulation aborted!");
 		}
 		if (simProcess != null) {
-			this.simProcess.destroy();
+			simProcess.destroy();
 		}
 
 	}

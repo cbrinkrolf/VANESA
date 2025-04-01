@@ -40,6 +40,7 @@ public enum MenuActionCommands {
     createCov("createCov"),
     loadModResult("loadModResult"),
     simulate("simulate"),
+    simulateDiscrete("simulateDiscrete"),
     createDoc("createDoc"),
     editElements("editElements"),
     devMode("devMode");
