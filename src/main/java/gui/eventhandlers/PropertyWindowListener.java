@@ -204,7 +204,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			if (geb instanceof DiscreteTransition) {
 				DiscreteTransition p = (DiscreteTransition) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
-				if (!"".equals(text) && !text.equals(p.getDelay())) {
+				if (!text.isEmpty() && !text.equals(p.getDelay())) {
 					p.setDelay(text.trim());
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
@@ -213,7 +213,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			if (geb instanceof Transition) {
 				Transition t = (Transition) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
-				if (!"".equals(text) && !text.equals(t.getFiringCondition())) {
+				if (!text.isEmpty() && !text.equals(t.getFiringCondition())) {
 					((Transition) geb).setFiringCondition(text.trim());
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
@@ -222,14 +222,14 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			if (geb instanceof DynamicNode) {
 				DynamicNode dn = (DynamicNode) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
-				if (!"".equals(text) && !text.equals(dn.getMaximalSpeed())) {
+				if (!text.isEmpty() && !text.equals(dn.getMaximalSpeed())) {
 					dn.setMaximalSpeed(text);
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
 			} else if(geb instanceof ContinuousTransition){
 				ContinuousTransition ct = (ContinuousTransition) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
-				if (!"".equals(text) && !text.equals(ct.getMaximalSpeed())) {
+				if (!text.isEmpty() && !text.equals(ct.getMaximalSpeed())) {
 					ct.setMaximalSpeed(text);
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
@@ -263,21 +263,25 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			}
 		} else if (source.equals("placeList")) {
 			Place p = (Place) geb;
-			for (BiologicalNodeAbstract neighbour : pw.getGraph().getJungGraph().getNeighbors(p)) {
-				for (BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
-					if (node.equals(neighbour) &&
-						("discrete".equals(((JComboBox<?>) event.getSource()).getSelectedItem()) &&
-						 node.getBiologicalElement().equals(Elementdeclerations.continuousTransition))) {
+			final String selectedType = ((JComboBox<?>) event.getSource()).getSelectedItem().toString();
+			if ((p.isDiscrete() && "discrete".equals(selectedType)) || (!p.isDiscrete() && !"discrete".equals(
+					selectedType))) {
+				return;
+			}
+			for (final BiologicalNodeAbstract neighbour : pw.getGraph().getJungGraph().getNeighbors(p)) {
+				for (final BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
+					if (node.equals(neighbour) && ("discrete".equals(selectedType) && node.getBiologicalElement()
+							.equals(Elementdeclerations.continuousTransition))) {
 						JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(),
-													  "Your action would lead to a relation between a discrete place and a continuous transition. That is not possible!",
-													  "Unallowed Operation...", JOptionPane.ERROR_MESSAGE);
+								"Your action would lead to a relation between a discrete place and a continuous transition. That is not possible!",
+								"Unallowed Operation...", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
 			}
 
 			Place newP;
-			if ("discrete".equals(((JComboBox<?>) event.getSource()).getSelectedItem())) {
+			if ("discrete".equals(selectedType)) {
 				newP = new DiscretePlace(p.getLabel(), p.getName(), pw);
 			} else {
 				newP = new ContinuousPlace(p.getLabel(), p.getName(), pw);
