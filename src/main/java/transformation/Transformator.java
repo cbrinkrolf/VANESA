@@ -826,64 +826,44 @@ public class Transformator {
 	}
 
 	private void createBuckets(Collection<BiologicalNodeAbstract> bnas) {
-		// System.out.println("calculate subgraph nodes: "+ bnas.size());
 		nodeType2bna.clear();
 		edgeType2bea.clear();
-
-		BiologicalNodeAbstract bna1;
-		BiologicalEdgeAbstract bea1;
-		String name;
-		Class<?> c;
-		nodeType2bna.put(Elementdeclerations.anyBNA, new ArrayList<BiologicalNodeAbstract>());
-		edgeType2bea.put(Elementdeclerations.anyBEA, new ArrayList<BiologicalEdgeAbstract>());
-
+		nodeType2bna.put(Elementdeclerations.anyBNA, new ArrayList<>());
+		edgeType2bea.put(Elementdeclerations.anyBEA, new ArrayList<>());
 		// all nodes
 		for (BiologicalNodeAbstract bna : bnas) {
-
-			c = bna.getClass();
-			name = bna.getClass().getSimpleName();
-			// Object o = c.getSuperclass().cast(bna);
+			Class<?> c = bna.getClass();
+			String name = c.getSimpleName();
 			nodeType2bna.get(Elementdeclerations.anyBNA).add(bna);
-
 			while (!name.equals("BiologicalNodeAbstract")) {
-				// System.out.println("class: "+c.getSimpleName());
-				// System.out.println(name);
-
-				// System.out.println("name: "+name);
-				// bna = (BiologicalNodeAbstract) c.cast(bna);
 				try {
-					bna1 = (BiologicalNodeAbstract) c.getConstructor(String.class, String.class).newInstance("", "");
+					BiologicalNodeAbstract bna1 = (BiologicalNodeAbstract) c.getConstructor(String.class, String.class,
+							Pathway.class).newInstance("", "", null);
 					if (!nodeType2bna.containsKey(bna1.getBiologicalElement())) {
-						nodeType2bna.put(bna1.getBiologicalElement(), new ArrayList<BiologicalNodeAbstract>());
+						nodeType2bna.put(bna1.getBiologicalElement(), new ArrayList<>());
 					}
 					nodeType2bna.get(bna1.getBiologicalElement()).add(bna);
-					// System.out.println("type: " + bna1.getBiologicalElement() + " " +
-					// bna1.getName());
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 					e.printStackTrace();
 				}
-
 				c = c.getSuperclass();
 				name = c.getSimpleName();
 			}
 		}
 		// all edges
 		for (BiologicalEdgeAbstract bea : pw.getAllEdges()) {
-			c = bea.getClass();
-			name = bea.getClass().getSimpleName();
-
+			Class<?> c = bea.getClass();
+			String name = bea.getClass().getSimpleName();
 			edgeType2bea.get(Elementdeclerations.anyBEA).add(bea);
 			while (!name.equals("BiologicalEdgeAbstract")) {
-
 				try {
-					bea1 = (BiologicalEdgeAbstract) c.getConstructor(String.class, String.class,
+					BiologicalEdgeAbstract bea1 = (BiologicalEdgeAbstract) c.getConstructor(String.class, String.class,
 							BiologicalNodeAbstract.class, BiologicalNodeAbstract.class).newInstance("", "", null, null);
 					if (!edgeType2bea.containsKey(bea1.getBiologicalElement())) {
 						edgeType2bea.put(bea1.getBiologicalElement(), new ArrayList<BiologicalEdgeAbstract>());
 					}
 					edgeType2bea.get(bea1.getBiologicalElement()).add(bea);
-					// System.out.println("type: "+bna1.getBiologicalElement());
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 					e.printStackTrace();
@@ -893,7 +873,6 @@ public class Transformator {
 				// edgeType2bea.put(name, new ArrayList<BiologicalEdgeAbstract>());
 				// }
 				// edgeType2bea.get(name).add(bea);
-				// System.out.println(name);
 				c = c.getSuperclass();
 				name = c.getSimpleName();
 			}
