@@ -47,7 +47,11 @@ import java.util.*;
  * The process of simulation is implemented as follows:
  * <ul>
  *     <li>Initialize start marking using tokenStart property of places and the defined start time (default: 0)</li>
- *     <li>Find all transitions that have concession in the current marking with the same, smallest delay</li>
+ *     <li>
+ *         Find all transitions that have concession in the current marking with the same, smallest delay. The delay is
+ *         determined either by the delay function of discrete transitions or the delay distribution of stochastic
+ *         transitions.
+ *     </li>
  *     <li>
  *         Select one of these transitions at random and fire it. When branching is allowed, each of them is fired
  *         creating branching markings.
