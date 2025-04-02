@@ -60,6 +60,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 	private final boolean colored;
 	private final boolean noIdent = false;
 	private final int seed;
+	private final int placeLocalSeed;
 
 	double minX = Double.MAX_VALUE;
 	double minY = Double.MAX_VALUE;
@@ -91,6 +92,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 		this.modelName = modelName;
 		this.packageInfo = packageInfo;
 		this.colored = colored;
+		placeLocalSeed = generatePlaceLocalSeed(seed);
 		init();
 	}
 
@@ -155,6 +157,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 		}
 		// globalSeed influences stochastic transitions and conflict solving strategy: probability
 		sb.append("parameter Integer seed=").append(seed).append(";").append(ENDL);
+		sb.append("parameter Integer placeLocalSeed=").append(placeLocalSeed).append(";").append(ENDL);
 		sb.append(INDENT).append("inner ").append(PNlibSettings).append(" settings(");
 		sb.append("animateHazardFunc=false");
 		sb.append(", animateMarking=false");
@@ -227,10 +230,10 @@ public class MOoutput extends BaseWriter<Pathway> {
 		}
 	}
 
-	private void buildAllNodes(Pathway pw) {
-		List<BiologicalNodeAbstract> places = new ArrayList<>();
-		List<BiologicalNodeAbstract> transitions = new ArrayList<>();
-		for (BiologicalNodeAbstract bna : pw.getAllGraphNodesSortedAlphabetically()) {
+	private void buildAllNodes(final Pathway pw) {
+		final List<BiologicalNodeAbstract> places = new ArrayList<>();
+		final List<BiologicalNodeAbstract> transitions = new ArrayList<>();
+		for (final BiologicalNodeAbstract bna : pw.getAllGraphNodesSortedAlphabetically()) {
 			if (bna instanceof Place) {
 				places.add(bna);
 			} else if (bna instanceof Transition) {
@@ -241,7 +244,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 		buildNodes(pw, transitions);
 	}
 
-	private void buildNodes(Pathway pw, List<BiologicalNodeAbstract> nodes) {
+	private void buildNodes(final Pathway pw, final List<BiologicalNodeAbstract> nodes) {
 		final StringBuilder attr = new StringBuilder();
 		for (final BiologicalNodeAbstract bna : nodes) {
 			attr.setLength(0);
@@ -259,10 +262,24 @@ public class MOoutput extends BaseWriter<Pathway> {
 				}
 				if (biologicalElement.equals(Elementdeclerations.discretePlace)) {
 					final Place place = (Place) bna;
-					attr.append("startTokens=").append((int) place.getTokenStart()).append(", minTokens=").append(
-							(int) place.getTokenMin()).append(", maxTokens=").append((int) place.getTokenMax());
-					// places = places.concat(getPlaceString(getModelicaString(place), bna, atr, in,
-					// out));
+					attr.append("startTokens=").append((int) place.getTokenStart());
+					attr.append(", minTokens=").append((int) place.getTokenMin());
+					attr.append(", maxTokens=").append((int) place.getTokenMax());
+					if (place.getConflictingOutEdges().size() > 1) {
+						if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PROB) {
+							attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
+							attr.append(", enablingProbOut={").append(outProb.get(place.getName())).append("}");
+						} else if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PRIO) {
+							attr.append(", enablingPrioOut={").append(outPrio.get(place.getName())).append("}");
+						} else {
+							// priority is default in PNLib, therefore, we set probability with default uniform
+							// distribution to use random conflict resolution backed by the placeLocalSeed parameter
+							attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
+						}
+					}
+					// Set a defined seed to ensure deterministic behaviour
+					attr.append(", localSeedIn=placeLocalSeed");
+					attr.append(", localSeedOut=placeLocalSeed");
 				} else if (biologicalElement.equals(Elementdeclerations.continuousPlace)) {
 					final Place place = (Place) bna;
 					final String start;
@@ -279,26 +296,27 @@ public class MOoutput extends BaseWriter<Pathway> {
 					}
 					// CHRIS units
 					attr.append("startMarks(final unit=\"mmol\")=").append(start);
-					attr.append(" ,minMarks(final unit=\"mmol\")=").append(min);
-					attr.append(" ,maxMarks(final unit=\"mmol\")=").append(max);
-					attr.append(" ,t(final unit=\"mmol\")");
+					attr.append(", minMarks(final unit=\"mmol\")=").append(min);
+					attr.append(", maxMarks(final unit=\"mmol\")=").append(max);
+					attr.append(", t(final unit=\"mmol\")");
 					if (place.getConflictingOutEdges().size() > 1) {
-						// priority is default
 						if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PROB) {
 							attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
 							attr.append(", enablingProbOut={").append(outProb.get(place.getName())).append("}");
 						} else if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PRIO) {
 							attr.append(", enablingPrioOut={").append(outPrio.get(place.getName())).append("}");
+						} else {
+							// priority is default in PNLib, therefore, we set probability with default uniform
+							// distribution to use random conflict resolution backed by the placeLocalSeed parameter
+							attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
 						}
 					}
-					// places =
-					// places.concat(getPlaceString(getModelicaString(place),
-					// bna, atr, in, out));
-					// System.out.println(place.getName() + " conflicting edges:
-					// " + place.getConflictingOutEdges().size());
+					// Set a defined seed to ensure deterministic behaviour
+					attr.append(", localSeedIn=placeLocalSeed");
+					attr.append(", localSeedOut=placeLocalSeed");
 				} else if (biologicalElement.equals(Elementdeclerations.stochasticTransition)) {
 					final StochasticTransition st = (StochasticTransition) bna;
-					attr.append("distributionType = ").append(distrPackage);
+					attr.append("distributionType=").append(distrPackage);
 					switch (st.getDistribution()) {
 					case Exponential:
 						attr.append("Exponential");
@@ -316,15 +334,15 @@ public class MOoutput extends BaseWriter<Pathway> {
 						attr.append("Discrete");
 						break;
 					}
-					attr.append(", h = ").append(st.getH());
-					attr.append(", a = ").append(st.getA());
-					attr.append(", b = ").append(st.getB());
-					attr.append(", c = ").append(st.getC());
-					attr.append(", mu = ").append(st.getMu());
-					attr.append(", sigma = ").append(st.getSigma());
-					attr.append(", E = {");
+					attr.append(", h=").append(st.getH());
+					attr.append(", a=").append(st.getA());
+					attr.append(", b=").append(st.getB());
+					attr.append(", c=").append(st.getC());
+					attr.append(", mu=").append(st.getMu());
+					attr.append(", sigma=").append(st.getSigma());
+					attr.append(", E={");
 					attr.append(st.getEvents().stream().map(String::valueOf).collect(Collectors.joining(", ")));
-					attr.append("}, P = {");
+					attr.append("}, P={");
 					attr.append(st.getProbabilities().stream().map(String::valueOf).collect(Collectors.joining(", ")));
 					attr.append("}");
 					// places = places.concat(getTransitionString(bna,
@@ -350,12 +368,13 @@ public class MOoutput extends BaseWriter<Pathway> {
 				if (bna instanceof Place) {
 				} else if (bna instanceof Transition) {
 					final Transition t = (Transition) bna;
-					String firingCondition = t.getFiringCondition();
 					if (t.isKnockedOut()) {
-						firingCondition = "false";
-					}
-					if (t.getFiringCondition().length() > 0) {
-						attr.append(", firingCon=").append(firingCondition);
+						attr.append(", firingCon=false");
+					} else {
+						final String firingCondition = t.getFiringCondition();
+						if (firingCondition.length() > 0) {
+							attr.append(", firingCon=").append(firingCondition);
+						}
 					}
 				}
 				componentsSB.append(getTransitionString(pw, bna, getModelicaString(bna), bna.getName(), attr, in, out));
@@ -818,5 +837,9 @@ public class MOoutput extends BaseWriter<Pathway> {
 				+ "      outWeights[2] := outWeights[2] + inColors2[2] / sum(inColors2) / 2;" + ENDL + "    end if;"
 				+ ENDL + "  end g2;" + ENDL;
 		return f;
+	}
+
+	public static int generatePlaceLocalSeed(final int seed) {
+		return (int) ((((long) Integer.MAX_VALUE) - seed) % 45849);
 	}
 }

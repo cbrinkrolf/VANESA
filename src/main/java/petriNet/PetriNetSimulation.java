@@ -296,7 +296,8 @@ public class PetriNetSimulation implements ActionListener {
 
 					override += "-override=outputFormat=ia,stopTime=" + stopTime.toPlainString() + ",stepSize=" +
 							stopTime.divide(BigDecimal.valueOf(intervals), RoundingMode.HALF_UP).toPlainString()
-							+ ",tolerance=" + tolerance.toPlainString() + ",seed=" + seed;
+							+ ",tolerance=" + tolerance.toPlainString() + ",seed=" + seed + ",placeLocalSeed=" +
+							MOoutput.generatePlaceLocalSeed(seed);
 					System.out.println("parameter changed: " + flags.isParameterChanged());
 					if (flags.isParameterChanged()) {
 						for (Parameter param : pw.getChangedParameters().keySet()) {
