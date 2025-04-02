@@ -590,7 +590,7 @@ public class JSBMLOutput {
 					XMLNode elDistributionProps = new XMLNode(
 							new XMLNode(new XMLTriple("distributionProperties", "", ""), new XMLAttributes()));
 					StochasticTransition st = (StochasticTransition) oneNode;
-					elDistributionProps.addChild(createElSub(st.getDistribution(), "distribution"));
+					elDistributionProps.addChild(createElSub(st.getDistribution().getId(), "distribution"));
 					elDistributionProps.addChild(createElSub(String.valueOf(st.getH()), "h"));
 					elDistributionProps.addChild(createElSub(String.valueOf(st.getA()), "a"));
 					elDistributionProps.addChild(createElSub(String.valueOf(st.getB()), "b"));

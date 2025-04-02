@@ -14,6 +14,7 @@ import graph.gui.Boundary;
 import gui.MainWindow;
 import gui.PopUpDialog;
 import org.apache.commons.lang3.StringUtils;
+import util.StochasticDistribution;
 
 import javax.swing.*;
 import java.awt.*;
@@ -480,7 +481,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			JComboBox<?> box = (JComboBox<?>) e.getSource();
 			if (box.getName().equals("distributionList") && e.getStateChange() == ItemEvent.SELECTED) {
 				StochasticTransition st = (StochasticTransition) geb;
-				st.setDistribution(box.getSelectedItem().toString());
+				st.setDistribution((StochasticDistribution) box.getSelectedItem());
 				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				MainWindow.getInstance().updateElementProperties();
 			}

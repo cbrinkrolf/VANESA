@@ -194,13 +194,13 @@ public class VAMLOutput {
 			if (bna instanceof Transition) {
 				if (bna instanceof DiscreteTransition) {
 					DiscreteTransition t = (DiscreteTransition) bna;
-					writer.writeAttribute("delay", t.getDelay() + "");
+					writer.writeAttribute("delay", t.getDelay());
 				} else if (bna instanceof ContinuousTransition) {
 					ContinuousTransition t = (ContinuousTransition) bna;
 					writer.writeAttribute("maximalSpeed", t.getMaximalSpeed());
 				} else if (bna instanceof StochasticTransition) {
 					StochasticTransition t = (StochasticTransition) bna;
-					writer.writeAttribute("distribution", t.getDistribution());
+					writer.writeAttribute("distribution", t.getDistribution().getId());
 				}
 			}
 			if (bna instanceof RNA) {

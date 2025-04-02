@@ -6,6 +6,8 @@ import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
+import biologicalObjects.nodes.petriNet.StochasticTransition;
+import biologicalObjects.nodes.petriNet.Transition;
 import com.ezylang.evalex.EvaluationException;
 import com.ezylang.evalex.parser.ParseException;
 import graph.gui.Parameter;
@@ -16,7 +18,7 @@ import java.math.BigInteger;
 import java.util.*;
 
 /**
- * Simulator for extended, timed, functional, discrete Petri Nets with capacities.
+ * Simulator for extended, timed, functional, stochastic, discrete Petri Nets with capacities.
  * <hr>
  * For each marking of the net, all transitions are evaluated for concession, by...
  * <ul>
@@ -71,12 +73,11 @@ import java.util.*;
  * <ul>
  *     <li>Evaluate time constraints of firingConditions and prevent jumping over emerging concessions based on time</li>
  *     <li>Handle conflict resolution strategy of places and arc priorities/probabilities</li>
- *     <li>Stochastic transitions</li>
  * </ul>
  */
 public class DiscreteSimulator extends Simulator {
 	private final List<DiscretePlace> places = new ArrayList<>();
-	private final Map<DiscreteTransition, TransitionDetails> transitions = new HashMap<>();
+	private final Map<Transition, TransitionDetails> transitions = new HashMap<>();
 	private final List<Marking> markings = new ArrayList<>();
 	private final List<Marking> openMarkings = new ArrayList<>();
 	private final List<FiringEdge> firingEdges = new ArrayList<>();
@@ -114,17 +115,29 @@ public class DiscreteSimulator extends Simulator {
 				places.add((DiscretePlace) node);
 			} else if (node instanceof DiscreteTransition) {
 				final DiscreteTransition t = (DiscreteTransition) node;
-				transitions.put(t, new TransitionDetails(t));
+				transitions.put(t, new TransitionDetails(t, random));
+			} else if (node instanceof StochasticTransition) {
+				final StochasticTransition t = (StochasticTransition) node;
+				transitions.put(t, new TransitionDetails(t, random));
+			} else {
+				throw new SimulationException(String.format("Petri net is not fully discrete. Found node of type '%s'",
+						node.getClass().getSimpleName()));
 			}
 		}
 		// Collect all transition source and target places
 		for (final var edge : edges) {
 			if (edge instanceof PNArc) {
-				if (edge.getFrom() instanceof DiscretePlace && edge.getTo() instanceof DiscreteTransition) {
-					transitions.get((DiscreteTransition) edge.getTo()).sources.add((PNArc) edge);
-				} else if (edge.getFrom() instanceof DiscreteTransition && edge.getTo() instanceof DiscretePlace) {
-					transitions.get((DiscreteTransition) edge.getFrom()).targets.add((PNArc) edge);
+				if (edge.getFrom() instanceof DiscretePlace && (edge.getTo() instanceof DiscreteTransition
+						|| edge.getTo() instanceof StochasticTransition)) {
+					transitions.get((Transition) edge.getTo()).sources.add((PNArc) edge);
+				} else if (
+						(edge.getFrom() instanceof DiscreteTransition || edge.getFrom() instanceof StochasticTransition)
+								&& edge.getTo() instanceof DiscretePlace) {
+					transitions.get((Transition) edge.getFrom()).targets.add((PNArc) edge);
 				}
+			} else {
+				throw new SimulationException(String.format("Petri net is not fully discrete. Found edge of type '%s'",
+						edge.getClass().getSimpleName()));
 			}
 		}
 		initialize(BigDecimal.ZERO);
@@ -404,7 +417,7 @@ public class DiscreteSimulator extends Simulator {
 		return places;
 	}
 
-	public Collection<DiscreteTransition> getTransitions() {
+	public Collection<Transition> getTransitions() {
 		return transitions.keySet();
 	}
 
@@ -494,11 +507,13 @@ public class DiscreteSimulator extends Simulator {
 		 * All arcs from this transition to places
 		 */
 		final List<PNArc> targets = new ArrayList<>();
-		final DiscreteTransition transition;
+		final Transition transition;
 		final String firingCondition;
 		private BigDecimal fixedDelay;
+		private String delayFunction;
+		private StochasticSampler delaySampler;
 
-		private TransitionDetails(final DiscreteTransition transition) {
+		private TransitionDetails(final Transition transition, final Random random) {
 			this.transition = transition;
 			// If possible, reduce the firingCondition function for faster subsequent calculations
 			String reducedFiringCondition;
@@ -509,15 +524,20 @@ public class DiscreteSimulator extends Simulator {
 				reducedFiringCondition = transition.getFiringCondition();
 			}
 			firingCondition = reducedFiringCondition;
-			// If the delay function has no token dependencies, evaluate it and cache the result
-			try {
-				final var delayExpression = new VanesaExpression(transition.getDelay());
-				delayExpression.with(transition.getParameters());
-				if (delayExpression.getUndefinedVariables().isEmpty()) {
-					fixedDelay = delayExpression.evaluate().getNumberValue();
+			if (transition instanceof DiscreteTransition) {
+				delayFunction = ((DiscreteTransition) transition).getDelay();
+				// If the delay function has no token dependencies, evaluate it and cache the result
+				try {
+					final var delayExpression = new VanesaExpression(delayFunction);
+					delayExpression.with(transition.getParameters());
+					if (delayExpression.getUndefinedVariables().isEmpty()) {
+						fixedDelay = delayExpression.evaluate().getNumberValue();
+					}
+				} catch (EvaluationException | ParseException ignored) {
+					fixedDelay = null;
 				}
-			} catch (EvaluationException | ParseException ignored) {
-				fixedDelay = null;
+			} else if (transition instanceof StochasticTransition) {
+				delaySampler = ((StochasticTransition) transition).getDistributionSampler(random);
 			}
 		}
 
@@ -526,15 +546,28 @@ public class DiscreteSimulator extends Simulator {
 			if (fixedDelay != null) {
 				return fixedDelay;
 			}
-			final var expression = createExpression(places, placeTokens, transition.getDelay(),
-					transition.getParameters());
-			try {
-				return expression.evaluate().getNumberValue();
-			} catch (EvaluationException | ParseException e) {
-				throw new SimulationException(
-						String.format("Failed to evaluate delay function for transition '%s' (%s): %s",
-								transition.getName(), transition.getLabel(), transition.getDelay()), e);
+			if (delayFunction != null) {
+				final var expression = createExpression(places, placeTokens, delayFunction, transition.getParameters());
+				try {
+					return expression.evaluate().getNumberValue();
+				} catch (EvaluationException | ParseException e) {
+					throw new SimulationException(
+							String.format("Failed to evaluate delay function for transition '%s' (%s): %s",
+									transition.getName(), transition.getLabel(), delayFunction), e);
+				}
 			}
+			if (delaySampler != null) {
+				final var delay = delaySampler.sample();
+				if (delay.signum() < 0) {
+					throw new SimulationException(String.format(
+							"Stochastic delay distribution returned negative value for transition '%s' (%s): %s",
+							transition.getName(), transition.getLabel(), delayFunction));
+				}
+				return delay;
+			}
+			throw new SimulationException(
+					String.format("Failed to determine delay for transition '%s' (%s)", transition.getName(),
+							transition.getLabel()));
 		}
 	}
 

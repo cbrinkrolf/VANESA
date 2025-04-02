@@ -43,7 +43,7 @@ public class PetriNetVertexDialog {
 
 	// for Transitions
 	private final JTextField delay = new JTextField("1");
-	private final JComboBox<String> distributionList;
+	private final JComboBox<StochasticDistribution> distributionList;
 	// JCheckBox transitionfire = new JCheckBox("Should transition fire:", true);
 	private final JTextField firingCondition = new JTextField("true");
 
@@ -54,7 +54,7 @@ public class PetriNetVertexDialog {
 	public PetriNetVertexDialog(String petriElement, Pathway pw) {
 		this.pw = pw;
 		this.petriElement = petriElement;
-		distributionList = new JComboBox<>(StochasticDistribution.distributions);
+		distributionList = new JComboBox<>(StochasticDistribution.DISTRIBUTIONS);
 
         final JPanel panel = new JPanel(new MigLayout("", "[left]"));
 		panel.add(new JLabel("Name"), "span 2, gaptop 2 ");
@@ -227,7 +227,7 @@ public class PetriNetVertexDialog {
 		} else if (petriElement.equals(Elementdeclerations.stochasticTransition)) {
 			StochasticTransition t = new StochasticTransition(name.getText().trim(), name.getText().trim(), pw);
 			if (!pw.isHeadless()) {
-				t.setDistribution(distributionList.getSelectedItem().toString());
+				t.setDistribution((StochasticDistribution) distributionList.getSelectedItem());
 				t.setFiringCondition(firingCondition.getText().trim());
 			}
 			createdNode = t;

@@ -320,19 +320,19 @@ public class MOoutput extends BaseWriter<Pathway> {
 					final StochasticTransition st = (StochasticTransition) bna;
 					attr.append("distributionType = ").append(distrPackage);
 					switch (st.getDistribution()) {
-					case StochasticDistribution.distributionExponential:
+					case Exponential:
 						attr.append("Exponential");
 						break;
-					case StochasticDistribution.distributionTriangular:
+					case Triangular:
 						attr.append("Triangular");
 						break;
-					case StochasticDistribution.distributionTruncatedNormal:
+					case TruncatedNormal:
 						attr.append("TruncatedNormal");
 						break;
-					case StochasticDistribution.distributionUniform:
+					case Uniform:
 						attr.append("Uniform");
 						break;
-					case StochasticDistribution.distributionDiscreteProbability:
+					case DiscreteProbability:
 						attr.append("Discrete");
 						break;
 					}

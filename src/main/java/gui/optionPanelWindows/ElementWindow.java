@@ -546,7 +546,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 						StochasticTransition trans = (StochasticTransition) ab;
 						// Create the combo box, select item at index 4.
 						// Indices start at 0, so 4 specifies the pig.
-						JComboBox<String> distributionList = new JComboBox<>(StochasticDistribution.distributions);
+						final var distributionList = new JComboBox<>(StochasticDistribution.DISTRIBUTIONS);
 						distributionList.setSelectedItem(trans.getDistribution());
 						distributionList.setName("distributionList");
 						distributionList.addItemListener(pwl);
@@ -593,7 +593,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 						mu.setName("mu");
 
 						MyJFormattedTextField sigma = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-						JLabel lblSigma = new JLabel("sigma: standard deviation");
+						JLabel lblSigma = new JLabel("sigma: std. deviation");
 						sigma.setText(String.valueOf(trans.getSigma()));
 						sigma.addFocusListener(pwl);
 						sigma.setFocusLostBehavior(JFormattedTextField.COMMIT);
@@ -614,11 +614,11 @@ public class ElementWindow implements ActionListener, ItemListener {
 						probabilities.setName("probabilities");
 
 						switch (trans.getDistribution()) {
-						case StochasticDistribution.distributionExponential:
+						case Exponential:
 							p.add(lblH, "gap 5");
 							p.add(h, "wrap");
 							break;
-						case StochasticDistribution.distributionTriangular:
+						case Triangular:
 							p.add(lblA, "gap 5");
 							p.add(a, "wrap");
 							p.add(lblB, "gap 5");
@@ -626,7 +626,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 							p.add(lblC, "gap 5");
 							p.add(c, "wrap");
 							break;
-						case StochasticDistribution.distributionTruncatedNormal:
+						case TruncatedNormal:
 							p.add(lblA, "gap 5");
 							p.add(a, "wrap");
 							p.add(lblB, "gap 5");
@@ -636,13 +636,13 @@ public class ElementWindow implements ActionListener, ItemListener {
 							p.add(lblSigma, "gap 5");
 							p.add(sigma, "wrap");
 							break;
-						case StochasticDistribution.distributionUniform:
+						case Uniform:
 							p.add(lblA, "gap 5");
 							p.add(a, "wrap");
 							p.add(lblB, "gap 5");
 							p.add(b, "wrap");
 							break;
-						case StochasticDistribution.distributionDiscreteProbability:
+						case DiscreteProbability:
 							p.add(lblEvents, "gap 5");
 							p.add(events, "wrap");
 							p.add(lblProbabilities, "gap 5");

@@ -44,6 +44,7 @@ import graph.compartment.Compartment;
 import graph.groups.Group;
 import graph.gui.Parameter;
 import gui.MainWindow;
+import util.StochasticDistribution;
 import util.VanesaUtility;
 
 /**
@@ -458,7 +459,7 @@ public class JSBMLInput {
 						elSub = specAnnotation.getChild("distributionProperties", null);
 						Element elSubSub = elSub.getChild("distribution", null);
 						attr = String.valueOf(elSubSub.getAttributeValue("distribution"));
-						st.setDistribution(attr);
+						st.setDistribution(StochasticDistribution.fromId(attr));
 						elSubSub = elSub.getChild("h", null);
 						attr = String.valueOf(elSubSub.getAttributeValue("h"));
 						st.setH(Double.parseDouble(attr));

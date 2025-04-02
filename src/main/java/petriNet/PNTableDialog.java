@@ -38,6 +38,7 @@ import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
+import util.StochasticDistribution;
 
 public class PNTableDialog extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -317,7 +318,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 								table.convertColumnIndexToView(7)));
 					} else if (t instanceof StochasticTransition) {
 						((StochasticTransition) t).setDistribution(
-								(String) table.getValueAt(table.convertRowIndexToView(i),
+								(StochasticDistribution) table.getValueAt(table.convertRowIndexToView(i),
 										table.convertColumnIndexToView(8)));
 					}
 

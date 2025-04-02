@@ -79,6 +79,7 @@ import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import graph.CreatePathway;
 import gui.MainWindow;
+import util.StochasticDistribution;
 import util.VanesaUtility;
 
 public class VAMLInput {
@@ -572,7 +573,8 @@ public class VAMLInput {
 			}
 		} else if (biologicalElement.equals("Stochastic Transition")) {
 			bna = new StochasticTransition(label, name, pw);
-			((StochasticTransition) bna).setDistribution(node.getAttribute("distribution").getValue());
+			((StochasticTransition) bna).setDistribution(
+					StochasticDistribution.fromId(node.getAttribute("distribution").getValue()));
 		}
 		if (bna != null) {
 			// bna.setCompartment(location);
