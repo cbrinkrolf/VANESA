@@ -27,7 +27,7 @@ import biologicalObjects.nodes.petriNet.Transition;
 import configurations.Workspace;
 import graph.GraphInstance;
 import graph.gui.Parameter;
-import util.StochasticDistribution;
+import org.apache.commons.lang3.StringUtils;
 import util.StringLengthComparator;
 import util.VanesaUtility;
 
@@ -46,8 +46,6 @@ public class MOoutput extends BaseWriter<Pathway> {
 
 	private final Map<String, ArrayList<BiologicalNodeAbstract>> actualInEdges = new HashMap<>();
 	private final Map<String, ArrayList<BiologicalNodeAbstract>> actualOutEdges = new HashMap<>();
-	private final Map<BiologicalNodeAbstract, String> nodeType = new HashMap<>();
-	private final Map<BiologicalNodeAbstract, String> vertex2name = new HashMap<>();
 	private final Map<String, String> inWeights = new HashMap<>();
 	private final Map<String, String> outWeights = new HashMap<>();
 	private final Map<String, String> outPrio = new HashMap<>();
@@ -57,11 +55,11 @@ public class MOoutput extends BaseWriter<Pathway> {
 
 	private Set<BiologicalNodeAbstract> marked;
 
-	private String modelName;
+	private final String modelName;
 	private final String packageInfo;
 	private final boolean colored;
 	private final boolean noIdent = false;
-	private int seed;
+	private final int seed;
 
 	double minX = Double.MAX_VALUE;
 	double minY = Double.MAX_VALUE;
@@ -78,7 +76,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 	private String PNlibTransitionBiColor = "";
 	private String PNlibIA = "";
 	private String PNlibTA = "";
-	private String distrPackage = "PNlib.Types.DistributionType.";
+	private static final String distrPackage = "PNlib.Types.DistributionType.";
 
 	private int inhibitCount = 0;
 	private int testArcCount = 0;
@@ -90,17 +88,17 @@ public class MOoutput extends BaseWriter<Pathway> {
 	public MOoutput(File file, String modelName, String packageInfo, int seed, boolean colored) {
 		super(file);
 		this.seed = seed;
-		init();
 		this.modelName = modelName;
 		this.packageInfo = packageInfo;
 		this.colored = colored;
+		init();
 	}
 
 	private void init() {
 		marked = GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked();
 
 		// set correct PNlib names, they might change from OM version
-		Map<String, String> env = System.getenv();
+		final Map<String, String> env = System.getenv();
 		int version = 13;
 		if (env.containsKey("OPENMODELICAHOME") && new File(env.get("OPENMODELICAHOME")).isDirectory()) {
 			String pathCompiler = env.get("OPENMODELICAHOME");
@@ -138,47 +136,47 @@ public class MOoutput extends BaseWriter<Pathway> {
 	}
 
 	@Override
-	protected void internalWrite(OutputStream outputStream, Pathway pathway) throws Exception {
+	protected void internalWrite(final OutputStream outputStream, final Pathway pathway) throws Exception {
 		if (Workspace.getCurrentSettings().isDeveloperMode()) {
-			System.out.println("MOoutput(File " + pathway.getName() + " Pathway " + pathway + ")");
+			System.out.println(
+					"MOoutput(File: " + pathway.getName() + ", Pathway: " + pathway + ", Model Name: " + modelName
+							+ ")");
 		}
-		if (Workspace.getCurrentSettings().isDeveloperMode())
-			System.out.println("Model Name = " + modelName);
-		prepare(pathway);
 		buildConnections(pathway);
 		buildParameters(pathway);
 		buildAllNodes(pathway);
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		sb.append("model ").append(modelName).append(ENDL);
 		if (colored) {
-			sb.append(this.getgFunctions());
+			sb.append(getgFunctions());
 		}
-		if (packageInfo != null && !packageInfo.isEmpty() && !packageInfo.isBlank()) {
-			sb.append(INDENT).append(this.packageInfo).append(ENDL);
+		if (StringUtils.isNotBlank(packageInfo)) {
+			sb.append(INDENT).append(packageInfo).append(ENDL);
 		}
-
-		// if (this.packageInfo == null) {
-		// sb.append(indentation + "inner PNlib.Settings settings1();" + ENDL);
-
-		// globalSeed influences stochastic transitions and conflict solving strategy:
-		// probability
-
-		String omitOpenModelicaAnimations = "animateHazardFunc = false, animateMarking = false, animatePlace = false, animatePutFireTime = false, animateSpeed = false, animateTIarc = false, animateTransition = false, animateWeightTIarc = false,";
-
-		sb.append("parameter Integer seed = ").append(seed).append(";").append(ENDL);
-		sb.append(INDENT).append("inner ").append(PNlibSettings).append(" settings(")
-				.append(omitOpenModelicaAnimations).append("showTokenFlow = true, globalSeed=seed)").append(ENDL)
-				.append("annotation(Placement(visible=true, transformation(origin={").append(minX - 30).append(", ")
-				.append(maxY + 30).append("}, extent={{-20, -20}, {20, 20}}, rotation=0)));").append(ENDL);
-		// }
+		// globalSeed influences stochastic transitions and conflict solving strategy: probability
+		sb.append("parameter Integer seed=").append(seed).append(";").append(ENDL);
+		sb.append(INDENT).append("inner ").append(PNlibSettings).append(" settings(");
+		sb.append("animateHazardFunc=false");
+		sb.append(", animateMarking=false");
+		sb.append(", animatePlace=false");
+		sb.append(", animatePutFireTime=false");
+		sb.append(", animateSpeed=false");
+		sb.append(", animateTIarc=false");
+		sb.append(", animateTransition=false");
+		sb.append(", animateWeightTIarc=false");
+		sb.append(", showTokenFlow=true");
+		sb.append(", globalSeed=seed");
+		sb.append(')').append(ENDL);
+		sb.append("annotation(Placement(visible=true, transformation(origin={").append(minX - 30).append(", ").append(
+				maxY + 30).append("}, extent={{-20, -20}, {20, 20}}, rotation=0)));").append(ENDL);
 		sb.append(parametersSB);
 		sb.append(componentsSB);
 		sb.append("equation").append(ENDL);
 		sb.append(edgesSB);
-		sb.append(INDENT).append("annotation(Icon(coordinateSystem(extent={{").append(minX - 50).append(",")
-				.append(minY - 50).append("},{").append(maxX + 50).append(",").append(maxY + 50)
-				.append("}})), Diagram(coordinateSystem(extent={{").append(minX - 50).append(",").append(minY - 50)
-				.append("},{").append(maxX + 50).append(",").append(maxY + 50).append("}})));").append(ENDL);
+		sb.append(INDENT).append("annotation(Icon(coordinateSystem(extent={{").append(minX - 50).append(",").append(
+				minY - 50).append("},{").append(maxX + 50).append(",").append(maxY + 50).append(
+				"}})), Diagram(coordinateSystem(extent={{").append(minX - 50).append(",").append(minY - 50).append(
+				"},{").append(maxX + 50).append(",").append(maxY + 50).append("}})));").append(ENDL);
 		sb.append("end ").append(modelName).append(";").append(ENDL);
 		String data = sb.toString();
 		if (noIdent) {
@@ -190,24 +188,6 @@ public class MOoutput extends BaseWriter<Pathway> {
 			// data= data.replaceAll("(\\S)\\-", "$1_");
 		}
 		outputStream.write(data.getBytes());
-	}
-
-	private void prepare(Pathway pw) {
-		for (BiologicalNodeAbstract bna : pw.getAllGraphNodesSortedAlphabetically()) {
-			if (!bna.isLogical()) {
-				/*
-				 * if (biologicalElement.equals(biologicalElements.Elementdeclerations.place) ||
-				 * biologicalElement.equals(biologicalElements.Elementdeclerations.s_place))
-				 * name = bna.getName(); else name = bna.getName();
-				 */
-
-				this.vertex2name.put(bna, bna.getName());
-				// nodePositions.put(name, p);
-				nodeType.put(bna, bna.getBiologicalElement());
-				// bioName.put(name, bna.getLabel());
-				// bioObject.put(name, bna);
-			}
-		}
 	}
 
 	private void buildParameters(Pathway pw) {
@@ -343,21 +323,9 @@ public class MOoutput extends BaseWriter<Pathway> {
 					attr.append(", mu = ").append(st.getMu());
 					attr.append(", sigma = ").append(st.getSigma());
 					attr.append(", E = {");
-					final List<Integer> events = st.getEvents();
-					for (int i = 0; i < events.size(); i++) {
-						if (i > 0) {
-							attr.append(", ");
-						}
-						attr.append(events.get(i));
-					}
+					attr.append(st.getEvents().stream().map(String::valueOf).collect(Collectors.joining(", ")));
 					attr.append("}, P = {");
-					final List<Double> probs = st.getProbabilities();
-					for (int i = 0; i < probs.size(); i++) {
-						if (i > 0) {
-							attr.append(", ");
-						}
-						attr.append(probs.get(i));
-					}
+					attr.append(st.getProbabilities().stream().map(String::valueOf).collect(Collectors.joining(", ")));
 					attr.append("}");
 					// places = places.concat(getTransitionString(bna,
 					// getModelicaString(t), bna.getName(), atr, in, out));
@@ -369,7 +337,6 @@ public class MOoutput extends BaseWriter<Pathway> {
 					// getModelicaString(t), bna.getName(), atr, in, out));
 				} else if (biologicalElement.equals(Elementdeclerations.continuousTransition)) {
 					final ContinuousTransition ct = (ContinuousTransition) bna;
-					// System.out.println(ct.getMaximalSpeed());
 					final String speed = replaceAll(ct.getMaximalSpeed(), ct.getParameters(), ct.getName(), false);
 					// if (ct.isKnockedOut()) {
 					// attr.append("maximumSpeed(final unit=\"mmol/min\")=0/*" + speed + "*/");
@@ -402,41 +369,41 @@ public class MOoutput extends BaseWriter<Pathway> {
 		StringBuilder weight = new StringBuilder();
 		for (BiologicalEdgeAbstract bea : pw.getAllEdgesSortedByID()) {
 			weight.setLength(0);
-			String fromString = vertex2name.get(resolveReference(bea.getFrom()));
-			String toString = vertex2name.get(resolveReference(bea.getTo()));
 			if (bea instanceof PNArc) {
-				PNArc e = (PNArc) bea;
+				final String fromName = resolveReference(bea.getFrom()).getName();
+				final String toName = resolveReference(bea.getTo()).getName();
+				final PNArc e = (PNArc) bea;
 				// Edge Place -> Transition
 				if (e.getFrom() instanceof Place) {
 					if (colored) {
 						if (marked.contains(e.getFrom())) {
 							weight.append("g1('").append(resolveReference(e.getFrom()).getName()).append("'.color)");
 						} else {
-							weight.append("{0, ").append(getModelicaEdgeFunction(e)).append("}/*").append(fromString)
+							weight.append("{0, ").append(getModelicaEdgeFunction(e)).append("}/*").append(fromName)
 									.append("*/");
 						}
 					} else {
 						weight.append(getModelicaEdgeFunction(e));
 					}
 
-					if (inWeights.containsKey(toString)) {
-						inWeights.put(toString, inWeights.get(toString) + ", " + weight);
+					if (inWeights.containsKey(toName)) {
+						inWeights.put(toName, inWeights.get(toName) + ", " + weight);
 					} else {
-						inWeights.put(toString, weight.toString());
+						inWeights.put(toName, weight.toString());
 					}
 
 					if (!(e.getTo() instanceof ContinuousTransition)) {
 						int prio = e.getPriority();
-						if (outPrio.containsKey(fromString)) {
-							outPrio.put(fromString, outPrio.get(fromString) + ", " + prio);
+						if (outPrio.containsKey(fromName)) {
+							outPrio.put(fromName, outPrio.get(fromName) + ", " + prio);
 						} else {
-							outPrio.put(fromString, String.valueOf(prio));
+							outPrio.put(fromName, String.valueOf(prio));
 						}
 						double prob = e.getProbability();
-						if (outProb.containsKey(fromString)) {
-							outProb.put(fromString, outProb.get(fromString) + ", " + prob);
+						if (outProb.containsKey(fromName)) {
+							outProb.put(fromName, outProb.get(fromName) + ", " + prob);
 						} else {
-							outProb.put(fromString, String.valueOf(prob));
+							outProb.put(fromName, String.valueOf(prob));
 						}
 					}
 
@@ -446,13 +413,10 @@ public class MOoutput extends BaseWriter<Pathway> {
 						Set<BiologicalNodeAbstract> markedOut = getMarkedNeighborsIn(e.getFrom());
 						final String tmp;
 						if (markedOut.isEmpty()) {
-							tmp = "{0, " + getModelicaEdgeFunction(e) + "}/*" + toString + "*/";
+							tmp = "{0, " + getModelicaEdgeFunction(e) + "}/*" + toName + "*/";
 						} else {
 							String nodes = "";
-							Iterator<BiologicalNodeAbstract> itBNA = markedOut.iterator();
-							BiologicalNodeAbstract node;
-							while (itBNA.hasNext()) {
-								node = itBNA.next();
+							for (final BiologicalNodeAbstract node : markedOut) {
 								nodes += "'" + resolveReference(node).getName() + "'.color,";
 							}
 							// ={g2('DHAP'.color, 'GAP'.color)}
@@ -462,46 +426,47 @@ public class MOoutput extends BaseWriter<Pathway> {
 						if (marked.contains(e.getTo())) {
 							weight.append(tmp);
 						} else {
-							weight.append("{0, " + getModelicaEdgeFunction(e) + "}/*" + fromString + "*/");
+							weight.append("{0, ").append(getModelicaEdgeFunction(e)).append("}/*").append(fromName)
+									.append("*/");
 						}
 					} else {
 						weight.append(getModelicaEdgeFunction(e));
 					}
 
-					if (this.outWeights.containsKey(fromString)) {
-						this.outWeights.put(fromString, outWeights.get(fromString) + ", " + weight);
+					if (outWeights.containsKey(fromName)) {
+						outWeights.put(fromName, outWeights.get(fromName) + ", " + weight);
 					} else {
-						this.outWeights.put(fromString, weight.toString());
+						outWeights.put(fromName, weight.toString());
 					}
 				}
 
-				if (!actualInEdges.containsKey(toString)) {
-					actualInEdges.put(toString, new ArrayList<>());
+				if (!actualInEdges.containsKey(toName)) {
+					actualInEdges.put(toName, new ArrayList<>());
 				}
-				actualInEdges.get(toString).add(e.getFrom());
+				actualInEdges.get(toName).add(e.getFrom());
 
-				if (!actualOutEdges.containsKey(fromString)) {
-					actualOutEdges.put(fromString, new ArrayList<>());
+				if (!actualOutEdges.containsKey(fromName)) {
+					actualOutEdges.put(fromName, new ArrayList<>());
 				}
 
-				actualOutEdges.get(fromString).add(e.getTo());
+				actualOutEdges.get(fromName).add(e.getTo());
 
 				if (e.getBiologicalElement().equals(Elementdeclerations.pnInhibitorArc)) {
 					if (e.getFrom() instanceof Place) {
-						componentsSB.append(this.createInhibitoryArc(pw, fromString, toString, e));
+						componentsSB.append(this.createInhibitoryArc(pw, fromName, toName, e));
 					}
 				} else if (e.getBiologicalElement().equals(Elementdeclerations.pnTestArc)) {
 					if (e.getFrom() instanceof Place) {
-						componentsSB.append(this.createTestArc(pw, fromString, toString, e));
+						componentsSB.append(this.createTestArc(pw, fromName, toName, e));
 					}
 				} else if (e.getFrom() instanceof Place) {
 					if (e.getFrom().isConstant()) {
-						componentsSB.append(this.createTestArc(pw, fromString, toString, e));
+						componentsSB.append(this.createTestArc(pw, fromName, toName, e));
 					} else {
-						edgesSB.append(getConnectionStringPT(pw, fromString, toString, e));
+						edgesSB.append(getConnectionStringPT(pw, fromName, toName, e));
 					}
 				} else {
-					edgesSB.append(getConnectionStringTP(pw, fromString, toString, e));
+					edgesSB.append(getConnectionStringTP(pw, fromName, toName, e));
 				}
 			}
 		}
