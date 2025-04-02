@@ -310,6 +310,7 @@ public class MenuListener implements ActionListener {
 				}
 				petriNet.getGraph().changeToGEMLayout(staticNodes);
 				CreatePathway.showPathway(petriNet);
+				MainWindow.getInstance().updateAllGuiElements();
 			} else {
 				PopUpDialog.getInstance().show("Error",
 						"Please transform the biological network into a Petri net first!.");
@@ -366,12 +367,12 @@ public class MenuListener implements ActionListener {
 		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
 			Pathway pw = GraphInstance.getPathway();
 			SuffixAwareFilter[] filters;
-			if (Workspace.getCurrentSettings().getDefaultImageExportFormat().equals(
-					ComponentImageWriter.IMAGE_TYPE_SVG)) {
+			if (Workspace.getCurrentSettings().getDefaultImageExportFormat()
+					.equals(ComponentImageWriter.IMAGE_TYPE_SVG)) {
 				filters = new SuffixAwareFilter[] { SuffixAwareFilter.SVG, SuffixAwareFilter.PNG,
 						SuffixAwareFilter.PDF };
-			} else if (Workspace.getCurrentSettings().getDefaultImageExportFormat().equals(
-					ComponentImageWriter.IMAGE_TYPE_PDF)) {
+			} else if (Workspace.getCurrentSettings().getDefaultImageExportFormat()
+					.equals(ComponentImageWriter.IMAGE_TYPE_PDF)) {
 				filters = new SuffixAwareFilter[] { SuffixAwareFilter.PDF, SuffixAwareFilter.PNG,
 						SuffixAwareFilter.SVG };
 			} else {
@@ -901,9 +902,9 @@ public class MenuListener implements ActionListener {
 			int indexA = 0;
 			int indexY = 0;
 			int outputIndex = 0;
-			for (int row = rows; --row >= 0; ) {
+			for (int row = rows; --row >= 0;) {
 				double sum = 0;
-				for (int i = indexA, j = indexY, column = columns; --column >= 0; ) {
+				for (int i = indexA, j = indexY, column = columns; --column >= 0;) {
 					sum += elements[i] * other.elements[j];
 					i++;
 					j++;
