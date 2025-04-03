@@ -270,12 +270,16 @@ public class MOoutput extends BaseWriter<Pathway> {
 							attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
 							attr.append(", enablingProbOut={").append(outProb.get(place.getName())).append("}");
 						} else if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PRIO) {
+							attr.append(", enablingType=PNlib.Types.EnablingType.Priority");
 							attr.append(", enablingPrioOut={").append(outPrio.get(place.getName())).append("}");
 						} else {
 							// priority is default in PNLib, therefore, we set probability with default uniform
 							// distribution to use random conflict resolution backed by the placeLocalSeed parameter
 							attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
 						}
+					} else {
+						// As we don't currently handle input conflicts (via capacities), add probability by default
+						attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
 					}
 					// Set a defined seed to ensure deterministic behaviour
 					attr.append(", localSeedIn=placeLocalSeed");
@@ -304,12 +308,16 @@ public class MOoutput extends BaseWriter<Pathway> {
 							attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
 							attr.append(", enablingProbOut={").append(outProb.get(place.getName())).append("}");
 						} else if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PRIO) {
+							attr.append(", enablingType=PNlib.Types.EnablingType.Priority");
 							attr.append(", enablingPrioOut={").append(outPrio.get(place.getName())).append("}");
 						} else {
 							// priority is default in PNLib, therefore, we set probability with default uniform
 							// distribution to use random conflict resolution backed by the placeLocalSeed parameter
 							attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
 						}
+					} else {
+						// As we don't currently handle input conflicts (via capacities), add probability by default
+						attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
 					}
 					// Set a defined seed to ensure deterministic behaviour
 					attr.append(", localSeedIn=placeLocalSeed");
