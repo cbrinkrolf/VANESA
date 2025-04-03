@@ -13,7 +13,7 @@ import util.VanesaUtility;
 
 import javax.swing.*;
 import java.math.BigDecimal;
-import java.util.Random;
+import java.util.*;
 
 public class DiscreteSimulationPanel extends JPanel {
 	private static final int PROGRESS_SCALE = 10000;
@@ -115,8 +115,8 @@ public class DiscreteSimulationPanel extends JPanel {
 		}
 		addLogText("Started simulation...\n");
 		try {
-			while (running && !simulator.isDead() && endTime.compareTo(simulator.getMaxTime()) > 0) {
-				simulator.step();
+			while (running && !simulator.isDead()) {
+				simulator.step(endTime);
 				progressBar.setValue(simulator.getMaxTime().multiply(progressFactor).intValue());
 				setElapsedTime(System.currentTimeMillis() - elapsedTimeStart);
 			}
@@ -141,13 +141,17 @@ public class DiscreteSimulationPanel extends JPanel {
 	private void onStopClicked() {
 		running = false;
 		if (simulator != null && simulationThread != null) {
+			addLogText("Simulation stop requested. Waiting for simulation to stop...\n");
 			try {
 				simulationThread.join();
 			} catch (final InterruptedException ignored) {
 			}
+			addLogText("Simulation stopped after " + elapsedTimeLabel.getText() + ".\n");
+			addLogText("Collecting results...\n");
 			collectResults();
 		}
 		resetAfterStart();
+		addLogText("done.\n");
 	}
 
 	private void resetAfterStart() {
@@ -172,7 +176,89 @@ public class DiscreteSimulationPanel extends JPanel {
 			return;
 		}
 		final SimulationResultController simResultController = pathway.getPetriPropertiesNet().getSimResController();
+		final List<DiscreteSimulator.Marking[]> markingTimelines = simulator.getAllMarkingTimelines();
+		if (markingTimelines.size() > 1) {
+			addLogText("- Found " + markingTimelines.size() + " marking timelines.\n");
+		}
+		// Compress all marking timelines to unique time-points
+		markingTimelines.replaceAll(this::compressMarkingTimeline);
+		final var uniqueMarkingTimelines = deduplicateMarkingTimelines(markingTimelines);
+		if (markingTimelines.size() > 1) {
+			addLogText("- " + uniqueMarkingTimelines.size() + " marking timelines are unique.\n");
+		}
+		for (final DiscreteSimulator.Marking[] markingTimeline : uniqueMarkingTimelines.keySet()) {
+			collectSimulationResult(simResultController, markingTimeline, uniqueMarkingTimelines.get(markingTimeline));
+		}
+		// Update UI
+		pathway.setPlotColorPlacesTransitions(false);
+		pathway.getPetriPropertiesNet().setPetriNetSimulation(true);
+		simulationResultsList.updateSimulationResults(pathway);
+		MainWindow.getInstance().addSimulationResults();
+	}
+
+	private DiscreteSimulator.Marking[] compressMarkingTimeline(final DiscreteSimulator.Marking[] markingTimeline) {
+		final List<DiscreteSimulator.Marking> result = new ArrayList<>();
+		BigDecimal lastTime = BigDecimal.ZERO;
+		for (int i = 1; i < markingTimeline.length; i++) {
+			final BigDecimal newTime = markingTimeline[i].time;
+			if (newTime.compareTo(lastTime) > 0) {
+				result.add(markingTimeline[i - 1]);
+			}
+			lastTime = newTime;
+		}
+		result.add(markingTimeline[markingTimeline.length - 1]);
+		return result.toArray(new DiscreteSimulator.Marking[0]);
+	}
+
+	private Map<DiscreteSimulator.Marking[], Integer> deduplicateMarkingTimelines(
+			final List<DiscreteSimulator.Marking[]> markingTimelines) {
+		final Map<DiscreteSimulator.Marking[], Integer> result = new HashMap<>();
+		result.put(markingTimelines.get(0), 1);
+		for (int i = 1; i < markingTimelines.size(); i++) {
+			final var timeline = markingTimelines.get(i);
+			DiscreteSimulator.Marking[] equalTimeline = null;
+			for (final DiscreteSimulator.Marking[] otherTimeline : result.keySet()) {
+				if (otherTimeline.length != timeline.length) {
+					continue;
+				}
+				boolean allMarkingsEqual = true;
+				for (int j = 0; j < timeline.length; j++) {
+					final var markingA = timeline[j];
+					final var markingB = otherTimeline[j];
+					if (!areMarkingsEqual(markingA, markingB)) {
+						allMarkingsEqual = false;
+						break;
+					}
+				}
+				if (allMarkingsEqual) {
+					equalTimeline = otherTimeline;
+					break;
+				}
+			}
+			if (equalTimeline == null) {
+				result.put(timeline, 1);
+			} else {
+				result.put(equalTimeline, result.get(equalTimeline) + 1);
+			}
+		}
+		return result;
+	}
+
+	private boolean areMarkingsEqual(final DiscreteSimulator.Marking a, final DiscreteSimulator.Marking b) {
+		for (int i = 0; i < a.placeTokens.length; i++) {
+			if (a.placeTokens[i].compareTo(b.placeTokens[i]) != 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private void collectSimulationResult(final SimulationResultController simResultController,
+			final DiscreteSimulator.Marking[] markingTimeline, int occurrences) {
 		String simResId = "discrete sim";
+		if (occurrences > 1) {
+			simResId += " [" + occurrences + "]";
+		}
 		if (simResultController.containsSimId(simResId)) {
 			int i = 1;
 			while (simResultController.containsSimId(simResId + "(" + i + ")")) {
@@ -183,35 +269,22 @@ public class DiscreteSimulationPanel extends JPanel {
 		final var simResult = simResultController.get(simResId);
 		simResult.setName(simResId);
 		simResult.getLogMessage().append(logTextArea.getText());
-		// Add markings to the simulation results, collapsing markings with the same time signature to the last state
-		final DiscreteSimulator.Marking[] markingTimeline = simulator.getMarkingTimeline();
-		BigDecimal lastTime = BigDecimal.ZERO;
-		for (int i = 1; i < markingTimeline.length; i++) {
-			final BigDecimal newTime = markingTimeline[i].time;
-			if (newTime.compareTo(lastTime) > 0) {
-				var marking = markingTimeline[i - 1];
+		// Add markings to the simulation results
+		for (int i = 0; i < markingTimeline.length; i++) {
+			final var marking = markingTimeline[i];
+			if (i > 0) {
+				final var previousMarking = markingTimeline[i - 1];
 				simResult.addTime(marking.time.doubleValue());
 				for (final var place : simulator.getPlaces()) {
 					simResult.addValue(place, SimulationResultController.SIM_TOKEN,
-							simulator.getTokens(marking, place).doubleValue());
-				}
-				simResult.addTime(newTime.doubleValue());
-				for (final var place : simulator.getPlaces()) {
-					simResult.addValue(place, SimulationResultController.SIM_TOKEN,
-							simulator.getTokens(marking, place).doubleValue());
+							simulator.getTokens(previousMarking, place).doubleValue());
 				}
 			}
-			lastTime = newTime;
+			simResult.addTime(marking.time.doubleValue());
+			for (final var place : simulator.getPlaces()) {
+				simResult.addValue(place, SimulationResultController.SIM_TOKEN,
+						simulator.getTokens(marking, place).doubleValue());
+			}
 		}
-		simResult.addTime(markingTimeline[markingTimeline.length - 1].time.doubleValue());
-		for (final var place : simulator.getPlaces()) {
-			simResult.addValue(place, SimulationResultController.SIM_TOKEN,
-					simulator.getTokens(markingTimeline[markingTimeline.length - 1], place).doubleValue());
-		}
-		// Update UI
-		pathway.setPlotColorPlacesTransitions(false);
-		pathway.getPetriPropertiesNet().setPetriNetSimulation(true);
-		simulationResultsList.updateSimulationResults(pathway);
-		MainWindow.getInstance().addSimulationResults();
 	}
 }

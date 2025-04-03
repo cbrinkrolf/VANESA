@@ -1,6 +1,6 @@
 package simulation;
 
-public class SimulationException extends Exception {
+public class SimulationException extends RuntimeException {
 	public SimulationException(final String message) {
 		super(message);
 	}

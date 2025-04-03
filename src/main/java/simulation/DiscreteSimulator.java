@@ -16,6 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.IntStream;
 
 /**
  * Simulator for extended, timed, functional, stochastic, discrete Petri Nets with capacities.
@@ -82,9 +84,11 @@ import java.util.*;
 public class DiscreteSimulator extends Simulator {
 	private final List<DiscretePlace> places = new ArrayList<>();
 	private final Map<Transition, TransitionDetails> transitions = new HashMap<>();
-	private final List<Marking> markings = new ArrayList<>();
+	private final List<Marking> markings = Collections.synchronizedList(new ArrayList<>());
 	private final List<Marking> openMarkings = new ArrayList<>();
-	private final List<FiringEdge> firingEdges = new ArrayList<>();
+	private final List<FiringEdge> firingEdges = Collections.synchronizedList(new ArrayList<>());
+	private final Map<Marking, List<FiringEdge>> outEdges = new ConcurrentHashMap<>();
+	private final Map<Marking, List<FiringEdge>> inEdges = new ConcurrentHashMap<>();
 
 	public DiscreteSimulator(final Pathway pathway) throws SimulationException {
 		this(pathway, 42, false);
@@ -304,8 +308,8 @@ public class DiscreteSimulator extends Simulator {
 	}
 
 	public void simulateUntil(final BigDecimal endTime) throws SimulationException {
-		while (!isDead() && endTime.compareTo(getMaxTime()) > 0) {
-			step();
+		while (!isDead()) {
+			step(endTime);
 		}
 	}
 
@@ -320,6 +324,10 @@ public class DiscreteSimulator extends Simulator {
 	}
 
 	public void step() throws SimulationException {
+		step(null);
+	}
+
+	public void step(final BigDecimal endTime) throws SimulationException {
 		if (openMarkings.isEmpty()) {
 			return;
 		}
@@ -340,15 +348,20 @@ public class DiscreteSimulator extends Simulator {
 			}
 			if (allowBranching) {
 				// Explore all possible branches
-				for (int i = 0; i < maxFireIndex; i++) {
-					fireTransition(marking, marking.concessionsOrderedByDelay[i].transition,
-							marking.concessionsOrderedByDelay[i].delay);
+				// TODO parallelize: IntStream.range(0, maxFireIndex + 1).parallel().forEach(i -> { ... });
+				for (int i = 0; i < maxFireIndex + 1; i++) {
+					final var concession = marking.concessionsOrderedByDelay[i];
+					if (endTime == null || marking.time.add(concession.delay).compareTo(endTime) <= 0) {
+						fireTransition(marking, concession.transition, concession.delay);
+					}
 				}
 			} else {
 				// Explore only one random branch
 				final int branchIndex = random.nextInt(maxFireIndex + 1);
-				fireTransition(marking, marking.concessionsOrderedByDelay[branchIndex].transition,
-						marking.concessionsOrderedByDelay[branchIndex].delay);
+				final var concession = marking.concessionsOrderedByDelay[branchIndex];
+				if (endTime == null || marking.time.add(concession.delay).compareTo(endTime) <= 0) {
+					fireTransition(marking, concession.transition, concession.delay);
+				}
 			}
 		}
 	}
@@ -414,7 +427,10 @@ public class DiscreteSimulator extends Simulator {
 		if (!newMarking.isDead()) {
 			openMarkings.add(newMarking);
 		}
-		firingEdges.add(new FiringEdge(marking, newMarking, transition));
+		final var edge = new FiringEdge(marking, newMarking, transition);
+		firingEdges.add(edge);
+		outEdges.computeIfAbsent(marking, m -> Collections.synchronizedList(new ArrayList<>())).add(edge);
+		inEdges.computeIfAbsent(newMarking, m -> Collections.synchronizedList(new ArrayList<>())).add(edge);
 	}
 
 	public Collection<DiscretePlace> getPlaces() {
@@ -461,16 +477,37 @@ public class DiscreteSimulator extends Simulator {
 		markings.add(getStartMarking());
 		boolean foundNext = true;
 		while (foundNext) {
-			foundNext = false;
-			for (final var edge : firingEdges) {
-				if (edge.from == markings.get(markings.size() - 1)) {
-					markings.add(edge.to);
-					foundNext = true;
-					break;
-				}
+			final var edges = outEdges.get(markings.get(markings.size() - 1));
+			foundNext = edges != null;
+			if (edges != null) {
+				markings.add(edges.get(0).to);
 			}
 		}
 		return markings.toArray(new Marking[0]);
+	}
+
+	public List<Marking[]> getAllMarkingTimelines() {
+		final List<Marking> endMarkings = new ArrayList<>();
+		for (final var marking : markings) {
+			if (outEdges.get(marking) == null) {
+				endMarkings.add(marking);
+			}
+		}
+		final List<Marking[]> result = new ArrayList<>();
+		for (final var endMarking : endMarkings) {
+			final List<Marking> timeline = new ArrayList<>();
+			timeline.add(endMarking);
+			boolean foundNext = true;
+			while (foundNext) {
+				final var edges = inEdges.get(timeline.get(0));
+				foundNext = edges != null;
+				if (edges != null) {
+					timeline.add(0, edges.get(0).from);
+				}
+			}
+			result.add(timeline.toArray(new Marking[0]));
+		}
+		return result;
 	}
 
 	public static class Marking {
