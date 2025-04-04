@@ -77,10 +77,6 @@ public abstract class Place extends PNNode {
 			return;
 		}
 		this.tokenStart = tokenStart;
-		// Pathway pw = GraphInstance.getPathway();
-
-		// if (pw.getPetriPropertiesNet() != null
-		// && !pw.getPetriPropertiesNet().isPetriNetSimulation())
 		token = tokenStart;
 	}
 

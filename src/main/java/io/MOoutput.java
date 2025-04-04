@@ -414,15 +414,15 @@ public class MOoutput extends BaseWriter<Pathway> {
 
 				if (e.getBiologicalElement().equals(Elementdeclerations.pnInhibitorArc)) {
 					if (e.getFrom() instanceof Place) {
-						componentsSB.append(this.createInhibitoryArc(pw, fromName, toName, e));
+						componentsSB.append(createInhibitoryArc(pw, fromName, toName, e));
 					}
 				} else if (e.getBiologicalElement().equals(Elementdeclerations.pnTestArc)) {
 					if (e.getFrom() instanceof Place) {
-						componentsSB.append(this.createTestArc(pw, fromName, toName, e));
+						componentsSB.append(createTestArc(pw, fromName, toName, e));
 					}
 				} else if (e.getFrom() instanceof Place) {
 					if (e.getFrom().isConstant()) {
-						componentsSB.append(this.createTestArc(pw, fromName, toName, e));
+						componentsSB.append(createTestArc(pw, fromName, toName, e));
 					} else {
 						edgesSB.append(getConnectionStringPT(pw, fromName, toName, e));
 					}

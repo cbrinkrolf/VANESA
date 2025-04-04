@@ -2,6 +2,7 @@ package graph.gui;
 
 import java.awt.Component;
 import java.awt.geom.Point2D;
+import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.swing.JComboBox;
@@ -167,14 +168,9 @@ public class PetriNetVertexDialog {
 		if (petriElement.equals(Elementdeclerations.discretePlace)) {
 			final Place p = new DiscretePlace(name.getText().trim(), name.getText().trim(), pw);
 			if (!pw.isHeadless()) {
-				// number = (Number) token.getValue();
-				// if (number != null) {
-				// p.setToken(number.doubleValue());
-				// }
 				Number number = (Number) tokenStart.getValue();
 				if (number != null) {
 					p.setTokenStart(number.doubleValue());
-					p.setToken(number.doubleValue());
 				}
 				number = (Number) tokenMin.getValue();
 				if (number != null) {
@@ -189,14 +185,9 @@ public class PetriNetVertexDialog {
 		} else if (petriElement.equals(Elementdeclerations.continuousPlace)) {
 			final Place p = new ContinuousPlace(name.getText().trim(), name.getText().trim(), pw);
 			if (!pw.isHeadless()) {
-				// number = (Number) token.getValue();
-				// if (number != null) {
-				// p.setToken(number.doubleValue());
-				// }
 				Number number = (Number) tokenStart.getValue();
 				if (number != null) {
 					p.setTokenStart(number.doubleValue());
-					p.setToken(number.doubleValue());
 				}
 				number = (Number) tokenMin.getValue();
 				if (number != null) {

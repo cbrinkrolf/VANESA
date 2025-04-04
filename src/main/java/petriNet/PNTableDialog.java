@@ -116,7 +116,6 @@ public class PNTableDialog extends JDialog implements ActionListener {
 			// rows2[i][6] = edge.getUpperBoundary();
 			rows2[i][7] = edge.getProbability();
 			i++;
-
 		}
 
 		DefaultTableModel model = new DefaultTableModel(rows,
@@ -133,10 +132,10 @@ public class PNTableDialog extends JDialog implements ActionListener {
 			}
 
 			public boolean isCellEditable(int rowIndex, int columnIndex) {
-				if (bnas[rowIndex] instanceof Place && (columnIndex == 7 || columnIndex == 8))
+				if (bnas[rowIndex] instanceof Place && (columnIndex == 2 || columnIndex == 7 || columnIndex == 8))
 					return false;
-				else if (bnas[rowIndex] instanceof Transition && (columnIndex == 2 || columnIndex == 3
-						|| columnIndex == 4 || columnIndex == 5))
+				if (bnas[rowIndex] instanceof Transition && (columnIndex == 2 || columnIndex == 3 || columnIndex == 4
+						|| columnIndex == 5))
 					return false;
 				return true;
 			}
@@ -240,96 +239,92 @@ public class PNTableDialog extends JDialog implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if (!e.getActionCommand().equals("submit")) {
+			return;
+		}
 		final Pathway pw = GraphInstance.getPathway();
-		if (e.getActionCommand().equals("submit")) {
-			boolean changedAllStates = true;
-			// System.out.println("nodes: "+pw.getAllNodes().toArray().length);
-			for (int i = 0; i < pw.getAllGraphNodes().toArray().length; i++) {
-				// System.out.println("i: " + i);
-				bnas[i].setName(
-						(String) table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(0)));
-				bnas[i].setLabel(
-						(String) table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(1)));
-				if (bnas[i] instanceof Place) {
-					final Place p = (Place) bnas[i];
-					p.setToken((Double) table.getValueAt(table.convertRowIndexToView(i),
-							table.convertColumnIndexToView(2)));
-					p.setTokenMax((Double) table.getValueAt(table.convertRowIndexToView(i),
-							table.convertColumnIndexToView(3)));
-					p.setTokenMin((Double) table.getValueAt(table.convertRowIndexToView(i),
-							table.convertColumnIndexToView(4)));
-					p.setTokenStart((Double) table.getValueAt(table.convertRowIndexToView(i),
-							table.convertColumnIndexToView(5)));
+		boolean changedAllStates = true;
+		for (int i = 0; i < pw.getAllGraphNodes().toArray().length; i++) {
+			bnas[i].setName(
+					(String) table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(0)));
+			bnas[i].setLabel(
+					(String) table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(1)));
+			if (bnas[i] instanceof Place) {
+				final Place p = (Place) bnas[i];
+				p.setTokenMax(
+						(Double) table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(3)));
+				p.setTokenMin(
+						(Double) table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(4)));
+				p.setTokenStart(
+						(Double) table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(5)));
 
-					boolean stateChanged = true;
-					for (BiologicalNodeAbstract neighbour : pw.getGraph().getJungGraph().getNeighbors(
-							bnas[table.convertRowIndexToView(i)])) {
-						for (BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
-							if (node.equals(neighbour) && (table.getValueAt(table.convertRowIndexToView(i),
-									table.convertColumnIndexToView(6)).equals(Elementdeclerations.discretePlace)
-									&& node instanceof ContinuousTransition))
-								stateChanged = false;
+				boolean stateChanged = true;
+				for (BiologicalNodeAbstract neighbour : pw.getGraph().getJungGraph().getNeighbors(
+						bnas[table.convertRowIndexToView(i)])) {
+					for (BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
+						if (node.equals(neighbour) && (table.getValueAt(table.convertRowIndexToView(i),
+								table.convertColumnIndexToView(6)).equals(Elementdeclerations.discretePlace)
+								&& node instanceof ContinuousTransition)) {
+							stateChanged = false;
 						}
 					}
-					changedAllStates &= stateChanged;
-					if (stateChanged)
-						p.setDiscrete(
-								table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6))
-										.equals(Elementdeclerations.discretePlace));
-					else
-						p.setColor(Color.red);
+				}
+				changedAllStates &= stateChanged;
+				if (stateChanged) {
+					p.setDiscrete(table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6))
+							.equals(Elementdeclerations.discretePlace));
+				} else {
+					p.setColor(Color.red);
+				}
 
-				} else if (bnas[i] instanceof Transition) {
-					Transition t = (Transition) bnas[i];
-					boolean stateChanged = true;
-					for (BiologicalNodeAbstract neighbour : pw.getGraph().getJungGraph().getNeighbors(t)) {
-						for (BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
-							if (node.equals(neighbour) && (table.getValueAt(table.convertRowIndexToView(i),
-									table.convertColumnIndexToView(6)).equals(Elementdeclerations.continuousTransition)
-									&& node.getBiologicalElement().equals(Elementdeclerations.discretePlace)))
-								stateChanged = false;
+			} else if (bnas[i] instanceof Transition) {
+				Transition t = (Transition) bnas[i];
+				boolean stateChanged = true;
+				for (BiologicalNodeAbstract neighbour : pw.getGraph().getJungGraph().getNeighbors(t)) {
+					for (BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
+						if (node.equals(neighbour) && (table.getValueAt(table.convertRowIndexToView(i),
+								table.convertColumnIndexToView(6)).equals(Elementdeclerations.continuousTransition)
+								&& node.getBiologicalElement().equals(Elementdeclerations.discretePlace))) {
+							stateChanged = false;
 						}
 					}
-					changedAllStates &= stateChanged;
+				}
+				changedAllStates &= stateChanged;
 
-					Transition newT = null;
-					System.out.println(
-							table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6)));
-					if (table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6)).equals(
-							Elementdeclerations.discreteTransition) && !(t instanceof DiscreteTransition)) {
-						newT = new DiscreteTransition(t.getLabel(), t.getName(), pw);
-					} else if (table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6))
-							.equals(Elementdeclerations.stochasticTransition) && !(t instanceof StochasticTransition)) {
-						newT = new StochasticTransition(t.getLabel(), t.getName(), pw);
-					} else if (table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6))
-							.equals(Elementdeclerations.continuousTransition) && !(t instanceof ContinuousTransition)) {
-						newT = new ContinuousTransition(t.getLabel(), t.getName(), pw);
-					}
-					if (newT != null) {
-						// newT.setCompartment(t.getCompartment());
-						pw.addVertex(newT, new Point(0, 0));
-						t = newT;
-					}
-					if (!stateChanged)
-						t.setColor(Color.red);
-
-					if (t instanceof DiscreteTransition) {
-						((DiscreteTransition) t).setDelay((String) table.getValueAt(table.convertRowIndexToView(i),
-								table.convertColumnIndexToView(7)));
-					} else if (t instanceof StochasticTransition) {
-						((StochasticTransition) t).setDistribution(
-								(StochasticDistribution) table.getValueAt(table.convertRowIndexToView(i),
-										table.convertColumnIndexToView(8)));
-					}
-
+				Transition newT = null;
+				System.out.println(table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6)));
+				if (table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6)).equals(
+						Elementdeclerations.discreteTransition) && !(t instanceof DiscreteTransition)) {
+					newT = new DiscreteTransition(t.getLabel(), t.getName(), pw);
+				} else if (table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6)).equals(
+						Elementdeclerations.stochasticTransition) && !(t instanceof StochasticTransition)) {
+					newT = new StochasticTransition(t.getLabel(), t.getName(), pw);
+				} else if (table.getValueAt(table.convertRowIndexToView(i), table.convertColumnIndexToView(6)).equals(
+						Elementdeclerations.continuousTransition) && !(t instanceof ContinuousTransition)) {
+					newT = new ContinuousTransition(t.getLabel(), t.getName(), pw);
+				}
+				if (newT != null) {
+					// newT.setCompartment(t.getCompartment());
+					pw.addVertex(newT, new Point(0, 0));
+					t = newT;
+				}
+				if (!stateChanged) {
+					t.setColor(Color.red);
+				}
+				if (t instanceof DiscreteTransition) {
+					((DiscreteTransition) t).setDelay((String) table.getValueAt(table.convertRowIndexToView(i),
+							table.convertColumnIndexToView(7)));
+				} else if (t instanceof StochasticTransition) {
+					((StochasticTransition) t).setDistribution(
+							(StochasticDistribution) table.getValueAt(table.convertRowIndexToView(i),
+									table.convertColumnIndexToView(8)));
 				}
 			}
-
-			setVisible(false);
-			if (!changedAllStates)
-				JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(),
-						"You tried to change the type of your transitions or places in a way, such that there were a relation between a continuous transition and a discrete place! The objects which type was not changed are marked red.",
-						"Action could not be fully performed...", JOptionPane.ERROR_MESSAGE);
 		}
+		setVisible(false);
+		if (!changedAllStates)
+			JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(),
+					"You tried to change the type of your transitions or places in a way, such that there were a relation between a continuous transition and a discrete place! The objects which type was not changed are marked red.",
+					"Action could not be fully performed...", JOptionPane.ERROR_MESSAGE);
 	}
 }

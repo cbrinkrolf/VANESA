@@ -55,14 +55,12 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 	private JCheckBox isDirected;
 
-	private void updateWindow(GraphicalElementAbstract element) {
+	private void updateWindow(final GraphicalElementAbstract element) {
 		p.removeAll();
-		Pathway pw = GraphInstance.getPathway();
+		final Pathway pw = GraphInstance.getPathway();
 		if (pw == null) {
 			return;
 		}
-		// this.element = element;
-		// this.ab = (GraphElementAbstract) graphInstance.getPathwayElement(element);
 		if (element instanceof GraphElementAbstract) {
 			original = (GraphElementAbstract) element;
 			PropertyWindowListener pwl = new PropertyWindowListener(original);
@@ -260,24 +258,14 @@ public class ElementWindow implements ActionListener, ItemListener {
 				constCheck.setSelected(((BiologicalNodeAbstract) ab).isConstant());
 
 				if (!(ab instanceof PNNode)) {
-					JLabel lblTokenStart = new JLabel("Start concentration");
 					concentration = new JLabel(String.valueOf(((BiologicalNodeAbstract) ab).getConcentration()));
 					MyJFormattedTextField concentrationStart = new MyJFormattedTextField(
 							MyNumberFormat.getDecimalFormat());
 					concentrationMin = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 					concentrationMax = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-					// concentration.setText(String.valueOf(((BiologicalNodeAbstract)
-					// ab).getConcentration()));
 					concentrationStart.setText(String.valueOf(((BiologicalNodeAbstract) ab).getConcentrationStart()));
 					concentrationMin.setText(String.valueOf(((BiologicalNodeAbstract) ab).getConcentrationMin()));
 					concentrationMax.setText(String.valueOf(((BiologicalNodeAbstract) ab).getConcentrationMax()));
-
-					JLabel lblConcentration = new JLabel("Concentration");
-
-					concentration.setName("concentration");
-					// token.addFocusListener(pwl);
-					// concentration.setEditable(false);
-					// concentration.setFocusLostBehavior(JFormattedTextField.COMMIT);
 
 					concentrationStart.setName("concentrationStart");
 					concentrationStart.setFocusLostBehavior(JFormattedTextField.COMMIT);
@@ -286,21 +274,19 @@ public class ElementWindow implements ActionListener, ItemListener {
 					concentrationMin.setName("concentrationMin");
 					concentrationMin.setFocusLostBehavior(JFormattedTextField.COMMIT);
 					concentrationMin.addFocusListener(pwl);
-					JLabel lblTokenMin = new JLabel("Min concentration");
 
 					concentrationMax.setName("concentrationMax");
 					concentrationMax.setFocusLostBehavior(JFormattedTextField.COMMIT);
 					concentrationMax.addFocusListener(pwl);
-					JLabel lblTokenMax = new JLabel("Max concentration");
-					p.add(lblConcentration, "gap 5 ");
+					p.add(new JLabel("Concentration"), "gap 5");
 					p.add(concentration, "wrap");
 
-					p.add(lblTokenStart, "gap 5 ");
+					p.add(new JLabel("Start concentration"), "gap 5 ");
 					p.add(concentrationStart, "wrap");
 
-					p.add(lblTokenMin, "gap 5 ");
+					p.add(new JLabel("Min concentration"), "gap 5 ");
 					p.add(concentrationMin, "wrap");
-					p.add(lblTokenMax, "gap 5");
+					p.add(new JLabel("Max concentration"), "gap 5");
 					p.add(concentrationMax, "wrap");
 					p.add(new JLabel("Constant concentration"), "gap 5");
 					p.add(constCheck, "wrap");
@@ -397,7 +383,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 					MyJFormattedTextField tokenStart;
 
-					JLabel lblTokenStart = new JLabel("Start tokens");
 					if (place.isDiscrete()) {
 						token = new JLabel();
 						tokenStart = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
@@ -417,12 +402,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 						tokenMin.setText(String.valueOf(place.getTokenMin()));
 						tokenMax.setText(String.valueOf(place.getTokenMax()));
 					}
-					JLabel lblToken = new JLabel("Tokens");
-
-					token.setName("token");
-					// token.addFocusListener(pwl);
-					// token.setEditable(false);
-					// token.setFocusLostBehavior(JFormattedTextField.COMMIT);
 
 					tokenStart.setName("tokenStart");
 					tokenStart.setFocusLostBehavior(JFormattedTextField.COMMIT);
@@ -431,28 +410,25 @@ public class ElementWindow implements ActionListener, ItemListener {
 					tokenMin.setName("tokenMin");
 					tokenMin.setFocusLostBehavior(JFormattedTextField.COMMIT);
 					tokenMin.addFocusListener(pwl);
-					JLabel lblTokenMin = new JLabel("Min tokens");
 
 					tokenMax.setName("tokenMax");
 					tokenMax.setFocusLostBehavior(JFormattedTextField.COMMIT);
 					tokenMax.addFocusListener(pwl);
-					JLabel lblTokenMax = new JLabel("Max tokens");
-					p.add(lblToken, "gap 5 ");
+					p.add(new JLabel("Tokens"), "gap 5 ");
 					p.add(token, "span 1, wrap");
 
-					p.add(lblTokenStart, "gap 5 ");
+					p.add(new JLabel("Start tokens"), "gap 5 ");
 					p.add(tokenStart, "wrap");
 
 					// p.add(constCheck, "wrap");
-					p.add(lblTokenMin, "gap 5 ");
+					p.add(new JLabel("Min tokens"), "gap 5 ");
 					p.add(tokenMin, "span 1, wrap");
-					p.add(lblTokenMax, "gap 5");
+					p.add(new JLabel("Max tokens"), "gap 5");
 					p.add(tokenMax, "span 1, wrap");
 					p.add(new JLabel("Constant tokens"), "gap 5");
 					p.add(constCheck, "wrap");
 
 					if (place.getConflictingOutEdges().size() > 1) {
-
 						ButtonGroup group = new ButtonGroup();
 						JRadioButton none = new JRadioButton("none");
 						none.setActionCommand("conflict_none");
@@ -497,49 +473,45 @@ public class ElementWindow implements ActionListener, ItemListener {
 					}
 
 				} else if (ab instanceof Transition) {
-					JLabel lswitchTrans = new JLabel("Transition type");
-					JComboBox<String> transList = new JComboBox<>(new String[] {
-							DiscreteTransition.class.getSimpleName(), ContinuousTransition.class.getSimpleName(),
-							StochasticTransition.class.getSimpleName() });
+					JComboBox<String> transList = new JComboBox<>(
+							new String[] { DiscreteTransition.class.getSimpleName(),
+									ContinuousTransition.class.getSimpleName(),
+									StochasticTransition.class.getSimpleName() });
 					transList.setSelectedItem(ab.getClass().getSimpleName());
 					transList.setName("transList");
 					transList.addFocusListener(pwl);
-					p.add(lswitchTrans, "gap 5");
+					p.add(new JLabel("Transition type"), "gap 5");
 					p.add(transList, "wrap");
 
 					JTextField firingCondition = new JTextField(4);
-					JLabel lblFiringCondition = new JLabel("Firing condition");
 					firingCondition.setText(((Transition) ab).getFiringCondition());
 					firingCondition.setName("firingCondition");
 					firingCondition.addFocusListener(pwl);
 
-					p.add(lblFiringCondition, "gap 5");
+					p.add(new JLabel("Firing condition"), "gap 5");
 					p.add(firingCondition, "wrap");
 
 					if (ab instanceof DiscreteTransition) {
 						DiscreteTransition trans = (DiscreteTransition) ab;
 						JTextField delay = new JTextField(4);
-						JLabel lbldelay = new JLabel("Delay");
 						delay.setText(String.valueOf(trans.getDelay()));
 						delay.setName("delay");
 						delay.addFocusListener(pwl);
 						if (trans.isKnockedOut()) {
 							delay.setEnabled(false);
 						}
-						p.add(lbldelay, "gap 5");
+						p.add(new JLabel("Delay"), "gap 5");
 						p.add(delay, "wrap");
 					} else if (ab instanceof ContinuousTransition) {
 						ContinuousTransition node = (ContinuousTransition) ab;
 						JTextField maxSpeed = new JTextField(4);
-						JLabel lblMaxSpeed = new JLabel("Maximal speed");
 						maxSpeed.setText(node.getMaximalSpeed());
 						maxSpeed.setName("maximalSpeed");
 						maxSpeed.addFocusListener(pwl);
 						if (node.isKnockedOut()) {
 							maxSpeed.setEnabled(false);
 						}
-
-						p.add(lblMaxSpeed, "gap 5");
+						p.add(new JLabel("Maximal speed"), "gap 5");
 						p.add(maxSpeed, "wrap");
 
 					} else if (ab instanceof StochasticTransition) {
@@ -669,8 +641,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 					knockedOut.setToolTipText("Knock out");
 					knockedOut.setActionCommand("knockedOut");
 					knockedOut.addActionListener(this);
-					p.add(new JLabel("Knocked out"), "gap 5 ");
-					p.add(knockedOut, "wrap ,span 1");
+					p.add(new JLabel("Knocked out"), "gap 5");
+					p.add(knockedOut, "wrap, span 1");
 				}
 
 				if (constCheck.isSelected()) {
@@ -712,10 +684,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 					if (ab instanceof PNArc) {
 						PNArc pnedge = (PNArc) ab;
 						if (!pnedge.isInhibitorArc() && !pnedge.isTestArc()) {
-							p.add(changeEdgeDirection, "");
+							p.add(changeEdgeDirection);
 						}
 					} else {
-						p.add(changeEdgeDirection, "");
+						p.add(changeEdgeDirection);
 					}
 				}
 
@@ -750,13 +722,12 @@ public class ElementWindow implements ActionListener, ItemListener {
 							}
 						}
 					}
-
 				} else {
 					isDirected.setSelected(((BiologicalEdgeAbstract) ab).isDirected());
 					isDirected.setToolTipText("Is directed");
 					isDirected.setActionCommand("isDirected");
 					isDirected.addActionListener(this);
-					p.add(new JLabel("Is directed"), "gap 5, split 2 ");
+					p.add(new JLabel("Is directed"), "gap 5, split 2");
 					p.add(isDirected, "wrap");
 
 					if (ab instanceof Inhibition) {
@@ -803,8 +774,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 				knockedOut.setToolTipText("Knock out");
 				knockedOut.setActionCommand("knockedOut");
 				knockedOut.addActionListener(this);
-				p.add(new JLabel("Knocked out"), "gap 5 ");
-				p.add(knockedOut, "wrap ,span 1");
+				p.add(new JLabel("Knocked out"), "gap 5");
+				p.add(knockedOut, "wrap, span 1");
 			}
 
 			if (ab.isVertex()) {
@@ -949,8 +920,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 		} else if ("pathwayLink".equals(event)) {
 			if (JOptionPane.showConfirmDialog(w.getFrame(),
 					"If you delete the PathwayLink the Sub-Pathway (with all eventually made changes within it) will be lost. Do you want to do this?",
-					"Delete the Sub-Pathway...", JOptionPane.YES_NO_OPTION,
-					JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION && ab instanceof PathwayMap) {
+					"Delete the Sub-Pathway...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
+					== JOptionPane.YES_OPTION && ab instanceof PathwayMap) {
 				((PathwayMap) ab).setPathwayLink(null);
 				w.updateElementTree();
 				w.updatePathwayTree();
@@ -988,7 +959,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			BiologicalNodeAbstract node = dialog.getAnswer();
 			if (node != null) {
 				bna.setLogicalReference(node);
-				this.revalidateView();
+				revalidateView();
 				w.updateElementTree();
 			}
 		} else if ("deleteRef".equals(event)) {
@@ -1060,7 +1031,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				Place place = (Place) ab;
 				if (place.getConflictStrategy() != Place.CONFLICTHANDLING_NONE) {
 					place.setConflictStrategy(Place.CONFLICTHANDLING_NONE);
-					this.revalidateView();
+					revalidateView();
 				}
 			}
 		} else if ("conflict_prio".equals(event)) {
@@ -1068,7 +1039,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				Place place = (Place) ab;
 				if (place.getConflictStrategy() != Place.CONFLICTHANDLING_PRIO) {
 					place.setConflictStrategy(Place.CONFLICTHANDLING_PRIO);
-					this.revalidateView();
+					revalidateView();
 				}
 			}
 		} else if ("conflict_prob".equals(event)) {
@@ -1124,13 +1095,11 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 	@Override
 	public void itemStateChanged(ItemEvent event) {
-		// String item = (String) event.getItem();
 		if (ab.isVertex()) {
 			JComboBox<String> compartment = (JComboBox<String>) event.getSource();
 			Pathway pw = GraphInstance.getPathway();
 			pw.getCompartmentManager().setCompartment((BiologicalNodeAbstract) ab,
 					pw.getCompartmentManager().getCompartment(compartment.getSelectedItem().toString()));
-
 		}
 	}
 
