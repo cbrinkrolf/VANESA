@@ -824,18 +824,6 @@ public class JSBMLInput {
 		case "AaSequence":
 			((biologicalObjects.nodes.Protein) bna).setAaSequence(value);
 			break;
-		case "Tarbase_accession":
-			((biologicalObjects.nodes.SRNA) bna).setTarbaseAccession(value);
-			break;
-		case "Tarbase_DS":
-			((biologicalObjects.nodes.SRNA) bna).setTarbaseDS(value);
-			break;
-		case "Tarbase_ensemble":
-			((biologicalObjects.nodes.SRNA) bna).setTarbaseEnsemble(value);
-			break;
-		case "Tarbase_IS":
-			((biologicalObjects.nodes.SRNA) bna).setTarbaseIS(value);
-			break;
 		}
 	}
 

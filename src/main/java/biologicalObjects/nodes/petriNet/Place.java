@@ -13,9 +13,9 @@ import graph.GraphInstance;
 import gui.PopUpDialog;
 
 public abstract class Place extends PNNode {
-	public static final int CONFLICTHANDLING_NONE = 0;
-	public static final int CONFLICTHANDLING_PRIO = 1;
-	public static final int CONFLICTHANDLING_PROB = 2;
+	public static final int CONFLICT_HANDLING_NONE = 0;
+	public static final int CONFLICT_HANDLING_PRIO = 1;
+	public static final int CONFLICT_HANDLING_PROB = 2;
 
 	private double token = 0;
 	private double tokenMin = 0;
@@ -95,7 +95,7 @@ public abstract class Place extends PNNode {
 			for (BiologicalEdgeAbstract bea : edges) {
 				if (bea instanceof PNArc) {
 					PNArc arc = (PNArc) bea;
-					if (!arc.isInhibitorArc() && !arc.isTestArc() && !(bea.getTo() instanceof ContinuousTransition)) {
+					if (arc.isRegularArc() && !(bea.getTo() instanceof ContinuousTransition)) {
 						result.add((PNArc) bea);
 					}
 				}
@@ -105,9 +105,9 @@ public abstract class Place extends PNNode {
 	}
 
 	public boolean hasConflictProperties() {
-		if (conflictStrategy == DiscretePlace.CONFLICTHANDLING_PRIO) {
+		if (conflictStrategy == DiscretePlace.CONFLICT_HANDLING_PRIO) {
 			return hasPriorityConflicts();
-		} else if (conflictStrategy == DiscretePlace.CONFLICTHANDLING_PROB) {
+		} else if (conflictStrategy == DiscretePlace.CONFLICT_HANDLING_PROB) {
 			return hasProbabilityConflicts();
 		}
 		return false;
@@ -150,9 +150,9 @@ public abstract class Place extends PNNode {
 	}
 
 	public void solveConflictProperties() {
-		if (conflictStrategy == DiscretePlace.CONFLICTHANDLING_PRIO && hasPriorityConflicts()) {
+		if (conflictStrategy == DiscretePlace.CONFLICT_HANDLING_PRIO && hasPriorityConflicts()) {
 			solvePriorityConflicts();
-		} else if (conflictStrategy == DiscretePlace.CONFLICTHANDLING_PROB && hasProbabilityConflicts()) {
+		} else if (conflictStrategy == DiscretePlace.CONFLICT_HANDLING_PROB && hasProbabilityConflicts()) {
 			solveProbabilityConflicts();
 		}
 	}

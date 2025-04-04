@@ -556,13 +556,6 @@ public class JSBMLOutput {
 			el.addChild(createElSub(((biologicalObjects.nodes.Protein) oneNode).getAaSequence(), "AaSequence"));
 		} else if (oneNode instanceof biologicalObjects.nodes.RNA) {
 			el.addChild(createElSub(((biologicalObjects.nodes.RNA) oneNode).getNtSequence(), "NtSequence"));
-			if (oneNode instanceof biologicalObjects.nodes.SRNA) {
-				biologicalObjects.nodes.SRNA sRna = (biologicalObjects.nodes.SRNA) oneNode;
-				el.addChild(createElSub(sRna.getTarbaseAccession(), "Tarbase_accession"));
-				el.addChild(createElSub(sRna.getTarbaseDS(), "Tarbase_DS"));
-				el.addChild(createElSub(sRna.getTarbaseEnsemble(), "Tarbase_ensemble"));
-				el.addChild(createElSub(sRna.getTarbaseIS(), "Tarbase_IS"));
-			}
 		}
 		if (oneNode instanceof DynamicNode) {
 			DynamicNode dynamicNode = (DynamicNode) oneNode;

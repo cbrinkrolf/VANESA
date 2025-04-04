@@ -459,13 +459,13 @@ public class ElementWindow implements ActionListener, ItemListener {
 						p.add(prio);
 						p.add(prob, "wrap");
 
-						if (place.getConflictStrategy() == Place.CONFLICTHANDLING_NONE) {
+						if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_NONE) {
 							none.setSelected(true);
-						} else if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PRIO) {
+						} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PRIO) {
 							prio.setSelected(true);
 							p.add(check, "skip,split 2");
 							p.add(solve, "wrap");
-						} else if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PROB) {
+						} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PROB) {
 							prob.setSelected(true);
 							p.add(check, "skip,split 2");
 							p.add(solve, "wrap");
@@ -709,13 +709,13 @@ public class ElementWindow implements ActionListener, ItemListener {
 						Place place = (Place) e.getFrom();
 						if (place.getConflictingOutEdges().size() > 1) {
 							p.add(new JLabel("Conflict solving strategy:"), "gap 5");
-							if (place.getConflictStrategy() == Place.CONFLICTHANDLING_NONE) {
+							if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_NONE) {
 								p.add(new JLabel("none"), "gap 5, wrap");
-							} else if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PRIO) {
+							} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PRIO) {
 								p.add(new JLabel("priorities"), "gap 5, wrap");
 								p.add(lblPrio, "gap 5");
 								p.add(activationPrio, "wrap");
-							} else if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PROB) {
+							} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PROB) {
 								p.add(new JLabel("probabilites"), "gap 5, wrap");
 								p.add(lblProb, "gap 5");
 								p.add(activationProb, "wrap");
@@ -1029,24 +1029,24 @@ public class ElementWindow implements ActionListener, ItemListener {
 		} else if ("conflict_none".equals(event)) {
 			if (ab instanceof Place) {
 				Place place = (Place) ab;
-				if (place.getConflictStrategy() != Place.CONFLICTHANDLING_NONE) {
-					place.setConflictStrategy(Place.CONFLICTHANDLING_NONE);
+				if (place.getConflictStrategy() != Place.CONFLICT_HANDLING_NONE) {
+					place.setConflictStrategy(Place.CONFLICT_HANDLING_NONE);
 					revalidateView();
 				}
 			}
 		} else if ("conflict_prio".equals(event)) {
 			if (ab instanceof Place) {
 				Place place = (Place) ab;
-				if (place.getConflictStrategy() != Place.CONFLICTHANDLING_PRIO) {
-					place.setConflictStrategy(Place.CONFLICTHANDLING_PRIO);
+				if (place.getConflictStrategy() != Place.CONFLICT_HANDLING_PRIO) {
+					place.setConflictStrategy(Place.CONFLICT_HANDLING_PRIO);
 					revalidateView();
 				}
 			}
 		} else if ("conflict_prob".equals(event)) {
 			if (ab instanceof Place) {
 				Place place = (Place) ab;
-				if (place.getConflictStrategy() != Place.CONFLICTHANDLING_PROB) {
-					place.setConflictStrategy(Place.CONFLICTHANDLING_PROB);
+				if (place.getConflictStrategy() != Place.CONFLICT_HANDLING_PROB) {
+					place.setConflictStrategy(Place.CONFLICT_HANDLING_PROB);
 					revalidateView();
 				}
 			}

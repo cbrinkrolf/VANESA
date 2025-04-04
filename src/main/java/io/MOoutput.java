@@ -211,10 +211,10 @@ public class MOoutput extends BaseWriter<Pathway> {
 					attr.append(", minTokens=").append((int) place.getTokenMin());
 					attr.append(", maxTokens=").append((int) place.getTokenMax());
 					if (place.getConflictingOutEdges().size() > 1) {
-						if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PROB) {
+						if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PROB) {
 							attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
 							attr.append(", enablingProbOut={").append(outProb.get(place.getName())).append("}");
-						} else if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PRIO) {
+						} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PRIO) {
 							attr.append(", enablingType=PNlib.Types.EnablingType.Priority");
 							attr.append(", enablingPrioOut={").append(outPrio.get(place.getName())).append("}");
 						} else {
@@ -249,10 +249,10 @@ public class MOoutput extends BaseWriter<Pathway> {
 					attr.append(", maxMarks(final unit=\"mmol\")=").append(max);
 					attr.append(", t(final unit=\"mmol\")");
 					if (place.getConflictingOutEdges().size() > 1) {
-						if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PROB) {
+						if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PROB) {
 							attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
 							attr.append(", enablingProbOut={").append(outProb.get(place.getName())).append("}");
-						} else if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PRIO) {
+						} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PRIO) {
 							attr.append(", enablingType=PNlib.Types.EnablingType.Priority");
 							attr.append(", enablingPrioOut={").append(outPrio.get(place.getName())).append("}");
 						} else {
