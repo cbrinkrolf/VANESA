@@ -185,7 +185,6 @@ public class VAMLOutput {
 			// writer.writeAttribute("class", bna.getClass().getName());
 			if (bna instanceof Place) {
 				Place p = (Place) bna;
-				writer.writeAttribute("token", p.getToken() + "");
 				writer.writeAttribute("tokenMin", p.getTokenMin() + "");
 				writer.writeAttribute("tokenMax", p.getTokenMax() + "");
 				writer.writeAttribute("tokenStart", p.getTokenStart() + "");

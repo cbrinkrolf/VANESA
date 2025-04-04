@@ -397,9 +397,6 @@ public class JSBMLInput {
 						}
 						break;
 					case Elementdeclerations.discretePlace:
-						elSub = specAnnotation.getChild("token", null);
-						attr = String.valueOf(elSub.getAttributeValue("token"));
-						((Place) bna).setToken(Double.parseDouble(attr));
 						elSub = specAnnotation.getChild("tokenMin", null);
 						attr = String.valueOf(elSub.getAttributeValue("tokenMin"));
 						((Place) bna).setTokenMin(Double.parseDouble(attr));
@@ -417,9 +414,6 @@ public class JSBMLInput {
 						}
 						break;
 					case Elementdeclerations.continuousPlace:
-						elSub = specAnnotation.getChild("token", null);
-						attr = String.valueOf(elSub.getAttributeValue("token"));
-						((Place) bna).setToken(Double.parseDouble(attr));
 						elSub = specAnnotation.getChild("tokenMin", null);
 						attr = String.valueOf(elSub.getAttributeValue("tokenMin"));
 						((Place) bna).setTokenMin(Double.parseDouble(attr));

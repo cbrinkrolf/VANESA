@@ -236,7 +236,6 @@ public class GraphMLReader extends BaseReader<Pathway> {
 		case Elementdeclerations.place:
 		case Elementdeclerations.discretePlace:
 		case Elementdeclerations.continuousPlace:
-			setPropertyIfExists(properties, "token", ((Place) bna)::setToken);
 			setPropertyIfExists(properties, "tokenMin", ((Place) bna)::setTokenMin);
 			setPropertyIfExists(properties, "tokenMax", ((Place) bna)::setTokenMax);
 			setPropertyIfExists(properties, "tokenStart", ((Place) bna)::setTokenStart);

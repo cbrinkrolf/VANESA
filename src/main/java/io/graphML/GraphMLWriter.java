@@ -270,7 +270,6 @@ public class GraphMLWriter extends BaseWriter<Pathway> {
             case Elementdeclerations.place:
             case Elementdeclerations.continuousPlace:
             case Elementdeclerations.discretePlace:
-                writePropertyIfNotNull(writer, properties, "token", ((Place) bna).getToken());
                 writePropertyIfNotNull(writer, properties, "tokenMin", ((Place) bna).getTokenMin());
                 writePropertyIfNotNull(writer, properties, "tokenMax", ((Place) bna).getTokenMax());
                 writePropertyIfNotNull(writer, properties, "tokenStart", ((Place) bna).getTokenStart());

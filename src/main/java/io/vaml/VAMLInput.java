@@ -539,21 +539,17 @@ public class VAMLInput {
 			bna = new Site(label, name, pw);
 		} else if (biologicalElement.equals("Discrete Place")) {
 			bna = new DiscretePlace(label, name, pw);
-			String token = node.getAttribute("token").getValue();
 			String tokenMin = node.getAttribute("tokenMin").getValue();
 			String tokenMax = node.getAttribute("tokenMax").getValue();
 			String tokenStart = node.getAttribute("tokenStart").getValue();
-			((Place) bna).setToken(Double.parseDouble(token));
 			((Place) bna).setTokenMin(Double.parseDouble(tokenMin));
 			((Place) bna).setTokenMax(Double.parseDouble(tokenMax));
 			((Place) bna).setTokenStart(Double.parseDouble(tokenStart));
 		} else if (biologicalElement.equals("Continuous Place")) {
 			bna = new ContinuousPlace(label, name, pw);
-			String token = node.getAttribute("token").getValue();
 			String tokenMin = node.getAttribute("tokenMin").getValue();
 			String tokenMax = node.getAttribute("tokenMax").getValue();
 			String tokenStart = node.getAttribute("tokenStart").getValue();
-			((Place) bna).setToken(Double.parseDouble(token));
 			((Place) bna).setTokenMin(Double.parseDouble(tokenMin));
 			((Place) bna).setTokenMax(Double.parseDouble(tokenMax));
 			((Place) bna).setTokenStart(Double.parseDouble(tokenStart));

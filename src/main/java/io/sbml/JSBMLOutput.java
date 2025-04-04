@@ -573,7 +573,6 @@ public class JSBMLOutput {
 		if (pathway.isPetriNet()) {
 			if (oneNode instanceof Place) {
 				Place place = (Place) oneNode;
-				el.addChild(createElSub(String.valueOf(place.getToken()), "token"));
 				el.addChild(createElSub(String.valueOf(place.getTokenMin()), "tokenMin"));
 				el.addChild(createElSub(String.valueOf(place.getTokenMax()), "tokenMax"));
 				el.addChild(createElSub(String.valueOf(place.getTokenStart()), "tokenStart"));
