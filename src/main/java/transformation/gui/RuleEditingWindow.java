@@ -569,13 +569,13 @@ public class RuleEditingWindow implements ActionListener {
 		// panel.add(new JSeparator(JSeparator.VERTICAL), "growy, gap 5");
 		panel.add(new JLabel(), "gap 10");
 
-		JButton adjustDown = new ToolBarButton(imagePath.getImageIcon("nodeAdjustDown.svg"));
+		JButton adjustDown = new ToolBarButton(imagePath.getImageIcon("nodeAdjustVerticalDown.svg"));
 		adjustDown.setToolTipText("Adjust Selected Nodes To Lowest Node");
 		adjustDown.setActionCommand("adjustDown");
 		adjustDown.addActionListener(listener);
 		panel.add(adjustDown);
 
-		JButton adjustLeft = new ToolBarButton(imagePath.getImageIcon("nodeAdjustLeft.svg"));
+		JButton adjustLeft = new ToolBarButton(imagePath.getImageIcon("nodeAdjustHorizontalLeft.svg"));
 		adjustLeft.setToolTipText("Adjust Selected Nodes To Left");
 		adjustLeft.setActionCommand("adjustLeft");
 		adjustLeft.addActionListener(listener);

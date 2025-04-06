@@ -90,10 +90,10 @@ public class RuleEditingWindowListener implements ActionListener {
 			con.setPetriNetEditingMode(Elementdeclerations.stochasticTransition);
 		} else if ("adjustDown".equals(event)) {
 			Set<BiologicalNodeAbstract> nodes = activePw.getSelectedNodes();
-			activePw.adjustDown(nodes);
+			activePw.adjustVerticalDown(nodes);
 		} else if ("adjustLeft".equals(event)) {
 			Set<BiologicalNodeAbstract> nodes = activePw.getSelectedNodes();
-			activePw.adjustLeft(nodes);
+			activePw.adjustHorizontalLeft(nodes);
 		} else if ("adjustHorizontalSpace".equals(event)) {
 			Set<BiologicalNodeAbstract> nodes = activePw.getSelectedNodes();
 			activePw.adjustHorizontalSpace(nodes);
