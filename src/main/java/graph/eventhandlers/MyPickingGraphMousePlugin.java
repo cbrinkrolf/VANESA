@@ -50,10 +50,11 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	private MyAnnotation highlight = null;
 	private Point2D pressed = null;
 	private boolean moved = false;
-	private GraphSettings settings = GraphSettings.getInstance();
+	private final GraphSettings settings = GraphSettings.getInstance();
 	private boolean modifyShape = false;
 
 	public void mouseReleased(MouseEvent e) {
+		pw.getGraph().getVisualizationViewer().requestFocus();
 		moved = false;
 		// vv.setFocusable(true);
 		// vv.requestFocus();
@@ -63,7 +64,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 			// If mouse was released to change the selection, save vertex positions and
 			// return.
 			if (!oldVertexPositions.keySet().containsAll(pw.getSelectedNodes())
-					|| oldVertexPositions.keySet().size() != pw.getSelectedNodes().size()) {
+					|| oldVertexPositions.size() != pw.getSelectedNodes().size()) {
 				saveOldVertexPositions();
 				super.mouseReleased(e);
 				return;

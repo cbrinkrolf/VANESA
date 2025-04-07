@@ -92,7 +92,7 @@ import gui.visualization.TokenRenderer;
 import util.VanesaUtility;
 
 public class MyGraph {
-	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g = new SparseMultigraph<>();
+	private final Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g = new SparseMultigraph<>();
 	private final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
 	private AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout;
 	private final MyEditingModalGraphMouse graphMouse;
