@@ -5,7 +5,7 @@
 
 # VANESA2
 ## Current Releases
-- [latest pre release](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.5_pre) (v.0.5-pre Release from 2024-08-27)
+- [latest pre release](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.5_pre_2) (v.0.5-pre_2 Release from 2025-04-08, for current paper review)
 - [latest stable release](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.4) (v.0.4 from 2023-03-01)
 
 ## Instructions for simulation
