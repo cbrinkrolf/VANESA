@@ -256,7 +256,8 @@ public class NetworkProperties {
 
 			ht.put(nodeassignsback.get(i), oneavgdegree);
 			// save neighbordegree
-			nodeassignsback.get(i).addAttribute(NodeAttributeType.GRAPH_PROPERTY, NodeAttributeNames.NEIGHBOR_DEGREE, oneavgdegree);
+			nodeassignsback.get(i).addAttribute(NodeAttributeType.GRAPH_PROPERTY, NodeAttributeNames.NEIGHBOR_DEGREE,
+					oneavgdegree);
 			oneavgdegree = 0f;
 		}
 		return ht;
@@ -418,6 +419,9 @@ public class NetworkProperties {
 		if (!isGraphConnected()) {
 			return new int[1];
 		}
+		if (nodes < 2) {
+			return new int[1];
+		}
 		final int[] cutnodes = new int[nodes + 1];
 		GraphTheoryAlgorithms.cutNodes(nodes, edges, nodei, nodej, cutnodes);
 		return cutnodes;
@@ -437,7 +441,8 @@ public class NetworkProperties {
 	}
 
 	/**
-	 * Calculate the number of edges that would disconnect the network. Works only with connected networks.
+	 * Calculate the number of edges that would disconnect the network. Works only
+	 * with connected networks.
 	 */
 	public int getEdgeConnectivity() {
 		return GraphTheoryAlgorithms.edgeConnectivity(nodes, edges, nodei, nodej);
@@ -446,12 +451,17 @@ public class NetworkProperties {
 	public int getFundamentalCycles() {
 		// k is the expected number of independent cycles, here automatically
 		// calculated (could be set by user)
+		if (edges < 2) {
+			return -1;
+		}
+
 		int k = (int) Math.min((double) edges - 2, ((double) (nodes - 1) * (nodes - 2)) / 2.0d);
 		int fundcyc[][] = new int[k + 1][nodes + 1];
 
 		GraphTheoryAlgorithms.fundamentalCycles(nodes, edges, nodei, nodej, fundcyc);
 
 		return fundcyc[0][0];
+
 	}
 
 	public short[][] AllPairShortestPaths() {
