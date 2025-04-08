@@ -197,8 +197,8 @@ public class PetriNetSimulation implements ActionListener {
 
 		String message = "Simulation properties: stop=" + stopTime + ", intervals=" + intervals + ", integrator="
 				+ menu.getSolver() + ", tolerance=" + tolerance + ", seed=" + seed + ", forced rebuild="
-				+ menu.isForceRebuild() + ", use short model name=" + shortModelName
-				+ ", override equations per file=" + overrideEqPerFile;
+				+ menu.isForceRebuild() + ", use short model name=" + shortModelName + ", override equations per file="
+				+ overrideEqPerFile;
 		if (overrideEqPerFile) {
 			message += ", equations per file=" + eqPerFile;
 		}
@@ -294,18 +294,18 @@ public class PetriNetSimulation implements ActionListener {
 						override += "\"";
 					}
 
-					override += "-override=outputFormat=ia,stopTime=" + stopTime.toPlainString() + ",stepSize=" +
-							stopTime.divide(BigDecimal.valueOf(intervals), RoundingMode.HALF_UP).toPlainString()
-							+ ",tolerance=" + tolerance.toPlainString() + ",seed=" + seed + ",placeLocalSeed=" +
-							MOoutput.generatePlaceLocalSeed(seed);
+					override += "-override=outputFormat=ia,stopTime=" + stopTime.toPlainString() + ",stepSize="
+							+ stopTime.divide(BigDecimal.valueOf(intervals)).toPlainString() + ",tolerance="
+							+ tolerance.toPlainString() + ",seed=" + seed + ",placeLocalSeed="
+							+ MOoutput.generatePlaceLocalSeed(seed);
 					System.out.println("parameter changed: " + flags.isParameterChanged());
 					if (flags.isParameterChanged()) {
 						for (Parameter param : pw.getChangedParameters().keySet()) {
 							GraphElementAbstract gea = pw.getChangedParameters().get(param);
 							if (gea instanceof BiologicalNodeAbstract) {
 								BiologicalNodeAbstract bna = (BiologicalNodeAbstract) gea;
-								override += ",'_" + bna.getName() + "_" + param.getName() + "'=" +
-										param.getValue().toPlainString();
+								override += ",'_" + bna.getName() + "_" + param.getName() + "'="
+										+ param.getValue().toPlainString();
 							} else {
 								// CHRIS override parameters of edges
 							}
@@ -1042,19 +1042,22 @@ public class PetriNetSimulation implements ActionListener {
 							// b = new Boundary();
 							// b.setLowerBoundary(value);
 							// pw.getChangedBoundaries().put((Place) bna, b);
-							override += ",'" + p.getName() + "'.min" + getMarksOrTokens(p) + "=" + value.toPlainString();
+							override += ",'" + p.getName() + "'.min" + getMarksOrTokens(p) + "="
+									+ value.toPlainString();
 							break;
 						case "token max":
 							// flags.setBoundariesChanged(true);
 							// b = new Boundary();
 							// b.setUpperBoundary(value);
 							// pw.getChangedBoundaries().put((Place) bna, b);
-							override += ",'" + p.getName() + "'.max" + getMarksOrTokens(p) + "=" + value.toPlainString();
+							override += ",'" + p.getName() + "'.max" + getMarksOrTokens(p) + "="
+									+ value.toPlainString();
 							break;
 						case "token start":
 							// flags.setInitialValueChanged(true);
 							// pw.getChangedInitialValues().put((Place) bna, value);
-							override += ",'" + p.getName() + "'.start" + getMarksOrTokens(p) + "=" + value.toPlainString();
+							override += ",'" + p.getName() + "'.start" + getMarksOrTokens(p) + "="
+									+ value.toPlainString();
 							break;
 						}
 					} else if (bna instanceof Transition) {
@@ -1071,8 +1074,8 @@ public class PetriNetSimulation implements ActionListener {
 						}
 					}
 					// rounding name up to 4 decimals
-					pw.getPetriPropertiesNet().getSimResController().get(simId)
-							.setName(bna.getName() + "_" + param + "=" + (Math.round(value.doubleValue() * 1000) / 1000.0));
+					pw.getPetriPropertiesNet().getSimResController().get(simId).setName(
+							bna.getName() + "_" + param + "=" + (Math.round(value.doubleValue() * 1000) / 1000.0));
 					logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
 					menu.clearText();
 					menu.addText(logMessage.toString());
