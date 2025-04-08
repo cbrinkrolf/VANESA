@@ -48,7 +48,7 @@ public class ParameterWindow implements DocumentListener {
 	private static final String KINETIC_CONVENIENCE = "Convenience kinetic";
 	private static final String KINETIC_LAW_OF_MASS_ACTION = "Law of mass action";
 
-	public ParameterWindow(GraphElementAbstract gea) {
+	public ParameterWindow(final GraphElementAbstract gea) {
 		isFunctionBuilder = gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract
 				|| gea instanceof ContinuousTransition || gea instanceof DiscreteTransition;
 		if (isFunctionBuilder) {
@@ -253,7 +253,7 @@ public class ParameterWindow implements DocumentListener {
 		panel.add(new JScrollPane(parametersListPanel), "growx");
 	}
 
-	private void onParameterEditClicked(int idx) {
+	private void onParameterEditClicked(final int idx) {
 		Parameter p = gea.getParameters().get(idx);
 		name.setText(p.getName());
 		value.setValue(p.getValue());
@@ -263,21 +263,21 @@ public class ParameterWindow implements DocumentListener {
 		repaintPanel();
 	}
 
-	private void onParameterDeleteClicked(int idx) {
+	private void onParameterDeleteClicked(final int idx) {
 		pw.handleChangeFlags(ChangedFlags.PARAMETER_CHANGED);
 		pw.getChangedParameters().remove(gea.getParameters().get(idx));
 		gea.getParameters().remove(idx);
 		repaintPanel();
 	}
 
-	private void onParameterUpClicked(int idx) {
+	private void onParameterUpClicked(final int idx) {
 		Parameter p = gea.getParameters().get(idx);
 		gea.getParameters().set(idx, gea.getParameters().get(idx - 1));
 		gea.getParameters().set(idx - 1, p);
 		repaintPanel();
 	}
 
-	private void onParameterDownClicked(int idx) {
+	private void onParameterDownClicked(final int idx) {
 		Parameter p = gea.getParameters().get(idx);
 		gea.getParameters().set(idx, gea.getParameters().get(idx + 1));
 		gea.getParameters().set(idx + 1, p);
@@ -337,23 +337,23 @@ public class ParameterWindow implements DocumentListener {
 	}
 
 	@Override
-	public void insertUpdate(DocumentEvent e) {
+	public void insertUpdate(final DocumentEvent e) {
 		handleChangedName();
 	}
 
 	@Override
-	public void removeUpdate(DocumentEvent e) {
+	public void removeUpdate(final DocumentEvent e) {
 		handleChangedName();
 	}
 
 	@Override
-	public void changedUpdate(DocumentEvent e) {
+	public void changedUpdate(final DocumentEvent e) {
 	}
 
 	private void handleChangedName() {
 		if (editMode) {
-			this.editMode = false;
-			this.add.setText("add");
+			editMode = false;
+			add.setText("add");
 		}
 	}
 

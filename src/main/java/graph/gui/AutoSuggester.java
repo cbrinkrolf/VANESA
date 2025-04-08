@@ -8,67 +8,62 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextPane;
-import javax.swing.JWindow;
-import javax.swing.KeyStroke;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-class AutoSuggester {
+public class AutoSuggester {
 	private final JTextPane textField;
 	private final Window container;
 	private final JPanel suggestionsPanel;
 	private final JWindow autoSuggestionPopUpWindow;
-	private String typedWord;
 	private final Set<String> dictionary = new HashSet<>();
-	private int currentIndexOfSpace;
-	private int tW;
-	private int tH;
+	private int tW = 0;
+	private int tH = 0;
 	private final Color suggestionsTextColor;
 	private final Color suggestionFocusedColor;
+	private int lastFocusableIndex = 0;
 
-	public AutoSuggester(JTextPane textField, Window mainWindow, Set<String> words, Color popUpBackground,
-			Color textColor, Color suggestionFocusedColor, float opacity) {
+	public AutoSuggester(final JTextPane textField, final Window mainWindow, final Set<String> words) {
+		this(textField, mainWindow, words, Color.WHITE, Color.BLUE, Color.RED, 1f);
+	}
+
+	public AutoSuggester(final JTextPane textField, final Window mainWindow, final Set<String> words,
+			final Color popUpBackground, final Color textColor, final Color suggestionFocusedColor,
+			final float opacity) {
 		this.textField = textField;
 		this.suggestionsTextColor = textColor;
 		this.container = mainWindow;
 		this.suggestionFocusedColor = suggestionFocusedColor;
 		this.textField.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
-			public void insertUpdate(DocumentEvent de) {
+			public void insertUpdate(final DocumentEvent de) {
 				checkForAndShowSuggestions();
 			}
 
 			@Override
-			public void removeUpdate(DocumentEvent de) {
+			public void removeUpdate(final DocumentEvent de) {
 				checkForAndShowSuggestions();
 			}
 
 			@Override
-			public void changedUpdate(DocumentEvent de) {
+			public void changedUpdate(final DocumentEvent de) {
 				checkForAndShowSuggestions();
 			}
 		});
-
 		if (words != null) {
 			dictionary.addAll(words);
 		}
-
-		typedWord = "";
-		currentIndexOfSpace = 0;
-		tW = 0;
-		tH = 0;
 		autoSuggestionPopUpWindow = new JWindow(mainWindow);
 		autoSuggestionPopUpWindow.setOpacity(opacity);
 		suggestionsPanel = new JPanel();
 		suggestionsPanel.setLayout(new GridLayout(0, 1));
 		suggestionsPanel.setBackground(popUpBackground);
+		suggestionsPanel.setBorder(new LineBorder(Color.BLACK));
 		addKeyBindingToRequestFocusInPopUpWindow();
 	}
 
@@ -76,10 +71,12 @@ class AutoSuggester {
 		textField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, true),
 				"Down released");
 		textField.getActionMap().put("Down released", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+			private static final long serialVersionUID = 9052168155182385575L;
 
 			@Override
-			public void actionPerformed(ActionEvent ae) {//focuses the first label on popwindow
+			public void actionPerformed(final ActionEvent ae) {
+				// focuses the first label
+				lastFocusableIndex = 0;
 				for (int i = 0; i < suggestionsPanel.getComponentCount(); i++) {
 					if (suggestionsPanel.getComponent(i) instanceof SuggestionLabel) {
 						((SuggestionLabel) suggestionsPanel.getComponent(i)).setFocused(true);
@@ -95,48 +92,38 @@ class AutoSuggester {
 		suggestionsPanel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
 				KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, true), "Down released");
 		suggestionsPanel.getActionMap().put("Down released", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
-			int lastFocusableIndex = 0;
-
 			@Override
-			public void actionPerformed(
-					ActionEvent ae) {//allows scrolling of labels in pop window (I know very hacky for now :))
-				ArrayList<SuggestionLabel> sls = getAddedSuggestionLabels();
-				int max = sls.size();
-				if (max > 1) {//more than 1 suggestion
-					for (int i = 0; i < max; i++) {
-						SuggestionLabel sl = sls.get(i);
-						if (sl.isFocused()) {
-							if (lastFocusableIndex == max - 1) {
-								lastFocusableIndex = 0;
-								sl.setFocused(false);
-								autoSuggestionPopUpWindow.setVisible(false);
-								setFocusToTextField();
-								checkForAndShowSuggestions();//fire method as if document listener change occurred and fired it
-
-							} else {
-								sl.setFocused(false);
-								lastFocusableIndex = i;
-							}
-						} else if (lastFocusableIndex <= i) {
-							if (i < max) {
-								sl.setFocused(true);
-								autoSuggestionPopUpWindow.toFront();
-								autoSuggestionPopUpWindow.requestFocusInWindow();
-								suggestionsPanel.requestFocusInWindow();
-								suggestionsPanel.getComponent(i).requestFocusInWindow();
-								lastFocusableIndex = i;
-								break;
-							}
-						}
-					}
-				} else {//only a single suggestion was given
-					autoSuggestionPopUpWindow.setVisible(false);
-					setFocusToTextField();
-					checkForAndShowSuggestions();//fire method as if document listener change occurred and fired it
-				}
+			public void actionPerformed(final ActionEvent ae) {
+				moveSelectedFocus(1);
 			}
 		});
+		suggestionsPanel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, true), "Up released");
+		suggestionsPanel.getActionMap().put("Up released", new AbstractAction() {
+			@Override
+			public void actionPerformed(final ActionEvent ae) {
+				moveSelectedFocus(-1);
+			}
+		});
+	}
+
+	private void moveSelectedFocus(final int offset) {
+		final List<SuggestionLabel> sls = getAddedSuggestionLabels();
+		for (final var suggestionLabel : sls) {
+			suggestionLabel.setFocused(false);
+		}
+		lastFocusableIndex += offset;
+		if (lastFocusableIndex <= -1 || lastFocusableIndex >= sls.size()) {
+			lastFocusableIndex = 0;
+			setFocusToTextField();
+			checkForAndShowSuggestions();
+		} else {
+			sls.get(lastFocusableIndex).setFocused(true);
+			autoSuggestionPopUpWindow.toFront();
+			autoSuggestionPopUpWindow.requestFocusInWindow();
+			suggestionsPanel.requestFocusInWindow();
+			suggestionsPanel.getComponent(lastFocusableIndex).requestFocusInWindow();
+		}
 	}
 
 	private void setFocusToTextField() {
@@ -145,63 +132,63 @@ class AutoSuggester {
 		textField.requestFocusInWindow();
 	}
 
-	public ArrayList<SuggestionLabel> getAddedSuggestionLabels() {
-		ArrayList<SuggestionLabel> sls = new ArrayList<>();
+	public List<SuggestionLabel> getAddedSuggestionLabels() {
+		List<SuggestionLabel> sls = new ArrayList<>();
 		for (int i = 0; i < suggestionsPanel.getComponentCount(); i++) {
 			if (suggestionsPanel.getComponent(i) instanceof SuggestionLabel) {
-				SuggestionLabel sl = (SuggestionLabel) suggestionsPanel.getComponent(i);
-				sls.add(sl);
+				sls.add((SuggestionLabel) suggestionsPanel.getComponent(i));
 			}
 		}
 		return sls;
 	}
 
 	private void checkForAndShowSuggestions() {
-		typedWord = getCurrentlyTypedWord();
-		// remove previous words/JLabels that were added
-		suggestionsPanel.removeAll();
-		// used to calculate size of JWindow as new JLabels are added
-		tW = 0;
-		tH = 0;
-		boolean added = wordTyped(typedWord);
-		if (!added) {
-			if (autoSuggestionPopUpWindow.isVisible()) {
-				autoSuggestionPopUpWindow.setVisible(false);
+		// Postpone retrieving the currently typed word, as the caret position has not been updated at this point
+		SwingUtilities.invokeLater(() -> {
+			final String typedWord = getCurrentlyTypedWord();
+			// remove previous words/JLabels that were added
+			suggestionsPanel.removeAll();
+			// used to calculate size of JWindow as new JLabels are added
+			tW = 0;
+			tH = 0;
+			boolean added = wordTyped(typedWord);
+			if (!added) {
+				if (autoSuggestionPopUpWindow.isVisible()) {
+					autoSuggestionPopUpWindow.setVisible(false);
+				}
+			} else {
+				showPopUpWindow();
+				setFocusToTextField();
 			}
-		} else {
-			showPopUpWindow();
-			setFocusToTextField();
-		}
+		});
 	}
 
-	protected void addWordToSuggestions(String word) {
+	protected void addWordToSuggestions(final String word) {
 		SuggestionLabel suggestionLabel = new SuggestionLabel(word, suggestionFocusedColor, suggestionsTextColor, this);
 		calculatePopUpWindowSize(suggestionLabel);
 		suggestionsPanel.add(suggestionLabel);
 	}
 
-	public String getCurrentlyTypedWord() {//get newest word after last white space if any or the first word if no white spaces
-		String text = textField.getText();
-		int pos = textField.getCaretPosition();
-		String wordBeingTyped = "";
-		if (text.contains(" ")) {
-			int tmp = text.substring(0, Math.min(pos, text.length())).lastIndexOf(" ");
-			if (tmp >= currentIndexOfSpace) {
-				//currentIndexOfSpace = tmp;
-				wordBeingTyped = text.substring(tmp + 1, Math.min(pos + 1, text.length()));
-			}
-		} else {
-			wordBeingTyped = text;
-		}
-		return wordBeingTyped.trim();
+	public String getCurrentlyTypedWord() {
+		final String text = textField.getText();
+		final int pos = textField.getCaretPosition();
+		final int startSearchIndex = Math.min(pos, text.length()) - 1;
+		int maxIndex = 0;
+		maxIndex = Math.max(maxIndex, text.lastIndexOf(' ', startSearchIndex) + 1);
+		maxIndex = Math.max(maxIndex, text.lastIndexOf('/', startSearchIndex) + 1);
+		maxIndex = Math.max(maxIndex, text.lastIndexOf('*', startSearchIndex) + 1);
+		maxIndex = Math.max(maxIndex, text.lastIndexOf('+', startSearchIndex) + 1);
+		maxIndex = Math.max(maxIndex, text.lastIndexOf('-', startSearchIndex) + 1);
+		maxIndex = Math.max(maxIndex, text.lastIndexOf('^', startSearchIndex) + 1);
+		// Potentially add: <, >, =
+		return text.substring(maxIndex, Math.min(pos, text.length())).trim();
 	}
 
-	private void calculatePopUpWindowSize(JLabel label) {
-		//so we can size the JWindow correctly
-		if (tW < label.getPreferredSize().width) {
-			tW = label.getPreferredSize().width;
-		}
-		tH += label.getPreferredSize().height;
+	private void calculatePopUpWindowSize(final JLabel label) {
+		// Update width and height so we can size the JWindow correctly
+		final Dimension preferredSize = label.getPreferredSize();
+		tW = Math.max(tW, preferredSize.width);
+		tH += preferredSize.height;
 	}
 
 	private void showPopUpWindow() {
@@ -246,29 +233,20 @@ class AutoSuggester {
 		return textField;
 	}
 
-	public void addToDictionary(String word) {
+	public void addToDictionary(final String word) {
 		dictionary.add(word);
 	}
 
-	boolean wordTyped(String typedWord) {
+	boolean wordTyped(final String typedWord) {
 		if (typedWord.isEmpty()) {
 			return false;
 		}
 		boolean suggestionAdded = false;
-		for (String word : dictionary) {//get words in the dictionary which we added
-			boolean fullymatches = true;
-			for (int i = 0; i < typedWord.length(); i++) {//each string in the word
-				if (typedWord.length() > word.length()) {
-					fullymatches = false;
-					break;
-				}
-				if (!typedWord.toLowerCase().startsWith(String.valueOf(word.toLowerCase().charAt(i)),
-						i)) {//check for match
-					fullymatches = false;
-					break;
-				}
+		for (String word : dictionary) {
+			if (typedWord.length() > word.length()) {
+				continue;
 			}
-			if (fullymatches) {
+			if (word.startsWith(typedWord)) {
 				addWordToSuggestions(word);
 				suggestionAdded = true;
 			}

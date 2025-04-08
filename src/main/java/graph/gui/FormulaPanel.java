@@ -83,27 +83,22 @@ public class FormulaPanel extends JPanel {
 		add(createMissingParametersButton, "span 2");
 		add(formulaDisplay, "growx, span 2");
 		evaluateFormula();
-		SwingUtilities.invokeLater(new Runnable() {
+		new AutoSuggester(textField, frame, null) {
 			@Override
-			public void run() {
-				new AutoSuggester(textField, frame, null, Color.WHITE, Color.BLUE, Color.RED, 0.75f) {
-					@Override
-					boolean wordTyped(final String typedWord) {
-						final Set<String> words = new HashSet<>();
-						for (final BiologicalNodeAbstract bna : pathway.getAllGraphNodes()) {
-							if (!bna.isLogical()) {
-								words.add(bna.getName());
-							}
-						}
-						for (final Parameter p : gea.getParameters()) {
-							words.add(p.getName());
-						}
-						setDictionary(words);
-						return super.wordTyped(typedWord);
+			boolean wordTyped(final String typedWord) {
+				final Set<String> words = new HashSet<>();
+				for (final BiologicalNodeAbstract bna : pathway.getAllGraphNodes()) {
+					if (!bna.isLogical()) {
+						words.add(bna.getName());
 					}
-				};
+				}
+				for (final Parameter p : gea.getParameters()) {
+					words.add(p.getName());
+				}
+				setDictionary(words);
+				return super.wordTyped(typedWord);
 			}
-		});
+		};
 	}
 
 	private void evaluateFormula() {

@@ -14,66 +14,55 @@ import javax.swing.JWindow;
 import javax.swing.KeyStroke;
 import javax.swing.border.LineBorder;
 
-class SuggestionLabel extends JLabel {
-	private static final long serialVersionUID = 1L;
-	private boolean focused = false;
-    private final JWindow autoSuggestionsPopUpWindow;
-    private final JTextPane textField;
-    private final AutoSuggester autoSuggester;
-    private final Color suggestionsTextColor;
-    private final Color suggestionBorderColor;
+public class SuggestionLabel extends JLabel {
+	private static final long serialVersionUID = -7792594909870037395L;
 
-    public SuggestionLabel(String string, final Color borderColor, Color suggestionsTextColor,
-                           AutoSuggester autoSuggester) {
-        super(string);
-        this.suggestionsTextColor = suggestionsTextColor;
-        this.autoSuggester = autoSuggester;
-        this.textField = autoSuggester.getTextField();
-        this.suggestionBorderColor = borderColor;
-        this.autoSuggestionsPopUpWindow = autoSuggester.getAutoSuggestionPopUpWindow();
-        initComponent();
-    }
+	private final JWindow autoSuggestionsPopUpWindow;
+	private final AutoSuggester autoSuggester;
+	private final LineBorder focusBorder;
 
-    private void initComponent() {
-        setFocusable(true);
-        setForeground(suggestionsTextColor);
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent me) {
-                super.mouseClicked(me);
-                replaceWithSuggestedText();
-                autoSuggestionsPopUpWindow.setVisible(false);
-            }
-        });
-        getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, true), "Enter released");
-        getActionMap().put("Enter released", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+	public SuggestionLabel(final String string, final Color focusBorderColor, final Color textColor,
+			final AutoSuggester autoSuggester) {
+		super(string);
+		this.autoSuggester = autoSuggester;
+		focusBorder = new LineBorder(focusBorderColor);
+		this.autoSuggestionsPopUpWindow = autoSuggester.getAutoSuggestionPopUpWindow();
+		setFocusable(true);
+		setForeground(textColor);
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent me) {
+				super.mouseClicked(me);
+				replaceWithSuggestedText();
+				autoSuggestionsPopUpWindow.setVisible(false);
+			}
+		});
+		getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, true), "Enter released");
+		getActionMap().put("Enter released", new AbstractAction() {
+			private static final long serialVersionUID = 7144999705332637662L;
 
 			@Override
-            public void actionPerformed(ActionEvent ae) {
-                replaceWithSuggestedText();
-                autoSuggestionsPopUpWindow.setVisible(false);
-            }
-        });
-    }
+			public void actionPerformed(ActionEvent ae) {
+				replaceWithSuggestedText();
+				autoSuggestionsPopUpWindow.setVisible(false);
+			}
+		});
+	}
 
-    public void setFocused(boolean focused) {
-        setBorder(focused ? new LineBorder(suggestionBorderColor) : null);
-        repaint();
-        this.focused = focused;
-    }
+	public void setFocused(final boolean focused) {
+		setBorder(focused ? focusBorder : null);
+		repaint();
+	}
 
-    public boolean isFocused() {
-        return focused;
-    }
-
-    private void replaceWithSuggestedText() {
-        String suggestedWord = getText();
-        String text = textField.getText();
-        String typedWord = autoSuggester.getCurrentlyTypedWord();
-        String t = text.substring(0, text.lastIndexOf(typedWord));
-        String tmp = t + text.substring(text.lastIndexOf(typedWord)).replace(typedWord, suggestedWord);
-        textField.setText(tmp + " ");
-        textField.setCaretPosition(t.length() + suggestedWord.length() + 1);
-    }
+	private void replaceWithSuggestedText() {
+		final JTextPane textField = autoSuggester.getTextField();
+		final String text = textField.getText();
+		final String suggestedWord = getText();
+		final String typedWord = autoSuggester.getCurrentlyTypedWord();
+		final String preText = text.substring(0, textField.getCaretPosition() - typedWord.length());
+		final String postText = text.substring(textField.getCaretPosition());
+		final int newCaretPosition = textField.getCaretPosition() - typedWord.length() + suggestedWord.length() + 1;
+		textField.setText(preText + suggestedWord + " " + postText);
+		textField.setCaretPosition(newCaretPosition);
+	}
 }
