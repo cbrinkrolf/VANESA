@@ -9,7 +9,7 @@ Both, biological networks and Petri nets, can be analyzed by graph algorithms. M
 ## Releases
 The latest **stable release** is [v.0.4](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.4). It is compatible with OpenModelica 1.17.0.
 
-The latest **pre-release** is [v.0.5_pre](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.5_pre). It is compatible with OpenModelica 1.23.1.
+The latest **pre-release** is [v.0.5_pre_2](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.5_pre_2). It is compatible with OpenModelica 1.23.1.
 
 ## Requirements and Installation
 VANESA requires a [Java SE 11 (or newer)](https://adoptium.net/de/temurin/releases/?package=jre&version=11) installation to execute the provided jar file. The simulation of Petri nets is based on OpenModelica and its Petri net library PNlib, and thus, an OpenModelica installation is required if the Petri net simulation is desired. A compatible OpenModelica version is given in the release notes, but in general the latest compatible stable release should be used instead of nightly builds. 
