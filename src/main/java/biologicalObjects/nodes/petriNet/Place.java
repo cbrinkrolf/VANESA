@@ -88,13 +88,29 @@ public abstract class Place extends PNNode {
 		this.conflictStrategy = conflictStrategy;
 	}
 
-	public Set<PNArc> getConflictingOutEdges() {
-		Collection<BiologicalEdgeAbstract> edges = GraphInstance.getMyGraph().getJungGraph().getOutEdges(this);
-		Set<PNArc> result = new HashSet<>();
+	public Set<PNArc> getConflictingInEdges() {
+		final Collection<BiologicalEdgeAbstract> edges = GraphInstance.getMyGraph().getJungGraph().getInEdges(this);
+		final Set<PNArc> result = new HashSet<>();
 		if (edges != null) {
-			for (BiologicalEdgeAbstract bea : edges) {
+			for (final BiologicalEdgeAbstract bea : edges) {
 				if (bea instanceof PNArc) {
-					PNArc arc = (PNArc) bea;
+					final PNArc arc = (PNArc) bea;
+					if (arc.isRegularArc() && !(bea.getFrom() instanceof ContinuousTransition)) {
+						result.add((PNArc) bea);
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	public Set<PNArc> getConflictingOutEdges() {
+		final Collection<BiologicalEdgeAbstract> edges = GraphInstance.getMyGraph().getJungGraph().getOutEdges(this);
+		final Set<PNArc> result = new HashSet<>();
+		if (edges != null) {
+			for (final BiologicalEdgeAbstract bea : edges) {
+				if (bea instanceof PNArc) {
+					final PNArc arc = (PNArc) bea;
 					if (arc.isRegularArc() && !(bea.getTo() instanceof ContinuousTransition)) {
 						result.add((PNArc) bea);
 					}
@@ -106,15 +122,16 @@ public abstract class Place extends PNNode {
 
 	public boolean hasConflictProperties() {
 		if (conflictStrategy == DiscretePlace.CONFLICT_HANDLING_PRIO) {
-			return hasPriorityConflicts();
-		} else if (conflictStrategy == DiscretePlace.CONFLICT_HANDLING_PROB) {
-			return hasProbabilityConflicts();
+			return hasPriorityConflicts(getConflictingInEdges()) || hasPriorityConflicts(getConflictingOutEdges());
+		}
+		if (conflictStrategy == DiscretePlace.CONFLICT_HANDLING_PROB) {
+			return hasProbabilityConflicts(getConflictingInEdges()) || hasProbabilityConflicts(
+					getConflictingOutEdges());
 		}
 		return false;
 	}
 
-	public boolean hasPriorityConflicts() {
-		Collection<PNArc> edges = getConflictingOutEdges();
+	private boolean hasPriorityConflicts(final Collection<PNArc> edges) {
 		if (edges.size() > 1) {
 			Set<Integer> set = new HashSet<>();
 			for (PNArc bea : edges) {
@@ -131,8 +148,7 @@ public abstract class Place extends PNNode {
 		return false;
 	}
 
-	public boolean hasProbabilityConflicts() {
-		Collection<PNArc> edges = getConflictingOutEdges();
+	private boolean hasProbabilityConflicts(final Collection<PNArc> edges) {
 		if (edges.size() <= 1) {
 			return false;
 		}
@@ -150,15 +166,26 @@ public abstract class Place extends PNNode {
 	}
 
 	public void solveConflictProperties() {
-		if (conflictStrategy == DiscretePlace.CONFLICT_HANDLING_PRIO && hasPriorityConflicts()) {
-			solvePriorityConflicts();
-		} else if (conflictStrategy == DiscretePlace.CONFLICT_HANDLING_PROB && hasProbabilityConflicts()) {
-			solveProbabilityConflicts();
+		final Collection<PNArc> inEdges = getConflictingInEdges();
+		final Collection<PNArc> outEdges = getConflictingOutEdges();
+		if (conflictStrategy == DiscretePlace.CONFLICT_HANDLING_PRIO) {
+			if (hasPriorityConflicts(inEdges)) {
+				solvePriorityConflicts(inEdges);
+			}
+			if (hasPriorityConflicts(outEdges)) {
+				solvePriorityConflicts(outEdges);
+			}
+		} else if (conflictStrategy == DiscretePlace.CONFLICT_HANDLING_PROB) {
+			if (hasProbabilityConflicts(inEdges)) {
+				solveProbabilityConflicts(inEdges);
+			}
+			if (hasProbabilityConflicts(outEdges)) {
+				solveProbabilityConflicts(outEdges);
+			}
 		}
 	}
 
-	public void solvePriorityConflicts() {
-		Collection<PNArc> edges = getConflictingOutEdges();
+	private void solvePriorityConflicts(final Collection<PNArc> edges) {
 		if (edges.size() > 1) {
 			Set<Integer> goodSet = new HashSet<>();
 			for (int i = 1; i <= edges.size(); i++) {
@@ -182,8 +209,7 @@ public abstract class Place extends PNNode {
 		}
 	}
 
-	public void solveProbabilityConflicts() {
-		Collection<PNArc> edges = getConflictingOutEdges();
+	private void solveProbabilityConflicts(final Collection<PNArc> edges) {
 		if (edges.size() > 1) {
 			double sum = 0;
 			for (PNArc bea : edges) {
