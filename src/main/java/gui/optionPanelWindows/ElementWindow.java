@@ -428,7 +428,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 					p.add(new JLabel("Constant tokens"), "gap 5");
 					p.add(constCheck, "wrap");
 
-					if (place.getConflictingOutEdges().size() > 1) {
+					if (place.getConflictingInEdges().size() > 1 || place.getConflictingOutEdges().size() > 1) {
 						ButtonGroup group = new ButtonGroup();
 						JRadioButton none = new JRadioButton("none");
 						none.setActionCommand("conflict_none");
@@ -445,7 +445,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 						group.add(prob);
 
 						JButton solve = new JButton("Solve conflict properties");
-						solve.setToolTipText("Solve priorities and normalize probabilites");
+						solve.setToolTipText("Solve priorities and normalize probabilities");
 						solve.setActionCommand("solve");
 						solve.addActionListener(this);
 
@@ -454,7 +454,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 						check.setActionCommand("check");
 						check.addActionListener(this);
 
-						p.add(new JLabel("Conflict solving:"), "gap 5 ");
+						p.add(new JLabel("Conflict solving:"), "gap 5");
 						p.add(none, "flowx, split 3");
 						p.add(prio);
 						p.add(prob, "wrap");
@@ -463,11 +463,11 @@ public class ElementWindow implements ActionListener, ItemListener {
 							none.setSelected(true);
 						} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PRIO) {
 							prio.setSelected(true);
-							p.add(check, "skip,split 2");
+							p.add(check, "skip, split 2");
 							p.add(solve, "wrap");
 						} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PROB) {
 							prob.setSelected(true);
-							p.add(check, "skip,split 2");
+							p.add(check, "skip, split 2");
 							p.add(solve, "wrap");
 						}
 					}
@@ -692,32 +692,44 @@ public class ElementWindow implements ActionListener, ItemListener {
 				}
 
 				if (ab instanceof PNArc) {
-					PNArc e = (PNArc) ab;
-					MyJFormattedTextField activationProb = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+					final PNArc e = (PNArc) ab;
+					final var activationProb = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 					activationProb.setText(String.valueOf(e.getProbability()));
 					activationProb.setName("activationProb");
 					activationProb.addFocusListener(pwl);
-					JLabel lblProb = new JLabel("Activation probability");
-
-					MyJFormattedTextField activationPrio = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
+					final var activationPrio = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
 					activationPrio.setText(String.valueOf(e.getPriority()));
 					activationPrio.setName("activationPrio");
 					activationPrio.addFocusListener(pwl);
-					JLabel lblPrio = new JLabel("Activation priority");
-
 					if (e.getFrom() instanceof Place) {
-						Place place = (Place) e.getFrom();
+						final Place place = (Place) e.getFrom();
 						if (place.getConflictingOutEdges().size() > 1) {
 							p.add(new JLabel("Conflict solving strategy:"), "gap 5");
 							if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_NONE) {
 								p.add(new JLabel("none"), "gap 5, wrap");
 							} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PRIO) {
 								p.add(new JLabel("priorities"), "gap 5, wrap");
-								p.add(lblPrio, "gap 5");
+								p.add(new JLabel("Activation priority"), "gap 5");
 								p.add(activationPrio, "wrap");
 							} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PROB) {
-								p.add(new JLabel("probabilites"), "gap 5, wrap");
-								p.add(lblProb, "gap 5");
+								p.add(new JLabel("probabilities"), "gap 5, wrap");
+								p.add(new JLabel("Activation probability"), "gap 5");
+								p.add(activationProb, "wrap");
+							}
+						}
+					} else if (e.getTo() instanceof Place) {
+						final Place place = (Place) e.getTo();
+						if (place.getConflictingInEdges().size() > 1) {
+							p.add(new JLabel("Conflict solving strategy:"), "gap 5");
+							if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_NONE) {
+								p.add(new JLabel("none"), "gap 5, wrap");
+							} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PRIO) {
+								p.add(new JLabel("priorities"), "gap 5, wrap");
+								p.add(new JLabel("Activation priority"), "gap 5");
+								p.add(activationPrio, "wrap");
+							} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PROB) {
+								p.add(new JLabel("probabilities"), "gap 5, wrap");
+								p.add(new JLabel("Activation probability"), "gap 5");
 								p.add(activationProb, "wrap");
 							}
 						}
