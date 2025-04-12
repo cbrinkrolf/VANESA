@@ -4,6 +4,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.URI;
@@ -198,5 +200,9 @@ public class VanesaUtility {
 	public static Rectangle scaleRectangle(final Rectangle r, final double factor) {
 		return new Rectangle((int) (r.x * factor), (int) (r.y * factor), (int) (r.width * factor),
 				(int) (r.height * factor));
+	}
+
+	public static BigDecimal fixedPrecisionDivide(final BigDecimal a, final BigDecimal b) {
+		return a.divide(b, 24, RoundingMode.HALF_UP).stripTrailingZeros();
 	}
 }

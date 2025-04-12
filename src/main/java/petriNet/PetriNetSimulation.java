@@ -294,10 +294,11 @@ public class PetriNetSimulation implements ActionListener {
 						override += "\"";
 					}
 
+					final String stepSize = VanesaUtility.fixedPrecisionDivide(stopTime, BigDecimal.valueOf(intervals))
+							.toPlainString();
 					override += "-override=outputFormat=ia,stopTime=" + stopTime.toPlainString() + ",stepSize="
-							+ stopTime.divide(BigDecimal.valueOf(intervals)).toPlainString() + ",tolerance="
-							+ tolerance.toPlainString() + ",seed=" + seed + ",placeLocalSeed="
-							+ MOoutput.generatePlaceLocalSeed(seed);
+							+ stepSize + ",tolerance=" + tolerance.toPlainString() + ",seed=" + seed
+							+ ",placeLocalSeed=" + MOoutput.generatePlaceLocalSeed(seed);
 					System.out.println("parameter changed: " + flags.isParameterChanged());
 					if (flags.isParameterChanged()) {
 						for (Parameter param : pw.getChangedParameters().keySet()) {
