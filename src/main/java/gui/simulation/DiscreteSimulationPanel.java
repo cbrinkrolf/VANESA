@@ -13,6 +13,7 @@ import util.VanesaUtility;
 
 import javax.swing.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 public class DiscreteSimulationPanel extends JPanel {
@@ -102,7 +103,8 @@ public class DiscreteSimulationPanel extends JPanel {
 		final var startTime = startInput.getBigDecimalValue(BigDecimal.ZERO);
 		final var endTime = stopInput.getBigDecimalValue(BigDecimal.ONE);
 		final int seed = seedInput.getValue(42);
-		final BigDecimal progressFactor = BigDecimal.valueOf(PROGRESS_SCALE).divide(endTime.subtract(startTime));
+		final BigDecimal progressFactor = BigDecimal.valueOf(PROGRESS_SCALE).divide(endTime.subtract(startTime), 24,
+				RoundingMode.HALF_UP);
 		addLogText("Preparing simulation...\n");
 		addLogText("- Using random seed " + seed + "\n");
 		try {
@@ -225,7 +227,7 @@ public class DiscreteSimulationPanel extends JPanel {
 				for (int j = 0; j < timeline.length; j++) {
 					final var markingA = timeline[j];
 					final var markingB = otherTimeline[j];
-					if (!areMarkingsEqual(markingA, markingB)) {
+					if (!markingA.hasEqualTokens(markingB)) {
 						allMarkingsEqual = false;
 						break;
 					}
@@ -242,15 +244,6 @@ public class DiscreteSimulationPanel extends JPanel {
 			}
 		}
 		return result;
-	}
-
-	private boolean areMarkingsEqual(final DiscreteSimulator.Marking a, final DiscreteSimulator.Marking b) {
-		for (int i = 0; i < a.placeTokens.length; i++) {
-			if (a.placeTokens[i].compareTo(b.placeTokens[i]) != 0) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	private void collectSimulationResult(final SimulationResultController simResultController,

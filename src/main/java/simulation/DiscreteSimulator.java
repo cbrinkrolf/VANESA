@@ -12,12 +12,14 @@ import com.ezylang.evalex.EvaluationException;
 import com.ezylang.evalex.parser.ParseException;
 import graph.gui.Parameter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.IntStream;
 
 /**
  * Simulator for extended, timed, functional, stochastic, discrete Petri Nets with capacities.
@@ -82,7 +84,8 @@ import java.util.stream.IntStream;
  * </ul>
  */
 public class DiscreteSimulator extends Simulator {
-	private final List<DiscretePlace> places = new ArrayList<>();
+	private final Map<DiscretePlace, Integer> placesOrder = new HashMap<>();
+	private final Map<DiscretePlace, PlaceDetails> places = new HashMap<>();
 	private final Map<Transition, TransitionDetails> transitions = new HashMap<>();
 	private final List<Marking> markings = Collections.synchronizedList(new ArrayList<>());
 	private final List<Marking> openMarkings = new ArrayList<>();
@@ -120,7 +123,9 @@ public class DiscreteSimulator extends Simulator {
 		// Collect places and transitions
 		for (final var node : nodes) {
 			if (node instanceof DiscretePlace) {
-				places.add((DiscretePlace) node);
+				final DiscretePlace p = (DiscretePlace) node;
+				places.put(p, new PlaceDetails(p));
+				placesOrder.put(p, placesOrder.size());
 			} else if (node instanceof DiscreteTransition) {
 				final DiscreteTransition t = (DiscreteTransition) node;
 				transitions.put(t, new TransitionDetails(t, random));
@@ -135,18 +140,27 @@ public class DiscreteSimulator extends Simulator {
 		// Collect all transition source and target places
 		for (final var edge : edges) {
 			if (edge instanceof PNArc) {
-				if (edge.getFrom() instanceof DiscretePlace && (edge.getTo() instanceof DiscreteTransition
+				final PNArc arc = (PNArc) edge;
+				if (arc.getFrom() instanceof DiscretePlace && (arc.getTo() instanceof DiscreteTransition
 						|| edge.getTo() instanceof StochasticTransition)) {
-					transitions.get((Transition) edge.getTo()).sources.add((PNArc) edge);
+					transitions.get((Transition) arc.getTo()).sources.add(arc);
+					places.get((DiscretePlace) arc.getFrom()).outputProbabilitiesNormalized.put(arc,
+							BigDecimal.valueOf(arc.getProbability()).max(BigDecimal.ZERO));
 				} else if (
-						(edge.getFrom() instanceof DiscreteTransition || edge.getFrom() instanceof StochasticTransition)
-								&& edge.getTo() instanceof DiscretePlace) {
-					transitions.get((Transition) edge.getFrom()).targets.add((PNArc) edge);
+						(arc.getFrom() instanceof DiscreteTransition || arc.getFrom() instanceof StochasticTransition)
+								&& arc.getTo() instanceof DiscretePlace) {
+					transitions.get((Transition) arc.getFrom()).targets.add(arc);
+					places.get((DiscretePlace) arc.getTo()).inputProbabilitiesNormalized.put(arc,
+							BigDecimal.valueOf(arc.getProbability()).max(BigDecimal.ZERO));
 				}
 			} else {
 				throw new SimulationException(String.format("Petri net is not fully discrete. Found edge of type '%s'",
 						edge.getClass().getSimpleName()));
 			}
+		}
+		// Normalize place probabilities
+		for (final var place : places.values()) {
+			place.normalizeProbabilities();
 		}
 		initialize(BigDecimal.ZERO);
 	}
@@ -158,17 +172,18 @@ public class DiscreteSimulator extends Simulator {
 		firingEdges.clear();
 		// Create the initial marking and store it in the graph as well as the open list
 		final var placeTokens = new BigInteger[places.size()];
-		for (int i = 0; i < places.size(); i++) {
-			final var place = places.get(i);
-			placeTokens[i] = BigInteger.valueOf((long) place.getTokenStart());
+		for (final var place : places.keySet()) {
+			final int placeIndex = placesOrder.get(place);
+			placeTokens[placeIndex] = BigInteger.valueOf((long) place.getTokenStart());
 		}
-		final var startMarking = new Marking(startTime, placeTokens, determineConcession(startTime, placeTokens));
+		final var startMarking = new Marking(startTime, placeTokens,
+				determineConcession(startTime, placeTokens, new HashMap<>()));
 		markings.add(startMarking);
 		openMarkings.add(startMarking);
 	}
 
-	private Concession[] determineConcession(final BigDecimal time, final BigInteger[] placeTokens)
-			throws SimulationException {
+	private Concession[] determineConcession(final BigDecimal time, final BigInteger[] placeTokens,
+			final Map<PNArc, BigInteger> fixedArcWeights) throws SimulationException {
 		final List<Concession> concessions = new ArrayList<>();
 		for (final var transition : transitions.values()) {
 			if (transition.transition.isKnockedOut()) {
@@ -178,7 +193,7 @@ public class DiscreteSimulator extends Simulator {
 				if ("false".equalsIgnoreCase(transition.firingCondition)) {
 					continue;
 				} else if (!"true".equalsIgnoreCase(transition.firingCondition)) {
-					final var firingConditionExpression = createExpression(places, placeTokens,
+					final var firingConditionExpression = createExpression(placesOrder, placeTokens,
 							transition.firingCondition, transition.transition.getParameters());
 					firingConditionExpression.with("time", time);
 					try {
@@ -202,8 +217,11 @@ public class DiscreteSimulator extends Simulator {
 					continue;
 				}
 				final DiscretePlace place = (DiscretePlace) arc.getFrom();
-				final int placeIndex = places.indexOf(place);
-				final var requestedTokens = evaluateFunction(placeTokens, arc, arc.getFunction(), arc.getParameters());
+				final int placeIndex = placesOrder.get(place);
+				BigInteger requestedTokens = fixedArcWeights.get(arc);
+				if (requestedTokens == null) {
+					requestedTokens = evaluateFunction(placeTokens, arc, arc.getFunction(), arc.getParameters());
+				}
 				if (requestedTokens.signum() < 0) {
 					valid = false;
 					break;
@@ -229,8 +247,11 @@ public class DiscreteSimulator extends Simulator {
 					continue;
 				}
 				final DiscretePlace place = (DiscretePlace) arc.getFrom();
-				final int placeIndex = places.indexOf(place);
-				final var requestedTokens = evaluateFunction(placeTokens, arc, arc.getFunction(), arc.getParameters());
+				final int placeIndex = placesOrder.get(place);
+				BigInteger requestedTokens = fixedArcWeights.get(arc);
+				if (requestedTokens == null) {
+					requestedTokens = evaluateFunction(placeTokens, arc, arc.getFunction(), arc.getParameters());
+				}
 				if (requestedTokens.signum() < 0) {
 					valid = false;
 					break;
@@ -252,9 +273,11 @@ public class DiscreteSimulator extends Simulator {
 						continue;
 					}
 					final DiscretePlace place = (DiscretePlace) arc.getTo();
-					final int placeIndex = places.indexOf(place);
-					final var producedTokens = evaluateFunction(placeTokens, arc, arc.getFunction(),
-							arc.getParameters());
+					final int placeIndex = placesOrder.get(place);
+					BigInteger producedTokens = fixedArcWeights.get(arc);
+					if (producedTokens == null) {
+						producedTokens = evaluateFunction(placeTokens, arc, arc.getFunction(), arc.getParameters());
+					}
 					if (producedTokens.signum() < 0) {
 						valid = false;
 						break;
@@ -272,7 +295,7 @@ public class DiscreteSimulator extends Simulator {
 				if (valid) {
 					// If all validations succeeded, evaluate the transition's delay and store the concession if the
 					// delay is non-negative
-					final BigDecimal delay = transition.getDelay(places, placeTokens);
+					final BigDecimal delay = transition.getDelay(placesOrder, placeTokens);
 					if (delay.signum() >= 0) {
 						concessions.add(new Concession(transition, delay));
 					}
@@ -282,18 +305,18 @@ public class DiscreteSimulator extends Simulator {
 		return concessions.stream().sorted(Comparator.comparing(o -> o.delay)).toArray(Concession[]::new);
 	}
 
-	private static VanesaExpression createExpression(final List<DiscretePlace> places, final BigInteger[] placeTokens,
-			final String function, final List<Parameter> parameters) {
+	private static VanesaExpression createExpression(final Map<DiscretePlace, Integer> placesOrder,
+			final BigInteger[] placeTokens, final String function, final List<Parameter> parameters) {
 		final var expression = new VanesaExpression(function).with(parameters);
-		for (int i = 0; i < placeTokens.length; i++) {
-			expression.with(places.get(i).getName(), placeTokens[i]);
+		for (final var place : placesOrder.keySet()) {
+			expression.with(place.getName(), placeTokens[placesOrder.get(place)]);
 		}
 		return expression;
 	}
 
 	private BigInteger evaluateFunction(final BigInteger[] placeTokens, final PNArc arc, final String function,
 			final List<Parameter> parameters) throws SimulationException {
-		final var expression = createExpression(places, placeTokens, function, parameters);
+		final var expression = createExpression(placesOrder, placeTokens, function, parameters);
 		try {
 			final var result = expression.evaluate();
 			final BigDecimal producedTokens = result.getNumberValue();
@@ -346,28 +369,111 @@ public class DiscreteSimulator extends Simulator {
 				}
 				maxFireIndex = i;
 			}
+			if (minDelay.compareTo(BigDecimal.ZERO) > 0) {
+				// Fix arc weights for next batch of transitions, so that all transitions that fire in parallel
+				// (but sequential in this implementation) reference the correct place token counts of the current
+				// marking.
+				for (int i = 0; i < maxFireIndex + 1; i++) {
+					final var concession = marking.concessionsOrderedByDelay[i];
+					for (final var arc : concession.transition.sources) {
+						final var tokens = evaluateFunction(marking.placeTokens, arc, arc.getFunction(),
+								arc.getParameters());
+						concession.fixedArcWeights.put(arc, tokens);
+					}
+					for (final var arc : concession.transition.targets) {
+						final var tokens = evaluateFunction(marking.placeTokens, arc, arc.getFunction(),
+								arc.getParameters());
+						concession.fixedArcWeights.put(arc, tokens);
+					}
+				}
+			}
+
 			if (allowBranching) {
 				// Explore all possible branches
 				// TODO parallelize: IntStream.range(0, maxFireIndex + 1).parallel().forEach(i -> { ... });
 				for (int i = 0; i < maxFireIndex + 1; i++) {
 					final var concession = marking.concessionsOrderedByDelay[i];
 					if (endTime == null || marking.time.add(concession.delay).compareTo(endTime) <= 0) {
-						fireTransition(marking, concession.transition, concession.delay);
+						fireTransition(marking, concession, concession.delay);
 					}
 				}
 			} else {
+				// TODO: determine output- and input-conflicts and fast-forward all allowed transitions based on
+				//  priority or probability
+				final Map<DiscretePlace, Set<Pair<PNArc, Concession>>> outputConflicts = new HashMap<>();
+				final Map<DiscretePlace, Set<Pair<PNArc, Concession>>> inputConflicts = new HashMap<>();
+				for (int i = 0; i < maxFireIndex + 1; i++) {
+					final var concession = marking.concessionsOrderedByDelay[i];
+					for (final var edge : concession.transition.sources) {
+						if (edge.isRegularArc() && !edge.getFrom().isConstant()) {
+							outputConflicts.computeIfAbsent((DiscretePlace) edge.getFrom(), p -> new HashSet<>()).add(
+									new ImmutablePair<>(edge, concession));
+						}
+					}
+					for (final var edge : concession.transition.targets) {
+						if (edge.isRegularArc() && !edge.getTo().isConstant()) {
+							inputConflicts.computeIfAbsent((DiscretePlace) edge.getTo(), p -> new HashSet<>()).add(
+									new ImmutablePair<>(edge, concession));
+						}
+					}
+				}
+
+				final Set<DiscretePlace> conflictedOutputPlaces = new HashSet<>();
+				final Set<DiscretePlace> conflictedInputPlaces = new HashSet<>();
+				for (final var place : outputConflicts.keySet()) {
+					final var concessions = outputConflicts.get(place);
+					if (concessions.size() > 1) {
+						final int placeIndex = placesOrder.get(place);
+						final BigInteger minTokens = BigInteger.valueOf((long) place.getTokenMin());
+						BigInteger putativeTokens = marking.placeTokens[placeIndex];
+						for (final var concession : concessions) {
+							final var arc = concession.getLeft();
+							final var requestedTokens = concession.getRight().fixedArcWeights.get(arc);
+							putativeTokens = putativeTokens.subtract(requestedTokens);
+							if (putativeTokens.compareTo(minTokens) < 0) {
+								conflictedOutputPlaces.add(place);
+								break;
+							}
+						}
+					}
+				}
+				for (final var place : inputConflicts.keySet()) {
+					final var concessions = inputConflicts.get(place);
+					if (concessions.size() > 1) {
+						final int placeIndex = placesOrder.get(place);
+						final BigInteger maxTokens = BigInteger.valueOf((long) place.getTokenMax());
+						BigInteger putativeTokens = marking.placeTokens[placeIndex];
+						for (final var concession : concessions) {
+							final var arc = concession.getLeft();
+							final var requestedTokens = concession.getRight().fixedArcWeights.get(arc);
+							putativeTokens = putativeTokens.add(requestedTokens);
+							if (putativeTokens.compareTo(maxTokens) > 0) {
+								conflictedInputPlaces.add(place);
+								break;
+							}
+						}
+					}
+				}
+				// if (conflictedOutputPlaces.size() > 0) {
+				// 	System.out.println(conflictedOutputPlaces.size() + " place(s) with output conflicts");
+				// }
+				// if (conflictedInputPlaces.size() > 0) {
+				// 	System.out.println(conflictedInputPlaces.size() + " place(s) with input conflicts");
+				// }
+
 				// Explore only one random branch
 				final int branchIndex = random.nextInt(maxFireIndex + 1);
 				final var concession = marking.concessionsOrderedByDelay[branchIndex];
 				if (endTime == null || marking.time.add(concession.delay).compareTo(endTime) <= 0) {
-					fireTransition(marking, concession.transition, concession.delay);
+					fireTransition(marking, concession, concession.delay);
 				}
 			}
 		}
 	}
 
-	private void fireTransition(final Marking marking, final TransitionDetails transition, final BigDecimal delay)
+	private Marking fireTransition(final Marking marking, final Concession concession, final BigDecimal delay)
 			throws SimulationException {
+		final TransitionDetails transition = concession.transition;
 		final BigDecimal newTime = marking.time.add(delay);
 		final BigInteger[] placeTokens = new BigInteger[places.size()];
 		System.arraycopy(marking.placeTokens, 0, placeTokens, 0, placeTokens.length);
@@ -377,9 +483,8 @@ public class DiscreteSimulator extends Simulator {
 				continue;
 			}
 			final DiscretePlace place = (DiscretePlace) arc.getFrom();
-			final int placeIndex = places.indexOf(place);
-			final var requestedTokens = evaluateFunction(marking.placeTokens, arc, arc.getFunction(),
-					arc.getParameters());
+			final int placeIndex = placesOrder.get(place);
+			final var requestedTokens = concession.fixedArcWeights.get(arc);
 			placeTokens[placeIndex] = placeTokens[placeIndex].subtract(requestedTokens);
 		}
 		for (final var arc : transition.targets) {
@@ -388,36 +493,41 @@ public class DiscreteSimulator extends Simulator {
 				continue;
 			}
 			final DiscretePlace place = (DiscretePlace) arc.getTo();
-			final int placeIndex = places.indexOf(place);
-			final var producedTokens = evaluateFunction(marking.placeTokens, arc, arc.getFunction(),
-					arc.getParameters());
+			final int placeIndex = placesOrder.get(place);
+			final var producedTokens = concession.fixedArcWeights.get(arc);
 			placeTokens[placeIndex] = placeTokens[placeIndex].add(producedTokens);
 		}
 		// Determine new markings concessions and delays considering previous concession delays
-		final Concession[] newConcessions = determineConcession(newTime, placeTokens);
+		final Map<PNArc, BigInteger> fixedArcWeights = new HashMap<>();
+		for (final var nextConcession : marking.concessionsOrderedByDelay) {
+			if (nextConcession.transition != transition) {
+				fixedArcWeights.putAll(nextConcession.fixedArcWeights);
+			}
+		}
+		final Concession[] newConcessions = determineConcession(newTime, placeTokens, fixedArcWeights);
 		final List<Concession> concessions = new ArrayList<>();
 		// First, retain all transitions that still have concession and reduce their delay
-		for (final var concession : marking.concessionsOrderedByDelay) {
-			if (concession.transition != transition) {
+		for (final var nextConcession : marking.concessionsOrderedByDelay) {
+			if (nextConcession.transition != transition) {
 				for (final var checkConcession : newConcessions) {
-					if (concession.transition.equals(checkConcession.transition)) {
-						concessions.add(concession.retain(delay));
+					if (nextConcession.transition.equals(checkConcession.transition)) {
+						concessions.add(nextConcession.retain(delay));
 						break;
 					}
 				}
 			}
 		}
 		// Second, add all new concessions
-		for (final var concession : newConcessions) {
+		for (final var nextConcession : newConcessions) {
 			boolean alreadyPresent = false;
 			for (final var checkConcession : concessions) {
-				if (concession.transition.equals(checkConcession.transition)) {
+				if (nextConcession.transition.equals(checkConcession.transition)) {
 					alreadyPresent = true;
 					break;
 				}
 			}
 			if (!alreadyPresent) {
-				concessions.add(concession);
+				concessions.add(nextConcession);
 			}
 		}
 		// Create the new marking
@@ -431,10 +541,11 @@ public class DiscreteSimulator extends Simulator {
 		firingEdges.add(edge);
 		outEdges.computeIfAbsent(marking, m -> Collections.synchronizedList(new ArrayList<>())).add(edge);
 		inEdges.computeIfAbsent(newMarking, m -> Collections.synchronizedList(new ArrayList<>())).add(edge);
+		return newMarking;
 	}
 
 	public Collection<DiscretePlace> getPlaces() {
-		return places;
+		return places.keySet();
 	}
 
 	public Collection<Transition> getTransitions() {
@@ -450,7 +561,7 @@ public class DiscreteSimulator extends Simulator {
 	}
 
 	public BigInteger getTokens(final Marking marking, final DiscretePlace place) {
-		return marking.placeTokens[places.indexOf(place)];
+		return marking.placeTokens[placesOrder.get(place)];
 	}
 
 	public Collection<FiringEdge> getEdges() {
@@ -525,6 +636,38 @@ public class DiscreteSimulator extends Simulator {
 		public boolean isDead() {
 			return concessionsOrderedByDelay.length == 0;
 		}
+
+		public boolean hasEqualTokens(final Marking other) {
+			if (other != null && other.placeTokens.length == placeTokens.length) {
+				for (int i = 0; i < placeTokens.length; i++) {
+					if (placeTokens[i].compareTo(other.placeTokens[i]) != 0) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+
+		public boolean hasEqualTokensAndConcessions(final Marking other) {
+			if (other == null || other.placeTokens.length != placeTokens.length
+					|| other.concessionsOrderedByDelay.length != concessionsOrderedByDelay.length) {
+				return false;
+			}
+			if (!hasEqualTokens(other)) {
+				return false;
+			}
+			final Map<TransitionDetails, BigDecimal> delayMap = new HashMap<>();
+			for (final var concession : concessionsOrderedByDelay) {
+				delayMap.put(concession.transition, concession.delay);
+			}
+			for (final var concession : other.concessionsOrderedByDelay) {
+				final BigDecimal delayA = delayMap.get(concession.transition);
+				if (delayA == null || delayA.compareTo(concession.delay) != 0) {
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 
 	public static class FiringEdge {
@@ -536,6 +679,45 @@ public class DiscreteSimulator extends Simulator {
 			this.from = from;
 			to = marking;
 			this.transition = transition;
+		}
+	}
+
+	public static class PlaceDetails {
+		final DiscretePlace place;
+		final Map<PNArc, BigDecimal> outputProbabilitiesNormalized = new HashMap<>();
+		final Map<PNArc, BigDecimal> inputProbabilitiesNormalized = new HashMap<>();
+
+		public PlaceDetails(final DiscretePlace place) {
+			this.place = place;
+		}
+
+		void normalizeProbabilities() {
+			if (!outputProbabilitiesNormalized.isEmpty()) {
+				BigDecimal sum = BigDecimal.ZERO;
+				for (final var probability : outputProbabilitiesNormalized.values()) {
+					sum = sum.add(probability);
+				}
+				if (sum.compareTo(BigDecimal.ZERO) == 0) {
+					throw new SimulationException("Output probabilities of place '" + place + "' are all zero");
+				}
+				for (final var edge : outputProbabilitiesNormalized.keySet()) {
+					outputProbabilitiesNormalized.put(edge, outputProbabilitiesNormalized.get(edge)
+							.divide(sum, 24, RoundingMode.HALF_UP).stripTrailingZeros());
+				}
+			}
+			if (!inputProbabilitiesNormalized.isEmpty()) {
+				BigDecimal sum = BigDecimal.ZERO;
+				for (final var probability : inputProbabilitiesNormalized.values()) {
+					sum = sum.add(probability);
+				}
+				if (sum.compareTo(BigDecimal.ZERO) == 0) {
+					throw new SimulationException("Input probabilities of place '" + place + "' are all zero");
+				}
+				for (final var edge : inputProbabilitiesNormalized.keySet()) {
+					inputProbabilitiesNormalized.put(edge, inputProbabilitiesNormalized.get(edge)
+							.divide(sum, 24, RoundingMode.HALF_UP).stripTrailingZeros());
+				}
+			}
 		}
 	}
 
@@ -582,13 +764,14 @@ public class DiscreteSimulator extends Simulator {
 			}
 		}
 
-		public BigDecimal getDelay(final List<DiscretePlace> places, final BigInteger[] placeTokens)
+		public BigDecimal getDelay(final Map<DiscretePlace, Integer> placesOrder, final BigInteger[] placeTokens)
 				throws SimulationException {
 			if (fixedDelay != null) {
 				return fixedDelay;
 			}
 			if (delayFunction != null) {
-				final var expression = createExpression(places, placeTokens, delayFunction, transition.getParameters());
+				final var expression = createExpression(placesOrder, placeTokens, delayFunction,
+						transition.getParameters());
 				try {
 					return expression.evaluate().getNumberValue();
 				} catch (EvaluationException | ParseException e) {
@@ -615,6 +798,7 @@ public class DiscreteSimulator extends Simulator {
 	public static class Concession {
 		public final TransitionDetails transition;
 		public final BigDecimal delay;
+		public final Map<PNArc, BigInteger> fixedArcWeights = new HashMap<>();
 
 		public Concession(final TransitionDetails transition, final BigDecimal delay) {
 			this.transition = transition;
@@ -622,7 +806,9 @@ public class DiscreteSimulator extends Simulator {
 		}
 
 		public Concession retain(final BigDecimal elapsedDelay) {
-			return new Concession(transition, delay.subtract(elapsedDelay));
+			final var result = new Concession(transition, delay.subtract(elapsedDelay));
+			result.fixedArcWeights.putAll(fixedArcWeights);
+			return result;
 		}
 	}
 }

@@ -583,4 +583,31 @@ class DiscreteSimulatorTest {
 		assertEquals(BigInteger.valueOf(1), simulator.getTokens(markingTimeline[4], p4));
 		assertEquals(BigInteger.valueOf(1), simulator.getTokens(markingTimeline[4], p5));
 	}
+
+	@Test
+	void arcsRetainWeightsWithSameDelay() throws SimulationException {
+		final var p1 = new DiscretePlace("p1", "p1", null);
+		p1.setTokenStart(4);
+		final var p2 = new DiscretePlace("p2", "p2", null);
+		p2.setTokenStart(1);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var t2 = new DiscreteTransition("t2", "t2", null);
+		final var t3 = new DiscreteTransition("t3", "t3", null);
+		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "p2");
+		final var arc2 = new PNArc(p1, t2, "arc2", "arc2", Elementdeclerations.pnArc, "p2");
+		final var arc3 = new PNArc(p1, t3, "arc3", "arc3", Elementdeclerations.pnArc, "p2");
+		final var arc4 = new PNArc(t1, p2, "arc5", "arc5", Elementdeclerations.pnArc, "1");
+		final var arc5 = new PNArc(t2, p2, "arc6", "arc6", Elementdeclerations.pnArc, "1");
+		final var arc6 = new PNArc(t3, p2, "arc7", "arc7", Elementdeclerations.pnArc, "1");
+		final var simulator = new DiscreteSimulator(List.of(p1, p2, t1, t2, t3),
+				List.of(arc1, arc2, arc3, arc4, arc5, arc6));
+		simulator.step();
+		simulator.step();
+		simulator.step();
+		final var markingTimeline = simulator.getMarkingTimeline();
+		assertEquals(BigInteger.valueOf(4), simulator.getTokens(markingTimeline[0], p1));
+		assertEquals(BigInteger.valueOf(3), simulator.getTokens(markingTimeline[1], p1));
+		assertEquals(BigInteger.valueOf(2), simulator.getTokens(markingTimeline[2], p1));
+		assertEquals(BigInteger.valueOf(1), simulator.getTokens(markingTimeline[3], p1));
+	}
 }
