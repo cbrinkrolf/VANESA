@@ -55,6 +55,8 @@ public class MOoutput extends BaseWriter<Pathway> {
 	private final Map<String, ArrayList<BiologicalNodeAbstract>> actualOutEdges = new HashMap<>();
 	private final Map<String, String> inWeights = new HashMap<>();
 	private final Map<String, String> outWeights = new HashMap<>();
+	private final Map<String, String> inPrio = new HashMap<>();
+	private final Map<String, String> inProb = new HashMap<>();
 	private final Map<String, String> outPrio = new HashMap<>();
 	private final Map<String, String> outProb = new HashMap<>();
 
@@ -210,21 +212,28 @@ public class MOoutput extends BaseWriter<Pathway> {
 					attr.append("startTokens=").append((int) place.getTokenStart());
 					attr.append(", minTokens=").append((int) place.getTokenMin());
 					attr.append(", maxTokens=").append((int) place.getTokenMax());
+					if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PROB) {
+						attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
+					} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PRIO) {
+						attr.append(", enablingType=PNlib.Types.EnablingType.Priority");
+					} else {
+						// priority is default in PNLib, therefore, we set probability with default uniform
+						// distribution to use random conflict resolution backed by the placeLocalSeed parameter
+						attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
+					}
+					if (place.getConflictingInEdges().size() > 1) {
+						if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PROB) {
+							attr.append(", enablingProbIn={").append(inProb.get(place.getName())).append("}");
+						} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PRIO) {
+							attr.append(", enablingPrioIn={").append(inPrio.get(place.getName())).append("}");
+						}
+					}
 					if (place.getConflictingOutEdges().size() > 1) {
 						if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PROB) {
-							attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
 							attr.append(", enablingProbOut={").append(outProb.get(place.getName())).append("}");
 						} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PRIO) {
-							attr.append(", enablingType=PNlib.Types.EnablingType.Priority");
 							attr.append(", enablingPrioOut={").append(outPrio.get(place.getName())).append("}");
-						} else {
-							// priority is default in PNLib, therefore, we set probability with default uniform
-							// distribution to use random conflict resolution backed by the placeLocalSeed parameter
-							attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
 						}
-					} else {
-						// As we don't currently handle input conflicts (via capacities), add probability by default
-						attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
 					}
 					// Set a defined seed to ensure deterministic behaviour
 					attr.append(", localSeedIn=placeLocalSeed");
@@ -354,13 +363,13 @@ public class MOoutput extends BaseWriter<Pathway> {
 					}
 
 					if (!(e.getTo() instanceof ContinuousTransition)) {
-						int prio = e.getPriority();
+						final int prio = e.getPriority();
 						if (outPrio.containsKey(fromName)) {
 							outPrio.put(fromName, outPrio.get(fromName) + ", " + prio);
 						} else {
 							outPrio.put(fromName, String.valueOf(prio));
 						}
-						double prob = e.getProbability();
+						final double prob = e.getProbability();
 						if (outProb.containsKey(fromName)) {
 							outProb.put(fromName, outProb.get(fromName) + ", " + prob);
 						} else {
@@ -370,6 +379,21 @@ public class MOoutput extends BaseWriter<Pathway> {
 
 					// Edge Transition -> Place
 				} else {
+					if (!(e.getFrom() instanceof ContinuousTransition)) {
+						final int prio = e.getPriority();
+						if (inPrio.containsKey(toName)) {
+							inPrio.put(toName, inPrio.get(toName) + ", " + prio);
+						} else {
+							inPrio.put(toName, String.valueOf(prio));
+						}
+						final double prob = e.getProbability();
+						if (inProb.containsKey(toName)) {
+							inProb.put(toName, inProb.get(toName) + ", " + prob);
+						} else {
+							inProb.put(toName, String.valueOf(prob));
+						}
+					}
+
 					if (colored) {
 						Set<BiologicalNodeAbstract> markedOut = getMarkedNeighborsIn(e.getFrom());
 						final String tmp;
