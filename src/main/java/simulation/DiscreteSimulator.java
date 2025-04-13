@@ -574,7 +574,62 @@ public class DiscreteSimulator extends Simulator {
 			}
 		} else {
 			// Handle conflict with probability
-			// TODO
+			final List<TransitionDetails> transitionCandidates = new ArrayList<>();
+			final List<BigDecimal> transitionCandidateProbabilities = new ArrayList<>();
+			for (final var arc : place.outputProbabilitiesNormalized.keySet()) {
+				final var transition = arcTransitions.get(arc);
+				final var concession = transitionConcessions.get(transition);
+				// If this transition has no concession, skip it
+				if (concession == null) {
+					continue;
+				}
+				int index = transitionCandidates.indexOf(transition);
+				if (index == -1) {
+					transitionCandidates.add(transition);
+					transitionCandidateProbabilities.add(place.outputProbabilitiesNormalized.get(arc));
+				} else {
+					transitionCandidateProbabilities.set(index, transitionCandidateProbabilities.get(index)
+							.add(place.outputProbabilitiesNormalized.get(arc)));
+				}
+			}
+			while (!transitionCandidates.isEmpty()) {
+				// Normalize probabilities
+				BigDecimal sum = BigDecimal.ZERO;
+				for (final var probability : transitionCandidateProbabilities) {
+					sum = sum.add(probability);
+				}
+				for (int i = 0; i < transitionCandidateProbabilities.size(); i++) {
+					transitionCandidateProbabilities.set(i,
+							fixedPrecisionDivide(transitionCandidateProbabilities.get(i), sum));
+				}
+				// Choose the next transition at random
+				BigDecimal randomValue = BigDecimal.valueOf(random.nextDouble());
+				int index = 0;
+				for (; index < transitionCandidates.size(); index++) {
+					final var probability = transitionCandidateProbabilities.get(index);
+					if (randomValue.compareTo(probability) < 0) {
+						break;
+					}
+					randomValue = randomValue.subtract(probability);
+				}
+				// Check the transition with available tokens and remove it from the candidate list
+				final var transition = transitionCandidates.get(index);
+				final var concession = transitionConcessions.get(transition);
+				transitionCandidates.remove(index);
+				transitionCandidateProbabilities.remove(index);
+				BigInteger requestedTokens = BigInteger.ZERO;
+				for (final var sourceArc : transition.sources) {
+					if (sourceArc.isRegularArc() && arcPlaces.get(sourceArc) == place) {
+						requestedTokens = requestedTokens.add(concession.fixedArcWeights.get(sourceArc));
+					}
+				}
+				if (putativeTokens.subtract(requestedTokens).compareTo(place.minTokens) >= 0) {
+					putativeTokens = putativeTokens.subtract(requestedTokens);
+					placeFireSet.add(concession);
+				} else {
+					placeDiscardedSet.add(concession);
+				}
+			}
 		}
 		if (placeFireSets.containsKey(place)) {
 			placeFireSets.get(place).addAll(placeFireSet);
@@ -620,7 +675,62 @@ public class DiscreteSimulator extends Simulator {
 			}
 		} else {
 			// Handle conflict with probability
-			// TODO
+			final List<TransitionDetails> transitionCandidates = new ArrayList<>();
+			final List<BigDecimal> transitionCandidateProbabilities = new ArrayList<>();
+			for (final var arc : place.inputProbabilitiesNormalized.keySet()) {
+				final var transition = arcTransitions.get(arc);
+				final var concession = transitionConcessions.get(transition);
+				// If this transition has no concession, skip it
+				if (concession == null) {
+					continue;
+				}
+				int index = transitionCandidates.indexOf(transition);
+				if (index == -1) {
+					transitionCandidates.add(transition);
+					transitionCandidateProbabilities.add(place.inputProbabilitiesNormalized.get(arc));
+				} else {
+					transitionCandidateProbabilities.set(index, transitionCandidateProbabilities.get(index)
+							.add(place.inputProbabilitiesNormalized.get(arc)));
+				}
+			}
+			while (!transitionCandidates.isEmpty()) {
+				// Normalize probabilities
+				BigDecimal sum = BigDecimal.ZERO;
+				for (final var probability : transitionCandidateProbabilities) {
+					sum = sum.add(probability);
+				}
+				for (int i = 0; i < transitionCandidateProbabilities.size(); i++) {
+					transitionCandidateProbabilities.set(i,
+							fixedPrecisionDivide(transitionCandidateProbabilities.get(i), sum));
+				}
+				// Choose the next transition at random
+				BigDecimal randomValue = BigDecimal.valueOf(random.nextDouble());
+				int index = 0;
+				for (; index < transitionCandidates.size(); index++) {
+					final var probability = transitionCandidateProbabilities.get(index);
+					if (randomValue.compareTo(probability) < 0) {
+						break;
+					}
+					randomValue = randomValue.subtract(probability);
+				}
+				// Check the transition with available tokens and remove it from the candidate list
+				final var transition = transitionCandidates.get(index);
+				final var concession = transitionConcessions.get(transition);
+				transitionCandidates.remove(index);
+				transitionCandidateProbabilities.remove(index);
+				BigInteger producedTokens = BigInteger.ZERO;
+				for (final var sourceArc : transition.targets) {
+					if (sourceArc.isRegularArc() && arcPlaces.get(sourceArc) == place) {
+						producedTokens = producedTokens.add(concession.fixedArcWeights.get(sourceArc));
+					}
+				}
+				if (putativeTokens.add(producedTokens).compareTo(place.maxTokens) <= 0) {
+					putativeTokens = putativeTokens.add(producedTokens);
+					placeFireSet.add(concession);
+				} else {
+					placeDiscardedSet.add(concession);
+				}
+			}
 		}
 		if (placeFireSets.containsKey(place)) {
 			placeFireSets.get(place).addAll(placeFireSet);
@@ -783,6 +893,10 @@ public class DiscreteSimulator extends Simulator {
 		return result;
 	}
 
+	private static BigDecimal fixedPrecisionDivide(final BigDecimal a, final BigDecimal b) {
+		return a.divide(b, 24, RoundingMode.HALF_UP).stripTrailingZeros();
+	}
+
 	public static class Marking {
 		public final BigDecimal time;
 		public final BigInteger[] placeTokens;
@@ -887,8 +1001,8 @@ public class DiscreteSimulator extends Simulator {
 					throw new SimulationException("Output probabilities of place '" + place + "' are all zero");
 				}
 				for (final var edge : outputProbabilitiesNormalized.keySet()) {
-					outputProbabilitiesNormalized.put(edge, outputProbabilitiesNormalized.get(edge)
-							.divide(sum, 24, RoundingMode.HALF_UP).stripTrailingZeros());
+					outputProbabilitiesNormalized.put(edge,
+							fixedPrecisionDivide(outputProbabilitiesNormalized.get(edge), sum));
 				}
 			}
 			if (!inputProbabilitiesNormalized.isEmpty()) {
@@ -900,8 +1014,8 @@ public class DiscreteSimulator extends Simulator {
 					throw new SimulationException("Input probabilities of place '" + place + "' are all zero");
 				}
 				for (final var edge : inputProbabilitiesNormalized.keySet()) {
-					inputProbabilitiesNormalized.put(edge, inputProbabilitiesNormalized.get(edge)
-							.divide(sum, 24, RoundingMode.HALF_UP).stripTrailingZeros());
+					inputProbabilitiesNormalized.put(edge,
+							fixedPrecisionDivide(inputProbabilitiesNormalized.get(edge), sum));
 				}
 			}
 		}
