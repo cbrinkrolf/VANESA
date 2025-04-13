@@ -58,7 +58,7 @@ class DiscreteSimulatorTest {
 		final var p1 = new DiscretePlace("p1", "p1", null);
 		p1.setTokenStart(10);
 		final var t1 = new DiscreteTransition("t1", "t1", null);
-		final var arc1 = new PNArc(p1, t1, "arc1", "arc1", Elementdeclerations.pnArc, "1");
+		final var arc1 = new PNArc(p1, t1, "arc1", "arc1");
 		final var simulator = new DiscreteSimulator(List.of(p1, t1), List.of(arc1));
 		for (int i = 0; i < 10; i++) {
 			simulator.step();
@@ -66,9 +66,7 @@ class DiscreteSimulatorTest {
 		final var markingTimeline = simulator.getMarkingTimeline();
 		assertEquals(11, markingTimeline.length);
 		assertEquals(10, simulator.getMaxTime().intValue());
-		for (int i = 0; i < 11; i++) {
-			assertEquals(BigInteger.valueOf(10 - i), simulator.getTokens(markingTimeline[i], p1));
-		}
+		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[] { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 });
 	}
 
 	/**
@@ -86,11 +84,7 @@ class DiscreteSimulatorTest {
 			simulator.step();
 		}
 		final var markingTimeline = simulator.getMarkingTimeline();
-		assertEquals(BigInteger.valueOf(10), simulator.getTokens(markingTimeline[0], p1));
-		assertEquals(BigInteger.valueOf(0), simulator.getTokens(markingTimeline[1], p1));
-		assertEquals(BigInteger.valueOf(0), simulator.getTokens(markingTimeline[2], p1));
-		assertEquals(BigInteger.valueOf(0), simulator.getTokens(markingTimeline[3], p1));
-		assertEquals(BigInteger.valueOf(0), simulator.getTokens(markingTimeline[4], p1));
+		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[] { 10, 0, 0, 0, 0 });
 	}
 
 	/**
@@ -101,7 +95,7 @@ class DiscreteSimulatorTest {
 	void pnlibTDtoPD() throws SimulationException {
 		final var p1 = new DiscretePlace("p1", "p1", null);
 		final var t1 = new DiscreteTransition("t1", "t1", null);
-		final var arc1 = new PNArc(t1, p1, "arc1", "arc1", Elementdeclerations.pnArc, "1");
+		final var arc1 = new PNArc(t1, p1, "arc1", "arc1");
 		final var simulator = new DiscreteSimulator(List.of(p1, t1), List.of(arc1));
 		for (int i = 0; i < 10; i++) {
 			simulator.step();
@@ -109,9 +103,7 @@ class DiscreteSimulatorTest {
 		final var markingTimeline = simulator.getMarkingTimeline();
 		assertEquals(11, markingTimeline.length);
 		assertEquals(10, simulator.getMaxTime().intValue());
-		for (int i = 0; i < 11; i++) {
-			assertEquals(BigInteger.valueOf(i), simulator.getTokens(markingTimeline[i], p1));
-		}
+		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 });
 	}
 
 	/**
@@ -129,11 +121,7 @@ class DiscreteSimulatorTest {
 			simulator.step();
 		}
 		final var markingTimeline = simulator.getMarkingTimeline();
-		assertEquals(BigInteger.valueOf(1), simulator.getTokens(markingTimeline[0], p1));
-		assertEquals(BigInteger.valueOf(2), simulator.getTokens(markingTimeline[1], p1));
-		assertEquals(BigInteger.valueOf(4), simulator.getTokens(markingTimeline[2], p1));
-		assertEquals(BigInteger.valueOf(8), simulator.getTokens(markingTimeline[3], p1));
-		assertEquals(BigInteger.valueOf(16), simulator.getTokens(markingTimeline[4], p1));
+		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[] { 1, 2, 4, 8, 16 });
 	}
 
 	/**
@@ -152,11 +140,7 @@ class DiscreteSimulatorTest {
 			simulator.step();
 		}
 		final var markingTimeline = simulator.getMarkingTimeline();
-		assertEquals(BigInteger.valueOf(2), simulator.getTokens(markingTimeline[0], p1));
-		assertEquals(BigInteger.valueOf(3), simulator.getTokens(markingTimeline[1], p1));
-		assertEquals(BigInteger.valueOf(4), simulator.getTokens(markingTimeline[2], p1));
-		assertEquals(BigInteger.valueOf(5), simulator.getTokens(markingTimeline[3], p1));
-		assertEquals(BigInteger.valueOf(6), simulator.getTokens(markingTimeline[4], p1));
+		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[] { 2, 3, 4, 5, 6 });
 	}
 
 	/**
@@ -170,9 +154,9 @@ class DiscreteSimulatorTest {
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var t2 = new DiscreteTransition("t2", "t2", null);
 		t2.setDelay("2");
-		final var arc1 = new PNArc(t1, p1, "arc1", "arc1", Elementdeclerations.pnArc, "1");
+		final var arc1 = new PNArc(t1, p1, "arc1", "arc1");
 		arc1.setPriority(2);
-		final var arc2 = new PNArc(t2, p1, "arc2", "arc2", Elementdeclerations.pnArc, "1");
+		final var arc2 = new PNArc(t2, p1, "arc2", "arc2");
 		arc2.setPriority(1);
 		final var simulator = new DiscreteSimulator(List.of(p1, t1, t2), List.of(arc1, arc2));
 		while (!simulator.isDead()) {
@@ -234,6 +218,38 @@ class DiscreteSimulatorTest {
 
 	/**
 	 * Equivalent to <a href=
+	 * "https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/ConflictPrio.mo">ConflictPrio.mo</a>
+	 */
+	@Test
+	void pnlibConflictPrio() throws SimulationException {
+		final var p1 = new DiscretePlace("p1", "p1", null);
+		p1.setTokenStart(2);
+		p1.setConflictStrategy(Place.CONFLICT_HANDLING_PRIO);
+		final var p2 = new DiscretePlace("p2", "p2", null);
+		final var p3 = new DiscretePlace("p3", "p3", null);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var t2 = new DiscreteTransition("t2", "t2", null);
+		final var t3 = new DiscreteTransition("t3", "t3", null);
+		final var arc1 = new PNArc(t3, p1, "arc1", "arc1");
+		final var arc2 = new PNArc(p1, t1, "arc2", "arc2");
+		arc2.setPriority(1);
+		final var arc3 = new PNArc(p1, t2, "arc3", "arc3");
+		arc3.setPriority(2);
+		final var arc4 = new PNArc(t1, p2, "arc4", "arc4");
+		final var arc5 = new PNArc(t2, p3, "arc5", "arc5");
+		final var simulator = new DiscreteSimulator(List.of(t1, p1, t2, p2, t3, p3),
+				List.of(arc1, arc2, arc3, arc4, arc5));
+		for (int i = 0; i < 9; i++) {
+			simulator.step();
+		}
+		final var markingTimeline = simulator.getMarkingTimeline();
+		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[] { 2, 1, 1, 1, 1, 1, 1, 1, 1, 1 });
+		assertPlaceTokensTimeline(simulator, markingTimeline, p2, new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+		assertPlaceTokensTimeline(simulator, markingTimeline, p3, new int[] { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1 });
+	}
+
+	/**
+	 * Equivalent to <a href=
 	 * "https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/OutputConflictPrio.mo">OutputConflictPrio.mo</a>
 	 */
 	@Test
@@ -260,9 +276,9 @@ class DiscreteSimulatorTest {
 			simulator.step();
 		}
 		final var markingTimeline = simulator.getMarkingTimeline();
-		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[]{2, 3, 3, 3, 3, 3, 3, 3, 3, 3});
-		assertPlaceTokensTimeline(simulator, markingTimeline, p2, new int[]{0, 0, 1, 2, 3, 4, 5, 6, 7, 8});
-		assertPlaceTokensTimeline(simulator, markingTimeline, p3, new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[] { 2, 3, 3, 3, 3, 3, 3, 3, 3, 3 });
+		assertPlaceTokensTimeline(simulator, markingTimeline, p2, new int[] { 0, 0, 1, 2, 3, 4, 5, 6, 7, 8 });
+		assertPlaceTokensTimeline(simulator, markingTimeline, p3, new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 	}
 
 	/**
@@ -294,16 +310,15 @@ class DiscreteSimulatorTest {
 			simulator.step();
 		}
 		final var markingTimeline = simulator.getMarkingTimeline();
-		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[]{0, 2, 1, 1, 1, 1, 1, 1, 1, 1});
-		assertPlaceTokensTimeline(simulator, markingTimeline, p2, new int[]{5, 4, 4, 3, 2, 1, 0, 0, 0, 0});
-		assertPlaceTokensTimeline(simulator, markingTimeline, p3, new int[]{5, 4, 4, 4, 4, 4, 4, 3, 2, 1});
+		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[] { 0, 2, 1, 1, 1, 1, 1, 1, 1, 1 });
+		assertPlaceTokensTimeline(simulator, markingTimeline, p2, new int[] { 5, 4, 4, 3, 2, 1, 0, 0, 0, 0 });
+		assertPlaceTokensTimeline(simulator, markingTimeline, p3, new int[] { 5, 4, 4, 4, 4, 4, 4, 3, 2, 1 });
 	}
 
 	// TODO:
 	// ConflictBeneBaB.mo
 	// ConflictBeneGreedy.mo
 	// ConflictBeneQuotient.mo
-	// ConflictPrio.mo
 	// ConflictProb.mo
 	// EightConflictProb.mo
 	// InputConflictBeneBaB.mo
