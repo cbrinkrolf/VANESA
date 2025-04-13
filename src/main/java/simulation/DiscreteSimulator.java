@@ -144,14 +144,18 @@ public class DiscreteSimulator extends Simulator {
 				if (arc.getFrom() instanceof DiscretePlace && (arc.getTo() instanceof DiscreteTransition
 						|| edge.getTo() instanceof StochasticTransition)) {
 					transitions.get((Transition) arc.getTo()).sources.add(arc);
-					places.get((DiscretePlace) arc.getFrom()).outputProbabilitiesNormalized.put(arc,
-							BigDecimal.valueOf(arc.getProbability()).max(BigDecimal.ZERO));
+					if (arc.isRegularArc()) {
+						places.get((DiscretePlace) arc.getFrom()).outputProbabilitiesNormalized.put(arc,
+								BigDecimal.valueOf(arc.getProbability()).max(BigDecimal.ZERO));
+					}
 				} else if (
 						(arc.getFrom() instanceof DiscreteTransition || arc.getFrom() instanceof StochasticTransition)
 								&& arc.getTo() instanceof DiscretePlace) {
 					transitions.get((Transition) arc.getFrom()).targets.add(arc);
-					places.get((DiscretePlace) arc.getTo()).inputProbabilitiesNormalized.put(arc,
-							BigDecimal.valueOf(arc.getProbability()).max(BigDecimal.ZERO));
+					if (arc.isRegularArc()) {
+						places.get((DiscretePlace) arc.getTo()).inputProbabilitiesNormalized.put(arc,
+								BigDecimal.valueOf(arc.getProbability()).max(BigDecimal.ZERO));
+					}
 				}
 			} else {
 				throw new SimulationException(String.format("Petri net is not fully discrete. Found edge of type '%s'",
@@ -208,8 +212,18 @@ public class DiscreteSimulator extends Simulator {
 					}
 				}
 			}
-			final BigInteger[] putativeTokens = new BigInteger[placeTokens.length];
-			System.arraycopy(placeTokens, 0, putativeTokens, 0, placeTokens.length);
+			// Collect the subset of connected places so we don't copy the whole net's marking each time
+			final Map<DiscretePlace, BigInteger> putativeTokensMap = new HashMap<>();
+			for (final var arc : transition.sources) {
+				final DiscretePlace place = (DiscretePlace) arc.getFrom();
+				final int placeIndex = placesOrder.get(place);
+				putativeTokensMap.put(place, placeTokens[placeIndex]);
+			}
+			for (final var arc : transition.targets) {
+				final DiscretePlace place = (DiscretePlace) arc.getTo();
+				final int placeIndex = placesOrder.get(place);
+				putativeTokensMap.put(place, placeTokens[placeIndex]);
+			}
 			boolean valid = true;
 			// Validate pre-conditions (test and inhibition arcs or constant places)
 			for (final var arc : transition.sources) {
@@ -217,7 +231,6 @@ public class DiscreteSimulator extends Simulator {
 					continue;
 				}
 				final DiscretePlace place = (DiscretePlace) arc.getFrom();
-				final int placeIndex = placesOrder.get(place);
 				BigInteger requestedTokens = fixedArcWeights.get(arc);
 				if (requestedTokens == null) {
 					requestedTokens = evaluateFunction(placeTokens, arc, arc.getFunction(), arc.getParameters());
@@ -226,7 +239,7 @@ public class DiscreteSimulator extends Simulator {
 					valid = false;
 					break;
 				}
-				if (putativeTokens[placeIndex].compareTo(requestedTokens) >= 0) {
+				if (putativeTokensMap.get(place).compareTo(requestedTokens) >= 0) {
 					// If enough tokens are available and the arc is an inhibitor arc, validation fails
 					if (arc.isInhibitorArc()) {
 						valid = false;
@@ -247,7 +260,6 @@ public class DiscreteSimulator extends Simulator {
 					continue;
 				}
 				final DiscretePlace place = (DiscretePlace) arc.getFrom();
-				final int placeIndex = placesOrder.get(place);
 				BigInteger requestedTokens = fixedArcWeights.get(arc);
 				if (requestedTokens == null) {
 					requestedTokens = evaluateFunction(placeTokens, arc, arc.getFunction(), arc.getParameters());
@@ -256,11 +268,11 @@ public class DiscreteSimulator extends Simulator {
 					valid = false;
 					break;
 				}
-				final BigInteger newTokens = putativeTokens[placeIndex].subtract(requestedTokens);
+				final BigInteger newTokens = putativeTokensMap.get(place).subtract(requestedTokens);
 				final BigInteger minTokens = BigInteger.valueOf((long) place.getTokenMin());
 				final BigInteger maxTokens = BigInteger.valueOf((long) place.getTokenMax());
 				if (newTokens.compareTo(minTokens) >= 0 && newTokens.compareTo(maxTokens) <= 0) {
-					putativeTokens[placeIndex] = newTokens;
+					putativeTokensMap.put(place, newTokens);
 				} else {
 					valid = false;
 					break;
@@ -273,7 +285,6 @@ public class DiscreteSimulator extends Simulator {
 						continue;
 					}
 					final DiscretePlace place = (DiscretePlace) arc.getTo();
-					final int placeIndex = placesOrder.get(place);
 					BigInteger producedTokens = fixedArcWeights.get(arc);
 					if (producedTokens == null) {
 						producedTokens = evaluateFunction(placeTokens, arc, arc.getFunction(), arc.getParameters());
@@ -282,11 +293,11 @@ public class DiscreteSimulator extends Simulator {
 						valid = false;
 						break;
 					}
-					final BigInteger newTokens = putativeTokens[placeIndex].add(producedTokens);
+					final BigInteger newTokens = putativeTokensMap.get(place).add(producedTokens);
 					final BigInteger minTokens = BigInteger.valueOf((long) place.getTokenMin());
 					final BigInteger maxTokens = BigInteger.valueOf((long) place.getTokenMax());
 					if (newTokens.compareTo(minTokens) >= 0 && newTokens.compareTo(maxTokens) <= 0) {
-						putativeTokens[placeIndex] = newTokens;
+						putativeTokensMap.put(place, newTokens);
 					} else {
 						valid = false;
 						break;
