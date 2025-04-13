@@ -14,6 +14,15 @@ public class PNArc extends BiologicalEdgeAbstract {
 	// conflict solving: probability that edge is active
 	private double probability = 1.0;
 
+	/**
+	 * Create a normal PN arc with function "1"
+	 */
+	public PNArc(BiologicalNodeAbstract from, BiologicalNodeAbstract to, String label, String name) {
+		super("1", name, from, to, Elementdeclerations.pnArc);
+		super.setDirected(true);
+		setFunction("1");
+	}
+
 	public PNArc(BiologicalNodeAbstract from, BiologicalNodeAbstract to, String label, String name, String type,
 			String edgeFunction) {
 		super(edgeFunction, name, from, to,

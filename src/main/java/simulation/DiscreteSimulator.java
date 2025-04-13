@@ -4,10 +4,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.petriNet.DiscretePlace;
-import biologicalObjects.nodes.petriNet.DiscreteTransition;
-import biologicalObjects.nodes.petriNet.StochasticTransition;
-import biologicalObjects.nodes.petriNet.Transition;
+import biologicalObjects.nodes.petriNet.*;
 import com.ezylang.evalex.EvaluationException;
 import com.ezylang.evalex.parser.ParseException;
 import graph.gui.Parameter;
@@ -87,6 +84,9 @@ public class DiscreteSimulator extends Simulator {
 	private final Map<DiscretePlace, Integer> placesOrder = new HashMap<>();
 	private final Map<DiscretePlace, PlaceDetails> places = new HashMap<>();
 	private final Map<Transition, TransitionDetails> transitions = new HashMap<>();
+	private final Map<PNArc, TransitionDetails> arcTransitions = new HashMap<>();
+	private final Map<PNArc, PlaceDetails> arcPlaces = new HashMap<>();
+
 	private final List<Marking> markings = Collections.synchronizedList(new ArrayList<>());
 	private final List<Marking> openMarkings = new ArrayList<>();
 	private final List<FiringEdge> firingEdges = Collections.synchronizedList(new ArrayList<>());
@@ -143,18 +143,28 @@ public class DiscreteSimulator extends Simulator {
 				final PNArc arc = (PNArc) edge;
 				if (arc.getFrom() instanceof DiscretePlace && (arc.getTo() instanceof DiscreteTransition
 						|| edge.getTo() instanceof StochasticTransition)) {
-					transitions.get((Transition) arc.getTo()).sources.add(arc);
+					final PlaceDetails place = places.get((DiscretePlace) arc.getFrom());
+					final TransitionDetails transition = transitions.get((Transition) arc.getTo());
+					transition.sources.add(arc);
+					arcTransitions.put(arc, transition);
+					arcPlaces.put(arc, place);
 					if (arc.isRegularArc()) {
-						places.get((DiscretePlace) arc.getFrom()).outputProbabilitiesNormalized.put(arc,
+						place.outputProbabilitiesNormalized.put(arc,
 								BigDecimal.valueOf(arc.getProbability()).max(BigDecimal.ZERO));
+						place.outputPrioritiesOrdered.add(arc);
 					}
 				} else if (
 						(arc.getFrom() instanceof DiscreteTransition || arc.getFrom() instanceof StochasticTransition)
 								&& arc.getTo() instanceof DiscretePlace) {
-					transitions.get((Transition) arc.getFrom()).targets.add(arc);
+					final TransitionDetails transition = transitions.get((Transition) arc.getFrom());
+					final PlaceDetails place = places.get((DiscretePlace) arc.getTo());
+					transition.targets.add(arc);
+					arcTransitions.put(arc, transition);
+					arcPlaces.put(arc, place);
 					if (arc.isRegularArc()) {
-						places.get((DiscretePlace) arc.getTo()).inputProbabilitiesNormalized.put(arc,
+						place.inputProbabilitiesNormalized.put(arc,
 								BigDecimal.valueOf(arc.getProbability()).max(BigDecimal.ZERO));
+						place.inputPrioritiesOrdered.add(arc);
 					}
 				}
 			} else {
@@ -162,8 +172,9 @@ public class DiscreteSimulator extends Simulator {
 						edge.getClass().getSimpleName()));
 			}
 		}
-		// Normalize place probabilities
+		// Normalize place probabilities and sort priorities
 		for (final var place : places.values()) {
+			place.sortPriorities();
 			place.normalizeProbabilities();
 		}
 		initialize(BigDecimal.ZERO);
@@ -259,7 +270,7 @@ public class DiscreteSimulator extends Simulator {
 				if (!arc.isRegularArc() || arc.getFrom().isConstant()) {
 					continue;
 				}
-				final DiscretePlace place = (DiscretePlace) arc.getFrom();
+				final PlaceDetails place = places.get((DiscretePlace) arc.getFrom());
 				BigInteger requestedTokens = fixedArcWeights.get(arc);
 				if (requestedTokens == null) {
 					requestedTokens = evaluateFunction(placeTokens, arc, arc.getFunction(), arc.getParameters());
@@ -268,11 +279,9 @@ public class DiscreteSimulator extends Simulator {
 					valid = false;
 					break;
 				}
-				final BigInteger newTokens = putativeTokensMap.get(place).subtract(requestedTokens);
-				final BigInteger minTokens = BigInteger.valueOf((long) place.getTokenMin());
-				final BigInteger maxTokens = BigInteger.valueOf((long) place.getTokenMax());
-				if (newTokens.compareTo(minTokens) >= 0 && newTokens.compareTo(maxTokens) <= 0) {
-					putativeTokensMap.put(place, newTokens);
+				final BigInteger newTokens = putativeTokensMap.get(place.place).subtract(requestedTokens);
+				if (newTokens.compareTo(place.minTokens) >= 0 && newTokens.compareTo(place.maxTokens) <= 0) {
+					putativeTokensMap.put(place.place, newTokens);
 				} else {
 					valid = false;
 					break;
@@ -284,7 +293,7 @@ public class DiscreteSimulator extends Simulator {
 					if (!arc.isRegularArc() || arc.getTo().isConstant()) {
 						continue;
 					}
-					final DiscretePlace place = (DiscretePlace) arc.getTo();
+					final PlaceDetails place = places.get((DiscretePlace) arc.getTo());
 					BigInteger producedTokens = fixedArcWeights.get(arc);
 					if (producedTokens == null) {
 						producedTokens = evaluateFunction(placeTokens, arc, arc.getFunction(), arc.getParameters());
@@ -293,11 +302,9 @@ public class DiscreteSimulator extends Simulator {
 						valid = false;
 						break;
 					}
-					final BigInteger newTokens = putativeTokensMap.get(place).add(producedTokens);
-					final BigInteger minTokens = BigInteger.valueOf((long) place.getTokenMin());
-					final BigInteger maxTokens = BigInteger.valueOf((long) place.getTokenMax());
-					if (newTokens.compareTo(minTokens) >= 0 && newTokens.compareTo(maxTokens) <= 0) {
-						putativeTokensMap.put(place, newTokens);
+					final BigInteger newTokens = putativeTokensMap.get(place.place).add(producedTokens);
+					if (newTokens.compareTo(place.minTokens) >= 0 && newTokens.compareTo(place.maxTokens) <= 0) {
+						putativeTokensMap.put(place.place, newTokens);
 					} else {
 						valid = false;
 						break;
@@ -373,6 +380,10 @@ public class DiscreteSimulator extends Simulator {
 			}
 			// Determine which transitions should fire next based on the smallest delay
 			final BigDecimal minDelay = marking.concessionsOrderedByDelay[0].delay;
+			// If we defined an end time and would move past this time limit, skip expanding this marking
+			if (endTime != null && marking.time.add(minDelay).compareTo(endTime) > 0) {
+				continue;
+			}
 			int maxFireIndex = 0;
 			for (int i = 1; i < marking.concessionsOrderedByDelay.length; i++) {
 				if (marking.concessionsOrderedByDelay[i].delay.compareTo(minDelay) > 0) {
@@ -405,124 +416,272 @@ public class DiscreteSimulator extends Simulator {
 				for (int i = 0; i < maxFireIndex + 1; i++) {
 					final var concession = marking.concessionsOrderedByDelay[i];
 					if (endTime == null || marking.time.add(concession.delay).compareTo(endTime) <= 0) {
-						fireTransition(marking, concession, concession.delay);
+						fireTransitions(marking, Set.of(concession), minDelay, 0);
 					}
 				}
 			} else {
-				// TODO: determine output- and input-conflicts and fast-forward all allowed transitions based on
-				//  priority or probability
-				final Map<DiscretePlace, Set<Pair<PNArc, Concession>>> outputConflicts = new HashMap<>();
-				final Map<DiscretePlace, Set<Pair<PNArc, Concession>>> inputConflicts = new HashMap<>();
+				final Map<PlaceDetails, Set<Pair<PNArc, Concession>>> placeOutputs = new HashMap<>();
+				final Map<PlaceDetails, Set<Pair<PNArc, Concession>>> placeInputs = new HashMap<>();
 				for (int i = 0; i < maxFireIndex + 1; i++) {
 					final var concession = marking.concessionsOrderedByDelay[i];
 					for (final var edge : concession.transition.sources) {
 						if (edge.isRegularArc() && !edge.getFrom().isConstant()) {
-							outputConflicts.computeIfAbsent((DiscretePlace) edge.getFrom(), p -> new HashSet<>()).add(
-									new ImmutablePair<>(edge, concession));
+							placeOutputs.computeIfAbsent(places.get((DiscretePlace) edge.getFrom()),
+									p -> new HashSet<>()).add(new ImmutablePair<>(edge, concession));
 						}
 					}
 					for (final var edge : concession.transition.targets) {
 						if (edge.isRegularArc() && !edge.getTo().isConstant()) {
-							inputConflicts.computeIfAbsent((DiscretePlace) edge.getTo(), p -> new HashSet<>()).add(
-									new ImmutablePair<>(edge, concession));
+							placeInputs.computeIfAbsent(places.get((DiscretePlace) edge.getTo()), p -> new HashSet<>())
+									.add(new ImmutablePair<>(edge, concession));
 						}
 					}
 				}
 
-				final Set<DiscretePlace> conflictedOutputPlaces = new HashSet<>();
-				final Set<DiscretePlace> conflictedInputPlaces = new HashSet<>();
-				for (final var place : outputConflicts.keySet()) {
-					final var concessions = outputConflicts.get(place);
-					if (concessions.size() > 1) {
-						final int placeIndex = placesOrder.get(place);
-						final BigInteger minTokens = BigInteger.valueOf((long) place.getTokenMin());
+				final Set<PlaceDetails> outputConflictPlaces = new HashSet<>();
+				final Set<PlaceDetails> inputConflictPlaces = new HashSet<>();
+				for (final var place : placeOutputs.keySet()) {
+					final var concessions = placeOutputs.get(place);
+					if (concessions.size() > 1 && !place.place.isConstant()) {
+						final int placeIndex = placesOrder.get(place.place);
 						BigInteger putativeTokens = marking.placeTokens[placeIndex];
 						for (final var concession : concessions) {
 							final var arc = concession.getLeft();
-							final var requestedTokens = concession.getRight().fixedArcWeights.get(arc);
-							putativeTokens = putativeTokens.subtract(requestedTokens);
-							if (putativeTokens.compareTo(minTokens) < 0) {
-								conflictedOutputPlaces.add(place);
-								break;
+							if (arc.isRegularArc()) {
+								final var requestedTokens = concession.getRight().fixedArcWeights.get(arc);
+								putativeTokens = putativeTokens.subtract(requestedTokens);
+								if (putativeTokens.compareTo(place.minTokens) < 0) {
+									if (place.place.getConflictStrategy() == Place.CONFLICT_HANDLING_NONE) {
+										throw new SimulationException("Place '" + place
+												+ "' has an output conflict, but no conflict handling strategy set");
+									}
+									outputConflictPlaces.add(place);
+									break;
+								}
 							}
 						}
 					}
 				}
-				for (final var place : inputConflicts.keySet()) {
-					final var concessions = inputConflicts.get(place);
-					if (concessions.size() > 1) {
-						final int placeIndex = placesOrder.get(place);
-						final BigInteger maxTokens = BigInteger.valueOf((long) place.getTokenMax());
+				for (final var place : placeInputs.keySet()) {
+					final var concessions = placeInputs.get(place);
+					if (concessions.size() > 1 && !place.place.isConstant()) {
+						final int placeIndex = placesOrder.get(place.place);
 						BigInteger putativeTokens = marking.placeTokens[placeIndex];
 						for (final var concession : concessions) {
 							final var arc = concession.getLeft();
-							final var requestedTokens = concession.getRight().fixedArcWeights.get(arc);
-							putativeTokens = putativeTokens.add(requestedTokens);
-							if (putativeTokens.compareTo(maxTokens) > 0) {
-								conflictedInputPlaces.add(place);
-								break;
+							if (arc.isRegularArc()) {
+								final var requestedTokens = concession.getRight().fixedArcWeights.get(arc);
+								putativeTokens = putativeTokens.add(requestedTokens);
+								if (putativeTokens.compareTo(place.maxTokens) > 0) {
+									if (place.place.getConflictStrategy() == Place.CONFLICT_HANDLING_NONE) {
+										throw new SimulationException("Place '" + place
+												+ "' has an input conflict, but no conflict handling strategy set");
+									}
+									inputConflictPlaces.add(place);
+									break;
+								}
 							}
 						}
 					}
 				}
-				// if (conflictedOutputPlaces.size() > 0) {
-				// 	System.out.println(conflictedOutputPlaces.size() + " place(s) with output conflicts");
-				// }
-				// if (conflictedInputPlaces.size() > 0) {
-				// 	System.out.println(conflictedInputPlaces.size() + " place(s) with input conflicts");
-				// }
-
-				// Explore only one random branch
-				final int branchIndex = random.nextInt(maxFireIndex + 1);
-				final var concession = marking.concessionsOrderedByDelay[branchIndex];
-				if (endTime == null || marking.time.add(concession.delay).compareTo(endTime) <= 0) {
-					fireTransition(marking, concession, concession.delay);
+				// Build the set of firing transitions by resolving conflicts, if necessary
+				final Set<Concession> fireSet = new HashSet<>();
+				if (outputConflictPlaces.isEmpty() && inputConflictPlaces.isEmpty()) {
+					for (int i = 0; i < maxFireIndex + 1; i++) {
+						fireSet.add(marking.concessionsOrderedByDelay[i]);
+					}
+				} else {
+					final Map<TransitionDetails, Concession> transitionConcessions = new HashMap<>();
+					for (int i = 0; i < maxFireIndex + 1; i++) {
+						final var concession = marking.concessionsOrderedByDelay[i];
+						transitionConcessions.put(concession.transition, concession);
+					}
+					final Map<PlaceDetails, Set<Concession>> placeFireSets = new HashMap<>();
+					final Map<PlaceDetails, Set<Concession>> placeDiscardedSets = new HashMap<>();
+					// Collect all non-conflicted place fire sets from inputs and outputs
+					for (final var place : placeOutputs.keySet()) {
+						if (!outputConflictPlaces.contains(place)) {
+							final var concessions = placeOutputs.get(place);
+							var placeFireSet = placeFireSets.computeIfAbsent(place, k -> new HashSet<>());
+							for (final var concession : concessions) {
+								placeFireSet.add(concession.getRight());
+							}
+						}
+					}
+					for (final var place : placeInputs.keySet()) {
+						if (!inputConflictPlaces.contains(place)) {
+							final var concessions = placeInputs.get(place);
+							var placeFireSet = placeFireSets.computeIfAbsent(place, k -> new HashSet<>());
+							for (final var concession : concessions) {
+								placeFireSet.add(concession.getRight());
+							}
+						}
+					}
+					if (!outputConflictPlaces.isEmpty()) {
+						for (final var place : outputConflictPlaces) {
+							resolvePlaceOutputConflict(marking, place, transitionConcessions, placeFireSets,
+									placeDiscardedSets);
+						}
+					}
+					// If input conflicts exist, further reduce the place fire sets in regard to post place capacities
+					if (!inputConflictPlaces.isEmpty()) {
+						for (final var place : inputConflictPlaces) {
+							resolvePlaceInputConflict(marking, place, transitionConcessions, placeFireSets,
+									placeDiscardedSets);
+						}
+					}
+					// Reduce the place fire sets by the place discarded sets to remove transitions that were
+					// excluded on a per-place basis
+					for (final var place : placeFireSets.keySet()) {
+						final var placeFireSet = placeFireSets.get(place);
+						for (final var otherPlace : placeDiscardedSets.keySet()) {
+							placeFireSet.removeAll(placeDiscardedSets.get(otherPlace));
+						}
+						fireSet.addAll(placeFireSet);
+					}
 				}
+				// Finally, fire all transitions in the fire set in parallel
+				fireTransitions(marking, fireSet, minDelay, maxFireIndex + 1);
 			}
 		}
 	}
 
-	private Marking fireTransition(final Marking marking, final Concession concession, final BigDecimal delay)
-			throws SimulationException {
-		final TransitionDetails transition = concession.transition;
+	private void resolvePlaceOutputConflict(final Marking marking, final PlaceDetails place,
+			final Map<TransitionDetails, Concession> transitionConcessions,
+			final Map<PlaceDetails, Set<Concession>> placeFireSets,
+			final Map<PlaceDetails, Set<Concession>> placeDiscardedSets) {
+		final int placeIndex = placesOrder.get(place.place);
+		BigInteger putativeTokens = marking.placeTokens[placeIndex];
+		final Set<Concession> placeFireSet = new HashSet<>();
+		final Set<Concession> placeDiscardedSet = new HashSet<>();
+		if (place.place.getConflictStrategy() == DiscretePlace.CONFLICT_HANDLING_PRIO) {
+			// Handle conflict with priority
+			for (final var arc : place.outputPrioritiesOrdered) {
+				final var transition = arcTransitions.get(arc);
+				final var concession = transitionConcessions.get(transition);
+				// If this transition has no concession, skip it
+				if (concession == null) {
+					continue;
+				}
+				// If we already checked this transition with a higher-priority arc, skip it
+				if (placeFireSet.contains(concession) || placeDiscardedSet.contains(concession)) {
+					continue;
+				}
+				BigInteger requestedTokens = BigInteger.ZERO;
+				for (final var sourceArc : transition.sources) {
+					if (sourceArc.isRegularArc() && arcPlaces.get(sourceArc) == place) {
+						requestedTokens = requestedTokens.add(concession.fixedArcWeights.get(sourceArc));
+					}
+				}
+				if (putativeTokens.subtract(requestedTokens).compareTo(place.minTokens) >= 0) {
+					putativeTokens = putativeTokens.subtract(requestedTokens);
+					placeFireSet.add(concession);
+				} else {
+					placeDiscardedSet.add(concession);
+				}
+			}
+		} else {
+			// Handle conflict with probability
+			// TODO
+		}
+		if (placeFireSets.containsKey(place)) {
+			placeFireSets.get(place).addAll(placeFireSet);
+		} else {
+			placeFireSets.put(place, placeFireSet);
+		}
+		placeDiscardedSets.put(place, placeDiscardedSet);
+	}
+
+	private void resolvePlaceInputConflict(final Marking marking, final PlaceDetails place,
+			final Map<TransitionDetails, Concession> transitionConcessions,
+			final Map<PlaceDetails, Set<Concession>> placeFireSets,
+			final Map<PlaceDetails, Set<Concession>> placeDiscardedSets) {
+		final int placeIndex = placesOrder.get(place.place);
+		BigInteger putativeTokens = marking.placeTokens[placeIndex];
+		final Set<Concession> placeFireSet = new HashSet<>();
+		final Set<Concession> placeDiscardedSet = placeDiscardedSets.getOrDefault(place, new HashSet<>());
+		if (place.place.getConflictStrategy() == DiscretePlace.CONFLICT_HANDLING_PRIO) {
+			// Handle conflict with priority
+			for (final var arc : place.inputPrioritiesOrdered) {
+				final var transition = arcTransitions.get(arc);
+				final var concession = transitionConcessions.get(transition);
+				// If this transition has no concession, skip it
+				if (concession == null) {
+					continue;
+				}
+				// If we already checked this transition with a higher-priority arc, skip it
+				if (placeFireSet.contains(concession) || placeDiscardedSet.contains(concession)) {
+					continue;
+				}
+				BigInteger producedTokens = BigInteger.ZERO;
+				for (final var sourceArc : transition.targets) {
+					if (sourceArc.isRegularArc() && arcPlaces.get(sourceArc) == place) {
+						producedTokens = producedTokens.add(concession.fixedArcWeights.get(sourceArc));
+					}
+				}
+				if (putativeTokens.add(producedTokens).compareTo(place.maxTokens) <= 0) {
+					putativeTokens = putativeTokens.add(producedTokens);
+					placeFireSet.add(concession);
+				} else {
+					placeDiscardedSet.add(concession);
+				}
+			}
+		} else {
+			// Handle conflict with probability
+			// TODO
+		}
+		if (placeFireSets.containsKey(place)) {
+			placeFireSets.get(place).addAll(placeFireSet);
+		} else {
+			placeFireSets.put(place, placeFireSet);
+		}
+		placeDiscardedSets.put(place, placeDiscardedSet);
+	}
+
+	private void fireTransitions(final Marking marking, final Set<Concession> concessions, final BigDecimal delay,
+			final int skipRetainConcessions) throws SimulationException {
 		final BigDecimal newTime = marking.time.add(delay);
 		final BigInteger[] placeTokens = new BigInteger[places.size()];
 		System.arraycopy(marking.placeTokens, 0, placeTokens, 0, placeTokens.length);
-		for (final var arc : transition.sources) {
-			// Test and inhibition arcs as well as constant places don't destroy tokens
-			if (!arc.isRegularArc() || arc.getFrom().isConstant()) {
-				continue;
+		for (final var concession : concessions) {
+			final TransitionDetails transition = concession.transition;
+			for (final var arc : transition.sources) {
+				// Test and inhibition arcs as well as constant places don't destroy tokens
+				if (!arc.isRegularArc() || arc.getFrom().isConstant()) {
+					continue;
+				}
+				final DiscretePlace place = (DiscretePlace) arc.getFrom();
+				final int placeIndex = placesOrder.get(place);
+				final var requestedTokens = concession.fixedArcWeights.get(arc);
+				placeTokens[placeIndex] = placeTokens[placeIndex].subtract(requestedTokens);
 			}
-			final DiscretePlace place = (DiscretePlace) arc.getFrom();
-			final int placeIndex = placesOrder.get(place);
-			final var requestedTokens = concession.fixedArcWeights.get(arc);
-			placeTokens[placeIndex] = placeTokens[placeIndex].subtract(requestedTokens);
-		}
-		for (final var arc : transition.targets) {
-			// In the malformed case of non-regular arcs and constant places don't produce tokens
-			if (!arc.isRegularArc() || arc.getTo().isConstant()) {
-				continue;
+			for (final var arc : transition.targets) {
+				// In the malformed case of non-regular arcs and constant places don't produce tokens
+				if (!arc.isRegularArc() || arc.getTo().isConstant()) {
+					continue;
+				}
+				final DiscretePlace place = (DiscretePlace) arc.getTo();
+				final int placeIndex = placesOrder.get(place);
+				final var producedTokens = concession.fixedArcWeights.get(arc);
+				placeTokens[placeIndex] = placeTokens[placeIndex].add(producedTokens);
 			}
-			final DiscretePlace place = (DiscretePlace) arc.getTo();
-			final int placeIndex = placesOrder.get(place);
-			final var producedTokens = concession.fixedArcWeights.get(arc);
-			placeTokens[placeIndex] = placeTokens[placeIndex].add(producedTokens);
 		}
 		// Determine new markings concessions and delays considering previous concession delays
 		final Map<PNArc, BigInteger> fixedArcWeights = new HashMap<>();
 		for (final var nextConcession : marking.concessionsOrderedByDelay) {
-			if (nextConcession.transition != transition) {
+			if (!concessions.contains(nextConcession)) {
 				fixedArcWeights.putAll(nextConcession.fixedArcWeights);
 			}
 		}
 		final Concession[] newConcessions = determineConcession(newTime, placeTokens, fixedArcWeights);
-		final List<Concession> concessions = new ArrayList<>();
+		final List<Concession> nextMarkingConcessions = new ArrayList<>();
 		// First, retain all transitions that still have concession and reduce their delay
-		for (final var nextConcession : marking.concessionsOrderedByDelay) {
-			if (nextConcession.transition != transition) {
+		for (int i = skipRetainConcessions; i < marking.concessionsOrderedByDelay.length; i++) {
+			final var nextConcession = marking.concessionsOrderedByDelay[i];
+			if (!concessions.contains(nextConcession)) {
 				for (final var checkConcession : newConcessions) {
 					if (nextConcession.transition.equals(checkConcession.transition)) {
-						concessions.add(nextConcession.retain(delay));
+						nextMarkingConcessions.add(nextConcession.retain(delay));
 						break;
 					}
 				}
@@ -531,28 +690,28 @@ public class DiscreteSimulator extends Simulator {
 		// Second, add all new concessions
 		for (final var nextConcession : newConcessions) {
 			boolean alreadyPresent = false;
-			for (final var checkConcession : concessions) {
+			for (final var checkConcession : nextMarkingConcessions) {
 				if (nextConcession.transition.equals(checkConcession.transition)) {
 					alreadyPresent = true;
 					break;
 				}
 			}
 			if (!alreadyPresent) {
-				concessions.add(nextConcession);
+				nextMarkingConcessions.add(nextConcession);
 			}
 		}
 		// Create the new marking
 		final var newMarking = new Marking(newTime, placeTokens,
-				concessions.stream().sorted(Comparator.comparing(o -> o.delay)).toArray(Concession[]::new));
+				nextMarkingConcessions.stream().sorted(Comparator.comparing(o -> o.delay)).toArray(Concession[]::new));
 		markings.add(newMarking);
 		if (!newMarking.isDead()) {
 			openMarkings.add(newMarking);
 		}
-		final var edge = new FiringEdge(marking, newMarking, transition);
+		final var edge = new FiringEdge(marking, newMarking,
+				concessions.stream().map(c -> c.transition).toArray(TransitionDetails[]::new));
 		firingEdges.add(edge);
 		outEdges.computeIfAbsent(marking, m -> Collections.synchronizedList(new ArrayList<>())).add(edge);
 		inEdges.computeIfAbsent(newMarking, m -> Collections.synchronizedList(new ArrayList<>())).add(edge);
-		return newMarking;
 	}
 
 	public Collection<DiscretePlace> getPlaces() {
@@ -679,27 +838,51 @@ public class DiscreteSimulator extends Simulator {
 			}
 			return true;
 		}
+
+		@Override
+		public String toString() {
+			final StringBuilder builder = new StringBuilder();
+			builder.append(time.toEngineeringString()).append(" {");
+			for (int i = 0; i < placeTokens.length; i++) {
+				if (i > 0) {
+					builder.append(',');
+				}
+				builder.append(placeTokens[i]);
+			}
+			return builder.append('}').toString();
+		}
 	}
 
 	public static class FiringEdge {
 		public final Marking from;
 		public final Marking to;
-		public final TransitionDetails transition;
+		public final TransitionDetails[] transitions;
 
-		public FiringEdge(final Marking from, final Marking marking, final TransitionDetails transition) {
+		public FiringEdge(final Marking from, final Marking marking, final TransitionDetails[] transitions) {
 			this.from = from;
 			to = marking;
-			this.transition = transition;
+			this.transitions = transitions;
 		}
 	}
 
 	public static class PlaceDetails {
 		final DiscretePlace place;
+		final BigInteger minTokens;
+		final BigInteger maxTokens;
 		final Map<PNArc, BigDecimal> outputProbabilitiesNormalized = new HashMap<>();
 		final Map<PNArc, BigDecimal> inputProbabilitiesNormalized = new HashMap<>();
+		final List<PNArc> outputPrioritiesOrdered = new ArrayList<>();
+		final List<PNArc> inputPrioritiesOrdered = new ArrayList<>();
 
 		public PlaceDetails(final DiscretePlace place) {
 			this.place = place;
+			minTokens = BigInteger.valueOf((long) place.getTokenMin());
+			maxTokens = BigInteger.valueOf((long) place.getTokenMax());
+		}
+
+		void sortPriorities() {
+			outputPrioritiesOrdered.sort(Comparator.comparingInt(PNArc::getPriority));
+			inputPrioritiesOrdered.sort(Comparator.comparingInt(PNArc::getPriority));
 		}
 
 		void normalizeProbabilities() {
@@ -729,6 +912,11 @@ public class DiscreteSimulator extends Simulator {
 							.divide(sum, 24, RoundingMode.HALF_UP).stripTrailingZeros());
 				}
 			}
+		}
+
+		@Override
+		public String toString() {
+			return place.getName();
 		}
 	}
 
@@ -804,6 +992,11 @@ public class DiscreteSimulator extends Simulator {
 					String.format("Failed to determine delay for transition '%s' (%s)", transition.getName(),
 							transition.getLabel()));
 		}
+
+		@Override
+		public String toString() {
+			return transition.getName();
+		}
 	}
 
 	public static class Concession {
@@ -820,6 +1013,11 @@ public class DiscreteSimulator extends Simulator {
 			final var result = new Concession(transition, delay.subtract(elapsedDelay));
 			result.fixedArcWeights.putAll(fixedArcWeights);
 			return result;
+		}
+
+		@Override
+		public String toString() {
+			return delay.toEngineeringString() + " - " + transition;
 		}
 	}
 }
