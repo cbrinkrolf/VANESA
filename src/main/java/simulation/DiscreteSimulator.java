@@ -451,10 +451,6 @@ public class DiscreteSimulator extends Simulator {
 								final var requestedTokens = concession.getRight().fixedArcWeights.get(arc);
 								putativeTokens = putativeTokens.subtract(requestedTokens);
 								if (putativeTokens.compareTo(place.minTokens) < 0) {
-									if (place.place.getConflictStrategy() == Place.CONFLICT_HANDLING_NONE) {
-										throw new SimulationException("Place '" + place
-												+ "' has an output conflict, but no conflict handling strategy set");
-									}
 									outputConflictPlaces.add(place);
 									break;
 								}
@@ -473,10 +469,6 @@ public class DiscreteSimulator extends Simulator {
 								final var requestedTokens = concession.getRight().fixedArcWeights.get(arc);
 								putativeTokens = putativeTokens.add(requestedTokens);
 								if (putativeTokens.compareTo(place.maxTokens) > 0) {
-									if (place.place.getConflictStrategy() == Place.CONFLICT_HANDLING_NONE) {
-										throw new SimulationException("Place '" + place
-												+ "' has an input conflict, but no conflict handling strategy set");
-									}
 									inputConflictPlaces.add(place);
 									break;
 								}
@@ -554,7 +546,7 @@ public class DiscreteSimulator extends Simulator {
 		BigInteger putativeTokens = marking.placeTokens[placeIndex];
 		final Set<Concession> placeFireSet = new HashSet<>();
 		final Set<Concession> placeDiscardedSet = new HashSet<>();
-		if (place.place.getConflictStrategy() == DiscretePlace.CONFLICT_HANDLING_PRIO) {
+		if (place.place.getConflictStrategy() == ConflictHandling.Priority) {
 			// Handle conflict with priority
 			for (final var arc : place.outputPrioritiesOrdered) {
 				final var transition = arcTransitions.get(arc);
@@ -600,7 +592,7 @@ public class DiscreteSimulator extends Simulator {
 		BigInteger putativeTokens = marking.placeTokens[placeIndex];
 		final Set<Concession> placeFireSet = new HashSet<>();
 		final Set<Concession> placeDiscardedSet = placeDiscardedSets.getOrDefault(place, new HashSet<>());
-		if (place.place.getConflictStrategy() == DiscretePlace.CONFLICT_HANDLING_PRIO) {
+		if (place.place.getConflictStrategy() == ConflictHandling.Priority) {
 			// Handle conflict with priority
 			for (final var arc : place.inputPrioritiesOrdered) {
 				final var transition = arcTransitions.get(arc);

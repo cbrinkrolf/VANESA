@@ -273,7 +273,8 @@ public class GraphMLWriter extends BaseWriter<Pathway> {
                 writePropertyIfNotNull(writer, properties, "tokenMin", ((Place) bna).getTokenMin());
                 writePropertyIfNotNull(writer, properties, "tokenMax", ((Place) bna).getTokenMax());
                 writePropertyIfNotNull(writer, properties, "tokenStart", ((Place) bna).getTokenStart());
-                writePropertyIfNotNull(writer, properties, "conflictStrategy", ((Place) bna).getConflictStrategy());
+                writePropertyIfNotNull(writer, properties, "conflictStrategy", ((Place) bna).getConflictStrategy()
+						.getId());
                 break;
         }
         writer.writeEndElement();

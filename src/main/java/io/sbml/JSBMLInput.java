@@ -44,6 +44,7 @@ import graph.compartment.Compartment;
 import graph.groups.Group;
 import graph.gui.Parameter;
 import gui.MainWindow;
+import simulation.ConflictHandling;
 import util.StochasticDistribution;
 import util.VanesaUtility;
 
@@ -410,7 +411,8 @@ public class JSBMLInput {
 						elSub = specAnnotation.getChild("ConflictStrategy", null);
 						if (elSub != null) {
 							attr = elSub.getAttributeValue("ConflictStrategy");
-							((Place) bna).setConflictStrategy(Integer.parseInt(attr));
+							final int conflictHandlingId = Integer.parseInt(attr);
+							((Place) bna).setConflictStrategy(ConflictHandling.fromId(conflictHandlingId));
 						}
 						break;
 					case Elementdeclerations.continuousPlace:
@@ -427,7 +429,8 @@ public class JSBMLInput {
 						elSub = specAnnotation.getChild("ConflictStrategy", null);
 						if (elSub != null) {
 							attr = elSub.getAttributeValue("ConflictStrategy");
-							((Place) bna).setConflictStrategy(Integer.parseInt(attr));
+							final int conflictHandlingId = Integer.parseInt(attr);
+							((Place) bna).setConflictStrategy(ConflictHandling.fromId(conflictHandlingId));
 						}
 						break;
 					case Elementdeclerations.discreteTransition:

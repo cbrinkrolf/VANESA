@@ -11,17 +11,14 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import graph.GraphInstance;
 import gui.PopUpDialog;
+import simulation.ConflictHandling;
 
 public abstract class Place extends PNNode {
-	public static final int CONFLICT_HANDLING_NONE = 0;
-	public static final int CONFLICT_HANDLING_PRIO = 1;
-	public static final int CONFLICT_HANDLING_PROB = 2;
-
 	private double token = 0;
 	private double tokenMin = 0;
 	private double tokenMax = Double.MAX_VALUE;
 	private double tokenStart = 0;
-	private int conflictStrategy = 0;
+	private ConflictHandling conflictStrategy = ConflictHandling.Probability;
 
 	protected Place(final String label, final String name, final String biologicalElement, final Pathway parent,
 			final boolean isDiscrete) {
@@ -80,11 +77,11 @@ public abstract class Place extends PNNode {
 		token = tokenStart;
 	}
 
-	public int getConflictStrategy() {
+	public ConflictHandling getConflictStrategy() {
 		return conflictStrategy;
 	}
 
-	public void setConflictStrategy(int conflictStrategy) {
+	public void setConflictStrategy(final ConflictHandling conflictStrategy) {
 		this.conflictStrategy = conflictStrategy;
 	}
 
@@ -121,10 +118,10 @@ public abstract class Place extends PNNode {
 	}
 
 	public boolean hasConflictProperties() {
-		if (conflictStrategy == DiscretePlace.CONFLICT_HANDLING_PRIO) {
+		if (conflictStrategy == ConflictHandling.Priority) {
 			return hasPriorityConflicts(getConflictingInEdges()) || hasPriorityConflicts(getConflictingOutEdges());
 		}
-		if (conflictStrategy == DiscretePlace.CONFLICT_HANDLING_PROB) {
+		if (conflictStrategy == ConflictHandling.Probability) {
 			return hasProbabilityConflicts(getConflictingInEdges()) || hasProbabilityConflicts(
 					getConflictingOutEdges());
 		}
@@ -168,14 +165,14 @@ public abstract class Place extends PNNode {
 	public void solveConflictProperties() {
 		final Collection<PNArc> inEdges = getConflictingInEdges();
 		final Collection<PNArc> outEdges = getConflictingOutEdges();
-		if (conflictStrategy == DiscretePlace.CONFLICT_HANDLING_PRIO) {
+		if (conflictStrategy == ConflictHandling.Priority) {
 			if (hasPriorityConflicts(inEdges)) {
 				solvePriorityConflicts(inEdges);
 			}
 			if (hasPriorityConflicts(outEdges)) {
 				solvePriorityConflicts(outEdges);
 			}
-		} else if (conflictStrategy == DiscretePlace.CONFLICT_HANDLING_PROB) {
+		} else if (conflictStrategy == ConflictHandling.Probability) {
 			if (hasProbabilityConflicts(inEdges)) {
 				solveProbabilityConflicts(inEdges);
 			}

@@ -4,7 +4,6 @@ import biologicalElements.Elementdeclerations;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
-import biologicalObjects.nodes.petriNet.Place;
 import graph.gui.Parameter;
 
 import org.junit.jupiter.api.Test;
@@ -176,7 +175,7 @@ class DiscreteSimulatorTest {
 	void pnlibPrioTest() throws SimulationException {
 		final var p1 = new DiscretePlace("p1", "p1", null);
 		p1.setTokenStart(1);
-		p1.setConflictStrategy(Place.CONFLICT_HANDLING_PRIO);
+		p1.setConflictStrategy(ConflictHandling.Priority);
 		final var p2 = new DiscretePlace("p2", "p2", null);
 		p2.setTokenMax(1);
 		final var p3 = new DiscretePlace("p3", "p3", null);
@@ -224,7 +223,7 @@ class DiscreteSimulatorTest {
 	void pnlibConflictPrio() throws SimulationException {
 		final var p1 = new DiscretePlace("p1", "p1", null);
 		p1.setTokenStart(2);
-		p1.setConflictStrategy(Place.CONFLICT_HANDLING_PRIO);
+		p1.setConflictStrategy(ConflictHandling.Priority);
 		final var p2 = new DiscretePlace("p2", "p2", null);
 		final var p3 = new DiscretePlace("p3", "p3", null);
 		final var t1 = new DiscreteTransition("t1", "t1", null);
@@ -257,7 +256,7 @@ class DiscreteSimulatorTest {
 		final var p1 = new DiscretePlace("p1", "p1", null);
 		p1.setTokenStart(2);
 		p1.setTokenMin(2);
-		p1.setConflictStrategy(Place.CONFLICT_HANDLING_PRIO);
+		p1.setConflictStrategy(ConflictHandling.Priority);
 		final var p2 = new DiscretePlace("p2", "p2", null);
 		final var p3 = new DiscretePlace("p3", "p3", null);
 		final var t1 = new DiscreteTransition("t1", "t1", null);
@@ -289,7 +288,7 @@ class DiscreteSimulatorTest {
 	void pnlibInputConflictPrio() throws SimulationException {
 		final var p1 = new DiscretePlace("p1", "p1", null);
 		p1.setTokenMax(2);
-		p1.setConflictStrategy(Place.CONFLICT_HANDLING_PRIO);
+		p1.setConflictStrategy(ConflictHandling.Priority);
 		final var p2 = new DiscretePlace("p2", "p2", null);
 		p2.setTokenStart(5);
 		final var p3 = new DiscretePlace("p3", "p3", null);

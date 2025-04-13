@@ -27,6 +27,7 @@ import configurations.Workspace;
 import graph.GraphInstance;
 import graph.gui.Parameter;
 import org.apache.commons.lang3.StringUtils;
+import simulation.ConflictHandling;
 import util.StringLengthComparator;
 import util.VanesaUtility;
 
@@ -212,26 +213,24 @@ public class MOoutput extends BaseWriter<Pathway> {
 					attr.append("startTokens=").append((int) place.getTokenStart());
 					attr.append(", minTokens=").append((int) place.getTokenMin());
 					attr.append(", maxTokens=").append((int) place.getTokenMax());
-					if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PROB) {
-						attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
-					} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PRIO) {
+					if (place.getConflictStrategy() == ConflictHandling.Priority) {
 						attr.append(", enablingType=PNlib.Types.EnablingType.Priority");
-					} else {
+					} else if (place.getConflictStrategy() == ConflictHandling.Probability) {
 						// priority is default in PNLib, therefore, we set probability with default uniform
 						// distribution to use random conflict resolution backed by the placeLocalSeed parameter
 						attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
 					}
 					if (place.getConflictingInEdges().size() > 1) {
-						if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PROB) {
+						if (place.getConflictStrategy() == ConflictHandling.Probability) {
 							attr.append(", enablingProbIn={").append(inProb.get(place.getName())).append("}");
-						} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PRIO) {
+						} else if (place.getConflictStrategy() == ConflictHandling.Priority) {
 							attr.append(", enablingPrioIn={").append(inPrio.get(place.getName())).append("}");
 						}
 					}
 					if (place.getConflictingOutEdges().size() > 1) {
-						if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PROB) {
+						if (place.getConflictStrategy() == ConflictHandling.Probability) {
 							attr.append(", enablingProbOut={").append(outProb.get(place.getName())).append("}");
-						} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PRIO) {
+						} else if (place.getConflictStrategy() == ConflictHandling.Priority) {
 							attr.append(", enablingPrioOut={").append(outPrio.get(place.getName())).append("}");
 						}
 					}
@@ -257,21 +256,26 @@ public class MOoutput extends BaseWriter<Pathway> {
 					attr.append(", minMarks(final unit=\"mmol\")=").append(min);
 					attr.append(", maxMarks(final unit=\"mmol\")=").append(max);
 					attr.append(", t(final unit=\"mmol\")");
-					if (place.getConflictingOutEdges().size() > 1) {
-						if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PROB) {
-							attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
-							attr.append(", enablingProbOut={").append(outProb.get(place.getName())).append("}");
-						} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PRIO) {
-							attr.append(", enablingType=PNlib.Types.EnablingType.Priority");
-							attr.append(", enablingPrioOut={").append(outPrio.get(place.getName())).append("}");
-						} else {
-							// priority is default in PNLib, therefore, we set probability with default uniform
-							// distribution to use random conflict resolution backed by the placeLocalSeed parameter
-							attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
-						}
-					} else {
-						// As we don't currently handle input conflicts (via capacities), add probability by default
+					if (place.getConflictStrategy() == ConflictHandling.Priority) {
+						attr.append(", enablingType=PNlib.Types.EnablingType.Priority");
+					} else if (place.getConflictStrategy() == ConflictHandling.Probability) {
+						// priority is default in PNLib, therefore, we set probability with default uniform
+						// distribution to use random conflict resolution backed by the placeLocalSeed parameter
 						attr.append(", enablingType=PNlib.Types.EnablingType.Probability");
+					}
+					if (place.getConflictingInEdges().size() > 1) {
+						if (place.getConflictStrategy() == ConflictHandling.Probability) {
+							attr.append(", enablingProbIn={").append(inProb.get(place.getName())).append("}");
+						} else if (place.getConflictStrategy() == ConflictHandling.Priority) {
+							attr.append(", enablingPrioIn={").append(inPrio.get(place.getName())).append("}");
+						}
+					}
+					if (place.getConflictingOutEdges().size() > 1) {
+						if (place.getConflictStrategy() == ConflictHandling.Probability) {
+							attr.append(", enablingProbOut={").append(outProb.get(place.getName())).append("}");
+						} else if (place.getConflictStrategy() == ConflictHandling.Priority) {
+							attr.append(", enablingPrioOut={").append(outPrio.get(place.getName())).append("}");
+						}
 					}
 					// Set a defined seed to ensure deterministic behaviour
 					attr.append(", localSeedIn=placeLocalSeed");

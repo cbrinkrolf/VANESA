@@ -11,6 +11,7 @@ import gui.MainWindow;
 import io.BaseReader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import simulation.ConflictHandling;
 import util.VanesaUtility;
 
 import javax.xml.namespace.QName;
@@ -239,7 +240,8 @@ public class GraphMLReader extends BaseReader<Pathway> {
 			setPropertyIfExists(properties, "tokenMin", ((Place) bna)::setTokenMin);
 			setPropertyIfExists(properties, "tokenMax", ((Place) bna)::setTokenMax);
 			setPropertyIfExists(properties, "tokenStart", ((Place) bna)::setTokenStart);
-			setPropertyIfExists(properties, "conflictStrategy", ((Place) bna)::setConflictStrategy);
+			this.<Integer>setPropertyIfExists(properties, "conflictStrategy",
+					(value) -> ((Place) bna).setConflictStrategy(ConflictHandling.fromId(value)));
 			break;
 		}
 		pw.addVertex(bna, p);

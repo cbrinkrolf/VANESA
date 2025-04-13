@@ -21,6 +21,7 @@ import gui.PopUpDialog;
 import gui.eventhandlers.PropertyWindowListener;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+import simulation.ConflictHandling;
 import util.MyColorChooser;
 import util.MyJFormattedTextField;
 import util.MyNumberFormat;
@@ -430,9 +431,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 					if (place.getConflictingInEdges().size() > 1 || place.getConflictingOutEdges().size() > 1) {
 						ButtonGroup group = new ButtonGroup();
-						JRadioButton none = new JRadioButton("none");
-						none.setActionCommand("conflict_none");
-						none.addActionListener(this);
 						JRadioButton prio = new JRadioButton("prio");
 						prio.setActionCommand("conflict_prio");
 						prio.addActionListener(this);
@@ -440,7 +438,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 						prob.setActionCommand("conflict_prob");
 						prob.addActionListener(this);
 
-						group.add(none);
 						group.add(prio);
 						group.add(prob);
 
@@ -454,22 +451,17 @@ public class ElementWindow implements ActionListener, ItemListener {
 						check.setActionCommand("check");
 						check.addActionListener(this);
 
-						p.add(new JLabel("Conflict solving:"), "gap 5");
-						p.add(none, "flowx, split 3");
-						p.add(prio);
-						p.add(prob, "wrap");
-
-						if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_NONE) {
-							none.setSelected(true);
-						} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PRIO) {
+						if (place.getConflictStrategy() == ConflictHandling.Priority) {
 							prio.setSelected(true);
-							p.add(check, "skip, split 2");
-							p.add(solve, "wrap");
-						} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PROB) {
+						} else if (place.getConflictStrategy() == ConflictHandling.Probability) {
 							prob.setSelected(true);
-							p.add(check, "skip, split 2");
-							p.add(solve, "wrap");
 						}
+
+						p.add(new JLabel("Conflict solving:"), "gap 5");
+						p.add(prio, "flowx, split 2");
+						p.add(prob, "wrap");
+						p.add(check, "skip, split 2");
+						p.add(solve, "wrap");
 					}
 
 				} else if (ab instanceof Transition) {
@@ -705,13 +697,11 @@ public class ElementWindow implements ActionListener, ItemListener {
 						final Place place = (Place) e.getFrom();
 						if (place.getConflictingOutEdges().size() > 1) {
 							p.add(new JLabel("Conflict solving strategy:"), "gap 5");
-							if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_NONE) {
-								p.add(new JLabel("none"), "gap 5, wrap");
-							} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PRIO) {
+							if (place.getConflictStrategy() == ConflictHandling.Priority) {
 								p.add(new JLabel("priorities"), "gap 5, wrap");
 								p.add(new JLabel("Activation priority"), "gap 5");
 								p.add(activationPrio, "wrap");
-							} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PROB) {
+							} else if (place.getConflictStrategy() == ConflictHandling.Probability) {
 								p.add(new JLabel("probabilities"), "gap 5, wrap");
 								p.add(new JLabel("Activation probability"), "gap 5");
 								p.add(activationProb, "wrap");
@@ -721,13 +711,11 @@ public class ElementWindow implements ActionListener, ItemListener {
 						final Place place = (Place) e.getTo();
 						if (place.getConflictingInEdges().size() > 1) {
 							p.add(new JLabel("Conflict solving strategy:"), "gap 5");
-							if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_NONE) {
-								p.add(new JLabel("none"), "gap 5, wrap");
-							} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PRIO) {
+							if (place.getConflictStrategy() == ConflictHandling.Priority) {
 								p.add(new JLabel("priorities"), "gap 5, wrap");
 								p.add(new JLabel("Activation priority"), "gap 5");
 								p.add(activationPrio, "wrap");
-							} else if (place.getConflictStrategy() == Place.CONFLICT_HANDLING_PROB) {
+							} else if (place.getConflictStrategy() == ConflictHandling.Probability) {
 								p.add(new JLabel("probabilities"), "gap 5, wrap");
 								p.add(new JLabel("Activation probability"), "gap 5");
 								p.add(activationProb, "wrap");
@@ -1038,27 +1026,19 @@ public class ElementWindow implements ActionListener, ItemListener {
 				}
 				pw.handleChangeFlags(ChangedFlags.EDGEWEIGHT_CHANGED);
 			}
-		} else if ("conflict_none".equals(event)) {
-			if (ab instanceof Place) {
-				Place place = (Place) ab;
-				if (place.getConflictStrategy() != Place.CONFLICT_HANDLING_NONE) {
-					place.setConflictStrategy(Place.CONFLICT_HANDLING_NONE);
-					revalidateView();
-				}
-			}
 		} else if ("conflict_prio".equals(event)) {
 			if (ab instanceof Place) {
 				Place place = (Place) ab;
-				if (place.getConflictStrategy() != Place.CONFLICT_HANDLING_PRIO) {
-					place.setConflictStrategy(Place.CONFLICT_HANDLING_PRIO);
+				if (place.getConflictStrategy() != ConflictHandling.Priority) {
+					place.setConflictStrategy(ConflictHandling.Priority);
 					revalidateView();
 				}
 			}
 		} else if ("conflict_prob".equals(event)) {
 			if (ab instanceof Place) {
 				Place place = (Place) ab;
-				if (place.getConflictStrategy() != Place.CONFLICT_HANDLING_PROB) {
-					place.setConflictStrategy(Place.CONFLICT_HANDLING_PROB);
+				if (place.getConflictStrategy() != ConflictHandling.Probability) {
+					place.setConflictStrategy(ConflictHandling.Probability);
 					revalidateView();
 				}
 			}
