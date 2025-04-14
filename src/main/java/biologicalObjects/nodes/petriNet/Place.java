@@ -119,16 +119,16 @@ public abstract class Place extends PNNode {
 
 	public boolean hasConflictProperties() {
 		if (conflictStrategy == ConflictHandling.Priority) {
-			return hasPriorityConflicts(getConflictingInEdges()) || hasPriorityConflicts(getConflictingOutEdges());
+			return hasPriorityConflict(getConflictingInEdges()) || hasPriorityConflict(getConflictingOutEdges());
 		}
 		if (conflictStrategy == ConflictHandling.Probability) {
-			return hasProbabilityConflicts(getConflictingInEdges()) || hasProbabilityConflicts(
+			return hasProbabilityConflict(getConflictingInEdges()) || hasProbabilityConflict(
 					getConflictingOutEdges());
 		}
 		return false;
 	}
 
-	private boolean hasPriorityConflicts(final Collection<PNArc> edges) {
+	public static boolean hasPriorityConflict(final Collection<PNArc> edges) {
 		if (edges.size() > 1) {
 			Set<Integer> set = new HashSet<>();
 			for (PNArc bea : edges) {
@@ -145,7 +145,7 @@ public abstract class Place extends PNNode {
 		return false;
 	}
 
-	private boolean hasProbabilityConflicts(final Collection<PNArc> edges) {
+	public static boolean hasProbabilityConflict(final Collection<PNArc> edges) {
 		if (edges.size() <= 1) {
 			return false;
 		}
@@ -159,37 +159,37 @@ public abstract class Place extends PNNode {
 			}
 			sum += bea.getProbability();
 		}
-		return sum != 1.0;
+		return (sum - 1.0) > 0.000001;
 	}
 
 	public void solveConflictProperties() {
 		final Collection<PNArc> inEdges = getConflictingInEdges();
 		final Collection<PNArc> outEdges = getConflictingOutEdges();
 		if (conflictStrategy == ConflictHandling.Priority) {
-			if (hasPriorityConflicts(inEdges)) {
-				solvePriorityConflicts(inEdges);
+			if (hasPriorityConflict(inEdges)) {
+				solvePriorityConflict(inEdges);
 			}
-			if (hasPriorityConflicts(outEdges)) {
-				solvePriorityConflicts(outEdges);
+			if (hasPriorityConflict(outEdges)) {
+				solvePriorityConflict(outEdges);
 			}
 		} else if (conflictStrategy == ConflictHandling.Probability) {
-			if (hasProbabilityConflicts(inEdges)) {
-				solveProbabilityConflicts(inEdges);
+			if (hasProbabilityConflict(inEdges)) {
+				solveProbabilityConflict(inEdges);
 			}
-			if (hasProbabilityConflicts(outEdges)) {
-				solveProbabilityConflicts(outEdges);
+			if (hasProbabilityConflict(outEdges)) {
+				solveProbabilityConflict(outEdges);
 			}
 		}
 	}
 
-	private void solvePriorityConflicts(final Collection<PNArc> edges) {
+	public static void solvePriorityConflict(final Collection<PNArc> edges) {
 		if (edges.size() > 1) {
-			Set<Integer> goodSet = new HashSet<>();
+			final Set<Integer> goodSet = new HashSet<>();
 			for (int i = 1; i <= edges.size(); i++) {
 				goodSet.add(i);
 			}
-			Set<PNArc> set = new HashSet<>();
-			for (PNArc bea : edges) {
+			final Set<PNArc> set = new HashSet<>();
+			for (final PNArc bea : edges) {
 				if (goodSet.contains(bea.getPriority())) {
 					goodSet.remove(bea.getPriority());
 				} else {
@@ -197,8 +197,8 @@ public abstract class Place extends PNNode {
 				}
 			}
 			if (set.size() == goodSet.size()) {
-				for (PNArc bea : set) {
-					int priority = goodSet.iterator().next();
+				for (final PNArc bea : set) {
+					final int priority = goodSet.iterator().next();
 					bea.setPriority(priority);
 					goodSet.remove(priority);
 				}
@@ -206,17 +206,17 @@ public abstract class Place extends PNNode {
 		}
 	}
 
-	private void solveProbabilityConflicts(final Collection<PNArc> edges) {
+	public static void solveProbabilityConflict(final Collection<PNArc> edges) {
 		if (edges.size() > 1) {
 			double sum = 0;
-			for (PNArc bea : edges) {
+			for (final PNArc bea : edges) {
 				if (bea.getProbability() < 0) {
 					bea.setProbability(bea.getProbability() * -1);
 				}
 				sum += bea.getProbability();
 			}
 			if (sum != 1.0) {
-				for (PNArc bea : edges) {
+				for (final PNArc bea : edges) {
 					bea.setProbability(bea.getProbability() / sum);
 				}
 			}

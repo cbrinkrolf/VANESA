@@ -5,10 +5,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Set;
 
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
@@ -19,6 +16,7 @@ import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.algorithms.gui.CompareGraphsGUI;
 import graph.jung.classes.MyGraph;
+import gui.verification.PNVerificationWindow;
 import net.miginfocom.swing.MigLayout;
 import petriNet.PNTableDialog;
 import petriNet.ReachController;
@@ -42,6 +40,7 @@ public class ToolBar {
 	private final JButton discreteTransition;
 	private final JButton continuousTransition;
 	private final JButton stochasticTransition;
+	private final JButton verifyPN;
 	private final JButton info;
 	private final JButton parallelView;
 
@@ -70,6 +69,7 @@ public class ToolBar {
 				this::onContinuousTransitionClicked);
 		stochasticTransition = ToolBarButton.create("stochasticTransition.png", "Stochastic Transition",
 				this::onStochasticTransitionClicked);
+		verifyPN = ToolBarButton.create("checkmark.svg", "Verify Petri net", this::onVerifyPetriNetClicked);
 		center = ToolBarButton.create("centerGraph.png", "Center Graph", this::onCenterClicked);
 		move = ToolBarButton.create("move.png", "Move Graph", this::onMoveClicked);
 		zoomIn = ToolBarButton.create("zoomPlus.png", "Zoom In", this::onZoomInClicked);
@@ -114,6 +114,7 @@ public class ToolBar {
 		bar.add(discreteTransition);
 		bar.add(continuousTransition);
 		bar.add(stochasticTransition);
+		bar.add(verifyPN);
 		bar.add(new ToolBarSeparator(), "growy");
 		bar.add(merge);
 		if (Workspace.getCurrentSettings().isDeveloperMode()) {
@@ -158,39 +159,27 @@ public class ToolBar {
 		final boolean petriNetView = pathway != null && pathway.isPetriNet();
 		// Enable/disable editing buttons
 		final boolean editButtonsEnabled = pathway != null;
-		edit.setEnabled(editButtonsEnabled);
+		edit.setEnabled(editButtonsEnabled && !petriNetView);
 		pick.setEnabled(editButtonsEnabled);
 		move.setEnabled(editButtonsEnabled);
 		trash.setEnabled(editButtonsEnabled);
 		hierarchy.setEnabled(editButtonsEnabled);
-		discretePlace.setEnabled(editButtonsEnabled);
-		continuousPlace.setEnabled(editButtonsEnabled);
-		discreteTransition.setEnabled(editButtonsEnabled);
-		continuousTransition.setEnabled(editButtonsEnabled);
-		stochasticTransition.setEnabled(editButtonsEnabled);
+		discretePlace.setEnabled(editButtonsEnabled && petriNetView);
+		continuousPlace.setEnabled(editButtonsEnabled && petriNetView);
+		discreteTransition.setEnabled(editButtonsEnabled && petriNetView);
+		continuousTransition.setEnabled(editButtonsEnabled && petriNetView);
+		stochasticTransition.setEnabled(editButtonsEnabled && petriNetView);
+		verifyPN.setEnabled(editButtonsEnabled && petriNetView);
 		zoomIn.setEnabled(editButtonsEnabled);
 		zoomOut.setEnabled(editButtonsEnabled);
 		center.setEnabled(editButtonsEnabled);
 		info.setEnabled(editButtonsEnabled);
 		annotationToolBarMenuButton.setEnabled(editButtonsEnabled);
 		nodeGroupingMenuButton.setEnabled(editButtonsEnabled);
-		merge.setEnabled(editButtonsEnabled);
+		merge.setEnabled(editButtonsEnabled && !petriNetView);
 		parallelView.setEnabled(editButtonsEnabled);
 		nodeAdjustmentMenuButton.setEnabled(editButtonsEnabled);
-
 		if (editButtonsEnabled) {
-			// Enable/disable petri net buttons
-			discretePlace.setEnabled(petriNetView);
-			continuousPlace.setEnabled(petriNetView);
-			discreteTransition.setEnabled(petriNetView);
-			continuousTransition.setEnabled(petriNetView);
-			stochasticTransition.setEnabled(petriNetView);
-			// Enable/disable biological graph buttons
-			edit.setEnabled(!petriNetView);
-			merge.setEnabled(!petriNetView);
-			// heatmap.setEnabled(!petriNetView);
-			// parallelView.setEnabled(!petriNetView);
-
 			final MyGraph graph = pathway.getGraph(false);
 			if (graph != null) {
 				final Set<BiologicalNodeAbstract> selection = lastPathway.getSelectedNodes();
@@ -369,6 +358,21 @@ public class ToolBar {
 		con.changeMouseFunction("edit");
 		con.setPetriView(true);
 		con.setPetriNetEditingMode(Elementdeclerations.stochasticTransition);
+	}
+
+	private void onVerifyPetriNetClicked() {
+		final Pathway pathway = GraphInstance.getPathway();
+		if (pathway != null) {
+			final var frame = new JFrame("VANESA - Verify Petri Net");
+			frame.setContentPane(new PNVerificationWindow(pathway));
+			frame.setMinimumSize(new Dimension(600, 600));
+			frame.setPreferredSize(new Dimension(600, 600));
+			frame.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
+			frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			frame.setLocationRelativeTo(MainWindow.getInstance().getFrame());
+			frame.pack();
+			frame.setVisible(true);
+		}
 	}
 
 	private void onCreateCovClicked() {
