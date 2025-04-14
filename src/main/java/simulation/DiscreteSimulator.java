@@ -680,8 +680,8 @@ public class DiscreteSimulator extends Simulator {
 			for (final var arc : place.inputProbabilitiesNormalized.keySet()) {
 				final var transition = arcTransitions.get(arc);
 				final var concession = transitionConcessions.get(transition);
-				// If this transition has no concession, skip it
-				if (concession == null) {
+				// If this transition has no concession, or it was already discarded in an output conflict, skip it
+				if (concession == null || placeDiscardedSet.contains(concession)) {
 					continue;
 				}
 				int index = transitionCandidates.indexOf(transition);
