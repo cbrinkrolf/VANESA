@@ -1,42 +1,51 @@
 package graph.jung.graphDrawing;
 
 import java.awt.Shape;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import com.google.common.base.Function;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.util.EdgeIndexFunction;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 
 public class MyEdgeShapeFunction implements Function<BiologicalEdgeAbstract, Shape> {
-    // private final QuadCurve quadcurve = EdgeShape.quadCurve(Graph<V,E>);
+	private final Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph;
 
-    // private final Line line = new EdgeShape.Line();
-    // private final BentLine<BiologicalNodeAbstract, BiologicalEdgeAbstract>
-    // bentline = new EdgeShape.BentLine<>();
-    // private final CubicCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract>
-    // cubiccurve = new EdgeShape.CubicCurve<>();
-    // private final Orthogonal<BiologicalNodeAbstract, BiologicalEdgeAbstract>
-    // orthogonal = new EdgeShape.Orthogonal<>();
+	public MyEdgeShapeFunction(final Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph) {
+		this.graph = graph;
+	}
 
-    private final Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph;
+	@Override
+	public Shape apply(final BiologicalEdgeAbstract bea) {
+		final Collection<BiologicalEdgeAbstract> forwardEdges = graph.findEdgeSet(bea.getFrom(), bea.getTo());
+		final Collection<BiologicalEdgeAbstract> backwardEdges = graph.findEdgeSet(bea.getTo(), bea.getFrom());
+		final List<BiologicalEdgeAbstract> edges = new ArrayList<>(forwardEdges);
+		edges.addAll(backwardEdges);
+		if (edges.size() > 1) {
+			final var shape = EdgeShape.quadCurve(graph);
+			shape.setEdgeIndexFunction(new EdgeIndexFunction<>() {
+				@Override
+				public int getIndex(final Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph,
+						final BiologicalEdgeAbstract bea) {
+					return edges.indexOf(bea);
+				}
 
-    public MyEdgeShapeFunction(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph) {
-        this.graph = graph;
-    }
+				@Override
+				public void reset(final Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g,
+						final BiologicalEdgeAbstract bea) {
+				}
 
-    @Override
-    public Shape apply(BiologicalEdgeAbstract bea) {
-        // if(context.element instanceof AlignmentEdge)
-        // return (new EdgeShape.Wedge<BiologicalNodeAbstract,
-        // BiologicalEdgeAbstract>(6)).transform(context);
-        if (graph.findEdge(bea.getTo(), bea.getFrom()) != null) {
-            return EdgeShape.quadCurve(graph).apply(bea);
-            // return (quadcurve).transform(context);
-        }
-        return EdgeShape.line(graph).apply(bea);
-        // return (line).transform(context);
-    }
-
+				@Override
+				public void reset() {
+				}
+			});
+			return shape.apply(bea);
+		}
+		return EdgeShape.line(graph).apply(bea);
+	}
 }
