@@ -95,6 +95,14 @@ public class ImagePath {
 				.getScaledInstance((int) (icon.getIconWidth() * scale), maxDimension, Image.SCALE_SMOOTH));
 	}
 
+	public static ImageIcon getExternalLinkIcon() {
+		return getExternalLinkIcon(16, 16);
+	}
+
+	public static ImageIcon getExternalLinkIcon(int width, int height) {
+		return ImagePath.getInstance().getImageIcon("externalLink.png", width, height);
+	}
+
 	private static class SVGTranscoder extends ImageTranscoder {
 		private BufferedImage image = null;
 

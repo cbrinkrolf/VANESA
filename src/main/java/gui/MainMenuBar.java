@@ -100,12 +100,17 @@ public class MainMenuBar extends JMenuBar {
 		// Help menu
 		JMenu helpMenu = new JMenu("Help");
 		JMenuItem allPopUps = createMenuItem("Show all previous PopUp messages", MenuActionCommands.allPopUps);
+		final JMenuItem githubLink = createMenuItem("GitHub Repository", this::onGitHubRepositoryClicked);
+		githubLink.setIcon(ImagePath.getExternalLinkIcon());
 		final JMenuItem reportIssue = createMenuItem("Report Issue", this::onReportIssueClicked);
+		reportIssue.setIcon(ImagePath.getExternalLinkIcon());
+
 		final String label = Workspace.getCurrentSettings().isDeveloperMode()
 				? "Next launch: normal mode"
 				: "Next launch: developer mode";
 		devMode = createMenuItem(label, MenuActionCommands.devMode);
 		helpMenu.add(allPopUps);
+		helpMenu.add(githubLink);
 		helpMenu.add(reportIssue);
 		helpMenu.add(devMode);
 		// about item is already present on mac osx
@@ -259,6 +264,10 @@ public class MainMenuBar extends JMenuBar {
 		item.setActionCommand(command.value);
 		item.setAccelerator(KeyStroke.getKeyStroke(keyEvent, InputEvent.CTRL_DOWN_MASK));
 		return item;
+	}
+
+	private void onGitHubRepositoryClicked() {
+		VanesaUtility.openURLInBrowser("https://github.com/cbrinkrolf/VANESA/");
 	}
 
 	private void onReportIssueClicked() {
