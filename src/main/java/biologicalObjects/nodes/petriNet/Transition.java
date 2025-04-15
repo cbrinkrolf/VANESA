@@ -12,25 +12,27 @@ public abstract class Transition extends PNNode {
 
 	protected Transition(final String label, final String name, final String biologicalElement, final Pathway parent) {
 		super(label, name, biologicalElement, parent);
-		if (label.isEmpty())
+		if (label.isEmpty()) {
 			setLabel(name);
-		if (name.isEmpty())
+		}
+		if (name.isEmpty()) {
 			setName(label);
+		}
 	}
 
 	public boolean isSimulationActive() {
 		return simulationActive;
 	}
 
-	public void setSimulationActive(boolean simulationActive) {
+	public void setSimulationActive(final boolean simulationActive) {
 		this.simulationActive = simulationActive;
 	}
-	
+
 	public boolean isSimulationFire() {
 		return simulationFire;
 	}
 
-	public void setSimulationFire(boolean simulationFire) {
+	public void setSimulationFire(final boolean simulationFire) {
 		this.simulationFire = simulationFire;
 	}
 
@@ -38,7 +40,7 @@ public abstract class Transition extends PNNode {
 		return firingCondition;
 	}
 
-	public void setFiringCondition(String firingCondition) {
+	public void setFiringCondition(final String firingCondition) {
 		this.firingCondition = firingCondition.trim();
 	}
 
@@ -46,7 +48,7 @@ public abstract class Transition extends PNNode {
 		return knockedOut;
 	}
 
-	public void setKnockedOut(boolean knockedOut) {
+	public void setKnockedOut(final boolean knockedOut) {
 		this.knockedOut = knockedOut;
 	}
 
