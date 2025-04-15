@@ -314,21 +314,193 @@ class DiscreteSimulatorTest {
 		assertPlaceTokensTimeline(simulator, markingTimeline, p3, new int[] { 5, 4, 4, 4, 4, 4, 4, 3, 2, 1 });
 	}
 
+	/**
+	 * Equivalent to <a href=
+	 * "https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/ConflictProb.mo">ConflictProb.mo</a>
+	 */
+	@Test
+	void pnlibConflictProb() throws SimulationException {
+		final var p1 = new DiscretePlace("p1", "p1", null);
+		p1.setTokenStart(2);
+		p1.setConflictStrategy(ConflictHandling.Probability);
+		final var p2 = new DiscretePlace("p2", "p2", null);
+		final var p3 = new DiscretePlace("p3", "p3", null);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var t2 = new DiscreteTransition("t2", "t2", null);
+		final var t3 = new DiscreteTransition("t3", "t3", null);
+		final var arc1 = new PNArc(t3, p1, "arc1", "arc1");
+		final var arc2 = new PNArc(p1, t1, "arc2", "arc2");
+		arc2.setProbability(0.5);
+		final var arc3 = new PNArc(p1, t2, "arc3", "arc3");
+		arc3.setProbability(0.5);
+		final var arc4 = new PNArc(t1, p2, "arc4", "arc4");
+		final var arc5 = new PNArc(t2, p3, "arc5", "arc5");
+		final var simulator = new DiscreteSimulator(List.of(t1, p1, t2, p2, t3, p3),
+				List.of(arc1, arc2, arc3, arc4, arc5), new Xorshift128Plus(42));
+		for (int i = 0; i < 9; i++) {
+			simulator.step();
+		}
+		final var markingTimeline = simulator.getMarkingTimeline();
+		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[] { 2, 1, 1, 1, 1, 1, 1, 1, 1, 1 });
+		assertPlaceTokensTimeline(simulator, markingTimeline, p2, new int[] { 0, 1, 2, 3, 4, 4, 5, 6, 7, 7 });
+		assertPlaceTokensTimeline(simulator, markingTimeline, p3, new int[] { 0, 1, 1, 1, 1, 2, 2, 2, 2, 3 });
+	}
+
+	/**
+	 * Equivalent to <a href=
+	 * "https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/OutputConflictProb.mo">OutputConflictProb.mo</a>
+	 */
+	@Test
+	void pnlibOutputConflictProb() throws SimulationException {
+		final var p1 = new DiscretePlace("p1", "p1", null);
+		p1.setTokenStart(2);
+		p1.setTokenMin(2);
+		p1.setConflictStrategy(ConflictHandling.Probability);
+		final var p2 = new DiscretePlace("p2", "p2", null);
+		final var p3 = new DiscretePlace("p3", "p3", null);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var t2 = new DiscreteTransition("t2", "t2", null);
+		final var t3 = new DiscreteTransition("t3", "t3", null);
+		final var arc1 = new PNArc(t3, p1, "arc1", "arc1");
+		final var arc2 = new PNArc(p1, t1, "arc2", "arc2");
+		arc2.setProbability(0.5);
+		final var arc3 = new PNArc(p1, t2, "arc3", "arc3");
+		arc3.setProbability(0.5);
+		final var arc4 = new PNArc(t1, p2, "arc4", "arc4");
+		final var arc5 = new PNArc(t2, p3, "arc5", "arc5");
+		final var simulator = new DiscreteSimulator(List.of(t1, p1, t2, p2, t3, p3),
+				List.of(arc1, arc2, arc3, arc4, arc5), new Xorshift128Plus(42));
+		for (int i = 0; i < 9; i++) {
+			simulator.step();
+		}
+		final var markingTimeline = simulator.getMarkingTimeline();
+		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[] { 2, 3, 3, 3, 3, 3, 3, 3, 3, 3 });
+		assertPlaceTokensTimeline(simulator, markingTimeline, p2, new int[] { 0, 0, 1, 2, 3, 3, 4, 5, 6, 6 });
+		assertPlaceTokensTimeline(simulator, markingTimeline, p3, new int[] { 0, 0, 0, 0, 0, 1, 1, 1, 1, 2 });
+	}
+
+	/**
+	 * Equivalent to <a href=
+	 * "https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/InputConflictProb.mo">InputConflictProb.mo</a>
+	 */
+	@Test
+	void pnlibInputConflictProb() throws SimulationException {
+		final var p1 = new DiscretePlace("p1", "p1", null);
+		p1.setTokenMax(2);
+		p1.setConflictStrategy(ConflictHandling.Probability);
+		final var p2 = new DiscretePlace("p2", "p2", null);
+		p2.setTokenStart(5);
+		final var p3 = new DiscretePlace("p3", "p3", null);
+		p3.setTokenStart(5);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var t2 = new DiscreteTransition("t2", "t2", null);
+		final var t3 = new DiscreteTransition("t3", "t3", null);
+		final var arc1 = new PNArc(p1, t1, "arc1", "arc1");
+		final var arc2 = new PNArc(p2, t2, "arc2", "arc2");
+		final var arc3 = new PNArc(p3, t3, "arc3", "arc3");
+		final var arc4 = new PNArc(t2, p1, "arc4", "arc4");
+		arc4.setProbability(0.5);
+		final var arc5 = new PNArc(t3, p1, "arc5", "arc5");
+		arc5.setProbability(0.5);
+		final var simulator = new DiscreteSimulator(List.of(t1, p1, t2, p2, t3, p3),
+				List.of(arc1, arc2, arc3, arc4, arc5), new Xorshift128Plus(42));
+		for (int i = 0; i < 9; i++) {
+			simulator.step();
+		}
+		final var markingTimeline = simulator.getMarkingTimeline();
+		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[] { 0, 2, 1, 1, 1, 1, 1, 1, 1, 1 });
+		assertPlaceTokensTimeline(simulator, markingTimeline, p2, new int[] { 5, 4, 4, 3, 2, 1, 1, 0, 0, 0 });
+		assertPlaceTokensTimeline(simulator, markingTimeline, p3, new int[] { 5, 4, 4, 4, 4, 4, 3, 3, 2, 1 });
+	}
+
+	/**
+	 * Equivalent to <a href=
+	 * "https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/SixConflictProb.mo">SixConflictProb.mo</a>
+	 */
+	@Test
+	void pnlibSixConflictProb() throws SimulationException {
+		final var p1 = new DiscretePlace("p1", "p1", null);
+		p1.setTokenStart(1);
+		p1.setConflictStrategy(ConflictHandling.Probability);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var t2 = new DiscreteTransition("t2", "t2", null);
+		final var t3 = new DiscreteTransition("t3", "t3", null);
+		final var t4 = new DiscreteTransition("t4", "t4", null);
+		final var t5 = new DiscreteTransition("t5", "t5", null);
+		final var t6 = new DiscreteTransition("t6", "t6", null);
+		final var arc1 = new PNArc(p1, t1, "arc1", "arc1");
+		arc1.setProbability(1 / 6.0);
+		final var arc2 = new PNArc(p1, t2, "arc2", "arc2");
+		arc2.setProbability(1 / 6.0);
+		final var arc3 = new PNArc(p1, t3, "arc3", "arc3");
+		arc3.setProbability(1 / 6.0);
+		final var arc4 = new PNArc(p1, t4, "arc4", "arc4");
+		arc4.setProbability(1 / 6.0);
+		final var arc5 = new PNArc(p1, t5, "arc5", "arc5");
+		arc5.setProbability(1 / 6.0);
+		final var arc6 = new PNArc(p1, t6, "arc6", "arc6");
+		arc6.setProbability(1 / 6.0);
+		final var simulator = new DiscreteSimulator(List.of(p1, t1, t2, t3, t4, t5, t6),
+				List.of(arc1, arc2, arc3, arc4, arc5, arc6), new Xorshift128Plus(42));
+		simulator.step();
+		final var markingTimeline = simulator.getMarkingTimeline();
+		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[] { 1, 0 });
+		assertEquals(1, simulator.getEdges().iterator().next().transitions.length);
+		assertEquals(t2, simulator.getEdges().iterator().next().transitions[0].transition);
+	}
+
+	/**
+	 * Equivalent to <a href=
+	 * "https://github.com/AMIT-HSBI/PNlib/blob/master/PNlib/Examples/DisTest/EightConflictProb.mo">EightConflictProb.mo</a>
+	 */
+	@Test
+	void pnlibEightConflictProb() throws SimulationException {
+		final var p1 = new DiscretePlace("p1", "p1", null);
+		p1.setTokenStart(1);
+		p1.setConflictStrategy(ConflictHandling.Probability);
+		final var t1 = new DiscreteTransition("t1", "t1", null);
+		final var t2 = new DiscreteTransition("t2", "t2", null);
+		final var t3 = new DiscreteTransition("t3", "t3", null);
+		final var t4 = new DiscreteTransition("t4", "t4", null);
+		final var t5 = new DiscreteTransition("t5", "t5", null);
+		final var t6 = new DiscreteTransition("t6", "t6", null);
+		final var t7 = new DiscreteTransition("t7", "t7", null);
+		final var t8 = new DiscreteTransition("t8", "t8", null);
+		final var arc1 = new PNArc(p1, t1, "arc1", "arc1");
+		arc1.setProbability(1 / 8.0);
+		final var arc2 = new PNArc(p1, t2, "arc2", "arc2");
+		arc2.setProbability(1 / 8.0);
+		final var arc3 = new PNArc(p1, t3, "arc3", "arc3");
+		arc3.setProbability(1 / 8.0);
+		final var arc4 = new PNArc(p1, t4, "arc4", "arc4");
+		arc4.setProbability(1 / 8.0);
+		final var arc5 = new PNArc(p1, t5, "arc5", "arc5");
+		arc5.setProbability(1 / 8.0);
+		final var arc6 = new PNArc(p1, t6, "arc6", "arc6");
+		arc6.setProbability(1 / 8.0);
+		final var arc7 = new PNArc(p1, t7, "arc7", "arc7");
+		arc7.setProbability(1 / 8.0);
+		final var arc8 = new PNArc(p1, t8, "arc8", "arc8");
+		arc8.setProbability(1 / 8.0);
+		final var simulator = new DiscreteSimulator(List.of(p1, t1, t2, t3, t4, t5, t6, t7, t8),
+				List.of(arc1, arc2, arc3, arc4, arc5, arc6, arc7, arc8), new Xorshift128Plus(42));
+		simulator.step();
+		final var markingTimeline = simulator.getMarkingTimeline();
+		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[] { 1, 0 });
+		assertEquals(1, simulator.getEdges().iterator().next().transitions.length);
+		assertEquals(t3, simulator.getEdges().iterator().next().transitions[0].transition);
+	}
+
 	// TODO:
 	// ConflictBeneBaB.mo
 	// ConflictBeneGreedy.mo
 	// ConflictBeneQuotient.mo
-	// ConflictProb.mo
-	// EightConflictProb.mo
 	// InputConflictBeneBaB.mo
 	// InputConflictBeneGreedy.mo
 	// InputConflictBeneQuotient.mo
-	// InputConflictProb.mo
 	// OutputConflictBeneBaB.mo
 	// OutputConflictBeneGreedy.mo
 	// OutputConflictBeneQuotient.mo
-	// OutputConflictProb.mo
-	// SixConflictProb.mo
 
 	@Test
 	void singleTransition() throws SimulationException {

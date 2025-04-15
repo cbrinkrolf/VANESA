@@ -9,6 +9,7 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import petriNet.SimulationResultController;
 import simulation.DiscreteSimulator;
 import simulation.SimulationException;
+import simulation.Xorshift128Plus;
 import util.VanesaUtility;
 
 import javax.swing.*;
@@ -108,7 +109,7 @@ public class DiscreteSimulationPanel extends JPanel {
 		addLogText("Preparing simulation...\n");
 		addLogText("- Using random seed " + seed + "\n");
 		try {
-			simulator = new DiscreteSimulator(pathway, seed, false);
+			simulator = new DiscreteSimulator(pathway, new Xorshift128Plus(seed), false);
 		} catch (final SimulationException e) {
 			addLogText("Preparing simulation failed:\n");
 			addLogText("\t" + e.getMessage() + "\n");

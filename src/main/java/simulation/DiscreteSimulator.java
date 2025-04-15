@@ -9,8 +9,6 @@ import com.ezylang.evalex.EvaluationException;
 import com.ezylang.evalex.parser.ParseException;
 import graph.gui.Parameter;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -77,7 +75,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * TODO:
  * <ul>
  *     <li>Evaluate time constraints of firingConditions and prevent jumping over emerging concessions based on time</li>
- *     <li>Handle conflict resolution strategy of places and arc priorities/probabilities</li>
  * </ul>
  */
 public class DiscreteSimulator extends Simulator {
@@ -94,32 +91,32 @@ public class DiscreteSimulator extends Simulator {
 	private final Map<Marking, List<FiringEdge>> inEdges = new ConcurrentHashMap<>();
 
 	public DiscreteSimulator(final Pathway pathway) throws SimulationException {
-		this(pathway, 42, false);
+		this(pathway, new Xorshift128Plus(42), false);
 	}
 
-	public DiscreteSimulator(final Pathway pathway, final long seed) throws SimulationException {
-		this(pathway, seed, false);
+	public DiscreteSimulator(final Pathway pathway, final RandomGenerator random) throws SimulationException {
+		this(pathway, random, false);
 	}
 
-	public DiscreteSimulator(final Pathway pathway, final long seed, final boolean allowBranching)
+	public DiscreteSimulator(final Pathway pathway, final RandomGenerator random, final boolean allowBranching)
 			throws SimulationException {
-		this(pathway.getAllGraphNodes(), pathway.getAllEdges(), seed, allowBranching);
+		this(pathway.getAllGraphNodes(), pathway.getAllEdges(), random, allowBranching);
 	}
 
 	public DiscreteSimulator(final Collection<BiologicalNodeAbstract> nodes,
 			final Collection<BiologicalEdgeAbstract> edges) throws SimulationException {
-		this(nodes, edges, 42, false);
+		this(nodes, edges, new Xorshift128Plus(42), false);
 	}
 
 	public DiscreteSimulator(final Collection<BiologicalNodeAbstract> nodes,
-			final Collection<BiologicalEdgeAbstract> edges, final long seed) throws SimulationException {
-		this(nodes, edges, seed, false);
+			final Collection<BiologicalEdgeAbstract> edges, final RandomGenerator random) throws SimulationException {
+		this(nodes, edges, random, false);
 	}
 
 	public DiscreteSimulator(final Collection<BiologicalNodeAbstract> nodes,
-			final Collection<BiologicalEdgeAbstract> edges, final long seed, final boolean allowBranching)
+			final Collection<BiologicalEdgeAbstract> edges, final RandomGenerator random, final boolean allowBranching)
 			throws SimulationException {
-		super(seed, allowBranching);
+		super(random, allowBranching);
 		// Collect places and transitions
 		for (final var node : nodes) {
 			if (node instanceof DiscretePlace) {
@@ -149,6 +146,7 @@ public class DiscreteSimulator extends Simulator {
 					arcTransitions.put(arc, transition);
 					arcPlaces.put(arc, place);
 					if (arc.isRegularArc()) {
+						place.outputProbabilitiesNormalizedArcOrder.add(arc);
 						place.outputProbabilitiesNormalized.put(arc,
 								BigDecimal.valueOf(arc.getProbability()).max(BigDecimal.ZERO));
 						place.outputPrioritiesOrdered.add(arc);
@@ -162,6 +160,7 @@ public class DiscreteSimulator extends Simulator {
 					arcTransitions.put(arc, transition);
 					arcPlaces.put(arc, place);
 					if (arc.isRegularArc()) {
+						place.inputProbabilitiesNormalizedArcOrder.add(arc);
 						place.inputProbabilitiesNormalized.put(arc,
 								BigDecimal.valueOf(arc.getProbability()).max(BigDecimal.ZERO));
 						place.inputPrioritiesOrdered.add(arc);
@@ -181,7 +180,6 @@ public class DiscreteSimulator extends Simulator {
 	}
 
 	private void initialize(final BigDecimal startTime) throws SimulationException {
-		random.setSeed(seed);
 		markings.clear();
 		openMarkings.clear();
 		firingEdges.clear();
@@ -427,13 +425,13 @@ public class DiscreteSimulator extends Simulator {
 					for (final var edge : concession.transition.sources) {
 						if (edge.isRegularArc() && !edge.getFrom().isConstant()) {
 							placeOutputs.computeIfAbsent(places.get((DiscretePlace) edge.getFrom()),
-									p -> new HashSet<>()).add(new ImmutablePair<>(edge, concession));
+									p -> new HashSet<>()).add(new Pair<>(edge, concession));
 						}
 					}
 					for (final var edge : concession.transition.targets) {
 						if (edge.isRegularArc() && !edge.getTo().isConstant()) {
 							placeInputs.computeIfAbsent(places.get((DiscretePlace) edge.getTo()), p -> new HashSet<>())
-									.add(new ImmutablePair<>(edge, concession));
+									.add(new Pair<>(edge, concession));
 						}
 					}
 				}
@@ -446,9 +444,9 @@ public class DiscreteSimulator extends Simulator {
 						final int placeIndex = placesOrder.get(place.place);
 						BigInteger putativeTokens = marking.placeTokens[placeIndex];
 						for (final var concession : concessions) {
-							final var arc = concession.getLeft();
+							final var arc = concession.first;
 							if (arc.isRegularArc()) {
-								final var requestedTokens = concession.getRight().fixedArcWeights.get(arc);
+								final var requestedTokens = concession.second.fixedArcWeights.get(arc);
 								putativeTokens = putativeTokens.subtract(requestedTokens);
 								if (putativeTokens.compareTo(place.minTokens) < 0) {
 									outputConflictPlaces.add(place);
@@ -464,9 +462,9 @@ public class DiscreteSimulator extends Simulator {
 						final int placeIndex = placesOrder.get(place.place);
 						BigInteger putativeTokens = marking.placeTokens[placeIndex];
 						for (final var concession : concessions) {
-							final var arc = concession.getLeft();
+							final var arc = concession.first;
 							if (arc.isRegularArc()) {
-								final var requestedTokens = concession.getRight().fixedArcWeights.get(arc);
+								final var requestedTokens = concession.second.fixedArcWeights.get(arc);
 								putativeTokens = putativeTokens.add(requestedTokens);
 								if (putativeTokens.compareTo(place.maxTokens) > 0) {
 									inputConflictPlaces.add(place);
@@ -496,7 +494,7 @@ public class DiscreteSimulator extends Simulator {
 							final var concessions = placeOutputs.get(place);
 							var placeFireSet = placeFireSets.computeIfAbsent(place, k -> new HashSet<>());
 							for (final var concession : concessions) {
-								placeFireSet.add(concession.getRight());
+								placeFireSet.add(concession.second);
 							}
 						}
 					}
@@ -505,7 +503,7 @@ public class DiscreteSimulator extends Simulator {
 							final var concessions = placeInputs.get(place);
 							var placeFireSet = placeFireSets.computeIfAbsent(place, k -> new HashSet<>());
 							for (final var concession : concessions) {
-								placeFireSet.add(concession.getRight());
+								placeFireSet.add(concession.second);
 							}
 						}
 					}
@@ -576,7 +574,7 @@ public class DiscreteSimulator extends Simulator {
 			// Handle conflict with probability
 			final List<TransitionDetails> transitionCandidates = new ArrayList<>();
 			final List<BigDecimal> transitionCandidateProbabilities = new ArrayList<>();
-			for (final var arc : place.outputProbabilitiesNormalized.keySet()) {
+			for (final var arc : place.outputProbabilitiesNormalizedArcOrder) {
 				final var transition = arcTransitions.get(arc);
 				final var concession = transitionConcessions.get(transition);
 				// If this transition has no concession, skip it
@@ -677,7 +675,7 @@ public class DiscreteSimulator extends Simulator {
 			// Handle conflict with probability
 			final List<TransitionDetails> transitionCandidates = new ArrayList<>();
 			final List<BigDecimal> transitionCandidateProbabilities = new ArrayList<>();
-			for (final var arc : place.inputProbabilitiesNormalized.keySet()) {
+			for (final var arc : place.inputProbabilitiesNormalizedArcOrder) {
 				final var transition = arcTransitions.get(arc);
 				final var concession = transitionConcessions.get(transition);
 				// If this transition has no concession, or it was already discarded in an output conflict, skip it
@@ -844,10 +842,6 @@ public class DiscreteSimulator extends Simulator {
 		return openMarkings.isEmpty();
 	}
 
-	public long getSeed() {
-		return seed;
-	}
-
 	public boolean isAllowBranching() {
 		return allowBranching;
 	}
@@ -895,6 +889,16 @@ public class DiscreteSimulator extends Simulator {
 
 	private static BigDecimal fixedPrecisionDivide(final BigDecimal a, final BigDecimal b) {
 		return a.divide(b, 24, RoundingMode.HALF_UP).stripTrailingZeros();
+	}
+
+	private static class Pair<T, S> {
+		public T first;
+		public S second;
+
+		public Pair(final T first, final S second) {
+			this.first = first;
+			this.second = second;
+		}
 	}
 
 	public static class Marking {
@@ -975,6 +979,8 @@ public class DiscreteSimulator extends Simulator {
 		final DiscretePlace place;
 		final BigInteger minTokens;
 		final BigInteger maxTokens;
+		final List<PNArc> outputProbabilitiesNormalizedArcOrder = new ArrayList<>();
+		final List<PNArc> inputProbabilitiesNormalizedArcOrder = new ArrayList<>();
 		final Map<PNArc, BigDecimal> outputProbabilitiesNormalized = new HashMap<>();
 		final Map<PNArc, BigDecimal> inputProbabilitiesNormalized = new HashMap<>();
 		final List<PNArc> outputPrioritiesOrdered = new ArrayList<>();
@@ -1041,7 +1047,7 @@ public class DiscreteSimulator extends Simulator {
 		private String delayFunction;
 		private StochasticSampler delaySampler;
 
-		private TransitionDetails(final Transition transition, final Random random) {
+		private TransitionDetails(final Transition transition, final RandomGenerator random) {
 			this.transition = transition;
 			// If possible, reduce the firingCondition function for faster subsequent calculations
 			String reducedFiringCondition;

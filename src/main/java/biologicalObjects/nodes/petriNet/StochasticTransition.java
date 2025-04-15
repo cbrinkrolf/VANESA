@@ -5,12 +5,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import graph.jung.graphDrawing.VertexShapes;
 import org.apache.commons.statistics.distribution.*;
+import simulation.RandomGenerator;
 import simulation.StochasticSampler;
 import util.StochasticDistribution;
 
@@ -111,7 +111,7 @@ public class StochasticTransition extends Transition {
 		return list;
 	}
 
-	public StochasticSampler getDistributionSampler(final Random random) {
+	public StochasticSampler getDistributionSampler(final RandomGenerator random) {
 		switch (distribution) {
 		case Exponential:
 			final var exponentialSampler = ExponentialDistribution.of(h).createSampler(random::nextLong);

@@ -8,12 +8,11 @@ import java.math.BigDecimal;
 import java.util.*;
 
 public abstract class Simulator {
-	protected final Random random = new Random();
-	protected final long seed;
+	protected final RandomGenerator random;
 	protected final boolean allowBranching;
 
-	protected Simulator(final long seed, final boolean allowBranching) {
-		this.seed = seed;
+	protected Simulator(final RandomGenerator random, final boolean allowBranching) {
+		this.random = random;
 		this.allowBranching = allowBranching;
 	}
 
