@@ -569,7 +569,7 @@ public class JSBMLOutput {
 				el.addChild(createElSub(String.valueOf(place.getTokenMin()), "tokenMin"));
 				el.addChild(createElSub(String.valueOf(place.getTokenMax()), "tokenMax"));
 				el.addChild(createElSub(String.valueOf(place.getTokenStart()), "tokenStart"));
-				el.addChild(createElSub(String.valueOf(place.getConflictStrategy()), "ConflictStrategy"));
+				el.addChild(createElSub(String.valueOf(place.getConflictStrategy().getId()), "ConflictStrategy"));
 			} else if (oneNode instanceof Transition) {
 				Transition transition = (Transition) oneNode;
 				el.addChild(createElSub(String.valueOf(transition.isKnockedOut()), "knockedOut"));
