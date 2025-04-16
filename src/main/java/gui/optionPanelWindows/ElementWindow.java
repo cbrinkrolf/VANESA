@@ -676,10 +676,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 					if (ab instanceof PNArc) {
 						PNArc pnedge = (PNArc) ab;
 						if (!pnedge.isInhibitorArc() && !pnedge.isTestArc()) {
-							p.add(changeEdgeDirection);
+							p.add(changeEdgeDirection, "wrap");
 						}
 					} else {
-						p.add(changeEdgeDirection);
+						p.add(changeEdgeDirection, "wrap");
 					}
 				}
 
@@ -689,6 +689,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 					activationProb.setText(String.valueOf(e.getProbability()));
 					activationProb.setName("activationProb");
 					activationProb.addFocusListener(pwl);
+					activationProb.setEnabled(e.isRegularArc());
 					final var activationPrio = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
 					activationPrio.setText(String.valueOf(e.getPriority()));
 					activationPrio.setName("activationPrio");

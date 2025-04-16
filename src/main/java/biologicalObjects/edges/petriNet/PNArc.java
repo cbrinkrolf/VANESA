@@ -63,6 +63,11 @@ public class PNArc extends BiologicalEdgeAbstract {
 	}
 
 	public double getProbability() {
+		// PNlib considers non-regular arcs when verifying probability sums during init. Therefore, those arcs
+		// simply return a probability of 0
+		if (isInhibitorArc() || isTestArc()) {
+			return 0;
+		}
 		return probability;
 	}
 
