@@ -1,7 +1,6 @@
 package util;
 
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -11,14 +10,12 @@ import java.net.ServerSocket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
@@ -55,27 +52,6 @@ public class VanesaUtility {
 			}
 		}
 		return median;
-	}
-
-	public static Path getWorkingDirectoryPath() {
-		final Path basePath = Paths.get(System.getenv(SystemUtils.IS_OS_WINDOWS ? "APPDATA" : "HOME"));
-		Path workingDirectory = basePath.resolve("vanesa");
-		File f = workingDirectory.toFile();
-		if (f.exists() && f.isDirectory()) {
-			return workingDirectory;
-		}
-		if (!f.exists()) {
-			f.mkdir();
-			return workingDirectory;
-		}
-		int i = 0;
-		while (f.exists() && !f.isDirectory()) {
-			workingDirectory = basePath.resolve("vanesa" + i);
-			f = workingDirectory.toFile();
-			i++;
-		}
-		f.mkdir();
-		return workingDirectory;
 	}
 
 	public static void openFolderInExplorer(final Path path) {

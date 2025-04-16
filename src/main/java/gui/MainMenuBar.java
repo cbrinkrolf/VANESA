@@ -327,6 +327,7 @@ public class MainMenuBar extends JMenuBar {
 			testTInvariant.setEnabled(true);
 			cov.setEnabled(true);
 			simulate.setEnabled(true);
+			simulateDiscrete.setEnabled(true);
 			covreach.setEnabled(true);
 			modelicaResult.setEnabled(true);
 			editPNelements.setEnabled(true);
@@ -349,6 +350,7 @@ public class MainMenuBar extends JMenuBar {
 		testTInvariant.setEnabled(isPetriNet);
 		cov.setEnabled(isPetriNet);
 		simulate.setEnabled(isPetriNet);
+		simulateDiscrete.setEnabled(isPetriNet);
 		covreach.setEnabled(isPetriNet);
 		modelicaResult.setEnabled(isPetriNet);
 		editPNelements.setEnabled(isPetriNet);
@@ -374,6 +376,7 @@ public class MainMenuBar extends JMenuBar {
 		testTInvariant.setEnabled(false);
 		cov.setEnabled(false);
 		simulate.setEnabled(false);
+		simulateDiscrete.setEnabled(false);
 		covreach.setEnabled(false);
 		modelicaResult.setEnabled(false);
 		editPNelements.setEnabled(false);

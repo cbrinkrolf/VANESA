@@ -34,6 +34,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.gui.Parameter;
+import petriNet.PetriNetSimulation;
 
 public class SimMenu extends JFrame implements ItemListener {
 	private static final long serialVersionUID = 7509509909627902082L;
@@ -60,6 +61,7 @@ public class SimMenu extends JFrame implements ItemListener {
 					"rungekuttaSsc - Runge-Kutta based on Novikov (2016) - explicit, step size control, order 4-5 [experimental]"),
 			Map.entry("qss", "qss - A QSS solver [experimental]"),
 			Map.entry("optimization", "optimization - Special solver for dynamic optimization"));
+	private static final List<String> SUPPORTED_PNLIB_VERSIONS = PetriNetSimulation.SUPPORTED_PNLIB_VERSIONS;
 
 	private final JButton start = new JButton("Start");
 	private final JButton stop = new JButton("Stop");
@@ -106,7 +108,6 @@ public class SimMenu extends JFrame implements ItemListener {
 	private final JTextField numbers;
 
 	private String parameterName;
-	private String parameterNameShort;
 
 	private final JCheckBox useShortModelName = new JCheckBox("use short model name");
 	private final JCheckBox useCustomExecutable = new JCheckBox("use executable:");
@@ -114,14 +115,12 @@ public class SimMenu extends JFrame implements ItemListener {
 	private final JCheckBox useCustomEqPerFile = new JCheckBox("Eq. per file:");
 	private final JIntTextField eqTxt;
 
-	private final List<String> pnLibVersions;
 	private List<File> customLibs;
 
 	private final Pathway pw;
 
-	public SimMenu(Pathway pw, ActionListener listener, List<String> pnLibVersions, List<File> customLibs) {
+	public SimMenu(final Pathway pw, final ActionListener listener, final List<File> customLibs) {
 		this.pw = pw;
-		this.pnLibVersions = pnLibVersions;
 		this.customLibs = customLibs;
 		setTitle("VANESA - Simulation Setup");
 
@@ -496,31 +495,32 @@ public class SimMenu extends JFrame implements ItemListener {
 	private void fillLibsComboBox() {
 		simLibs.removeAllItems();
 		if (!Workspace.getCurrentSettings().isOverridePNlibPath()) {
-			for (int i = 0; i < pnLibVersions.size(); i++) {
-				simLibs.addItem("PNlib " + pnLibVersions.get(i) + " (" + (i == 0 ? "default, " : "") + "built-in)");
+			for (int i = 0; i < SUPPORTED_PNLIB_VERSIONS.size(); i++) {
+				simLibs.addItem(
+						"PNlib " + SUPPORTED_PNLIB_VERSIONS.get(i) + " (" + (i == 0 ? "default, " : "") + "built-in)");
 			}
 		}
-		for (File f : customLibs) {
+		for (final File f : customLibs) {
 			simLibs.addItem(f.getName() + " - " + f.getParentFile().getName());
 		}
 		simLibs.setSelectedIndex(simLibs.getItemCount() > lastLibsIdx ? lastLibsIdx : 0);
 	}
 
 	public boolean isBuiltInPNlibSelected() {
-		return simLibs.getSelectedIndex() < pnLibVersions.size() && !Workspace.getCurrentSettings()
+		return simLibs.getSelectedIndex() < SUPPORTED_PNLIB_VERSIONS.size() && !Workspace.getCurrentSettings()
 				.isOverridePNlibPath();
 	}
 
 	public String getSelectedBuiltInPNLibVersion() {
-		if (simLibs.getSelectedIndex() < pnLibVersions.size() && !Workspace.getCurrentSettings()
+		if (simLibs.getSelectedIndex() < SUPPORTED_PNLIB_VERSIONS.size() && !Workspace.getCurrentSettings()
 				.isOverridePNlibPath()) {
-			return pnLibVersions.get(simLibs.getSelectedIndex());
+			return SUPPORTED_PNLIB_VERSIONS.get(simLibs.getSelectedIndex());
 		}
 		return null;
 	}
 
 	public File getCustomPNLib() {
-		if (simLibs.getSelectedIndex() < pnLibVersions.size() && !Workspace.getCurrentSettings()
+		if (simLibs.getSelectedIndex() < SUPPORTED_PNLIB_VERSIONS.size() && !Workspace.getCurrentSettings()
 				.isOverridePNlibPath()) {
 			return null;
 		}
@@ -528,7 +528,7 @@ public class SimMenu extends JFrame implements ItemListener {
 		if (Workspace.getCurrentSettings().isOverridePNlibPath()) {
 			return customLibs.get(simLibs.getSelectedIndex());
 		} else {
-			return customLibs.get(simLibs.getSelectedIndex() - pnLibVersions.size());
+			return customLibs.get(simLibs.getSelectedIndex() - SUPPORTED_PNLIB_VERSIONS.size());
 		}
 	}
 
@@ -558,10 +558,6 @@ public class SimMenu extends JFrame implements ItemListener {
 
 	public String getParameterName() {
 		return parameterName;
-	}
-
-	public String getParameterNameShort() {
-		return parameterNameShort;
 	}
 
 	public List<BigDecimal> getParameterValues() {

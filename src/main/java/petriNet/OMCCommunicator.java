@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import configurations.Workspace;
 import util.VanesaUtility;
 
 public class OMCCommunicator {
@@ -21,7 +22,7 @@ public class OMCCommunicator {
 
 	public OMCCommunicator(Path bin) {
 		this.bin = bin;
-		pathToMos = VanesaUtility.getWorkingDirectoryPath().resolve("scripting.mos");
+		pathToMos = Workspace.getCurrent().getPath().resolve("scripting.mos");
 	}
 
 	/**
@@ -116,7 +117,6 @@ public class OMCCommunicator {
 		final Process process = new ProcessBuilder(bin.toString(), pathToMos.toString()).start();
 		final byte[] bytes;
 		try (InputStream os = process.getInputStream()) {
-			// boolean buildSuccess = true;
 			process.waitFor();
 			bytes = os.readAllBytes();
 		}
