@@ -16,7 +16,7 @@ import graph.GraphInstance;
 import gui.AsyncTaskExecutor;
 import gui.MainWindow;
 import gui.PopUpDialog;
-import gui.SimMenu;
+import gui.simulation.SimMenu;
 import io.graphML.GraphMLReader;
 import io.kgml.KGMLReader;
 import io.pnResult.PNSimulationResultCSVReader;

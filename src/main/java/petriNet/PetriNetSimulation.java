@@ -49,7 +49,7 @@ import graph.gui.Boundary;
 import graph.gui.Parameter;
 import gui.MainWindow;
 import gui.PopUpDialog;
-import gui.SimMenu;
+import gui.simulation.SimMenu;
 import io.MOoutput;
 import util.VanesaUtility;
 

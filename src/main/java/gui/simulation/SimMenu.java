@@ -1,4 +1,4 @@
-package gui;
+package gui.simulation;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -26,7 +26,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import configurations.Workspace;
-import gui.simulation.SimulationResultsListPanel;
+import gui.*;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import biologicalElements.Pathway;
