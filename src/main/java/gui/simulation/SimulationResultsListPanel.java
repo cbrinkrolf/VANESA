@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SimulationResultsListPanel extends JPanel {
-	private final JTextArea logTextArea;
+	private JTextArea logTextArea;
 	private boolean triggerUIUpdate = true;
 	private final HashMap<JTextField, SimulationResult> text2sim = new HashMap<>();
 	private final JPanel resultsListPanel = new JPanel(new MigLayout("ins 0, fillx, wrap 6"));
@@ -26,9 +26,8 @@ public class SimulationResultsListPanel extends JPanel {
 
 	private Pathway currentPathway;
 
-	public SimulationResultsListPanel(final JTextArea logTextArea) {
+	public SimulationResultsListPanel() {
 		super(new MigLayout("fill, wrap", "", "[][grow, align top]"));
-		this.logTextArea = logTextArea;
 
 		final JPanel headerPanel = new JPanel(new MigLayout("ins 0, fillx", "[][][grow]"));
 
@@ -55,6 +54,10 @@ public class SimulationResultsListPanel extends JPanel {
 		resultsListScrollPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		resultsListScrollPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		add(resultsListScrollPanel, "grow");
+	}
+
+	public void setLogTextArea(JTextArea logTextArea) {
+		this.logTextArea = logTextArea;
 	}
 
 	public void updateSimulationResults(final Pathway pathway) {

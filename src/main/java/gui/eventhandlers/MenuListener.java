@@ -1,6 +1,5 @@
 package gui.eventhandlers;
 
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -48,7 +47,7 @@ import gui.LabelToDataMappingWindow;
 import gui.LabelToDataMappingWindow.InputFormatException;
 import gui.MainWindow;
 import gui.PopUpDialog;
-import gui.simulation.DiscreteSimulationPanel;
+import gui.simulation.SimulationWindow;
 import gui.tables.MyTable;
 import io.OpenDialog;
 import io.SaveDialog;
@@ -392,15 +391,7 @@ public class MenuListener implements ActionListener {
 	private static void simulateDiscrete() {
 		final Pathway pw = GraphInstance.getPathway();
 		if (pw != null) {
-			final var frame = new JFrame("VANESA - Discrete Simulation");
-			frame.setContentPane(new DiscreteSimulationPanel(pw));
-			frame.setMinimumSize(new Dimension(800, 400));
-			frame.setPreferredSize(new Dimension(800, 400));
-			frame.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
-			frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-			frame.setLocationRelativeTo(MainWindow.getInstance().getFrame());
-			frame.pack();
-			frame.setVisible(true);
+			new SimulationWindow(pw);
 		}
 	}
 

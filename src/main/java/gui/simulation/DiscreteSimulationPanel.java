@@ -20,6 +20,7 @@ import java.util.*;
 public class DiscreteSimulationPanel extends JPanel {
 	private static final int PROGRESS_SCALE = 10000;
 
+	private final SimulationWindow.UpdateSimulationResultsListener updateSimulationResultsListener;
 	private final JButton startButton = new JButton("Start");
 	private final JButton stopButton = new JButton("Stop");
 	private final JLabel elapsedTimeLabel = new JLabel("-");
@@ -29,16 +30,17 @@ public class DiscreteSimulationPanel extends JPanel {
 	private final JCheckBox seedCheckBox = new JCheckBox("Random");
 	private final JProgressBar progressBar = new JProgressBar(SwingConstants.HORIZONTAL);
 	private final JTextArea logTextArea = new JTextArea();
-	private final SimulationResultsListPanel simulationResultsList = new SimulationResultsListPanel(logTextArea);
 
 	private final Pathway pathway;
 	private DiscreteSimulator simulator;
 	private Thread simulationThread;
 	private boolean running = false;
 
-	public DiscreteSimulationPanel(final Pathway pathway) {
-		super(new MigLayout("ins 0, fill", "[][][grow]"));
+	public DiscreteSimulationPanel(final Pathway pathway,
+			final SimulationWindow.UpdateSimulationResultsListener updateSimulationResultsListener) {
+		super(new MigLayout("fill, wrap", "", "[][][][grow]"));
 		this.pathway = pathway;
+		this.updateSimulationResultsListener = updateSimulationResultsListener;
 		startInput.setValue(BigDecimal.ZERO);
 		startInput.setEnabled(false);
 		stopInput.setValue(BigDecimal.ONE);
@@ -70,17 +72,14 @@ public class DiscreteSimulationPanel extends JPanel {
 		parametersPanel.add(seedInput, "growx");
 		parametersPanel.add(seedCheckBox);
 
-		final JPanel simulationPanel = new JPanel(new MigLayout("fill, wrap", "", "[][][][grow]"));
-		simulationPanel.add(parametersPanel, "growx");
-		simulationPanel.add(startStopPanel, "growx");
-		simulationPanel.add(progressBar, "growx");
-		simulationPanel.add(new JScrollPane(logTextArea), "grow");
+		add(parametersPanel, "growx");
+		add(startStopPanel, "growx");
+		add(progressBar, "growx");
+		add(new JScrollPane(logTextArea), "grow");
+	}
 
-		add(simulationResultsList, "growy");
-		add(new JSeparator(SwingConstants.VERTICAL), "growy, width 3:3:3");
-		add(simulationPanel, "grow");
-
-		simulationResultsList.updateSimulationResults(pathway);
+	public JTextArea getLogTextArea() {
+		return logTextArea;
 	}
 
 	private void onStartClicked() {
@@ -195,7 +194,9 @@ public class DiscreteSimulationPanel extends JPanel {
 		// Update UI
 		pathway.setPlotColorPlacesTransitions(false);
 		pathway.getPetriPropertiesNet().setPetriNetSimulation(true);
-		simulationResultsList.updateSimulationResults(pathway);
+		if (updateSimulationResultsListener != null) {
+			updateSimulationResultsListener.onUpdate();
+		}
 		MainWindow.getInstance().addSimulationResults();
 	}
 

@@ -81,7 +81,7 @@ public class SimMenu extends JFrame implements ItemListener {
 	private final JLabel simLibLbl = new JLabel("Simulation library:");
 	private final JComboBox<String> simLibs = new JComboBox<>();
 	private int lastLibsIdx = 0;
-	private final SimulationResultsListPanel simulationResultsList = new SimulationResultsListPanel(textArea);
+	private final SimulationResultsListPanel simulationResultsList = new SimulationResultsListPanel();
 	private final JCheckBox forceRebuild = new JCheckBox("force rebuild");
 
 	private final JLabel seedLbl = new JLabel("Seed:");
@@ -148,6 +148,7 @@ public class SimMenu extends JFrame implements ItemListener {
 		seedTxt.setColumns(5);
 
 		textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+		simulationResultsList.setLogTextArea(textArea);
 
 		solvers.setRenderer(new ToolTipListCellRenderer(SOLVER_TOOLTIPS));
 		AutoCompleteDecorator.decorate(solvers);
@@ -280,6 +281,10 @@ public class SimMenu extends JFrame implements ItemListener {
 		pack();
 		setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		setVisible(true);
+	}
+
+	public JTextArea getLogTextArea() {
+		return textArea;
 	}
 
 	private void revalidateParametrizedPanel() {
