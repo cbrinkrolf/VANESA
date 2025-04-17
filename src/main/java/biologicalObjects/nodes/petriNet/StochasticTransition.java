@@ -9,7 +9,7 @@ import java.util.List;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import graph.jung.graphDrawing.VertexShapes;
-import org.apache.commons.statistics.distribution.*;
+import org.apache.commons.math3.special.Erf;
 import simulation.RandomGenerator;
 import simulation.StochasticSampler;
 import util.StochasticDistribution;
@@ -113,31 +113,78 @@ public class StochasticTransition extends Transition {
 
 	public StochasticSampler getDistributionSampler(final RandomGenerator random) {
 		switch (distribution) {
-		case Exponential:
-			final var exponentialSampler = ExponentialDistribution.of(h).createSampler(random::nextLong);
-			return () -> BigDecimal.valueOf(exponentialSampler.sample());
-		case Triangular:
-			final var triangularSampler = TriangularDistribution.of(a, c, b).createSampler(random::nextLong);
-			return () -> BigDecimal.valueOf(triangularSampler.sample());
-		case Uniform:
-			final var uniformSampler = UniformContinuousDistribution.of(a, b).createSampler(random::nextLong);
-			return () -> BigDecimal.valueOf(uniformSampler.sample());
-		case TruncatedNormal:
-			final var truncatedNormalSampler = TruncatedNormalDistribution.of(mu, sigma, a, b).createSampler(
-					random::nextLong);
-			return () -> BigDecimal.valueOf(truncatedNormalSampler.sample());
-		case DiscreteProbability:
-			final var events = new ArrayList<>(this.events);
-			final var probabilities = new ArrayList<>(this.probabilities);
+		case Exponential: {
+			// Equivalent to PNlib "randomexp.mo"
+			final double lambda = Math.max(1e-10, h);
+			return () -> BigDecimal.valueOf(-Math.log(Math.max(1e-10, random.nextDouble()) / lambda));
+			// final var exponentialSampler = ExponentialDistribution.of(h).createSampler(random::nextLong);
+			// return () -> BigDecimal.valueOf(exponentialSampler.sample());
+		}
+		case Triangular: {
+			// Equivalent to PNlib "randomtriangular.mo"
+			final double a = this.a;
+			final double b = this.b;
+			final double c = this.c;
+			return () -> {
+				final double x = Math.max(1e-10, random.nextDouble());
+				final double help = (c - a) / (b - a);
+				if (x <= help) {
+					return BigDecimal.valueOf(Math.sqrt(x * (b - a) * (c - a)) + a);
+				} else {
+					return BigDecimal.valueOf(b - Math.sqrt((1 - x) * (b - a) * (b - c)));
+				}
+			};
+			// final var triangularSampler = TriangularDistribution.of(a, c, b).createSampler(random::nextLong);
+			// return () -> BigDecimal.valueOf(triangularSampler.sample());
+		}
+		case Uniform: {
+			// Equivalent to OpenModelica "Distributions.mo"
+			final double a = this.a;
+			final double b = this.b;
+			return () -> BigDecimal.valueOf(Math.max(1e-10, random.nextDouble()) * (b - a) + a);
+			// final var uniformSampler = UniformContinuousDistribution.of(a, b).createSampler(random::nextLong);
+			// return () -> BigDecimal.valueOf(uniformSampler.sample());
+		}
+		case TruncatedNormal: {
+			// Equivalent to OpenModelica "Distributions.mo"
+			final double cdfMin = (1 + Erf.erf((a - mu) / (sigma * Math.sqrt(2)))) * 0.5; // normal cumulative
+			final double cdfMax = (1 + Erf.erf((b - mu) / (sigma * Math.sqrt(2)))) * 0.5; // normal cumulative
+			return () -> {
+				final double u = cdfMin + Math.max(1e-10, random.nextDouble()) * (cdfMax - cdfMin);
+				final double normalQuantile = mu + sigma * Math.sqrt(2) * Erf.erfInv(2 * u - 1);
+				return BigDecimal.valueOf(Math.min(b, Math.max(a, normalQuantile)));
+			};
+			// final var truncatedNormalSampler = TruncatedNormalDistribution.of(mu, sigma, a, b).createSampler(
+			// 		random::nextLong);
+			// return () -> BigDecimal.valueOf(truncatedNormalSampler.sample());
+		}
+		case DiscreteProbability: {
+			final var events = this.events.toArray(new Integer[0]);
+			final var probabilities = this.probabilities.toArray(new Double[0]);
+			// Normalize the probabilities
+			double sum = 0.0;
+			for (int i = 0; i < probabilities.length; i++) {
+				sum += probabilities[i];
+			}
+			for (int i = 0; i < probabilities.length; i++) {
+				probabilities[i] /= sum;
+			}
+			// Equivalent to PNlib "randomdis.mo"
+			final var cumulativeProbabilities = new double[events.length];
+			cumulativeProbabilities[0] = probabilities[0];
+			for (int i = 1; i < events.length; i++) {
+				cumulativeProbabilities[i] = cumulativeProbabilities[i - 1] + probabilities[i];
+			}
 			return () -> {
 				double x = random.nextDouble();
-				int index = 0;
-				while (index < probabilities.size() && x >= probabilities.get(index)) {
-					x -= probabilities.get(index);
-					index++;
+				for (int i = 0; i < cumulativeProbabilities.length; i++) {
+					if (x <= cumulativeProbabilities[i]) {
+						return BigDecimal.valueOf(events[i]);
+					}
 				}
-				return BigDecimal.valueOf(events.get(index));
+				return BigDecimal.valueOf(events[events.length - 1]);
 			};
+		}
 		}
 		return null;
 	}
