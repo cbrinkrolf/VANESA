@@ -9,13 +9,11 @@ import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import com.ezylang.evalex.parser.ParseException;
+import graph.gui.Parameter;
 import simulation.ConflictHandling;
 import simulation.VanesaExpression;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PNVerifier {
 	private final Pathway pathway;
@@ -27,9 +25,11 @@ public class PNVerifier {
 
 	public boolean verify() {
 		final Map<String, Object> placeFunctionParameters = new HashMap<>();
+		final Set<String> placeNames = new HashSet<>();
 		for (final BiologicalNodeAbstract node : pathway.getAllGraphNodes()) {
 			if (node instanceof Place) {
 				final Place place = (Place) node;
+				placeNames.add(place.getName());
 				// Register the place name with a dummy value of 1 to make it available as parameter
 				placeFunctionParameters.put(place.getName(), 1);
 			}
@@ -38,6 +38,12 @@ public class PNVerifier {
 		for (final BiologicalNodeAbstract node : pathway.getAllGraphNodes()) {
 			if (node instanceof Place) {
 				final Place place = (Place) node;
+				for (final Parameter parameter : place.getParameters()) {
+					if (placeNames.contains(parameter.getName())) {
+						issues.add(
+								new ParameterOverlapsPlaceNameVerificationIssue(pathway, place, parameter.getName()));
+					}
+				}
 				if (place.getConflictStrategy() == ConflictHandling.Priority) {
 					if (Place.hasPriorityConflict(place.getConflictingInEdges())) {
 						issues.add(new InputConflictPriorityVerificationIssue(pathway, place));
@@ -55,6 +61,12 @@ public class PNVerifier {
 				}
 			} else if (node instanceof Transition) {
 				final Transition transition = (Transition) node;
+				for (final Parameter parameter : transition.getParameters()) {
+					if (placeNames.contains(parameter.getName())) {
+						issues.add(new ParameterOverlapsPlaceNameVerificationIssue(pathway, transition,
+								parameter.getName()));
+					}
+				}
 				verifyTransitionFunction(transition, placeFunctionParameters, transition.getFiringCondition(),
 						"firingCondition");
 				if (node instanceof DiscreteTransition) {
@@ -69,6 +81,11 @@ public class PNVerifier {
 		for (final BiologicalEdgeAbstract edge : pathway.getAllEdges()) {
 			if (edge instanceof PNArc) {
 				final PNArc arc = (PNArc) edge;
+				for (final Parameter parameter : arc.getParameters()) {
+					if (placeNames.contains(parameter.getName())) {
+						issues.add(new ParameterOverlapsPlaceNameVerificationIssue(pathway, arc, parameter.getName()));
+					}
+				}
 				final var expression = new VanesaExpression(arc.getFunction()).with(arc.getParameters()).withValues(
 						placeFunctionParameters);
 				try {
