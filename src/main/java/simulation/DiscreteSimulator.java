@@ -1041,7 +1041,7 @@ public class DiscreteSimulator extends Simulator {
 		 * All arcs from this transition to places
 		 */
 		final List<PNArc> targets = new ArrayList<>();
-		final Transition transition;
+		public final Transition transition;
 		final String firingCondition;
 		private BigDecimal fixedDelay;
 		private String delayFunction;

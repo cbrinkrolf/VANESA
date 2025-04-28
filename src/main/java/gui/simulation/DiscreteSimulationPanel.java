@@ -6,6 +6,7 @@ import gui.JIntTextField;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import petriNet.SimulationResult;
 import petriNet.SimulationResultController;
 import simulation.DiscreteSimulator;
 import simulation.SimulationException;
@@ -101,7 +102,7 @@ public class DiscreteSimulationPanel extends JPanel {
 	private void runSimulation() {
 		long elapsedTimeStart = System.currentTimeMillis();
 		final var startTime = startInput.getBigDecimalValue(BigDecimal.ZERO);
-		final var endTime = stopInput.getBigDecimalValue(BigDecimal.ONE);
+		final var endTime = getEndTime();
 		final int seed = seedInput.getValue(42);
 		final BigDecimal progressFactor = BigDecimal.valueOf(PROGRESS_SCALE).divide(endTime.subtract(startTime), 24,
 				RoundingMode.HALF_UP);
@@ -131,9 +132,13 @@ public class DiscreteSimulationPanel extends JPanel {
 		setElapsedTime(System.currentTimeMillis() - elapsedTimeStart);
 		addLogText("Simulation finished in " + elapsedTimeLabel.getText() + ".\n");
 		addLogText("Collecting results...\n");
-		collectResults();
+		collectResults(endTime);
 		resetAfterStart();
 		addLogText("done.\n");
+	}
+
+	private BigDecimal getEndTime() {
+		return stopInput.getBigDecimalValue(BigDecimal.ONE);
 	}
 
 	public void addLogText(final String text) {
@@ -150,7 +155,7 @@ public class DiscreteSimulationPanel extends JPanel {
 			}
 			addLogText("Simulation stopped after " + elapsedTimeLabel.getText() + ".\n");
 			addLogText("Collecting results...\n");
-			collectResults();
+			collectResults(getEndTime());
 		}
 		resetAfterStart();
 		addLogText("done.\n");
@@ -173,7 +178,7 @@ public class DiscreteSimulationPanel extends JPanel {
 		elapsedTimeLabel.repaint();
 	}
 
-	private void collectResults() {
+	private void collectResults(final BigDecimal endTime) {
 		if (simulator == null) {
 			return;
 		}
@@ -189,7 +194,8 @@ public class DiscreteSimulationPanel extends JPanel {
 			addLogText("- " + uniqueMarkingTimelines.size() + " marking timelines are unique.\n");
 		}
 		for (final DiscreteSimulator.Marking[] markingTimeline : uniqueMarkingTimelines.keySet()) {
-			collectSimulationResult(simResultController, markingTimeline, uniqueMarkingTimelines.get(markingTimeline));
+			collectSimulationResult(simResultController, markingTimeline, uniqueMarkingTimelines.get(markingTimeline),
+					endTime);
 		}
 		// Update UI
 		pathway.setPlotColorPlacesTransitions(false);
@@ -249,7 +255,10 @@ public class DiscreteSimulationPanel extends JPanel {
 	}
 
 	private void collectSimulationResult(final SimulationResultController simResultController,
-			final DiscreteSimulator.Marking[] markingTimeline, int occurrences) {
+			final DiscreteSimulator.Marking[] markingTimeline, int occurrences, final BigDecimal endTime) {
+		if (markingTimeline.length == 0) {
+			return;
+		}
 		String simResId = "discrete sim";
 		if (occurrences > 1) {
 			simResId += " [" + occurrences + "]";
@@ -274,11 +283,36 @@ public class DiscreteSimulationPanel extends JPanel {
 					simResult.addValue(place, SimulationResultController.SIM_TOKEN,
 							simulator.getTokens(previousMarking, place).doubleValue());
 				}
+				for (final var transition : simulator.getTransitions()) {
+					final boolean isTransitionActive = Arrays.stream(previousMarking.concessionsOrderedByDelay)
+							.anyMatch(c -> c.transition.transition == transition);
+					simResult.addValue(transition, SimulationResultController.SIM_ACTIVE,
+							isTransitionActive ? 1.0 : 0.0);
+				}
 			}
 			simResult.addTime(marking.time.doubleValue());
 			for (final var place : simulator.getPlaces()) {
 				simResult.addValue(place, SimulationResultController.SIM_TOKEN,
 						simulator.getTokens(marking, place).doubleValue());
+			}
+			for (final var transition : simulator.getTransitions()) {
+				final boolean isTransitionActive = Arrays.stream(marking.concessionsOrderedByDelay).anyMatch(
+						c -> c.transition.transition == transition);
+				simResult.addValue(transition, SimulationResultController.SIM_ACTIVE, isTransitionActive ? 1.0 : 0.0);
+			}
+		}
+		// If the last marking is before the user defined end time, we add a last time-point at the end time
+		final var lastMarking = markingTimeline[markingTimeline.length - 1];
+		if (lastMarking.time.compareTo(endTime) < 0) {
+			simResult.addTime(endTime.doubleValue());
+			for (final var place : simulator.getPlaces()) {
+				simResult.addValue(place, SimulationResultController.SIM_TOKEN,
+						simulator.getTokens(lastMarking, place).doubleValue());
+			}
+			for (final var transition : simulator.getTransitions()) {
+				final boolean isTransitionActive = Arrays.stream(lastMarking.concessionsOrderedByDelay).anyMatch(
+						c -> c.transition.transition == transition);
+				simResult.addValue(transition, SimulationResultController.SIM_ACTIVE, isTransitionActive ? 1.0 : 0.0);
 			}
 		}
 	}
