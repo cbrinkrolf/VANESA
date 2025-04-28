@@ -70,7 +70,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 	private final boolean colored;
 	private final boolean noIdent = false;
 	private final int seed;
-	private final int placeLocalSeed;
+	private final int localSeed;
 
 	private double minX = Double.MAX_VALUE;
 	private double minY = Double.MAX_VALUE;
@@ -90,7 +90,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 		this.modelName = modelName;
 		this.packageInfo = packageInfo;
 		this.colored = colored;
-		placeLocalSeed = generatePlaceLocalSeed(seed);
+		localSeed = generateLocalSeed(seed);
 		marked = GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked();
 	}
 
@@ -112,7 +112,8 @@ public class MOoutput extends BaseWriter<Pathway> {
 		}
 		// globalSeed influences stochastic transitions and conflict solving strategy: probability
 		sb.append("parameter Integer seed=").append(seed).append(";").append(ENDL);
-		sb.append("parameter Integer placeLocalSeed=").append(placeLocalSeed).append(";").append(ENDL);
+		sb.append("parameter Integer placeLocalSeed=").append(localSeed).append(";").append(ENDL);
+		sb.append("parameter Integer transitionLocalSeed=").append(localSeed).append(";").append(ENDL);
 		sb.append(INDENT).append("inner ").append(PNlibSettings).append(" settings(");
 		sb.append("animateHazardFunc=false");
 		sb.append(", animateMarking=false");
@@ -311,6 +312,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 					attr.append("}, P={");
 					attr.append(st.getProbabilities().stream().map(String::valueOf).collect(Collectors.joining(", ")));
 					attr.append("}");
+					attr.append(", localSeed=transitionLocalSeed");
 				} else if (biologicalElement.equals(Elementdeclerations.discreteTransition)) {
 					final DiscreteTransition dt = (DiscreteTransition) bna;
 					final String delay = replaceAll(dt.getDelay(), dt.getParameters(), dt.getName(), false);
@@ -780,7 +782,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 		return builder.toString();
 	}
 
-	public static int generatePlaceLocalSeed(final int seed) {
+	public static int generateLocalSeed(final int seed) {
 		return (int) ((((long) Integer.MAX_VALUE) - seed) % 45849);
 	}
 }
