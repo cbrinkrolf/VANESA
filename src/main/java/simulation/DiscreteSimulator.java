@@ -986,6 +986,15 @@ public class DiscreteSimulator extends Simulator {
 			to = marking;
 			this.transitions = transitions;
 		}
+
+		public boolean fires(final Transition transition) {
+			for (final TransitionDetails transitionDetails : transitions) {
+				if (transitionDetails.transition == transition) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 
 	public static class PlaceDetails {
@@ -1128,14 +1137,20 @@ public class DiscreteSimulator extends Simulator {
 		public final TransitionDetails transition;
 		public final BigDecimal delay;
 		public final Map<PNArc, BigInteger> fixedArcWeights = new HashMap<>();
+		public final boolean retained;
 
 		public Concession(final TransitionDetails transition, final BigDecimal delay) {
+			this(transition, delay, false);
+		}
+
+		public Concession(final TransitionDetails transition, final BigDecimal delay, final boolean retained) {
 			this.transition = transition;
 			this.delay = delay;
+			this.retained = retained;
 		}
 
 		public Concession retain(final BigDecimal elapsedDelay) {
-			final var result = new Concession(transition, delay.subtract(elapsedDelay));
+			final var result = new Concession(transition, delay.subtract(elapsedDelay), true);
 			result.fixedArcWeights.putAll(fixedArcWeights);
 			return result;
 		}

@@ -19,7 +19,7 @@ public class SimulationWindow extends JFrame {
 		this.pathway = pathway;
 		tabbedPanel.addTab("Discrete [built-in]", null, discreteSimulationPanel,
 				"Simulate discrete Petri nets using the built-in simulator");
-		tabbedPanel.addTab("OpenModelica", null, new JPanel(), "Simulate using OpenModelica and the PNlib");
+		// tabbedPanel.addTab("OpenModelica", null, new JPanel(), "Simulate using OpenModelica and the PNlib");
 
 		tabbedPanel.addChangeListener(e -> {
 			if (e.getSource() instanceof JTabbedPane) {

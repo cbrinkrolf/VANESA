@@ -197,7 +197,7 @@ public class MainMenuBar extends JMenuBar {
 		final JMenu petriNetMenu = new JMenu("Petri Net");
 		editPNelements = createMenuItem("Edit PN-Elements", MenuActionCommands.editElements);
 		simulate = createMenuItem("Simulate", MenuActionCommands.simulate);
-		simulateDiscrete = createMenuItem("Simulate Discrete (Experimental)", MenuActionCommands.simulateDiscrete);
+		simulateDiscrete = createMenuItem("Simulate Discrete [built-in]", MenuActionCommands.simulateDiscrete);
 		modelicaResult = createMenuItem("Load Simulation Result", MenuActionCommands.loadModResult);
 		testPInvariant = createMenuItem("Test P Invariant", MenuActionCommands.openTestP);
 		testTInvariant = createMenuItem("Test T Invariant", MenuActionCommands.openTestT);
@@ -206,9 +206,7 @@ public class MainMenuBar extends JMenuBar {
 		createDoc = createMenuItem("Create Documentation", MenuActionCommands.createDoc);
 		petriNetMenu.add(editPNelements);
 		petriNetMenu.add(simulate);
-		if (Workspace.getCurrentSettings().isDeveloperMode()) {
-			petriNetMenu.add(simulateDiscrete);
-		}
+		petriNetMenu.add(simulateDiscrete);
 		petriNetMenu.add(modelicaResult);
 		petriNetMenu.add(testPInvariant);
 		petriNetMenu.add(testTInvariant);

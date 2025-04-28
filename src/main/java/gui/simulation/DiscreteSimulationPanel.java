@@ -298,9 +298,8 @@ public class DiscreteSimulationPanel extends JPanel {
 				final var nextMarking = markingTimeline[i + 1];
 				final var firingEdge = simulator.getFiringEdge(marking, nextMarking);
 				for (final var transition : simulator.getTransitions()) {
-					final boolean firing = Arrays.stream(firingEdge.transitions).anyMatch(
-							t -> t.transition == transition);
-					simResult.addValue(transition, SimulationResultSeriesKey.FIRE, firing ? 1.0 : 0.0);
+					simResult.addValue(transition, SimulationResultSeriesKey.FIRE,
+							firingEdge.fires(transition) ? 1.0 : 0.0);
 				}
 			} else {
 				for (final var transition : simulator.getTransitions()) {
@@ -313,11 +312,8 @@ public class DiscreteSimulationPanel extends JPanel {
 				final var firingEdge = simulator.getFiringEdge(previousMarking, marking);
 				final Set<DiscreteSimulator.Concession> firedConcessions = new HashSet<>();
 				for (final var concession : previousMarking.concessionsOrderedByDelay) {
-					for (final var transition : firingEdge.transitions) {
-						if (transition == concession.transition) {
-							firedConcessions.add(concession);
-							break;
-						}
+					if (firingEdge.fires(concession.transition.transition)) {
+						firedConcessions.add(concession);
 					}
 				}
 				for (final var arc : simulator.getArcs()) {
