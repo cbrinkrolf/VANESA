@@ -822,12 +822,25 @@ public class DiscreteSimulator extends Simulator {
 		return transitions.keySet();
 	}
 
+	public Collection<PNArc> getArcs() {
+		return arcPlaces.keySet();
+	}
+
 	public Collection<Marking> getMarkings() {
 		return markings;
 	}
 
 	public Marking getStartMarking() {
 		return markings.get(0);
+	}
+
+	public FiringEdge getFiringEdge(final Marking from, final Marking to) {
+		for (final var edge : outEdges.get(from)) {
+			if (inEdges.get(to).contains(edge)) {
+				return edge;
+			}
+		}
+		return null;
 	}
 
 	public BigInteger getTokens(final Marking marking, final DiscretePlace place) {
