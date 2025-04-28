@@ -26,10 +26,7 @@ import graph.animations.RegulationTableModel;
 import gui.tables.MyTable;
 import io.SaveDialog;
 import net.miginfocom.swing.MigLayout;
-import petriNet.PlotsPanel;
-import petriNet.Series;
-import petriNet.SimulationResult;
-import petriNet.SimulationResultController;
+import petriNet.*;
 
 public class DetailedSimRes implements ActionListener {
     private final JFrame dialog;
@@ -102,7 +99,7 @@ public class DetailedSimRes implements ActionListener {
             if (!(bna instanceof Place) || bna.isLogical()) {
                 continue;
             }
-            Series series = simRes.get(bna, SimulationResultController.SIM_TOKEN);
+            Series series = simRes.get(bna, SimulationResultSeriesKey.PLACE_TOKEN);
             rows[i][0] = bna.getName();
             for (int j = 1; j <= rowsDim; j++) {
                 if (series != null && series.size() > j - 1) {

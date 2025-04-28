@@ -46,15 +46,16 @@ import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 import petriNet.SimulationResult;
 import petriNet.SimulationResultController;
+import petriNet.SimulationResultSeriesKey;
 import util.TripleHashMap;
 
-import static petriNet.SimulationResultController.SIM_TOKEN;
-import static petriNet.SimulationResultController.SIM_ACTUAL_FIRING_SPEED;
-import static petriNet.SimulationResultController.SIM_ACTIVE;
-import static petriNet.SimulationResultController.SIM_FIRE;
-import static petriNet.SimulationResultController.SIM_DELAY;
-import static petriNet.SimulationResultController.SIM_SUM_OF_TOKEN;
-import static petriNet.SimulationResultController.SIM_ACTUAL_TOKEN_FLOW;
+import static petriNet.SimulationResultSeriesKey.PLACE_TOKEN;
+import static petriNet.SimulationResultSeriesKey.ACTUAL_FIRING_SPEED;
+import static petriNet.SimulationResultSeriesKey.ACTIVE;
+import static petriNet.SimulationResultSeriesKey.FIRE;
+import static petriNet.SimulationResultSeriesKey.DELAY;
+import static petriNet.SimulationResultSeriesKey.ARC_SUM_OF_TOKEN;
+import static petriNet.SimulationResultSeriesKey.ARC_ACTUAL_TOKEN_FLOW;
 
 public class SimulationResultsPlot extends JPanel implements ChangeListener {
 	private static final BasicStroke SERIES_STROKE = new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER,
@@ -88,7 +89,7 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 	private final XYSeriesCollection dataset = new XYSeriesCollection();
 	private final XYSeriesCollection dataset2 = new XYSeriesCollection();
 
-	private final TripleHashMap<GraphElementAbstract, Integer, String, Integer> series2idx = new TripleHashMap<>();
+	private final TripleHashMap<GraphElementAbstract, SimulationResultSeriesKey, String, Integer> series2idx = new TripleHashMap<>();
 	private final HashMap<Integer, SimulationResult> idx2simR1 = new HashMap<>();
 	private final HashMap<Integer, SimulationResult> idx2simR2 = new HashMap<>();
 
@@ -164,8 +165,8 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 				if (simRes.getTime().size() > 0) {
 					for (final BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
 						if (node instanceof Transition) {
-							if (simRes.contains(node) && simRes.get(node, SIM_ACTIVE) != null) {
-								final Double ref = simRes.get(node, SIM_ACTIVE).get(slider.getValue());
+							if (simRes.contains(node) && simRes.get(node, ACTIVE) != null) {
+								final Double ref = simRes.get(node, ACTIVE).get(slider.getValue());
 								((Transition) node).setSimulationActive(ref != null && ref == 1);
 							}
 						}
@@ -213,11 +214,11 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 			if (bea instanceof PNArc) {
 				secondAxis = true;
 				final PNArc edge = (PNArc) bea;
-				final List<SimulationResult> listActive = simResController.getAllActiveWithData(edge, SIM_SUM_OF_TOKEN);
+				final List<SimulationResult> listActive = simResController.getAllActiveWithData(edge, ARC_SUM_OF_TOKEN);
 				for (int i = 0; i < listActive.size(); i++) {
 					final SimulationResult result = listActive.get(i);
-					final int idxFlow = series2idx.get(edge, SIM_ACTUAL_TOKEN_FLOW, result.getId());
-					final int idxSum = series2idx.get(edge, SIM_SUM_OF_TOKEN, result.getId());
+					final int idxFlow = series2idx.get(edge, ARC_ACTUAL_TOKEN_FLOW, result.getId());
+					final int idxSum = series2idx.get(edge, ARC_SUM_OF_TOKEN, result.getId());
 					renderer.setSeriesStroke(idxFlow, SERIES_STROKE);
 					final Color c = Color.getHSBColor(i / (float) listActive.size(), 1, 1);
 					renderer.setSeriesPaint(idxFlow, c);
@@ -242,8 +243,8 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 			for (final PNArc arc : validSet) {
 				secondAxis = true;
 				final SimulationResult result = simResController.getLastActive();
-				int idxFlow = series2idx.get(arc, SIM_ACTUAL_TOKEN_FLOW, result.getId());
-				int idxSum = series2idx.get(arc, SIM_SUM_OF_TOKEN, result.getId());
+				int idxFlow = series2idx.get(arc, ARC_ACTUAL_TOKEN_FLOW, result.getId());
+				int idxSum = series2idx.get(arc, ARC_SUM_OF_TOKEN, result.getId());
 				renderer.setSeriesStroke(idxFlow, SERIES_STROKE);
 				final Color c = Color.getHSBColor(i / (float) validSet.size(), 1, 1);
 				renderer.setSeriesPaint(idxFlow, c);
@@ -260,23 +261,23 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 			if (bna instanceof PNNode) {
 				List<SimulationResult> listActive;
 				if (bna instanceof Place) {
-					listActive = simResController.getAllActiveWithData(bna, SIM_TOKEN);
+					listActive = simResController.getAllActiveWithData(bna, PLACE_TOKEN);
 				} else if (bna instanceof ContinuousTransition) {
-					listActive = simResController.getAllActiveWithData(bna, SIM_ACTUAL_FIRING_SPEED);
+					listActive = simResController.getAllActiveWithData(bna, ACTUAL_FIRING_SPEED);
 					legendY = "Speed";
 				} else {
-					listActive = simResController.getAllActiveWithData(bna, SIM_DELAY);
+					listActive = simResController.getAllActiveWithData(bna, DELAY);
 					legendY = "Delay";
 				}
 				for (int i = 0; i < listActive.size(); i++) {
 					final SimulationResult result = listActive.get(i);
 					final int idx;
 					if (bna instanceof Place) {
-						idx = series2idx.get(bna, SIM_TOKEN, result.getId());
+						idx = series2idx.get(bna, PLACE_TOKEN, result.getId());
 					} else if (bna instanceof ContinuousTransition) {
-						idx = series2idx.get(bna, SIM_ACTUAL_FIRING_SPEED, result.getId());
+						idx = series2idx.get(bna, ACTUAL_FIRING_SPEED, result.getId());
 					} else {
-						idx = series2idx.get(bna, SIM_DELAY, result.getId());
+						idx = series2idx.get(bna, DELAY, result.getId());
 					}
 					renderer.setSeriesVisible(idx, true);
 					final Color c = Color.getHSBColor(i / (float) listActive.size(), 1, 1);
@@ -323,27 +324,27 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 				bna = resolveHidden(bna);
 				if (bna instanceof Place) {
 					final Place place = (Place) bna;
-					if (series2idx.containsKey(place, SIM_TOKEN) && series2idx.get(place, SIM_TOKEN, simRes.getId())
+					if (series2idx.containsKey(place, PLACE_TOKEN) && series2idx.get(place, PLACE_TOKEN, simRes.getId())
 							!= null) {
-						renderer.setSeriesStroke(series2idx.get(place, SIM_TOKEN, simRes.getId()), new BasicStroke(1));
-						renderer.setSeriesPaint(series2idx.get(place, SIM_TOKEN, simRes.getId()), place.getPlotColor());
-						renderer.setSeriesVisible(series2idx.get(place, SIM_TOKEN, simRes.getId()), true);
+						renderer.setSeriesStroke(series2idx.get(place, PLACE_TOKEN, simRes.getId()), new BasicStroke(1));
+						renderer.setSeriesPaint(series2idx.get(place, PLACE_TOKEN, simRes.getId()), place.getPlotColor());
+						renderer.setSeriesVisible(series2idx.get(place, PLACE_TOKEN, simRes.getId()), true);
 					}
 				} else if (bna instanceof Transition && onlyT && onlyDiscreteT) {
 					legendY = "Delay";
 					final Transition transition = (Transition) bna;
-					if (series2idx.containsKey(transition, SIM_DELAY)) {
-						renderer.setSeriesPaint(series2idx.get(transition, SIM_DELAY, simRes.getId()),
+					if (series2idx.containsKey(transition, DELAY)) {
+						renderer.setSeriesPaint(series2idx.get(transition, DELAY, simRes.getId()),
 								transition.getPlotColor());
-						renderer.setSeriesVisible(series2idx.get(transition, SIM_DELAY, simRes.getId()), true);
+						renderer.setSeriesVisible(series2idx.get(transition, DELAY, simRes.getId()), true);
 					}
 				} else if (bna instanceof Transition && onlyT) {
 					legendY = "Speed";
 					final Transition transition = (Transition) bna;
-					if (series2idx.containsKey(transition, SIM_ACTUAL_FIRING_SPEED)) {
-						renderer.setSeriesPaint(series2idx.get(transition, SIM_ACTUAL_FIRING_SPEED, simRes.getId()),
+					if (series2idx.containsKey(transition, ACTUAL_FIRING_SPEED)) {
+						renderer.setSeriesPaint(series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId()),
 								transition.getPlotColor());
-						renderer.setSeriesVisible(series2idx.get(transition, SIM_ACTUAL_FIRING_SPEED, simRes.getId()),
+						renderer.setSeriesVisible(series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId()),
 								true);
 					}
 				}
@@ -429,17 +430,17 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 				// System.out.println(series.getItemCount());
 				if (bna instanceof Place && !bna.isLogical()) {
 					// System.out.println(simRes.contains(place, TOKEN));
-					if (simRes.contains(bna, SIM_TOKEN) && simRes.get(bna, SIM_TOKEN).size() > 0) {
+					if (simRes.contains(bna, PLACE_TOKEN) && simRes.get(bna, PLACE_TOKEN).size() > 0) {
 						// System.out.println(place + " " + TOKEN + " " + simRes.getId());
 						// System.out.println(series2idx.get(place, TOKEN, simRes.getId()));
-						seriesId = series2idx.get(bna, SIM_TOKEN, simRes.getId());
+						seriesId = series2idx.get(bna, PLACE_TOKEN, simRes.getId());
 						XYSeries series = this.seriesListR1.get(seriesId);
-						int stop = Math.min(simRes.get(bna, SIM_TOKEN).size(), time.size());
+						int stop = Math.min(simRes.get(bna, PLACE_TOKEN).size(), time.size());
 						int steps = stop - series.getItemCount();
 						if (steps > 0) {
 							for (int i = series.getItemCount(); i < stop; i++) {
 								// if (simRes.get(place, TOKEN).size() > i) {
-								Double value = simRes.get(bna, SIM_TOKEN).get(i);
+								Double value = simRes.get(bna, PLACE_TOKEN).get(i);
 								// } else {
 								// value = 0.0;
 								// }
@@ -453,15 +454,15 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 						}
 					}
 				} else if (bna instanceof ContinuousTransition && !bna.isLogical()) {
-					if (simRes.contains(bna, SIM_ACTUAL_FIRING_SPEED) && simRes.get(bna, SIM_ACTUAL_FIRING_SPEED).size()
+					if (simRes.contains(bna, ACTUAL_FIRING_SPEED) && simRes.get(bna, ACTUAL_FIRING_SPEED).size()
 							> 0) {
-						seriesId = series2idx.get(bna, SIM_ACTUAL_FIRING_SPEED, simRes.getId());
+						seriesId = series2idx.get(bna, ACTUAL_FIRING_SPEED, simRes.getId());
 						XYSeries series = this.seriesListR1.get(seriesId);
-						int stop = Math.min(simRes.get(bna, SIM_ACTUAL_FIRING_SPEED).size(), time.size());
+						int stop = Math.min(simRes.get(bna, ACTUAL_FIRING_SPEED).size(), time.size());
 						int steps = stop - series.getItemCount();
 						if (steps > 0) {
 							for (int i = series.getItemCount(); i < stop; i++) {
-								Double value = simRes.get(bna, SIM_ACTUAL_FIRING_SPEED).get(i);
+								Double value = simRes.get(bna, ACTUAL_FIRING_SPEED).get(i);
 								series.add(simRes.getTime().get(i), value, false);
 							}
 							if (fireSerieState && renderer.isSeriesVisible(seriesId) && !isIterating) {
@@ -472,14 +473,14 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 					}
 				} else if ((bna instanceof DiscreteTransition || bna instanceof StochasticTransition)
 						&& !bna.isLogical()) {
-					if (simRes.contains(bna, SIM_DELAY) && simRes.get(bna, SIM_DELAY).size() > 0) {
-						seriesId = series2idx.get(bna, SIM_DELAY, simRes.getId());
+					if (simRes.contains(bna, DELAY) && simRes.get(bna, DELAY).size() > 0) {
+						seriesId = series2idx.get(bna, DELAY, simRes.getId());
 						XYSeries series = this.seriesListR1.get(seriesId);
-						int stop = Math.min(simRes.get(bna, SIM_DELAY).size(), time.size());
+						int stop = Math.min(simRes.get(bna, DELAY).size(), time.size());
 						int steps = stop - series.getItemCount();
 						if (steps > 0) {
 							for (int i = series.getItemCount(); i < stop; i++) {
-								Double value = simRes.get(bna, SIM_DELAY).get(i);
+								Double value = simRes.get(bna, DELAY).get(i);
 								series.add(simRes.getTime().get(i), value, false);
 							}
 							if (fireSerieState && renderer.isSeriesVisible(seriesId) && !isIterating) {
@@ -500,17 +501,17 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 				if (bea instanceof PNArc) {
 					PNArc edge = (PNArc) bea;
 					if (simRes.contains(edge)) {
-						seriesId = series2idx.get(edge, SIM_ACTUAL_TOKEN_FLOW, simRes.getId());
+						seriesId = series2idx.get(edge, ARC_ACTUAL_TOKEN_FLOW, simRes.getId());
 						XYSeries series = this.seriesListR1.get(seriesId);
 						XYSeries series2 = this.seriesListR2.get(
-								series2idx.get(edge, SIM_SUM_OF_TOKEN, simRes.getId()));
-						if (simRes.contains(edge, SIM_ACTUAL_TOKEN_FLOW) && simRes.get(edge, SIM_ACTUAL_TOKEN_FLOW)
+								series2idx.get(edge, ARC_SUM_OF_TOKEN, simRes.getId()));
+						if (simRes.contains(edge, ARC_ACTUAL_TOKEN_FLOW) && simRes.get(edge, ARC_ACTUAL_TOKEN_FLOW)
 								.size() > 0) {
-							int stop = Math.min(simRes.get(edge, SIM_ACTUAL_TOKEN_FLOW).size(), time.size());
+							int stop = Math.min(simRes.get(edge, ARC_ACTUAL_TOKEN_FLOW).size(), time.size());
 							int steps = stop - series.getItemCount();
 							if (steps > 0) {
 								for (int i = series.getItemCount(); i < stop; i++) {
-									Double value = simRes.get(edge, SIM_ACTUAL_TOKEN_FLOW).get(i);
+									Double value = simRes.get(edge, ARC_ACTUAL_TOKEN_FLOW).get(i);
 									series.add(simRes.getTime().get(i), value, false);
 								}
 								if (fireSerieState && renderer.isSeriesVisible(seriesId) && !isIterating) {
@@ -520,13 +521,13 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 							}
 						}
 
-						if (simRes.contains(edge, SIM_SUM_OF_TOKEN) && simRes.get(edge, SIM_SUM_OF_TOKEN).size() > 0) {
-							seriesId = series2idx.get(edge, SIM_SUM_OF_TOKEN, simRes.getId());
-							int stop = Math.min(simRes.get(edge, SIM_SUM_OF_TOKEN).size(), time.size());
+						if (simRes.contains(edge, ARC_SUM_OF_TOKEN) && simRes.get(edge, ARC_SUM_OF_TOKEN).size() > 0) {
+							seriesId = series2idx.get(edge, ARC_SUM_OF_TOKEN, simRes.getId());
+							int stop = Math.min(simRes.get(edge, ARC_SUM_OF_TOKEN).size(), time.size());
 							int steps = stop - series2.getItemCount();
 							if (steps > 0) {
 								for (int i = series2.getItemCount(); i < stop; i++) {
-									Double value = simRes.get(edge, SIM_SUM_OF_TOKEN).get(i);
+									Double value = simRes.get(edge, ARC_SUM_OF_TOKEN).get(i);
 									series2.add(simRes.getTime().get(i), value, false);
 								}
 								if (fireSerieState && renderer2.isSeriesVisible(seriesId) && !isIterating) {
@@ -629,15 +630,15 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 						bna = resolveHidden(bna);
 						if (simRes.contains(bna) && slider.getValue() >= 0) {
 							if (bna instanceof Place) {
-								((Place) bna).setToken(simRes.get(bna, SIM_TOKEN).get(slider.getValue()));
+								((Place) bna).setToken(simRes.get(bna, PLACE_TOKEN).get(slider.getValue()));
 								MainWindow.getInstance().redrawTokens();
 							} else if (bna instanceof Transition) {
 								Transition t = (Transition) bna;
-								if (simRes.get(t, SIM_ACTIVE) != null) {
-									t.setSimulationActive(simRes.get(t, SIM_ACTIVE).get(slider.getValue()) == 1);
+								if (simRes.get(t, ACTIVE) != null) {
+									t.setSimulationActive(simRes.get(t, ACTIVE).get(slider.getValue()) == 1);
 								}
-								if (simRes.get(t, SIM_FIRE) != null) {
-									t.setSimulationFire(simRes.get(t, SIM_FIRE).get(slider.getValue()) == 1);
+								if (simRes.get(t, FIRE) != null) {
+									t.setSimulationFire(simRes.get(t, FIRE).get(slider.getValue()) == 1);
 								}
 							}
 						}
@@ -701,10 +702,10 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 				BiologicalNodeAbstract graphElement = vState.getPicked().iterator().next();
 				graphElement = resolveReference(graphElement);
 				final BiologicalNodeAbstract bna = hiddenPN ? resolveHidden(graphElement) : graphElement;
-				if (bna instanceof Place && simResController.getAllActiveWithData(bna, SIM_TOKEN).size() <= 1) {
+				if (bna instanceof Place && simResController.getAllActiveWithData(bna, PLACE_TOKEN).size() <= 1) {
 					return labelsR1.get(seriesIdx);
 				}
-				if (bna instanceof Transition && simResController.getAllActiveWithData(bna, SIM_ACTUAL_FIRING_SPEED)
+				if (bna instanceof Transition && simResController.getAllActiveWithData(bna, ACTUAL_FIRING_SPEED)
 						.size() <= 1) {
 					return labelsR1.get(seriesIdx);
 				}
@@ -721,15 +722,15 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 				BiologicalNodeAbstract graphElement = vState.getPicked().iterator().next();
 				graphElement = resolveReference(graphElement);
 				final BiologicalNodeAbstract bna = hiddenPN ? resolveHidden(graphElement) : graphElement;
-				if (bna instanceof Place && simResController.getAllActiveWithData(bna, SIM_TOKEN).size() <= 1) {
+				if (bna instanceof Place && simResController.getAllActiveWithData(bna, PLACE_TOKEN).size() <= 1) {
 					return graphElement.getName();
 				}
 				if (bna instanceof ContinuousTransition && simResController.getAllActiveWithData(bna,
-						SIM_ACTUAL_FIRING_SPEED).size() <= 1) {
+						ACTUAL_FIRING_SPEED).size() <= 1) {
 					return graphElement.getName();
 				}
 				if ((bna instanceof DiscreteTransition || bna instanceof StochasticTransition)
-						&& simResController.getAllActiveWithData(bna, SIM_DELAY).size() <= 1) {
+						&& simResController.getAllActiveWithData(bna, DELAY).size() <= 1) {
 					return graphElement.getName();
 				}
 				return idx2simR1.get(seriesIdx).getName();
@@ -741,7 +742,7 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 							pw.getTransformationInformation().getBnToPnMapping().get(bea.getFrom()),
 							pw.getTransformationInformation().getBnToPnMapping().get(bea.getTo()));
 				}
-				if (simResController.getAllActiveWithData(bea, SIM_SUM_OF_TOKEN).size() <= 1) {
+				if (simResController.getAllActiveWithData(bea, ARC_SUM_OF_TOKEN).size() <= 1) {
 					return labelsR1.get(seriesIdx);
 				}
 				return idx2simR1.get(seriesIdx).getName() + "(" + labelsR1.get(seriesIdx) + ")";
@@ -762,7 +763,7 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 							pw.getTransformationInformation().getBnToPnMapping().get(bea.getFrom()),
 							pw.getTransformationInformation().getBnToPnMapping().get(bea.getTo()));
 				}
-				if (simResController.getAllActiveWithData(bea, SIM_SUM_OF_TOKEN).size() <= 1) {
+				if (simResController.getAllActiveWithData(bea, ARC_SUM_OF_TOKEN).size() <= 1) {
 					return "Sum";
 				}
 				return idx2simR2.get(seriesIdx).getName() + "(Sum)";
@@ -881,7 +882,7 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 					places.add(place);
 					XYSeries s = new XYSeries(r1Count);
 
-					series2idx.put(place, SIM_TOKEN, simId, r1Count);
+					series2idx.put(place, PLACE_TOKEN, simId, r1Count);
 					idx2simR1.put(r1Count, simResController.get(simId));
 					seriesListR1.add(s);
 					dataset.addSeries(s);
@@ -911,9 +912,9 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 					// places.add(transition);
 					XYSeries s = new XYSeries(r1Count);
 					if (transition instanceof ContinuousTransition) {
-						series2idx.put(transition, SIM_ACTUAL_FIRING_SPEED, simId, r1Count);
+						series2idx.put(transition, ACTUAL_FIRING_SPEED, simId, r1Count);
 					} else {
-						series2idx.put(transition, SIM_DELAY, simId, r1Count);
+						series2idx.put(transition, DELAY, simId, r1Count);
 					}
 					idx2simR1.put(r1Count, simResController.get(simId));
 					// seriesList.add(new XYSeries(j));
@@ -955,7 +956,7 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 			if (bea instanceof PNArc) {
 				final PNArc edge = (PNArc) bea;
 				XYSeries s = new XYSeries(r1Count);
-				series2idx.put(edge, SIM_ACTUAL_TOKEN_FLOW, simId, r1Count);
+				series2idx.put(edge, ARC_ACTUAL_TOKEN_FLOW, simId, r1Count);
 				idx2simR1.put(r1Count, simResController.get(simId));
 				seriesListR1.add(s);
 				dataset.addSeries(s);
@@ -966,7 +967,7 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 				labelsR1.add("Flow");
 				r1Count++;
 				s = new XYSeries(r2Count);
-				series2idx.put(edge, SIM_SUM_OF_TOKEN, simId, seriesListR2.size());
+				series2idx.put(edge, ARC_SUM_OF_TOKEN, simId, seriesListR2.size());
 				idx2simR2.put(r2Count, simResController.get(simId));
 				renderer2.setSeriesPaint(seriesListR2.size(), Color.RED);
 				renderer2.setSeriesShapesVisible(seriesListR2.size(), false);

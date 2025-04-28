@@ -10,19 +10,6 @@ import graph.GraphInstance;
 import gui.MainWindow;
 
 public class SimulationResultController {
-	// for places
-	public static int SIM_TOKEN = 1;
-	// for transitions
-	public static int SIM_ACTUAL_FIRING_SPEED = 0;
-	public static int SIM_FIRE = 2;
-	public static int SIM_ACTIVE = 5;
-	public static int SIM_PUT_DELAY = 6;
-	public static int SIM_FIRE_TIME = 7;
-	public static int SIM_DELAY = 8;
-	// for edges
-	public static int SIM_SUM_OF_TOKEN = 3;
-	public static int SIM_ACTUAL_TOKEN_FLOW = 4;
-
 	/**
 	 * should be concurrent, otherwise it might lead to problems if a simulation is performed and simulation runs are
 	 * deleted in the sim menu. Then Ids get messed up.
@@ -84,7 +71,8 @@ public class SimulationResultController {
 		return list;
 	}
 
-	public List<SimulationResult> getAllActiveWithData(final GraphElementAbstract gea, final int simulationAttribute) {
+	public List<SimulationResult> getAllActiveWithData(final GraphElementAbstract gea,
+			final SimulationResultSeriesKey simulationAttribute) {
 		final List<SimulationResult> list = new ArrayList<>();
 		for (final String simId : simIds) {
 			final SimulationResult s = series.get(simId);

@@ -19,7 +19,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import io.BaseWriter;
 import petriNet.SimulationResult;
-import petriNet.SimulationResultController;
+import petriNet.SimulationResultSeriesKey;
 
 public class PNSimulationResultCSVWriter extends BaseWriter<SimulationResult> {
 	private final Pathway pw;
@@ -54,25 +54,25 @@ public class PNSimulationResultCSVWriter extends BaseWriter<SimulationResult> {
 			final List<String> row = new ArrayList<>();
 			row.add(String.valueOf(simRes.getTime().get(t)));
 			for (final Place place : places) {
-				addValueToRow(row, simRes, place, SimulationResultController.SIM_TOKEN, t);
+				addValueToRow(row, simRes, place, SimulationResultSeriesKey.PLACE_TOKEN, t);
 			}
 			for (final Transition transition : transitions) {
 				if (transition instanceof DiscreteTransition) {
-					addValueToRow(row, simRes, transition, SimulationResultController.SIM_ACTIVE, t);
-					addValueToRow(row, simRes, transition, SimulationResultController.SIM_FIRE, t);
-					addValueToRow(row, simRes, transition, SimulationResultController.SIM_DELAY, t);
+					addValueToRow(row, simRes, transition, SimulationResultSeriesKey.ACTIVE, t);
+					addValueToRow(row, simRes, transition, SimulationResultSeriesKey.FIRE, t);
+					addValueToRow(row, simRes, transition, SimulationResultSeriesKey.DELAY, t);
 				} else if (transition instanceof StochasticTransition) {
-					addValueToRow(row, simRes, transition, SimulationResultController.SIM_ACTIVE, t);
-					addValueToRow(row, simRes, transition, SimulationResultController.SIM_FIRE, t);
-					addValueToRow(row, simRes, transition, SimulationResultController.SIM_DELAY, t);
+					addValueToRow(row, simRes, transition, SimulationResultSeriesKey.ACTIVE, t);
+					addValueToRow(row, simRes, transition, SimulationResultSeriesKey.FIRE, t);
+					addValueToRow(row, simRes, transition, SimulationResultSeriesKey.DELAY, t);
 				} else if (transition instanceof ContinuousTransition) {
-					addValueToRow(row, simRes, transition, SimulationResultController.SIM_FIRE, t);
-					addValueToRow(row, simRes, transition, SimulationResultController.SIM_ACTUAL_FIRING_SPEED, t);
+					addValueToRow(row, simRes, transition, SimulationResultSeriesKey.FIRE, t);
+					addValueToRow(row, simRes, transition, SimulationResultSeriesKey.ACTUAL_FIRING_SPEED, t);
 				}
 			}
 			for (final BiologicalEdgeAbstract edge : edges) {
-				addValueToRow(row, simRes, edge, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, t);
-				addValueToRow(row, simRes, edge, SimulationResultController.SIM_SUM_OF_TOKEN, t);
+				addValueToRow(row, simRes, edge, SimulationResultSeriesKey.ARC_ACTUAL_TOKEN_FLOW, t);
+				addValueToRow(row, simRes, edge, SimulationResultSeriesKey.ARC_SUM_OF_TOKEN, t);
 			}
 			csvWriter.write(row.toArray(new String[0]));
 		}
@@ -107,7 +107,7 @@ public class PNSimulationResultCSVWriter extends BaseWriter<SimulationResult> {
 	}
 
 	private void addValueToRow(final List<String> row, final SimulationResult simRes, final GraphElementAbstract gea,
-			final int key, final int t) {
+			final SimulationResultSeriesKey key, final int t) {
 		if (simRes.contains(gea, key)) {
 			row.add(String.valueOf(simRes.get(gea, key).get(t)));
 		} else {

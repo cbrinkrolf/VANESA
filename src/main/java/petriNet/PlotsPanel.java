@@ -29,7 +29,7 @@ import org.knowm.xchart.internal.chartpart.Chart;
 import org.knowm.xchart.style.Styler;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 
-import static petriNet.SimulationResultController.SIM_TOKEN;
+import static petriNet.SimulationResultSeriesKey.PLACE_TOKEN;
 
 public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 	private static final long serialVersionUID = -3274771297573731270L;
@@ -68,9 +68,9 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 		int cols = simRes.getTime().size();
 		for (int j = 0; j < rows; j++) {
 			final Place place = places.get(labels.get(j));
-			if (simRes.contains(place, SIM_TOKEN) && simRes.get(place, SIM_TOKEN).size() > 0) {
-				seriesMin[j] = Collections.min(simRes.get(place, SIM_TOKEN).getAll());
-				seriesMax[j] = Collections.max(simRes.get(place, SIM_TOKEN).getAll());
+			if (simRes.contains(place, PLACE_TOKEN) && simRes.get(place, PLACE_TOKEN).size() > 0) {
+				seriesMin[j] = Collections.min(simRes.get(place, PLACE_TOKEN).getAll());
+				seriesMax[j] = Collections.max(simRes.get(place, PLACE_TOKEN).getAll());
 				min = Math.min(min, seriesMin[j]);
 				max = Math.max(max, seriesMax[j]);
 			}
@@ -86,9 +86,9 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 		for (int j = 0; j < rows; j++) {
 			final Place place = places.get(labels.get(j));
 			final NumberFormat format = place instanceof ContinuousPlace ? df : intf;
-			if (simRes.contains(place, SIM_TOKEN) && simRes.get(place, SIM_TOKEN).size() > 0) {
-				final String start = format.format(simRes.get(place, SIM_TOKEN).get(0));
-				final String end = format.format(simRes.get(place, SIM_TOKEN).get(simRes.size() - 1));
+			if (simRes.contains(place, PLACE_TOKEN) && simRes.get(place, PLACE_TOKEN).size() > 0) {
+				final String start = format.format(simRes.get(place, PLACE_TOKEN).get(0));
+				final String end = format.format(simRes.get(place, PLACE_TOKEN).get(simRes.size() - 1));
 				final XYChart chart = new XYChartBuilder().theme(Styler.ChartTheme.Matlab).width(320).height(200)
 						.xAxisTitle("Time step").yAxisTitle("Token").title(labels.get(j)).build();
 				chart.getStyler().setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Line);
@@ -99,7 +99,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 				final double[] yValues = new double[cols];
 				for (int i = 0; i < cols; i++) {
 					xValues[i] = simRes.getTime().get(i);
-					yValues[i] = simRes.get(place, SIM_TOKEN).get(i);
+					yValues[i] = simRes.get(place, PLACE_TOKEN).get(i);
 				}
 				final XYSeries series = chart.addSeries("series", xValues, yValues);
 				series.setLineColor(Color.RED);

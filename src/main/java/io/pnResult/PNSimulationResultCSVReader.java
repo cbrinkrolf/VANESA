@@ -21,7 +21,7 @@ import io.BaseReader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import petriNet.SimulationResult;
-import petriNet.SimulationResultController;
+import petriNet.SimulationResultSeriesKey;
 
 public class PNSimulationResultCSVReader extends BaseReader<SimulationResult> {
 	private final Logger logger = Logger.getRootLogger();
@@ -90,21 +90,21 @@ public class PNSimulationResultCSVReader extends BaseReader<SimulationResult> {
 			result.addTime(Double.parseDouble(row[timeColumn]));
 			for (final BiologicalNodeAbstract bna : usedBNAs) {
 				if (bna instanceof Place) {
-					addValueFromRow(row, result, bna, SimulationResultController.SIM_TOKEN, "", propertyColumnMap);
+					addValueFromRow(row, result, bna, SimulationResultSeriesKey.PLACE_TOKEN, "", propertyColumnMap);
 				} else if (bna instanceof Transition) {
-					addValueFromRow(row, result, bna, SimulationResultController.SIM_ACTIVE, "-active",
+					addValueFromRow(row, result, bna, SimulationResultSeriesKey.ACTIVE, "-active",
 							propertyColumnMap);
-					addValueFromRow(row, result, bna, SimulationResultController.SIM_FIRE, "-fire", propertyColumnMap);
-					addValueFromRow(row, result, bna, SimulationResultController.SIM_ACTUAL_FIRING_SPEED, "-speed",
+					addValueFromRow(row, result, bna, SimulationResultSeriesKey.FIRE, "-fire", propertyColumnMap);
+					addValueFromRow(row, result, bna, SimulationResultSeriesKey.ACTUAL_FIRING_SPEED, "-speed",
 							propertyColumnMap);
-					addValueFromRow(row, result, bna, SimulationResultController.SIM_DELAY, "-delay",
+					addValueFromRow(row, result, bna, SimulationResultSeriesKey.DELAY, "-delay",
 							propertyColumnMap);
 				}
 			}
 			for (final BiologicalEdgeAbstract bea : usedBEAs) {
-				addValueFromRow(row, result, bea, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, "-token",
+				addValueFromRow(row, result, bea, SimulationResultSeriesKey.ARC_ACTUAL_TOKEN_FLOW, "-token",
 						propertyColumnMap);
-				addValueFromRow(row, result, bea, SimulationResultController.SIM_SUM_OF_TOKEN, "-tokenSum",
+				addValueFromRow(row, result, bea, SimulationResultSeriesKey.ARC_SUM_OF_TOKEN, "-tokenSum",
 						propertyColumnMap);
 			}
 		}
@@ -112,7 +112,7 @@ public class PNSimulationResultCSVReader extends BaseReader<SimulationResult> {
 	}
 
 	private void addValueFromRow(final String[] row, final SimulationResult result, final BiologicalNodeAbstract bna,
-			final int key, final String suffix, final Map<String, Integer> propertyColumnMap) {
+			final SimulationResultSeriesKey key, final String suffix, final Map<String, Integer> propertyColumnMap) {
 		final String propertyName = bna.getName() + suffix;
 		final Integer column = propertyColumnMap.get(propertyName);
 		if (column != null) {
@@ -123,7 +123,7 @@ public class PNSimulationResultCSVReader extends BaseReader<SimulationResult> {
 	}
 
 	private void addValueFromRow(final String[] row, final SimulationResult result, final BiologicalEdgeAbstract bea,
-			final int key, final String suffix, final Map<String, Integer> propertyColumnMap) {
+			final SimulationResultSeriesKey key, final String suffix, final Map<String, Integer> propertyColumnMap) {
 		final String propertyName = bea.getFrom().getName() + '-' + bea.getTo().getName() + suffix;
 		final Integer column = propertyColumnMap.get(propertyName);
 		if (column != null) {

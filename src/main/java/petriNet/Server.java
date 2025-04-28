@@ -249,39 +249,39 @@ public class Server {
 	private void setData(final Map<String, Integer> name2index, final List<Object> values) {
 		for (PNArc e : edgesFlow) {
 			final Object o = values.get(name2index.get("der(" + bea2key.get(e) + ")"));
-			checkAndAddValue(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, o);
+			checkAndAddValue(e, SimulationResultSeriesKey.ARC_ACTUAL_TOKEN_FLOW, o);
 		}
 		for (final PNArc e : edgeSum) {
 			final Object o = values.get(name2index.get(bea2key.get(e)));
-			checkAndAddValue(e, SimulationResultController.SIM_SUM_OF_TOKEN, o);
+			checkAndAddValue(e, SimulationResultSeriesKey.ARC_SUM_OF_TOKEN, o);
 		}
 		for (final Place p : placeToken) {
 			final Object o = values.get(name2index.get("'" + p.getName() + "'.t"));
-			checkAndAddValue(p, SimulationResultController.SIM_TOKEN, o);
+			checkAndAddValue(p, SimulationResultSeriesKey.PLACE_TOKEN, o);
 		}
 		for (final Transition t : transitionActive) {
 			final Object o = values.get(name2index.get("'" + t.getName() + "'.active"));
-			checkAndAddValue(t, SimulationResultController.SIM_ACTIVE, o);
+			checkAndAddValue(t, SimulationResultSeriesKey.ACTIVE, o);
 		}
 		for (final Transition t : transitionFire) {
 			final Object o = values.get(name2index.get("'" + t.getName() + "'.fire"));
-			checkAndAddValue(t, SimulationResultController.SIM_FIRE, o);
+			checkAndAddValue(t, SimulationResultSeriesKey.FIRE, o);
 		}
 		for (final Transition t : transitionSpeed) {
 			final Object o = values.get(name2index.get("'" + t.getName() + "'.actualSpeed"));
-			checkAndAddValue(t, SimulationResultController.SIM_ACTUAL_FIRING_SPEED, o);
+			checkAndAddValue(t, SimulationResultSeriesKey.ACTUAL_FIRING_SPEED, o);
 		}
 		for (final Transition t : transitionDelay) {
 			final Object o = values.get(name2index.get("'" + t.getName() + "'.delay"));
-			checkAndAddValue(t, SimulationResultController.SIM_DELAY, o);
+			checkAndAddValue(t, SimulationResultSeriesKey.DELAY, o);
 		}
 		for (final Transition t : transitionPutDelay) {
 			final Object o = values.get(name2index.get("'" + t.getName() + "'.putDelay"));
-			checkAndAddValue(t, SimulationResultController.SIM_PUT_DELAY, o);
+			checkAndAddValue(t, SimulationResultSeriesKey.PUT_DELAY, o);
 		}
 		for (final Transition t : transitionFireTime) {
 			final Object o = values.get(name2index.get("'" + t.getName() + "'.fireTime"));
-			checkAndAddValue(t, SimulationResultController.SIM_FIRE_TIME, o);
+			checkAndAddValue(t, SimulationResultSeriesKey.FIRE_TIME, o);
 		}
 
 		long now = System.currentTimeMillis();
@@ -295,7 +295,8 @@ public class Server {
 		simResult.addTime((Double) values.get(name2index.get("time")));
 	}
 
-	private void checkAndAddValue(final GraphElementAbstract gea, final int type, final Object o) {
+	private void checkAndAddValue(final GraphElementAbstract gea, final SimulationResultSeriesKey type,
+			final Object o) {
 		// TODO: values should be stored in their original datatype. Especially long to
 		// double may cause issues for large values.
 		final double value;

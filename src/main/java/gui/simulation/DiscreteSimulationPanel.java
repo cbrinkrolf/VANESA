@@ -9,6 +9,7 @@ import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import petriNet.SimulationResult;
 import petriNet.SimulationResultController;
+import petriNet.SimulationResultSeriesKey;
 import simulation.DiscreteSimulator;
 import simulation.SimulationException;
 import simulation.Xorshift128Plus;
@@ -272,6 +273,7 @@ public class DiscreteSimulationPanel extends JPanel {
 			}
 			simResId += "(" + i + ")";
 		}
+		// TODO: SIM_DELAY, SIM_ACTUAL_TOKEN_FLOW
 		final var simResult = simResultController.get(simResId);
 		simResult.setName(simResId);
 		simResult.getLogMessage().append(logTextArea.getText());
@@ -279,30 +281,33 @@ public class DiscreteSimulationPanel extends JPanel {
 		for (int i = 0; i < markingTimeline.length; i++) {
 			final var marking = markingTimeline[i];
 			if (i > 0) {
-				simResult.addTime(marking.time.doubleValue());
-				for (final var place : simulator.getPlaces()) {
-					duplicateLastSeriesPoint(simResult, place, SimulationResultController.SIM_TOKEN);
-				}
-				for (final var transition : simulator.getTransitions()) {
-					duplicateLastSeriesPoint(simResult, transition, SimulationResultController.SIM_ACTIVE);
-					duplicateLastSeriesPoint(simResult, transition, SimulationResultController.SIM_FIRE);
-					duplicateLastSeriesPoint(simResult, transition, SimulationResultController.SIM_DELAY);
-				}
-				for (final var arc : simulator.getArcs()) {
-					duplicateLastSeriesPoint(simResult, arc, SimulationResultController.SIM_SUM_OF_TOKEN);
-					duplicateLastSeriesPoint(simResult, arc, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW);
-				}
+				duplicateListSeries(simulator, simResult, marking.time);
 			}
 			simResult.addTime(marking.time.doubleValue());
 			for (final var place : simulator.getPlaces()) {
-				simResult.addValue(place, SimulationResultController.SIM_TOKEN,
+				simResult.addValue(place, SimulationResultSeriesKey.PLACE_TOKEN,
 						simulator.getTokens(marking, place).doubleValue());
 			}
 			for (final var transition : simulator.getTransitions()) {
 				final boolean isTransitionActive = Arrays.stream(marking.concessionsOrderedByDelay).anyMatch(
 						c -> c.transition.transition == transition);
-				simResult.addValue(transition, SimulationResultController.SIM_ACTIVE, isTransitionActive ? 1.0 : 0.0);
+				simResult.addValue(transition, SimulationResultSeriesKey.ACTIVE, isTransitionActive ? 1.0 : 0.0);
 			}
+			// Look forward what transitions will fire and update the transition's FIRE data
+			if (i < markingTimeline.length - 1) {
+				final var nextMarking = markingTimeline[i + 1];
+				final var firingEdge = simulator.getFiringEdge(marking, nextMarking);
+				for (final var transition : simulator.getTransitions()) {
+					final boolean firing = Arrays.stream(firingEdge.transitions).anyMatch(
+							t -> t.transition == transition);
+					simResult.addValue(transition, SimulationResultSeriesKey.FIRE, firing ? 1.0 : 0.0);
+				}
+			} else {
+				for (final var transition : simulator.getTransitions()) {
+					simResult.addValue(transition, SimulationResultSeriesKey.FIRE, 0.0);
+				}
+			}
+			// Look backward what transitions fired and update the arc's SUM_OF_TOKEN data
 			if (i > 0) {
 				final var previousMarking = markingTimeline[i - 1];
 				final var firingEdge = simulator.getFiringEdge(previousMarking, marking);
@@ -316,7 +321,7 @@ public class DiscreteSimulationPanel extends JPanel {
 					}
 				}
 				for (final var arc : simulator.getArcs()) {
-					final var series = simResult.get(arc, SimulationResultController.SIM_SUM_OF_TOKEN);
+					final var series = simResult.get(arc, SimulationResultSeriesKey.ARC_SUM_OF_TOKEN);
 					BigInteger tokens = series == null || series.size() == 0 ? BigInteger.ZERO : BigInteger.valueOf(
 							series.get(series.size() - 1).longValue());
 					for (final var concession : firedConcessions) {
@@ -326,39 +331,44 @@ public class DiscreteSimulationPanel extends JPanel {
 							break;
 						}
 					}
-					simResult.addValue(arc, SimulationResultController.SIM_SUM_OF_TOKEN, tokens.doubleValue());
+					simResult.addValue(arc, SimulationResultSeriesKey.ARC_SUM_OF_TOKEN, tokens.doubleValue());
 				}
 			} else {
 				for (final var arc : simulator.getArcs()) {
-					final var series = simResult.get(arc, SimulationResultController.SIM_SUM_OF_TOKEN);
+					final var series = simResult.get(arc, SimulationResultSeriesKey.ARC_SUM_OF_TOKEN);
 					final BigInteger tokens =
 							series == null || series.size() == 0 ? BigInteger.ZERO : BigInteger.valueOf(
 									series.get(series.size() - 1).longValue());
-					simResult.addValue(arc, SimulationResultController.SIM_SUM_OF_TOKEN, tokens.doubleValue());
+					simResult.addValue(arc, SimulationResultSeriesKey.ARC_SUM_OF_TOKEN, tokens.doubleValue());
 				}
 			}
 		}
 		// If the last marking is before the user defined end time, we add a last time-point at the end time
 		final var lastMarking = markingTimeline[markingTimeline.length - 1];
 		if (lastMarking.time.compareTo(endTime) < 0) {
-			simResult.addTime(endTime.doubleValue());
-			for (final var place : simulator.getPlaces()) {
-				duplicateLastSeriesPoint(simResult, place, SimulationResultController.SIM_TOKEN);
-			}
-			for (final var transition : simulator.getTransitions()) {
-				duplicateLastSeriesPoint(simResult, transition, SimulationResultController.SIM_ACTIVE);
-				duplicateLastSeriesPoint(simResult, transition, SimulationResultController.SIM_FIRE);
-				duplicateLastSeriesPoint(simResult, transition, SimulationResultController.SIM_DELAY);
-			}
-			for (final var arc : simulator.getArcs()) {
-				duplicateLastSeriesPoint(simResult, arc, SimulationResultController.SIM_SUM_OF_TOKEN);
-				duplicateLastSeriesPoint(simResult, arc, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW);
-			}
+			duplicateListSeries(simulator, simResult, endTime);
+		}
+	}
+
+	private static void duplicateListSeries(final DiscreteSimulator simulator, final SimulationResult simResult,
+			final BigDecimal time) {
+		simResult.addTime(time.doubleValue());
+		for (final var place : simulator.getPlaces()) {
+			duplicateLastSeriesPoint(simResult, place, SimulationResultSeriesKey.PLACE_TOKEN);
+		}
+		for (final var transition : simulator.getTransitions()) {
+			duplicateLastSeriesPoint(simResult, transition, SimulationResultSeriesKey.ACTIVE);
+			duplicateLastSeriesPoint(simResult, transition, SimulationResultSeriesKey.FIRE);
+			duplicateLastSeriesPoint(simResult, transition, SimulationResultSeriesKey.DELAY);
+		}
+		for (final var arc : simulator.getArcs()) {
+			duplicateLastSeriesPoint(simResult, arc, SimulationResultSeriesKey.ARC_SUM_OF_TOKEN);
+			duplicateLastSeriesPoint(simResult, arc, SimulationResultSeriesKey.ARC_ACTUAL_TOKEN_FLOW);
 		}
 	}
 
 	private static void duplicateLastSeriesPoint(final SimulationResult simResult, final GraphElementAbstract gea,
-			final int type) {
+			final SimulationResultSeriesKey type) {
 		final var series = simResult.get(gea, type);
 		if (series != null && series.size() > 0) {
 			series.add(series.get(series.size() - 1));
