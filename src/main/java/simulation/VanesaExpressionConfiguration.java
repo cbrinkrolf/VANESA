@@ -9,7 +9,6 @@ import com.ezylang.evalex.data.EvaluationValue;
 import com.ezylang.evalex.functions.AbstractFunction;
 import com.ezylang.evalex.functions.FunctionParameter;
 import com.ezylang.evalex.functions.basic.*;
-import com.ezylang.evalex.functions.string.*;
 import com.ezylang.evalex.functions.trigonometric.*;
 import com.ezylang.evalex.parser.Token;
 
@@ -49,15 +48,19 @@ public class VanesaExpressionConfiguration {
 				Map.entry("SEC", new SecFunction()), Map.entry("SECH", new SecHFunction()),
 				Map.entry("SECR", new SecRFunction()), Map.entry("TAN", new TanFunction()),
 				Map.entry("TANH", new TanHFunction()), Map.entry("TANR", new TanRFunction()),
-				Map.entry("STR_CONTAINS", new StringContains()),
-				Map.entry("STR_ENDS_WITH", new StringEndsWithFunction()),
-				Map.entry("STR_FORMAT", new StringFormatFunction()), Map.entry("STR_LEFT", new StringLeftFunction()),
-				Map.entry("STR_LENGTH", new StringLengthFunction()), Map.entry("STR_LOWER", new StringLowerFunction()),
-				Map.entry("STR_MATCHES", new StringMatchesFunction()),
-				Map.entry("STR_RIGHT", new StringRightFunction()),
-				Map.entry("STR_STARTS_WITH", new StringStartsWithFunction()),
-				Map.entry("STR_SUBSTRING", new StringSubstringFunction()),
-				Map.entry("STR_TRIM", new StringTrimFunction()), Map.entry("STR_UPPER", new StringUpperFunction()),
+				// Disabled string functions
+				// Map.entry("STR_CONTAINS", new StringContains()),
+				// Map.entry("STR_ENDS_WITH", new StringEndsWithFunction()),
+				// Map.entry("STR_FORMAT", new StringFormatFunction()),
+				// Map.entry("STR_LEFT", new StringLeftFunction()),
+				// Map.entry("STR_LENGTH", new StringLengthFunction()),
+				// Map.entry("STR_LOWER", new StringLowerFunction()),
+				// Map.entry("STR_MATCHES", new StringMatchesFunction()),
+				// Map.entry("STR_RIGHT", new StringRightFunction()),
+				// Map.entry("STR_STARTS_WITH", new StringStartsWithFunction()),
+				// Map.entry("STR_SUBSTRING", new StringSubstringFunction()),
+				// Map.entry("STR_TRIM", new StringTrimFunction()),
+				// Map.entry("STR_UPPER", new StringUpperFunction()),
 				// Disabled datetime functions
 				// Map.entry("DT_DATE_NEW", new DateTimeNewFunction()),
 				// Map.entry("DT_DATE_PARSE", new DateTimeParseFunction()),
