@@ -36,7 +36,7 @@ public class Xorshift128Plus implements RandomGenerator {
 	@Override
 	public long nextLong() {
 		long x = state0;
-		long y = state1;
+		final long y = state1;
 		state0 = y;
 		x ^= x << 23;
 		x ^= x >>> 17;

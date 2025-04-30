@@ -150,6 +150,7 @@ class DiscreteSimulatorTest {
 	void pnlibNoInputConflict() throws SimulationException {
 		final var p1 = new DiscretePlace("p1", "p1", null);
 		p1.setTokenMax(1);
+		p1.setConflictStrategy(ConflictHandling.Priority);
 		final var t1 = new DiscreteTransition("t1", "t1", null);
 		final var t2 = new DiscreteTransition("t2", "t2", null);
 		t2.setDelay("2");
@@ -519,11 +520,9 @@ class DiscreteSimulatorTest {
 		assertEquals(t1, simulator.getEdges().iterator().next().transitions[0].transition);
 		final var markingTimeline = simulator.getMarkingTimeline();
 		assertFalse(markingTimeline[0].isDead());
-		assertEquals(BigInteger.ONE, simulator.getTokens(markingTimeline[0], p1));
-		assertEquals(BigInteger.ZERO, simulator.getTokens(markingTimeline[0], p2));
 		assertTrue(markingTimeline[1].isDead());
-		assertEquals(BigInteger.ZERO, simulator.getTokens(markingTimeline[1], p1));
-		assertEquals(BigInteger.ONE, simulator.getTokens(markingTimeline[1], p2));
+		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[] { 1, 0 });
+		assertPlaceTokensTimeline(simulator, markingTimeline, p2, new int[] { 0, 1 });
 	}
 
 	@Test
@@ -542,11 +541,9 @@ class DiscreteSimulatorTest {
 		assertEquals(10, simulator.getEdges().size());
 		final var markingTimeline = simulator.getMarkingTimeline();
 		assertFalse(markingTimeline[0].isDead());
-		assertEquals(BigInteger.valueOf(10), simulator.getTokens(markingTimeline[0], p1));
-		assertEquals(BigInteger.ZERO, simulator.getTokens(markingTimeline[0], p2));
 		assertTrue(markingTimeline[markingTimeline.length - 1].isDead());
-		assertEquals(BigInteger.ZERO, simulator.getTokens(markingTimeline[markingTimeline.length - 1], p1));
-		assertEquals(BigInteger.valueOf(20), simulator.getTokens(markingTimeline[markingTimeline.length - 1], p2));
+		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[] { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 });
+		assertPlaceTokensTimeline(simulator, markingTimeline, p2, new int[] { 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 });
 	}
 
 	@Test
@@ -563,10 +560,8 @@ class DiscreteSimulatorTest {
 		final var markingTimeline = simulator.getMarkingTimeline();
 		assertTrue(markingTimeline.length > 1);
 		assertFalse(markingTimeline[1].isDead());
-		assertEquals(BigInteger.valueOf(10), simulator.getTokens(markingTimeline[0], p1));
-		assertEquals(BigInteger.valueOf(7), simulator.getTokens(markingTimeline[1], p1));
-		assertEquals(BigInteger.valueOf(0), simulator.getTokens(markingTimeline[0], p2));
-		assertEquals(BigInteger.valueOf(5), simulator.getTokens(markingTimeline[1], p2));
+		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[] { 10, 7 });
+		assertPlaceTokensTimeline(simulator, markingTimeline, p2, new int[] { 0, 5 });
 	}
 
 	@Test
@@ -778,10 +773,8 @@ class DiscreteSimulatorTest {
 		assertFalse(markingTimeline[0].isDead());
 		assertFalse(markingTimeline[1].isDead());
 		assertFalse(markingTimeline[2].isDead());
-		assertEquals(BigInteger.valueOf(9), simulator.getTokens(markingTimeline[1], p1));
-		assertEquals(BigInteger.valueOf(1), simulator.getTokens(markingTimeline[1], p2));
-		assertEquals(BigInteger.valueOf(9), simulator.getTokens(markingTimeline[2], p1));
-		assertEquals(BigInteger.valueOf(2), simulator.getTokens(markingTimeline[2], p2));
+		assertPlaceTokensTimeline(simulator, markingTimeline, p1, new int[] { 9, 9, 9 });
+		assertPlaceTokensTimeline(simulator, markingTimeline, p2, new int[] { 0, 1, 2 });
 	}
 
 	@Test
