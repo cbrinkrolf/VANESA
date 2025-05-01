@@ -2,14 +2,16 @@ package simulation;
 
 import com.ezylang.evalex.Expression;
 import com.ezylang.evalex.bigmath.functions.bigdecimalmath.*;
-import com.ezylang.evalex.bigmath.operators.bigdecimalmath.BigDecimalMathOperators;
+import com.ezylang.evalex.bigmath.operators.bigdecimalmath.BigMathInfixPowerOfOperator;
 import com.ezylang.evalex.config.ExpressionConfiguration;
 import com.ezylang.evalex.config.MapBasedFunctionDictionary;
+import com.ezylang.evalex.config.MapBasedOperatorDictionary;
 import com.ezylang.evalex.data.EvaluationValue;
 import com.ezylang.evalex.functions.AbstractFunction;
 import com.ezylang.evalex.functions.FunctionParameter;
 import com.ezylang.evalex.functions.basic.*;
-import com.ezylang.evalex.functions.trigonometric.*;
+import com.ezylang.evalex.operators.arithmetic.*;
+import com.ezylang.evalex.operators.booleans.*;
 import com.ezylang.evalex.parser.Token;
 
 import java.util.Locale;
@@ -19,35 +21,39 @@ public class VanesaExpressionConfiguration {
 	public static final ExpressionConfiguration EXPRESSION_CONFIGURATION;
 
 	static {
-		final var builder = ExpressionConfiguration.builder().locale(Locale.US);
-		builder.functionDictionary(MapBasedFunctionDictionary.ofFunctions(Map.entry("ABS", new AbsFunction()),
-				Map.entry("AVERAGE", new AverageFunction()), Map.entry("CEILING", new CeilingFunction()),
-				Map.entry("COALESCE", new CoalesceFunction()), Map.entry("FACT", new FactFunction()),
-				Map.entry("FLOOR", new FloorFunction()), Map.entry("IF", new IfFunction()),
-				Map.entry("LOG", new LogFunction()), Map.entry("LOG10", new Log10Function()),
-				Map.entry("MAX", new MaxFunction()), Map.entry("MIN", new MinFunction()),
-				Map.entry("NOT", new NotFunction()),
-				// Disabled random
+		final var builder = ExpressionConfiguration.builder().locale(Locale.US).arraysAllowed(false).binaryAllowed(
+				false).structuresAllowed(false);
+		// Explicitly define available operators
+		builder.operatorDictionary(MapBasedOperatorDictionary.ofOperators(
+				// Disabled operators
+				// Map.entry("!", new PrefixNotOperator()),
+				// Disabled operators replaced by BigMath operators
+				// Map.entry("^", new InfixPowerOfOperator()),
+				// Disabled alternative (in-)equality operators
+				// Map.entry("=", new InfixEqualsOperator()),
+				// Map.entry("<>", new InfixNotEqualsOperator()),
+				Map.entry("+", new PrefixPlusOperator()), Map.entry("-", new PrefixMinusOperator()),
+				Map.entry("+", new InfixPlusOperator()), Map.entry("-", new InfixMinusOperator()),
+				Map.entry("*", new InfixMultiplicationOperator()), Map.entry("/", new InfixDivisionOperator()),
+				Map.entry("%", new InfixModuloOperator()), Map.entry("==", new InfixEqualsOperator()),
+				Map.entry("!=", new InfixNotEqualsOperator()), Map.entry(">", new InfixGreaterOperator()),
+				Map.entry(">=", new InfixGreaterEqualsOperator()), Map.entry("<", new InfixLessOperator()),
+				Map.entry("<=", new InfixLessEqualsOperator()), Map.entry("&&", new InfixAndOperator()),
+				Map.entry("||", new InfixOrOperator()),
+				// BigMath operators
+				Map.entry("^", new BigMathInfixPowerOfOperator())));
+
+		// Explicitly define available functions
+		builder.functionDictionary(MapBasedFunctionDictionary.ofFunctions(
+				// Disabled functions
 				// Map.entry("RANDOM", new RandomFunction()),
-				Map.entry("ROUND", new RoundFunction()), Map.entry("SQRT", new SqrtFunction()),
-				Map.entry("SUM", new SumFunction()), Map.entry("SWITCH", new SwitchFunction()),
-				Map.entry("ACOS", new AcosFunction()), Map.entry("ACOSH", new AcosHFunction()),
-				Map.entry("ACOSR", new AcosRFunction()), Map.entry("ACOT", new AcotFunction()),
-				Map.entry("ACOTH", new AcotHFunction()), Map.entry("ACOTR", new AcotRFunction()),
-				Map.entry("ASIN", new AsinFunction()), Map.entry("ASINH", new AsinHFunction()),
-				Map.entry("ASINR", new AsinRFunction()), Map.entry("ATAN", new AtanFunction()),
-				Map.entry("ATAN2", new Atan2Function()), Map.entry("ATAN2R", new Atan2RFunction()),
-				Map.entry("ATANH", new AtanHFunction()), Map.entry("ATANR", new AtanRFunction()),
-				Map.entry("COS", new CosFunction()), Map.entry("COSH", new CosHFunction()),
-				Map.entry("COSR", new CosRFunction()), Map.entry("COT", new CotFunction()),
-				Map.entry("COTH", new CotHFunction()), Map.entry("COTR", new CotRFunction()),
-				Map.entry("CSC", new CscFunction()), Map.entry("CSCH", new CscHFunction()),
-				Map.entry("CSCR", new CscRFunction()), Map.entry("DEG", new DegFunction()),
-				Map.entry("RAD", new RadFunction()), Map.entry("SIN", new SinFunction()),
-				Map.entry("SINH", new SinHFunction()), Map.entry("SINR", new SinRFunction()),
-				Map.entry("SEC", new SecFunction()), Map.entry("SECH", new SecHFunction()),
-				Map.entry("SECR", new SecRFunction()), Map.entry("TAN", new TanFunction()),
-				Map.entry("TANH", new TanHFunction()), Map.entry("TANR", new TanRFunction()),
+				// Map.entry("AVERAGE", new AverageFunction()),
+				// Map.entry("COALESCE", new CoalesceFunction()),
+				// Map.entry("SUM", new SumFunction()),
+				// Map.entry("EXPONENT", new BigMathExponentFunction()),
+				// Map.entry("MANTISSA", new BigMathMantissaFunction()),
+				// Map.entry("SIGNIFICANTDIGITS", new BigMathSignificantDigitsFunction()),
+				// Map.entry("SWITCH", new SwitchFunction()),
 				// Disabled string functions
 				// Map.entry("STR_CONTAINS", new StringContains()),
 				// Map.entry("STR_ENDS_WITH", new StringEndsWithFunction()),
@@ -72,13 +78,35 @@ public class VanesaExpressionConfiguration {
 				// Map.entry("DT_DURATION_PARSE", new DurationParseFunction()),
 				// Map.entry("DT_NOW", new DateTimeNowFunction()),
 				// Map.entry("DT_TODAY", new DateTimeTodayFunction())
+				Map.entry("ABS", new AbsFunction()), Map.entry("CEILING", new CeilingFunction()),
+				Map.entry("FLOOR", new FloorFunction()), Map.entry("IF", new IfFunction()),
+				Map.entry("MAX", new MaxFunction()), Map.entry("MIN", new MinFunction()),
+				Map.entry("NOT", new NotFunction()), Map.entry("ROUND", new RoundFunction()),
 				// Custom functions
 				Map.entry("CEIL", new CeilingFunction()), Map.entry("AND", new AndFunction()),
-				Map.entry("OR", new OrFunction())));
+				Map.entry("OR", new OrFunction()),
+				// BigMath functions
+				Map.entry("ACOS", new BigMathAcosFunction()), Map.entry("ACOSH", new BigMathAcosHFunction()),
+				Map.entry("ACOT", new BigMathAcotFunction()), Map.entry("ACOTH", new BigMathAcotHFunction()),
+				Map.entry("ASIN", new BigMathAsinFunction()), Map.entry("ASINH", new BigMathAsinHFunction()),
+				Map.entry("ATAN2", new BigMathAtan2Function()), Map.entry("ATAN", new BigMathAtanFunction()),
+				Map.entry("ATANH", new BigMathAtanHFunction()), Map.entry("BN", new BigMathBernoulliFunction()),
+				Map.entry("COS", new BigMathCosFunction()), Map.entry("COSH", new BigMathCosHFunction()),
+				Map.entry("COT", new BigMathCotFunction()), Map.entry("COTH", new BigMathCotHFunction()),
+				Map.entry("CSC", new BigMathCscFunction()), Map.entry("CSCH", new BigMathCscHFunction()),
+				Map.entry("DEG", new BigMathDegFunction()), Map.entry("E", new BigMathEFunction()),
+				Map.entry("EXP", new BigMathExpFunction()), Map.entry("FACT", new BigMathFactorialFunction()),
+				Map.entry("FRACTIONALPART", new BigMathFractionalPartFunction()),
+				Map.entry("GAMMA", new BigMathGammaFunction()),
+				Map.entry("INTEGRALPART", new BigMathIntegralPartFunction()),
+				Map.entry("LOG", new BigMathLogFunction()), Map.entry("LOG10", new BigMathLog10Function()),
+				Map.entry("LOG2", new BigMathLog2Function()), Map.entry("PI", new BigMathPiFunction()),
+				Map.entry("RAD", new BigMathRadFunction()), Map.entry("RECIPROCAL", new BigMathReciprocalFunction()),
+				Map.entry("ROOT", new BigMathRootFunction()), Map.entry("SEC", new BigMathSecFunction()),
+				Map.entry("SECH", new BigMathSecHFunction()), Map.entry("SIN", new BigMathSinFunction()),
+				Map.entry("SINH", new BigMathSinHFunction()), Map.entry("SQRT", new BigMathSqrtFunction()),
+				Map.entry("TAN", new BigMathTanFunction()), Map.entry("TANH", new BigMathTanHFunction())));
 		EXPRESSION_CONFIGURATION = builder.build();
-		// Add BigDecimal extensions
-		EXPRESSION_CONFIGURATION.withAdditionalFunctions(BigDecimalMathFunctions.allFunctions());
-		EXPRESSION_CONFIGURATION.withAdditionalOperators(BigDecimalMathOperators.allOperators());
 	}
 
 	@FunctionParameter(name = "a")
