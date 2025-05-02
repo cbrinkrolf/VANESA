@@ -14,6 +14,8 @@ import com.ezylang.evalex.operators.arithmetic.*;
 import com.ezylang.evalex.operators.booleans.*;
 import com.ezylang.evalex.parser.Token;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -23,6 +25,16 @@ public class VanesaExpressionConfiguration {
 	static {
 		final var builder = ExpressionConfiguration.builder().locale(Locale.US).arraysAllowed(false).binaryAllowed(
 				false).structuresAllowed(false);
+		// Explicitly define available constants
+		final var constants = new HashMap<String, EvaluationValue>();
+		constants.put("TRUE", EvaluationValue.TRUE);
+		constants.put("FALSE", EvaluationValue.FALSE);
+		constants.put("PI", EvaluationValue.numberValue(new BigDecimal(
+				"3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679")));
+		constants.put("E", EvaluationValue.numberValue(
+				new BigDecimal("2.71828182845904523536028747135266249775724709369995957496696762772407663")));
+		constants.put("NULL", EvaluationValue.NULL_VALUE);
+		builder.defaultConstants(constants);
 		// Explicitly define available operators
 		builder.operatorDictionary(MapBasedOperatorDictionary.ofOperators(
 				// Disabled operators
@@ -54,6 +66,7 @@ public class VanesaExpressionConfiguration {
 				// Map.entry("MANTISSA", new BigMathMantissaFunction()),
 				// Map.entry("SIGNIFICANTDIGITS", new BigMathSignificantDigitsFunction()),
 				// Map.entry("SWITCH", new SwitchFunction()),
+				// Map.entry("BN", new BigMathBernoulliFunction()),
 				// Disabled string functions
 				// Map.entry("STR_CONTAINS", new StringContains()),
 				// Map.entry("STR_ENDS_WITH", new StringEndsWithFunction()),
@@ -90,12 +103,12 @@ public class VanesaExpressionConfiguration {
 				Map.entry("ACOT", new BigMathAcotFunction()), Map.entry("ACOTH", new BigMathAcotHFunction()),
 				Map.entry("ASIN", new BigMathAsinFunction()), Map.entry("ASINH", new BigMathAsinHFunction()),
 				Map.entry("ATAN2", new BigMathAtan2Function()), Map.entry("ATAN", new BigMathAtanFunction()),
-				Map.entry("ATANH", new BigMathAtanHFunction()), Map.entry("BN", new BigMathBernoulliFunction()),
-				Map.entry("COS", new BigMathCosFunction()), Map.entry("COSH", new BigMathCosHFunction()),
-				Map.entry("COT", new BigMathCotFunction()), Map.entry("COTH", new BigMathCotHFunction()),
-				Map.entry("CSC", new BigMathCscFunction()), Map.entry("CSCH", new BigMathCscHFunction()),
-				Map.entry("DEG", new BigMathDegFunction()), Map.entry("E", new BigMathEFunction()),
-				Map.entry("EXP", new BigMathExpFunction()), Map.entry("FACT", new BigMathFactorialFunction()),
+				Map.entry("ATANH", new BigMathAtanHFunction()), Map.entry("COS", new BigMathCosFunction()),
+				Map.entry("COSH", new BigMathCosHFunction()), Map.entry("COT", new BigMathCotFunction()),
+				Map.entry("COTH", new BigMathCotHFunction()), Map.entry("CSC", new BigMathCscFunction()),
+				Map.entry("CSCH", new BigMathCscHFunction()), Map.entry("DEG", new BigMathDegFunction()),
+				Map.entry("E", new BigMathEFunction()), Map.entry("EXP", new BigMathExpFunction()),
+				Map.entry("FACT", new BigMathFactorialFunction()),
 				Map.entry("FRACTIONALPART", new BigMathFractionalPartFunction()),
 				Map.entry("GAMMA", new BigMathGammaFunction()),
 				Map.entry("INTEGRALPART", new BigMathIntegralPartFunction()),

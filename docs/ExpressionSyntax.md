@@ -35,52 +35,51 @@ evaluated and will destroy/create `48` tokens.
 
 ## Available Functions
 
-| Name           | Description                  |
-|----------------|------------------------------|
-| abs            |                              |
-| `acos(x)`      | Arc cosine of `x` (degrees)  |
-| acosh          |                              |
-| acot           |                              |
-| acoth          |                              |
-| and            | Logical AND                  |
-| `asin(x)`      | Arc sine of `x` (degrees)    |
-| asinh          |                              |
-| `atan(x)`      | Arc tangent of `x` (degrees) |
-| atan2          |                              |
-| atanh          |                              |
-| bn             | Bernoulli                    |
-| ceil / ceiling |                              |
-| `cos(x)`       | Cosine of `x` (degrees)      |
-| cosh           |                              |
-| cot            |                              |
-| coth           |                              |
-| csc            |                              |
-| csch           |                              |
-| deg            |                              |
-| e              | e constant                   |
-| exp            | $e^x$                        |
-| fact           | Factorial                    |
-| floor          |                              |
-| fractionalpart |                              |
-| gamma          |                              |
-| if             |                              |
-| integralpart   |                              |
-| log            |                              |
-| log10          |                              |
-| log2           |                              |
-| max            |                              |
-| min            |                              |
-| not            | Logical NOT                  |
-| or             | Logical OR                   |
-| pi             | PI constant                  |
-| rad            |                              |
-| reciprocal     |                              |
-| root           |                              |
-| round          |                              |
-| sec            |                              |
-| sech           |                              |
-| `sin(x)`       | Sine of `x` (degrees)        |
-| sinh           |                              |
-| sqrt           |                              |
-| `tan(x)`       | Tangent of `x` (degrees)     |
-| tanh           |                              |
+| Name                     | Description                         |
+|--------------------------|-------------------------------------|
+| `abs(x)`                 | Absolute value of `x`               |
+| `acos(x)`                | Arc cosine of `x` (degrees)         |
+| acosh                    |                                     |
+| acot                     |                                     |
+| acoth                    |                                     |
+| and                      | Logical AND                         |
+| `asin(x)`                | Arc sine of `x` (degrees)           |
+| asinh                    |                                     |
+| `atan(x)`                | Arc tangent of `x` (degrees)        |
+| atan2                    |                                     |
+| atanh                    |                                     |
+| `ceil(x)` / `ceiling(x)` |                                     |
+| `cos(x)`                 | Cosine of `x` (degrees)             |
+| cosh                     |                                     |
+| cot                      |                                     |
+| coth                     |                                     |
+| csc                      |                                     |
+| csch                     |                                     |
+| `deg(x)`                 | Convert `x` from radians to degrees |
+| `e`                      | e constant                          |
+| exp                      | $e^x$                               |
+| fact                     | Factorial                           |
+| `floor(x)`               |                                     |
+| `fractionalpart(x)`      | Fractional part of `x`              |
+| gamma                    |                                     |
+| if                       |                                     |
+| `integralpart(x)`        | Integral part of `x`                |
+| log                      |                                     |
+| log10                    |                                     |
+| log2                     |                                     |
+| max                      |                                     |
+| min                      |                                     |
+| not                      | Logical NOT of `x`                  |
+| or                       | Logical OR                          |
+| `pi`                     | PI constant                         |
+| `rad(x)`                 | Convert `x` from degrees to radians |
+| reciprocal               |                                     |
+| root                     |                                     |
+| round                    |                                     |
+| sec                      |                                     |
+| sech                     |                                     |
+| `sin(x)`                 | Sine of `x` (degrees)               |
+| sinh                     |                                     |
+| `sqrt(x)`                | Square root of `x`                  |
+| `tan(x)`                 | Tangent of `x` (degrees)            |
+| tanh                     |                                     |

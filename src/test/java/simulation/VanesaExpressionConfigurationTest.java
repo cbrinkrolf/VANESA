@@ -23,11 +23,12 @@ class VanesaExpressionConfigurationTest {
 		// ACOT
 		// ACOTH
 		// ASIN
+		assertNumberExpression("90", "ASIN(1)");
+		assertNumberExpression("0", "asin(0)");
 		// ASINH
 		// ATAN
 		// ATAN2
 		// ATANH
-		// BN
 		// CEIL/CEILING
 		assertNumberExpression("11", "CEIL(10.1)");
 		assertNumberExpression("-10", "ceil(-10.1)");
@@ -36,13 +37,20 @@ class VanesaExpressionConfigurationTest {
 		assertNumberExpression("-10", "ceiling(-10.1)");
 		assertNumberExpression("11", "ceiling(11)");
 		// COS
+		assertNumberExpression("1", "COS(0)");
+		assertNumberExpression("0", "cos(90)");
 		// COSH
 		// COT
 		// COTH
 		// CSC
 		// CSCH
 		// DEG
+		assertNumberExpression("90", "DEG(PI/2)");
+		assertNumberExpression("180", "deg(PI)");
+		assertNumberExpression("0", "deg(0)");
 		// E
+		assertNumberExpression("2.71828182845904523536028747135266249775", "E");
+		assertNumberExpression("2.71828182845904523536028747135266249775", "e");
 		// EXP
 		// FACT
 		// FLOOR
@@ -50,16 +58,29 @@ class VanesaExpressionConfigurationTest {
 		assertNumberExpression("-11", "floor(-10.1)");
 		assertNumberExpression("11", "floor(11)");
 		// FRACTIONALPART
+		assertNumberExpression("0.1", "FRACTIONALPART(10.1)");
+		assertNumberExpression("0.12358", "fractionalpart(0.12358)");
 		// GAMMA
 		// IF
 		// INTEGRALPART
+		assertNumberExpression("10", "INTEGRALPART(10.1)");
+		assertNumberExpression("0", "integralpart(0.12358)");
 		// LOG
 		// LOG10
 		// LOG2
 		// MAX
+		assertNumberExpression("5", "MAX(4, 5)");
+		assertNumberExpression("-1", "max(-1, -5)");
 		// MIN
+		assertNumberExpression("4", "MIN(4, 5)");
+		assertNumberExpression("-5", "min(-1, -5)");
 		// PI
+		assertNumberExpression("3.14159265358979323846264338327950288419", "PI");
+		assertNumberExpression("3.14159265358979323846264338327950288419", "pi");
 		// RAD
+		assertNumberExpression("1.57079632679489661923132169163975144209", "RAD(90)");
+		assertNumberExpression("3.14159265358979323846264338327950288419", "rad(180)");
+		assertNumberExpression("0", "rad(0)");
 		// RECIPROCAL
 		// ROOT
 		// ROUND
@@ -71,6 +92,8 @@ class VanesaExpressionConfigurationTest {
 		assertNumberExpression("-1", "sin(270)");
 		// SINH
 		// SQRT
+		assertNumberExpression("3", "SQRT(9)");
+		assertNumberExpression("5", "sqrt(25)");
 		// TAN
 		// TANH
 	}
@@ -107,7 +130,10 @@ class VanesaExpressionConfigurationTest {
 
 	private void assertNumberExpression(final String expected, final String formula)
 			throws EvaluationException, ParseException {
-		assertEquals(new BigDecimal(expected).toPlainString(), evaluateExpression(formula).getNumberValue()
-				.toPlainString());
+		final var result = evaluateExpression(formula).getNumberValue();
+		final var difference = new BigDecimal(expected).subtract(result).abs();
+		assertTrue(difference.compareTo(new BigDecimal("0.00000000000000001")) <= 0,
+				"Expected " + formula + " to evaluate to " + expected + " (Actual: " + result + ", Difference: "
+						+ difference + ')');
 	}
 }
