@@ -15,6 +15,8 @@ import com.ezylang.evalex.operators.booleans.*;
 import com.ezylang.evalex.parser.Token;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -24,7 +26,7 @@ public class VanesaExpressionConfiguration {
 
 	static {
 		final var builder = ExpressionConfiguration.builder().locale(Locale.US).arraysAllowed(false).binaryAllowed(
-				false).structuresAllowed(false);
+				false).structuresAllowed(false).mathContext(new MathContext(64, RoundingMode.HALF_UP));
 		// Explicitly define available constants
 		final var constants = new HashMap<String, EvaluationValue>();
 		constants.put("TRUE", EvaluationValue.TRUE);
@@ -33,7 +35,7 @@ public class VanesaExpressionConfiguration {
 				"3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679")));
 		constants.put("E", EvaluationValue.numberValue(
 				new BigDecimal("2.71828182845904523536028747135266249775724709369995957496696762772407663")));
-		constants.put("NULL", EvaluationValue.NULL_VALUE);
+		// constants.put("NULL", EvaluationValue.NULL_VALUE);
 		builder.defaultConstants(constants);
 		// Explicitly define available operators
 		builder.operatorDictionary(MapBasedOperatorDictionary.ofOperators(
@@ -67,6 +69,8 @@ public class VanesaExpressionConfiguration {
 				// Map.entry("SIGNIFICANTDIGITS", new BigMathSignificantDigitsFunction()),
 				// Map.entry("SWITCH", new SwitchFunction()),
 				// Map.entry("BN", new BigMathBernoulliFunction()),
+				// Map.entry("E", new BigMathEFunction()),
+				// Map.entry("PI", new BigMathPiFunction()),
 				// Disabled string functions
 				// Map.entry("STR_CONTAINS", new StringContains()),
 				// Map.entry("STR_ENDS_WITH", new StringEndsWithFunction()),
@@ -94,7 +98,7 @@ public class VanesaExpressionConfiguration {
 				Map.entry("ABS", new AbsFunction()), Map.entry("CEILING", new CeilingFunction()),
 				Map.entry("FLOOR", new FloorFunction()), Map.entry("IF", new IfFunction()),
 				Map.entry("MAX", new MaxFunction()), Map.entry("MIN", new MinFunction()),
-				Map.entry("NOT", new NotFunction()), Map.entry("ROUND", new RoundFunction()),
+				Map.entry("NOT", new NotFunction()), Map.entry("ROUND", new RoundWithDefaultPrecisionFunction()),
 				// Custom functions
 				Map.entry("CEIL", new CeilingFunction()), Map.entry("AND", new AndFunction()),
 				Map.entry("OR", new OrFunction()),
@@ -107,27 +111,39 @@ public class VanesaExpressionConfiguration {
 				Map.entry("COSH", new BigMathCosHFunction()), Map.entry("COT", new BigMathCotFunction()),
 				Map.entry("COTH", new BigMathCotHFunction()), Map.entry("CSC", new BigMathCscFunction()),
 				Map.entry("CSCH", new BigMathCscHFunction()), Map.entry("DEG", new BigMathDegFunction()),
-				Map.entry("E", new BigMathEFunction()), Map.entry("EXP", new BigMathExpFunction()),
-				Map.entry("FACT", new BigMathFactorialFunction()),
+				Map.entry("EXP", new BigMathExpFunction()), Map.entry("FACT", new BigMathFactorialFunction()),
 				Map.entry("FRACTIONALPART", new BigMathFractionalPartFunction()),
 				Map.entry("GAMMA", new BigMathGammaFunction()),
 				Map.entry("INTEGRALPART", new BigMathIntegralPartFunction()),
 				Map.entry("LOG", new BigMathLogFunction()), Map.entry("LOG10", new BigMathLog10Function()),
-				Map.entry("LOG2", new BigMathLog2Function()), Map.entry("PI", new BigMathPiFunction()),
-				Map.entry("RAD", new BigMathRadFunction()), Map.entry("RECIPROCAL", new BigMathReciprocalFunction()),
-				Map.entry("ROOT", new BigMathRootFunction()), Map.entry("SEC", new BigMathSecFunction()),
-				Map.entry("SECH", new BigMathSecHFunction()), Map.entry("SIN", new BigMathSinFunction()),
-				Map.entry("SINH", new BigMathSinHFunction()), Map.entry("SQRT", new BigMathSqrtFunction()),
-				Map.entry("TAN", new BigMathTanFunction()), Map.entry("TANH", new BigMathTanHFunction())));
+				Map.entry("LOG2", new BigMathLog2Function()), Map.entry("RAD", new BigMathRadFunction()),
+				Map.entry("RECIPROCAL", new BigMathReciprocalFunction()), Map.entry("ROOT", new BigMathRootFunction()),
+				Map.entry("SEC", new BigMathSecFunction()), Map.entry("SECH", new BigMathSecHFunction()),
+				Map.entry("SIN", new BigMathSinFunction()), Map.entry("SINH", new BigMathSinHFunction()),
+				Map.entry("SQRT", new BigMathSqrtFunction()), Map.entry("TAN", new BigMathTanFunction()),
+				Map.entry("TANH", new BigMathTanHFunction())));
 		EXPRESSION_CONFIGURATION = builder.build();
+	}
+
+	@FunctionParameter(name = "value")
+	@FunctionParameter(name = "scale", isVarArg = true, nonNegative = true)
+	public static class RoundWithDefaultPrecisionFunction extends AbstractFunction {
+		@Override
+		public EvaluationValue evaluate(final Expression expression, final Token functionToken,
+				final EvaluationValue... parameterValues) {
+			final EvaluationValue value = parameterValues[0];
+			final int precision = parameterValues.length > 1 ? parameterValues[1].getNumberValue().intValue() : 0;
+			return expression.convertValue(value.getNumberValue()
+					.setScale(precision, expression.getConfiguration().getMathContext().getRoundingMode()));
+		}
 	}
 
 	@FunctionParameter(name = "a")
 	@FunctionParameter(name = "b")
 	static class AndFunction extends AbstractFunction {
 		@Override
-		public EvaluationValue evaluate(Expression expression, Token functionToken,
-				EvaluationValue... parameterValues) {
+		public EvaluationValue evaluate(final Expression expression, final Token functionToken,
+				final EvaluationValue... parameterValues) {
 			final boolean a = parameterValues[0].getBooleanValue();
 			final boolean b = parameterValues[1].getBooleanValue();
 			return expression.convertValue(a && b);
@@ -138,8 +154,8 @@ public class VanesaExpressionConfiguration {
 	@FunctionParameter(name = "b")
 	static class OrFunction extends AbstractFunction {
 		@Override
-		public EvaluationValue evaluate(Expression expression, Token functionToken,
-				EvaluationValue... parameterValues) {
+		public EvaluationValue evaluate(final Expression expression, final Token functionToken,
+				final EvaluationValue... parameterValues) {
 			final boolean a = parameterValues[0].getBooleanValue();
 			final boolean b = parameterValues[1].getBooleanValue();
 			return expression.convertValue(a || b);
