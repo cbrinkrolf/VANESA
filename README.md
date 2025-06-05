@@ -5,8 +5,8 @@
 
 # VANESA2
 ## Current Releases
-- [latest pre release](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.5_pre_2) (v.0.5-pre_2 Release from 2025-04-08, for current paper review)
-- [latest stable release](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.4) (v.0.4 from 2023-03-01)
+- [latest pre release](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.5_pre_2) (v.0.5-pre_2 Release from 2025-04-08)
+- [latest stable release](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.5) (v.0.5 from 2025-06-04)
 
 ## Instructions for simulation
 In order to run simulations in VANESA, [OpenModelica](https://openmodelica.org) needs to be installed.

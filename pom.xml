@@ -6,7 +6,7 @@
 
     <groupId>io.github.cbrinkrolf</groupId>
     <artifactId>VANESA2</artifactId>
-    <version>0.5_pre_2</version>
+    <version>0.5</version>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
