@@ -75,7 +75,12 @@ public class JSBMLInput {
 	private boolean strictParsing = false;
 
 	public JSBMLInput(Pathway pw) {
+		this(pw, pw != null);
+	}
+
+	public JSBMLInput(Pathway pw, boolean coarsed) {
 		pathway = pw;
+		coarsePathway = coarsed;
 	}
 
 	private Node getChildNode(Node node, String nodeName, boolean logErrors) {
@@ -187,8 +192,6 @@ public class JSBMLInput {
 
 		if (pathway == null) {
 			pathway = new CreatePathway(file.getName()).getPathway();
-		} else {
-			coarsePathway = true;
 		}
 		if (pathway.getFile() == null) {
 			pathway.setFile(file);

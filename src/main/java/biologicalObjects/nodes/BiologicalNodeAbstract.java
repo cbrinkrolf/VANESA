@@ -153,14 +153,14 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		}
 		for (BiologicalEdgeAbstract e : node.getConnectingEdges()) {
 			if (e.getFrom() != node) {
-				Pathway neighborParent =
-						e.getFrom().getParentNode() == null ? node.getRootPathway() : e.getFrom().getParentNode();
+				Pathway neighborParent = e.getFrom().getParentNode() == null ? node.getRootPathway()
+						: e.getFrom().getParentNode();
 				node.addVertex(e.getFrom(), neighborParent.getGraph().getVertexLocation(e.getFrom()));
 				// node.getPredefinedEnvironment().add(e.getFrom());
 				e.getFrom().removeConnectingEdge(e);
 			} else if (e.getTo() != node) {
-				Pathway neighborParent =
-						e.getTo().getParentNode() == null ? node.getRootPathway() : e.getTo().getParentNode();
+				Pathway neighborParent = e.getTo().getParentNode() == null ? node.getRootPathway()
+						: e.getTo().getParentNode();
 				node.addVertex(e.getTo(), neighborParent.getGraph().getVertexLocation(e.getTo()));
 				// node.getPredefinedEnvironment().add(e.getTo());
 				e.getTo().removeConnectingEdge(e);
@@ -174,6 +174,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	public static BiologicalNodeAbstract coarse(Set<BiologicalNodeAbstract> nodes, Integer id, String label) {
+		System.out.println("coarse");
 		return BiologicalNodeAbstract.coarse(nodes, id, label, null);
 	}
 
@@ -448,7 +449,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			BiologicalNodeAbstract bna = BiologicalNodeAbstract.coarse(innerNodes, getID(), getLabel());
 			setGraph(bna.getGraph());
 			GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
-			//			bna.printAllHierarchicalAttributes();
+			// bna.printAllHierarchicalAttributes();
 		}
 	}
 
@@ -562,18 +563,19 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	 *
 	 * @return The internal nodes excluding environment nodes.
 	 */
-	//	public Collection<BiologicalNodeAbstract> getInnerNodes(){
-	//		Collection<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
-	//		if(getVertices().isEmpty()){
-	//			return innerNodes;
-	//		}
-	//		for(BiologicalNodeAbstract node : getVertices().keySet()){
-	//			if(!getEnvironment().contains(node.getCurrentShownParentNode(getGraph()))){
-	//				innerNodes.add(node);
-	//			}
-	//		}
-	//		return innerNodes;
-	//	}
+	// public Collection<BiologicalNodeAbstract> getInnerNodes(){
+	// Collection<BiologicalNodeAbstract> innerNodes = new
+	// HashSet<BiologicalNodeAbstract>();
+	// if(getVertices().isEmpty()){
+	// return innerNodes;
+	// }
+	// for(BiologicalNodeAbstract node : getVertices().keySet()){
+	// if(!getEnvironment().contains(node.getCurrentShownParentNode(getGraph()))){
+	// innerNodes.add(node);
+	// }
+	// }
+	// return innerNodes;
+	// }
 	public Collection<BiologicalNodeAbstract> getChildrenNodes() {
 		Set<BiologicalNodeAbstract> childrenNodes = new HashSet<>();
 		Set<BiologicalNodeAbstract> done = new HashSet<>();
@@ -603,13 +605,13 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	public boolean isCoarseNode() {
 		if (!getVertices().isEmpty())
 			return true;
-		//		if(getInnerNodes().isEmpty()){
-		//			return false;
-		//		}
-		//		if(getGraph(false)==null){
-		//			return false;
-		//		}
-		//		return true;
+		// if(getInnerNodes().isEmpty()){
+		// return false;
+		// }
+		// if(getGraph(false)==null){
+		// return false;
+		// }
+		// return true;
 		return false;
 	}
 
