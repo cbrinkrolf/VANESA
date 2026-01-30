@@ -1,8 +1,9 @@
 package util;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.Rectangle;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.DatagramSocket;
@@ -15,12 +16,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.jdom2.Document;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.input.sax.XMLReaderSAX2Factory;
-import org.xml.sax.InputSource;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import gui.PopUpDialog;
@@ -81,22 +76,6 @@ public class VanesaUtility {
 				e.printStackTrace();
 				PopUpDialog.getInstance().show("URL Error", e.getMessage());
 			}
-		}
-	}
-
-	public static Document loadXmlDocument(InputStream inputStream) {
-		// changed empty constructor SAXBuilder builder = new SAXBuilder();
-		// to following, because open JDK got an error with empty constructor
-		// see:
-		// https://stackoverflow.com/questions/11409025/exceptionininitializererror-while-creating-ant-custom-task
-		SAXBuilder builder = new SAXBuilder(new XMLReaderSAX2Factory(false, "org.apache.xerces.parsers.SAXParser"));
-		InputSource in = new InputSource(inputStream);
-		// SBMLReader.read(inputStream);
-		try {
-			return builder.build(in);
-		} catch (JDOMException | IOException e) {
-			e.printStackTrace();
-			return null;
 		}
 	}
 
