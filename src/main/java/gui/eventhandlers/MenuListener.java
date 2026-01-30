@@ -725,10 +725,17 @@ public class MenuListener implements ActionListener {
 
 	private static void exportNetwork() {
 		if (GraphContainer.getInstance().ensurePathwayWithAtLeastOneElement()) {
-			new SaveDialog(
-					new SuffixAwareFilter[] { SuffixAwareFilter.GRAPH_ML, SuffixAwareFilter.MO, SuffixAwareFilter.CSML,
-							SuffixAwareFilter.PNML, SuffixAwareFilter.GRAPH_TEXT_FILE },
-					SaveDialog.DATA_TYPE_NETWORK_EXPORT);
+			if (GraphInstance.getPathway().isPetriNet()) {
+				new SaveDialog(
+						new SuffixAwareFilter[] { SuffixAwareFilter.GRAPH_ML, SuffixAwareFilter.MO,
+								SuffixAwareFilter.CSML, SuffixAwareFilter.PNML, SuffixAwareFilter.GRAPH_TEXT_FILE },
+						SaveDialog.DATA_TYPE_NETWORK_EXPORT);
+			} else {
+				new SaveDialog(
+						new SuffixAwareFilter[] { SuffixAwareFilter.GRAPH_ML, SuffixAwareFilter.GRAPH_TEXT_FILE },
+						SaveDialog.DATA_TYPE_NETWORK_EXPORT);
+			}
+
 		}
 	}
 

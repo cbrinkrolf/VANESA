@@ -56,8 +56,8 @@ import simulation.ConflictHandling;
 import util.StochasticDistribution;
 
 /**
- * To read a SBML file and put the results on the graph. A SBML which has been
- * passed over to an instance of this class will be parsed to the VANESA graph.
+ * To read a SBML file and put the results on the graph. A SBML which has been passed over to an instance of this class
+ * will be parsed to the VANESA graph.
  *
  * @author Annika, Sandra, cbrinkrolf
  */
@@ -230,8 +230,8 @@ public class JSBMLInput {
 	}
 
 	/**
-	 * Groups and their members are saved in list, cause groups cant be created at
-	 * this point, because nodes aren't created yet
+	 * Groups and their members are saved in list, cause groups cant be created at this point, because nodes aren't
+	 * created yet
 	 */
 	private void getInputGroups(Node groupNode) {
 		List<Node> groupChildren = this.getChildAllNodes(groupNode, "Group");
