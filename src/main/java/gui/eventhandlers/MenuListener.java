@@ -746,8 +746,8 @@ public class MenuListener implements ActionListener {
 	}
 
 	private static void openNetwork() {
-		new OpenDialog(SuffixAwareFilter.SBML, SuffixAwareFilter.VAML, SuffixAwareFilter.GRAPH_ML,
-				SuffixAwareFilter.KGML, SuffixAwareFilter.GRAPH_TEXT_FILE).show();
+		new OpenDialog(SuffixAwareFilter.SBML, SuffixAwareFilter.GRAPH_ML, SuffixAwareFilter.KGML,
+				SuffixAwareFilter.GRAPH_TEXT_FILE).show();
 	}
 
 	private void shakeEnzymes() {

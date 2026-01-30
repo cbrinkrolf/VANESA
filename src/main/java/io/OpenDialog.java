@@ -3,7 +3,6 @@ package io;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
 
 import javax.swing.JFileChooser;
@@ -21,8 +20,6 @@ import io.graphML.GraphMLReader;
 import io.kgml.KGMLReader;
 import io.pnResult.PNSimulationResultCSVReader;
 import io.sbml.JSBMLInput;
-import io.sbml.JSBMLInputNew;
-import io.vaml.VAMLInput;
 import petriNet.PetriNetProperties;
 import petriNet.SimulationResult;
 import petriNet.SimulationResultController;
@@ -73,9 +70,7 @@ public final class OpenDialog {
 		if (fileFilter == null) {
 			return;
 		}
-		if (fileFilter == SuffixAwareFilter.VAML) {
-			openVAML(file);
-		} else if (fileFilter == SuffixAwareFilter.SBML) {
+		if (fileFilter == SuffixAwareFilter.SBML) {
 			openSBML(file);
 		} else if (fileFilter == SuffixAwareFilter.GRAPH_TEXT_FILE) {
 			openGraphText(file);
@@ -85,15 +80,6 @@ public final class OpenDialog {
 			openKGML(file);
 		} else if (fileFilter == SuffixAwareFilter.VANESA_SIM_RESULT) {
 			openSimulationResult(file);
-		}
-	}
-
-	private static void openVAML(File file) {
-		try {
-			new VAMLInput(file);
-		} catch (IOException e) {
-			PopUpDialog.getInstance().show("VAML read error.", "Failed to load VAML file.");
-			e.printStackTrace();
 		}
 	}
 

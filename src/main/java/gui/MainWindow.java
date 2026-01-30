@@ -163,9 +163,6 @@ public class MainWindow implements ApplicationListener {
 					case "graphml":
 						OpenDialog.openUIBlocking(SuffixAwareFilter.GRAPH_ML, file);
 						break;
-					case "vaml":
-						OpenDialog.openUIBlocking(SuffixAwareFilter.VAML, file);
-						break;
 					case "sbml":
 						OpenDialog.openUIBlocking(SuffixAwareFilter.SBML, file);
 						break;
@@ -315,8 +312,7 @@ public class MainWindow implements ApplicationListener {
 	}
 
 	public void removeTab(boolean ask, TitledTab remove, Pathway pw) {
-		boolean isLastTabOfView = rootWindow.getTabCount() == 1
-				&& con.getAllPathways().contains(pw);
+		boolean isLastTabOfView = rootWindow.getTabCount() == 1 && con.getAllPathways().contains(pw);
 		if (isLastTabOfView) {
 			addedTabs = 0;
 			mainMenuBar.disableCloseAndSaveFunctions();
