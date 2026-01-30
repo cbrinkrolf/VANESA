@@ -735,7 +735,6 @@ public class MenuListener implements ActionListener {
 						new SuffixAwareFilter[] { SuffixAwareFilter.GRAPH_ML, SuffixAwareFilter.GRAPH_TEXT_FILE },
 						SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 			}
-
 		}
 	}
 
