@@ -178,6 +178,7 @@ public class PNMLOutput extends BaseWriter<Pathway> {
 		File tempExportFile = null;
 		try {
 			tempExportFile = File.createTempFile("vanesa_pnml_export", "pnml");
+			pex.disableGrammarValidation();
 			pex.exportObject(doc, tempExportFile.getAbsolutePath());
 			Files.copy(tempExportFile.toPath(), outputStream);
 			outputStream.flush();
