@@ -21,6 +21,7 @@ import io.graphML.GraphMLReader;
 import io.kgml.KGMLReader;
 import io.pnResult.PNSimulationResultCSVReader;
 import io.sbml.JSBMLInput;
+import io.sbml.JSBMLInputNew;
 import io.vaml.VAMLInput;
 import petriNet.PetriNetProperties;
 import petriNet.SimulationResult;

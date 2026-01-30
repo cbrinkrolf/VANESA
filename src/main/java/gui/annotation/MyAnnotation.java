@@ -16,7 +16,7 @@ import edu.uci.ics.jung.visualization.annotations.Annotation;
 public class MyAnnotation implements GraphicalElementAbstract {
 	private final RectangularShape shape;
 	private Annotation<?> a;
-	private String text;
+	private String text = "";
 	private String name = "";
 	private Color fillColor;
 	private Color outlineColor;

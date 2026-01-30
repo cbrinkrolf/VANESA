@@ -279,6 +279,7 @@ public class JSBMLOutput {
 			for (Map<String, String> annotation : annotations) {
 				elSubSub = new XMLNode(new XMLNode(new XMLTriple("Range", "", ""), new XMLAttributes()));
 				for (String key : annotation.keySet()) {
+					System.out.println(key);
 					value = annotation.get(key);
 					elSubSub.addChild(createElSub(value, key));
 				}

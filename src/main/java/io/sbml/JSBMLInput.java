@@ -13,12 +13,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.jdom2.Document;
-import org.jdom2.Element;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import biologicalElements.Elementdeclerations;
+import biologicalElements.GraphElementAbstract;
 import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -30,12 +34,16 @@ import biologicalObjects.edges.ReactionPairEdge;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
-import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.DynamicNode;
+import biologicalObjects.nodes.Gene;
 import biologicalObjects.nodes.KEGGNode;
+import biologicalObjects.nodes.NodeWithLogFC;
+import biologicalObjects.nodes.NodeWithNTSequence;
 import biologicalObjects.nodes.Other;
-import biologicalObjects.nodes.RNA;
+import biologicalObjects.nodes.PathwayMap;
+import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
@@ -46,16 +54,14 @@ import graph.gui.Parameter;
 import gui.MainWindow;
 import simulation.ConflictHandling;
 import util.StochasticDistribution;
-import util.VanesaUtility;
 
 /**
  * To read a SBML file and put the results on the graph. A SBML which has been
  * passed over to an instance of this class will be parsed to the VANESA graph.
  *
- * @author Annika and Sandra
+ * @author Annika, Sandra, cbrinkrolf
  */
 public class JSBMLInput {
-	// CHRIS avoid jdom, use jsbml lib directly to read xml
 	private Pathway pathway;
 	private final Hashtable<Integer, BiologicalNodeAbstract> nodes = new Hashtable<>();
 	private final HashMap<String, Integer> string2id = new HashMap<>();
@@ -63,16 +69,122 @@ public class JSBMLInput {
 	private final Hashtable<BiologicalNodeAbstract, Integer> bna2Ref = new Hashtable<>();
 	private final boolean reverseEngineering = false;
 	private final ArrayList<ArrayList<String>> inputGroups = new ArrayList<>();
+	private final StringBuilder errorString = new StringBuilder();
+	// returns all parsing errors / missing values that could occur loading old
+	// files that lack parameters introduced later during development
+	private boolean strictParsing = false;
 
 	public JSBMLInput(Pathway pw) {
 		pathway = pw;
 	}
 
-	public String loadSBMLFile(InputStream is, File file) {
-		Document doc = VanesaUtility.loadXmlDocument(is);
-		if (doc == null) {
-			return "An error occurred";
+	private Node getChildNode(Node node, String nodeName, boolean logErrors) {
+		if (!node.hasChildNodes()) {
+			if (logErrors && strictParsing) {
+				errorString.append("SBML parsing error: Child node with name " + nodeName + " does not exist for Tag "
+						+ node.getNodeName() + ". Tag does not have any child nodes!\n");
+			}
+			return null;
 		}
+		for (int i = 0; i < node.getChildNodes().getLength(); i++) {
+			if (node.getChildNodes().item(i).getNodeName().strip().equals(nodeName.strip())) {
+				return node.getChildNodes().item(i);
+			}
+		}
+		if (logErrors && strictParsing) {
+			errorString.append("SBML parsing error: Child node with name " + nodeName + " does not exist for Tag "
+					+ node.getNodeName() + "!\n");
+		}
+		return null;
+	}
+
+	private Node getChildNode(Node node, String nodeName) {
+		return this.getChildNode(node, nodeName, true);
+	}
+
+	private List<Node> getChildAllNodes(Node node, String nodeName) {
+		List<Node> childNodes = new ArrayList<>();
+		if (!node.hasChildNodes()) {
+			return childNodes;
+		}
+		for (int i = 0; i < node.getChildNodes().getLength(); i++) {
+			if (node.getChildNodes().item(i).getNodeName().strip().equals(nodeName.strip())) {
+				childNodes.add(node.getChildNodes().item(i));
+			}
+		}
+		return childNodes;
+	}
+
+	private List<Node> getChildAllNodes(Node node) {
+		List<Node> childNodes = new ArrayList<>();
+		if (!node.hasChildNodes()) {
+			return childNodes;
+		}
+		for (int i = 0; i < node.getChildNodes().getLength(); i++) {
+			childNodes.add(node.getChildNodes().item(i));
+		}
+		return childNodes;
+	}
+
+	private String getAttributeValue(Node node, String attributeName, boolean logErrors) {
+		if (!node.hasAttributes()) {
+			if (logErrors && strictParsing) {
+				errorString
+						.append("SBML parsing error: Attribute " + attributeName + " does not exist for Tag with name "
+								+ node.getNodeName() + ". Tag does not contain any attributes!\n");
+			}
+			return null;
+		}
+		for (int i = 0; i < node.getAttributes().getLength(); i++) {
+			if (node.getAttributes().item(i).getNodeName().trim().equals(attributeName.trim())) {
+				return node.getAttributes().item(i).getNodeValue().trim();
+			}
+		}
+		if (logErrors && strictParsing) {
+			errorString.append("SBML parsing error: Attribute " + attributeName + " does not exist for Tag with name "
+					+ node.getNodeName() + "!\n");
+		}
+		return null;
+	}
+
+	private String getCascadingNodeAttribute(Node node, String attribute, boolean logErrors) {
+		Node childNode = this.getChildNode(node, attribute, logErrors);
+		if (childNode != null) {
+			return getAttributeValue(childNode, attribute, logErrors);
+		}
+		return null;
+	}
+
+	private String getCascadingNodeAttribute(Node node, String attribute) {
+		return getCascadingNodeAttribute(node, attribute, true);
+	}
+
+	private String getAttributeValue(Node node, String attributeName) {
+		return getAttributeValue(node, attributeName, true);
+	}
+
+	public String loadSBMLFile(InputStream is, File file) {
+
+		Document document = null;
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			document = builder.parse(is);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+
+		if (document == null) {
+			return "An error occurred, document is null!";
+		}
+		document.getDocumentElement().normalize();
+
+		Node sbmlNode = this.getChildNode(document, "sbml");
+		if (sbmlNode == null) {
+			return "Error while parsing SMBL document. Tag SBML missing!";
+		}
+
 		if (pathway == null) {
 			pathway = new CreatePathway(file.getName()).getPathway();
 		} else {
@@ -81,18 +193,22 @@ public class JSBMLInput {
 		if (pathway.getFile() == null) {
 			pathway.setFile(file);
 		}
-		Element sbmlNode = doc.getRootElement();
-		Element modelNode = sbmlNode.getChild("model", null);
-		// List<Element> modelNodeChildren = modelNode.getChildren();
-		Element annotationNode = modelNode.getChild("annotation", null);
+
+		Node modelNode = this.getChildNode(sbmlNode, "model");
+		if (modelNode == null) {
+			return "Error while parsing SMBL document. Tag Model missing!";
+		}
+		Node annotationNode = this.getChildNode(modelNode, "annotation");
 		createAnnotation(annotationNode);
-		// not needed yet
-		Element compartmentNode = modelNode.getChild("listOfCompartments", null);
+
+		Node compartmentNode = this.getChildNode(modelNode, "listOfCompartments");
 		createCompartment(compartmentNode);
-		Element speciesNode = modelNode.getChild("listOfSpecies", null);
+
+		Node speciesNode = this.getChildNode(modelNode, "listOfSpecies");
 		createSpecies(speciesNode);
+
 		handleReferences();
-		Element reactionNode = modelNode.getChild("listOfReactions", null);
+		Node reactionNode = this.getChildNode(modelNode, "listOfReactions", false);
 		createReaction(reactionNode);
 		buildUpHierarchy(annotationNode);
 		createGroup();
@@ -107,25 +223,24 @@ public class JSBMLInput {
 			ex.printStackTrace();
 			return "An error occurred during the loading.";
 		}
-		return "";
+		return errorString.toString();
 	}
 
 	/**
 	 * Groups and their members are saved in list, cause groups cant be created at
 	 * this point, because nodes aren't created yet
 	 */
-	private void getInputGroups(Element groupNode) {
-		if (groupNode == null) {
-			return;
-		}
-		List<Element> groupChildren = groupNode.getChildren();
-		for (Element group : groupChildren) {
-			List<Element> groupMembers = group.getChildren();
+	private void getInputGroups(Node groupNode) {
+		List<Node> groupChildren = this.getChildAllNodes(groupNode, "Group");
+		for (Node group : groupChildren) {
+			List<Node> groupMembers = this.getChildAllNodes(group, "Node");
 			ArrayList<String> tmp = new ArrayList<>();
-			for (Element node : groupMembers) {
-				// add nodes mit ID/label to nodes list
-				String label = node.getAttributeValue("Node");
-				tmp.add(label);
+			for (Node node : groupMembers) {
+				// add nodes with ID/label to nodes list
+				String label = this.getAttributeValue(node, "Node");
+				if (label != null) {
+					tmp.add(label);
+				}
 			}
 			inputGroups.add(tmp);
 		}
@@ -152,57 +267,80 @@ public class JSBMLInput {
 	/**
 	 * creates the annotation of the model
 	 */
-	private void createAnnotation(Element annotationNode) {
+	private void createAnnotation(Node annotationNode) {
 		if (annotationNode == null) {
+			errorString.append("Error while parsing SBML document. Tag Annotation is missing!\n");
 			return;
 		}
-		Element modelNode = annotationNode.getChild("model", null);
+
+		Node modelNode = this.getChildNode(annotationNode, "model");
 		// get the information if the imported net is a Petri net
 		boolean isPetri = false;
-		if (modelNode != null) {
-			Element isPetriNetNode = modelNode.getChild("isPetriNet", null);
-			isPetri = Boolean.parseBoolean(isPetriNetNode.getAttributeValue("isPetriNet"));
-			if (reverseEngineering) {
-				isPetri = false;
+		if (modelNode == null) {
+			errorString.append("Error while parsing SMBL document. Tag Model is missing!\n");
+			pathway.setIsPetriNet(isPetri);
+			return;
+		}
+
+		Node isPetriNetNode = this.getChildNode(modelNode, "isPetriNet");
+
+		if (isPetriNetNode != null) {
+			String value = this.getAttributeValue(isPetriNetNode, "isPetriNet");
+			if (value != null) {
+				isPetri = Boolean.parseBoolean(value);
 			}
-			// get the annotations / ranges if present
-			Element anNode = modelNode.getChild("listOfRanges", null);
-			if (anNode != null) {
-				List<Element> anNodeChildren = anNode.getChildren();
-				for (Element annotation : anNodeChildren) {
-					addAnnotation(annotation);
-				}
-			}
-			Element groupNode = modelNode.getChild("listOfGroups", null);
+		}
+		if (reverseEngineering) {
+			isPetri = false;
+		}
+		// get the annotations / ranges if present
+		Node annotationsNode = this.getChildNode(modelNode, "listOfRanges", false);
+		if (annotationsNode != null) {
+			this.addAnnotations(annotationsNode);
+		}
+		Node groupNode = this.getChildNode(modelNode, "listOfGroups", false);
+		if (groupNode != null) {
 			getInputGroups(groupNode);
 		}
+
 		pathway.setIsPetriNet(isPetri);
 	}
 
 	/**
 	 * creates the compartments not needed yet
 	 */
-	private void createCompartment(Element compartmentNode) {
-		if (compartmentNode == null) {
+	private void createCompartment(Node compartmentNode) {
+		if (compartmentNode == null && strictParsing) {
+			errorString.append("Error while parsing SBML document. Tag listOfCompartments is missing!\n");
 			return;
 		}
-		List<Element> compartmentNodeChildren = compartmentNode.getChildren();
-		for (Element comp : compartmentNodeChildren) {
-			String name = comp.getAttributeValue("id");
-			if (name == null || name.equals("comp_") || name.length() == 0) {
+
+		for (Node comp : this.getChildAllNodes(compartmentNode, "compartment")) {
+			String name = this.getAttributeValue(comp, "id");
+			if (name == null) {
+				continue;
+			}
+			if (name.equals("comp_") || name.length() == 0) {
 				continue;
 			}
 			Color color = Color.GRAY;
-			Element annotation = comp.getChild("annotation", null);
+			Node annotation = this.getChildNode(comp, "annotation");
 			if (annotation != null) {
-				Element compAnnotation = annotation.getChild("spec", null);
+				Node compAnnotation = this.getChildNode(annotation, "spec");
 				if (compAnnotation != null) {
-					Element elColor = compAnnotation.getChild("Color", null);
-					if (elColor != null) {
-
-						Element elSub = elColor.getChild("RGB", null);
-						if (elSub != null) {
-							color = new Color(Integer.parseInt(elSub.getAttributeValue("RGB")));
+					Node colorNode = this.getChildNode(compAnnotation, "Color");
+					if (colorNode != null) {
+						Node rgbNode = this.getChildNode(colorNode, "RGB");
+						if (rgbNode != null) {
+							String value = this.getAttributeValue(rgbNode, "RGB");
+							if (value != null) {
+								try {
+									color = new Color(Integer.parseInt(value));
+								} catch (NumberFormatException e) {
+									e.printStackTrace();
+									errorString.append(e.getMessage());
+								}
+							}
 						}
 					}
 				}
@@ -218,328 +356,419 @@ public class JSBMLInput {
 	/**
 	 * creates the reactions
 	 */
-	private void createReaction(Element reactionNode) {
+	private void createReaction(Node reactionNode) {
 		if (reactionNode == null) {
 			return;
 		}
-		List<Element> reactionNodeChildren = reactionNode.getChildren();
 		// for each reaction
-		for (Element reaction : reactionNodeChildren) {
+		for (Node reaction : this.getChildAllNodes(reactionNode, "reaction")) {
 			// test which bea has to be created
 			// get name and label to create the bea
-			String name = reaction.getAttributeValue("name");
+			String name = this.getAttributeValue(reaction, "name");
 			if (name == null) {
 				name = "";
 			}
 			// get from an to nodes for the reaction
-			Element rectantsNode = reaction.getChild("listOfReactants", null);
-			Element productsNode = reaction.getChild("listOfProducts", null);
-			if (rectantsNode != null && productsNode != null) {
-				Element rectant = rectantsNode.getChild("speciesReference", null);
-				String id = rectant.getAttributeValue("species");
-				BiologicalNodeAbstract from = nodes.get(string2id.get(id));
-				Element product = productsNode.getChild("speciesReference", null);
-				id = product.getAttributeValue("species");
-				BiologicalNodeAbstract to = nodes.get(string2id.get(id));
+			Node reactantsNode = this.getChildNode(reaction, "listOfReactants");
+			Node productsNode = this.getChildNode(reaction, "listOfProducts");
+			if (reactantsNode != null && productsNode != null) {
+				Node reactant = this.getChildNode(reactantsNode, "speciesReference");
+				if (reactant == null) {
+					continue;
+				}
+				String idReact = this.getAttributeValue(reactant, "species");
+				BiologicalNodeAbstract from = nodes.get(string2id.get(idReact));
+				Node product = this.getChildNode(productsNode, "speciesReference");
+				if (product == null) {
+					continue;
+				}
+				String idProd = this.getAttributeValue(product, "species");
+				BiologicalNodeAbstract to = nodes.get(string2id.get(idProd));
 				String label = name;
 				BiologicalEdgeAbstract bea = new ReactionEdge(label, name, from, to);
 				bea.setDirected(true);
-				bea.setFrom(from);
-				bea.setTo(to);
-				bea.setLabel(label);
-				bea.setName(name);
-				Element annotation = reaction.getChild("annotation", null);
+				// bea.setFrom(from);
+				// bea.setTo(to);
+				// bea.setLabel(label);
+				// bea.setName(name);
+				Node annotation = this.getChildNode(reaction, "annotation");
 				if (annotation != null) {
-					Element reacAnnotation = annotation.getChild("reac", null);
+					Node reacAnnotation = this.getChildNode(annotation, "reac");
 					if (reacAnnotation != null) {
-						Element elSub = reacAnnotation.getChild("BiologicalElement", null);
-						String biologicalElement = elSub.getAttributeValue("BiologicalElement");
-
-						elSub = reacAnnotation.getChild("label", null);
-						if (elSub != null) {
-							label = elSub.getAttributeValue("label");
+						String biologicalElement = this.getCascadingNodeAttribute(reacAnnotation, "BiologicalElement");
+						if (biologicalElement == null) {
+							biologicalElement = "";
+						}
+						String labelAttr = this.getCascadingNodeAttribute(reacAnnotation, "label");
+						if (labelAttr != null) {
+							label = labelAttr;
 						}
 						bea = BiologicalEdgeAbstractFactory.create(biologicalElement, from, to, label, name);
 						bea.setDirected(true);
 
-						elSub = reacAnnotation.getChild("Parameters", null);
-						// elSubSub = elSub.getChild("x_Coordinate", null);
-						if (elSub != null) {
-							for (int j = 0; j < elSub.getChildren().size(); j++) {
-								final Element elSubSub = elSub.getChildren().get(j);
-								final String pname = elSubSub.getChild("Name", null).getAttributeValue("Name");
-								final BigDecimal value = new BigDecimal(
-										elSubSub.getChild("Value", null).getAttributeValue("Value"));
-								String unit = "";
-								if (elSubSub.getChild("Unit", null) != null) {
-									unit = elSubSub.getChild("Unit", null).getAttributeValue("Unit");
+						Node parametersNode = this.getChildNode(reacAnnotation, "Parameters", false);
+						handleReationParameters(parametersNode, bea);
+
+						if (bea instanceof PNArc) {
+							String probability = this.getCascadingNodeAttribute(reacAnnotation, "Probability");
+							if (probability != null) {
+								try {
+									((PNArc) bea).setProbability(Double.parseDouble(probability));
+								} catch (NumberFormatException e) {
+									e.printStackTrace();
+									errorString.append(e.getMessage());
 								}
-								bea.getParameters().add(new Parameter(pname, value, unit));
 							}
+
+							String priority = this.getCascadingNodeAttribute(reacAnnotation, "Priority");
+							if (priority != null) {
+								try {
+									((PNArc) bea).setPriority(Integer.parseInt(priority));
+								} catch (NumberFormatException e) {
+									e.printStackTrace();
+									errorString.append(e.getMessage());
+								}
+							}
+
 						}
 
-						elSub = reacAnnotation.getChild("Probability", null);
-						String attr;
-						if (elSub != null && bea instanceof PNArc) {
-							attr = elSub.getAttributeValue("Probability");
-							((PNArc) bea).setProbability(Double.parseDouble(attr));
-						}
-
-						elSub = reacAnnotation.getChild("Priority", null);
-						if (elSub != null && bea instanceof PNArc) {
-							attr = elSub.getAttributeValue("Priority");
-							((PNArc) bea).setPriority(Integer.parseInt(attr));
-						}
-
-						// break;
-						// case Elementdeclerations.pnInhibitionEdge:
-						// elSub = reacAnnotation.getChild("Function", null);
-						// attr = "";
-						// if (elSub != null) {
-						// attr = elSub.getAttributeValue("Function");
-						// }
-						// bea = new PNEdge(from, to, label, name,
-						// biologicalElements.Elementdeclerations.pnInhibitionEdge,
-						// attr);
-						// ((PNEdge)
-						// bea).setActivationProbability(Double.parseDouble(attr));
-						// break;
-						// default:
-						// System.out.println(biologicalElement);
-						// break;
-						// }
-						// get additional information
-						List<Element> reacAnnotationChildren = reacAnnotation.getChildren();
-						for (Element child : reacAnnotationChildren) {
+						for (Node child : this.getChildAllNodes(reacAnnotation)) {
 							// go through all Nodes and look up what is set
-							handleEdgeInformation(bea, child.getName(), child);
+							handleEdgeInformation(bea, child.getNodeName(), child);
 						}
 					}
 				}
 				// set ID of the reaction
-				id = reaction.getAttributeValue("id");
-				int idint = this.getID(id);
-				try {
-					if (idint > -1) {
-						bea.setID(idint, pathway);
-					} else {
-						bea.setID(pathway);
-					}
-				} catch (IDAlreadyExistException ex) {
-					bea.setID(pathway);
-				}
+				this.handleIdInformation(reaction, bea);
 				this.pathway.addEdge(bea);
 			}
 		}
 	}
 
+	private String handleIdInformation(Node node, GraphElementAbstract gea) {
+		String id = this.getAttributeValue(node, "id");
+		if (id == null) {
+			id = "-1";
+		}
+		int intid = this.getID(id);
+		try {
+			if (intid > -1) {
+				gea.setID(intid, pathway);
+			} else {
+				gea.setID(pathway);
+			}
+		} catch (IDAlreadyExistException ex) {
+			gea.setID(pathway);
+		}
+		return id;
+	}
+
 	/**
 	 * creates the species
 	 */
-	private void createSpecies(Element speciesNode) {
-		if (speciesNode == null) {
+	private void createSpecies(Node speciesNode) {
+		if (speciesNode == null && strictParsing) {
+			errorString.append("Error while parsing SBML document. Tag listOfSpecies is missing!\n");
 			return;
 		}
-		List<Element> speciesNodeChildren = speciesNode.getChildren();
-		String pathwayLink = null;
+
 		// for each species
-		for (Element species : speciesNodeChildren) {
+		for (Node species : this.getChildAllNodes(speciesNode, "species")) {
 			// test which bna has to be created
 			// get name and label to create the bna
-			String name = species.getAttributeValue("name");
+			String name = this.getAttributeValue(species, "name");
+			String biologicalElement = "";
 			if (name == null) {
 				name = "";
 			}
 			String label = name;
 			BiologicalNodeAbstract bna = new Other(label, name, pathway);
 			Point2D.Double p = new Point2D.Double(0.0, 0.0);
-			Element annotation = species.getChild("annotation", null);
+			Node annotation = this.getChildNode(species, "annotation");
 			if (annotation != null) {
-				Element specAnnotation = annotation.getChild("spec", null);
+				Node specAnnotation = this.getChildNode(annotation, "spec");
 				if (specAnnotation != null) {
-					Element elSub = specAnnotation.getChild("BiologicalElement", null);
-					String biologicalElement = elSub.getAttributeValue("BiologicalElement");
-					elSub = specAnnotation.getChild("label", null);
-					if (elSub != null) {
-						label = elSub.getAttributeValue("label");
-					} else {
-						elSub = specAnnotation.getChild("Label", null);
-						if (elSub != null) {
-							label = elSub.getAttributeValue("Label");
+					Node biologicalElementNode = this.getChildNode(specAnnotation, "BiologicalElement");
+					if (biologicalElementNode != null) {
+						String value = this.getAttributeValue(biologicalElementNode, "BiologicalElement");
+						if (value != null) {
+							biologicalElement = value;
 						}
 					}
-					bna = BiologicalNodeAbstractFactory.create(pathway, biologicalElement);
-					if (reverseEngineering) {
-						if (bna instanceof Place) {
-							bna = BiologicalNodeAbstractFactory.create(pathway, Elementdeclerations.metabolite);
-						} else if (bna instanceof Transition) {
-							bna = BiologicalNodeAbstractFactory.create(pathway, Elementdeclerations.enzyme);
-						}
-					}
-					bna.setLabel(label);
-					bna.setName(name);
-					String attr;
-					switch (bna.getBiologicalElement()) {
-					case Elementdeclerations.mRNA:
-					case Elementdeclerations.miRNA:
-					case Elementdeclerations.lncRNA:
-					case Elementdeclerations.sRNA:
-						// TODO
-						elSub = specAnnotation.getChild("NtSequence", null);
-						if (elSub != null) {
-							attr = elSub.getAttributeValue("NtSequence");
-							((RNA) bna).setNtSequence(attr);
-						}
-						break;
-					case Elementdeclerations.pathwayMap:
-						elSub = specAnnotation.getChild("PathwayLink", null);
-						if (elSub != null) {
-							pathwayLink = String.valueOf(elSub.getAttributeValue("PathwayLink"));
-						}
-						break;
-					case Elementdeclerations.discretePlace:
-						elSub = specAnnotation.getChild("tokenMin", null);
-						attr = String.valueOf(elSub.getAttributeValue("tokenMin"));
-						((Place) bna).setTokenMin(Double.parseDouble(attr));
-						elSub = specAnnotation.getChild("tokenMax", null);
-						attr = String.valueOf(elSub.getAttributeValue("tokenMax"));
-						((Place) bna).setTokenMax(Double.parseDouble(attr));
-						elSub = specAnnotation.getChild("tokenStart", null);
-						attr = String.valueOf(elSub.getAttributeValue("tokenStart"));
-						((Place) bna).setTokenStart(Double.parseDouble(attr));
-						bna.setDiscrete(true);
-						elSub = specAnnotation.getChild("ConflictStrategy", null);
-						if (elSub != null) {
-							attr = elSub.getAttributeValue("ConflictStrategy");
-							final int conflictHandlingId = Integer.parseInt(attr);
-							((Place) bna).setConflictStrategy(ConflictHandling.fromId(conflictHandlingId));
-						}
-						break;
-					case Elementdeclerations.continuousPlace:
-						elSub = specAnnotation.getChild("tokenMin", null);
-						attr = String.valueOf(elSub.getAttributeValue("tokenMin"));
-						((Place) bna).setTokenMin(Double.parseDouble(attr));
-						elSub = specAnnotation.getChild("tokenMax", null);
-						attr = String.valueOf(elSub.getAttributeValue("tokenMax"));
-						((Place) bna).setTokenMax(Double.parseDouble(attr));
-						elSub = specAnnotation.getChild("tokenStart", null);
-						attr = String.valueOf(elSub.getAttributeValue("tokenStart"));
-						((Place) bna).setTokenStart(Double.parseDouble(attr));
-						bna.setDiscrete(false);
-						elSub = specAnnotation.getChild("ConflictStrategy", null);
-						if (elSub != null) {
-							attr = elSub.getAttributeValue("ConflictStrategy");
-							final int conflictHandlingId = Integer.parseInt(attr);
-							((Place) bna).setConflictStrategy(ConflictHandling.fromId(conflictHandlingId));
-						}
-						break;
-					case Elementdeclerations.discreteTransition:
-						elSub = specAnnotation.getChild("delay", null);
-						attr = String.valueOf(elSub.getAttributeValue("delay"));
-						((biologicalObjects.nodes.petriNet.DiscreteTransition) bna).setDelay(attr);
-						break;
-					case Elementdeclerations.continuousTransition:
-						elSub = specAnnotation.getChild("maximalSpeed", null);
-						if (elSub != null) {
-							attr = String.valueOf(elSub.getAttributeValue("maximalSpeed"));
-							((ContinuousTransition) bna).setMaximalSpeed(attr);
-						} else {
-							elSub = specAnnotation.getChild("maximumSpeed", null);
-							if (elSub != null) {
-								attr = String.valueOf(elSub.getAttributeValue("maximumSpeed"));
-								((ContinuousTransition) bna).setMaximalSpeed(attr);
+					Node labelNode = this.getChildNode(specAnnotation, "label", false);
+					if (labelNode == null) {
+
+						labelNode = this.getChildNode(specAnnotation, "Label");
+
+						if (labelNode != null) {
+							String value = this.getAttributeValue(labelNode, "Label");
+							if (value != null) {
+								label = value;
 							}
 						}
-						break;
-					case Elementdeclerations.stochasticTransition:
-						StochasticTransition st = (StochasticTransition) bna;
-						elSub = specAnnotation.getChild("distributionProperties", null);
-						Element elSubSub = elSub.getChild("distribution", null);
-						attr = String.valueOf(elSubSub.getAttributeValue("distribution"));
-						st.setDistribution(StochasticDistribution.fromId(attr));
-						elSubSub = elSub.getChild("h", null);
-						attr = String.valueOf(elSubSub.getAttributeValue("h"));
-						st.setH(Double.parseDouble(attr));
-						elSubSub = elSub.getChild("a", null);
-						attr = String.valueOf(elSubSub.getAttributeValue("a"));
-						st.setA(Double.parseDouble(attr));
-						elSubSub = elSub.getChild("b", null);
-						attr = String.valueOf(elSubSub.getAttributeValue("b"));
-						st.setB(Double.parseDouble(attr));
-						elSubSub = elSub.getChild("c", null);
-						attr = String.valueOf(elSubSub.getAttributeValue("c"));
-						st.setC(Double.parseDouble(attr));
-						elSubSub = elSub.getChild("mu", null);
-						attr = String.valueOf(elSubSub.getAttributeValue("mu"));
-						st.setMu(Double.parseDouble(attr));
-						elSubSub = elSub.getChild("sigma", null);
-						attr = String.valueOf(elSubSub.getAttributeValue("sigma"));
-						st.setSigma(Double.parseDouble(attr));
-						elSubSub = elSub.getChild("discreteEvents", null);
-						attr = String.valueOf(elSubSub.getAttributeValue("discreteEvents"));
-						ArrayList<Integer> events = new ArrayList<>();
-						String[] eventTokens = attr.split(",");
-						for (String eventToken : eventTokens) {
-							events.add(Integer.parseInt(eventToken.trim()));
+
+					} else {
+						String value = this.getAttributeValue(labelNode, "label");
+						if (value != null) {
+							label = value;
 						}
-						st.setEvents(events);
-						elSubSub = elSub.getChild("discreteEventProbabilities", null);
-						attr = String.valueOf(elSubSub.getAttributeValue("discreteEventProbabilities"));
-						ArrayList<Double> probs = new ArrayList<>();
-						String[] probTokens = attr.split(",");
-						for (String probToken : probTokens) {
-							probs.add(Double.parseDouble(probToken.trim()));
-						}
-						st.setProbabilities(probs);
-						break;
-					}
-					// get additional information
-					for (Element child : specAnnotation.getChildren()) {
-						// go through all Nodes and look up what is set
-						handleNodeInformation(bna, child.getName(), child);
-					}
-					// get the coordinates of the bna
-					elSub = specAnnotation.getChild("Coordinates", null);
-					Element elSubSub = elSub.getChild("x_Coordinate", null);
-					double xCoord = Double.parseDouble(elSubSub.getAttributeValue("x_Coordinate"));
-					elSubSub = elSub.getChild("y_Coordinate", null);
-					double yCoord = Double.parseDouble(elSubSub.getAttributeValue("y_Coordinate"));
-					p = new Point2D.Double(xCoord, yCoord);
-					elSub = specAnnotation.getChild("environmentNode", null);
-					if (elSub != null) {
-						if (String.valueOf(elSub.getAttributeValue("environmentNode")).equals("true")) {
-							bna.setMarkedAsEnvironment(true);
-						}
-					}
-					elSub = specAnnotation.getChild("Parameters", null);
-					// elSubSub = elSub.getChild("x_Coordinate", null);
-					for (int j = 0; j < elSub.getChildren().size(); j++) {
-						elSubSub = elSub.getChildren().get(j);
-						final String pname = elSubSub.getChild("Name", null).getAttributeValue("Name");
-						final BigDecimal value = new BigDecimal(
-								elSubSub.getChild("Value", null).getAttributeValue("Value"));
-						String unit = "";
-						if (elSubSub.getChild("Unit", null) != null) {
-							unit = elSubSub.getChild("Unit", null).getAttributeValue("Unit");
-						}
-						bna.getParameters().add(new Parameter(pname, value, unit));
 					}
 				}
+				bna = BiologicalNodeAbstractFactory.create(pathway, biologicalElement);
+				if (reverseEngineering) {
+					if (bna instanceof Place) {
+						bna = BiologicalNodeAbstractFactory.create(pathway, Elementdeclerations.metabolite);
+					} else if (bna instanceof Transition) {
+						bna = BiologicalNodeAbstractFactory.create(pathway, Elementdeclerations.enzyme);
+					}
+				}
+				bna.setLabel(label);
+				bna.setName(name);
+
+				// TODO ntSequence is missing in JSBML Export
+				if (bna instanceof NodeWithNTSequence) {
+					String ntSequence = getCascadingNodeAttribute(specAnnotation, "NtSequence");
+					if (ntSequence != null) {
+						((NodeWithNTSequence) bna).setNtSequence(ntSequence);
+					}
+				}
+
+				// TODO logFC is missing in JSBML Export
+				if (bna instanceof NodeWithLogFC) {
+					String logFC = this.getCascadingNodeAttribute(specAnnotation, "LogFC");
+					if (logFC != null) {
+						try {
+							((NodeWithLogFC) bna).setLogFC(Double.parseDouble(logFC));
+						} catch (NumberFormatException e) {
+							e.printStackTrace();
+							errorString
+									.append("Error while parsing SBML document. Attribute LogFC of species with name "
+											+ name + " cannot be parsed as a number!\n");
+							errorString.append(e.getMessage());
+						}
+					}
+				}
+
+				if (bna instanceof PathwayMap) {
+					// TODO missing implementation setting the pathway link to the object
+					String pathwayLink = this.getCascadingNodeAttribute(specAnnotation, "PathwayLink");
+				}
+				if (bna instanceof Place) {
+					Place place = (Place) bna;
+
+					String tokenMin = this.getCascadingNodeAttribute(specAnnotation, "tokenMin");
+					if (tokenMin != null) {
+						try {
+							place.setTokenMin(Double.parseDouble(tokenMin));
+						} catch (NumberFormatException e) {
+							e.printStackTrace();
+							errorString.append(e.getMessage());
+						}
+					}
+
+					String tokenMax = this.getCascadingNodeAttribute(specAnnotation, "tokenMax");
+					if (tokenMax != null) {
+						try {
+							place.setTokenMax(Double.parseDouble(tokenMax));
+						} catch (NumberFormatException e) {
+							e.printStackTrace();
+							errorString.append(e.getMessage());
+						}
+					}
+
+					String tokenStart = this.getCascadingNodeAttribute(specAnnotation, "tokenStart");
+					if (tokenStart != null) {
+						try {
+							place.setTokenStart(Double.parseDouble(tokenStart));
+						} catch (NumberFormatException e) {
+							e.printStackTrace();
+							errorString.append(e.getMessage());
+						}
+					}
+
+					String conflictStrategy = this.getCascadingNodeAttribute(specAnnotation, "ConflictStrategy");
+					if (conflictStrategy != null) {
+						try {
+							final int conflictHandlingId = Integer.parseInt(conflictStrategy);
+							((Place) bna).setConflictStrategy(ConflictHandling.fromId(conflictHandlingId));
+						} catch (NumberFormatException e) {
+							e.printStackTrace();
+							errorString.append(e.getMessage());
+						}
+					}
+				}
+
+				if (bna instanceof DiscreteTransition) {
+					String delay = this.getCascadingNodeAttribute(specAnnotation, "delay");
+					if (delay != null) {
+						((DiscreteTransition) bna).setDelay(delay);
+					}
+				}
+
+				if (bna instanceof ContinuousTransition) {
+					// for legacy
+					String maximalSpeed = this.getCascadingNodeAttribute(specAnnotation, "maximumSpeed", false);
+					if (maximalSpeed == null) {
+						maximalSpeed = this.getCascadingNodeAttribute(specAnnotation, "maximalSpeed");
+					}
+					if (maximalSpeed != null) {
+						((ContinuousTransition) bna).setMaximalSpeed(maximalSpeed);
+					}
+				}
+
+				if (bna instanceof StochasticTransition) {
+					Node distributionProperties = this.getChildNode(specAnnotation, "distributionProperties");
+					if (distributionProperties != null) {
+						StochasticTransition st = (StochasticTransition) bna;
+
+						String distribution = this.getCascadingNodeAttribute(distributionProperties, "distribution");
+						if (distribution != null) {
+							st.setDistribution(StochasticDistribution.fromId(distribution));
+						}
+
+						String h = this.getCascadingNodeAttribute(distributionProperties, "h");
+						if (h != null) {
+							try {
+								st.setH(Double.parseDouble(h));
+							} catch (NumberFormatException e) {
+								e.printStackTrace();
+								errorString.append(e.getMessage());
+							}
+						}
+
+						String a = this.getCascadingNodeAttribute(distributionProperties, "a");
+						if (a != null) {
+							try {
+								st.setA(Double.parseDouble(a));
+							} catch (NumberFormatException e) {
+								e.printStackTrace();
+								errorString.append(e.getMessage());
+							}
+						}
+
+						String b = this.getCascadingNodeAttribute(distributionProperties, "b");
+						if (b != null) {
+							try {
+								st.setB(Double.parseDouble(b));
+							} catch (NumberFormatException e) {
+								e.printStackTrace();
+								errorString.append(e.getMessage());
+							}
+						}
+
+						String c = this.getCascadingNodeAttribute(distributionProperties, "c");
+						if (c != null) {
+							try {
+								st.setC(Double.parseDouble(c));
+							} catch (NumberFormatException e) {
+								e.printStackTrace();
+								errorString.append(e.getMessage());
+							}
+						}
+
+						String mu = this.getCascadingNodeAttribute(distributionProperties, "mu");
+						if (mu != null) {
+							try {
+								st.setMu(Double.parseDouble(mu));
+							} catch (NumberFormatException e) {
+								e.printStackTrace();
+								errorString.append(e.getMessage());
+							}
+						}
+
+						String sigma = this.getCascadingNodeAttribute(distributionProperties, "sigma");
+						if (sigma != null) {
+							try {
+								st.setSigma(Double.parseDouble(sigma));
+							} catch (NumberFormatException e) {
+								e.printStackTrace();
+								errorString.append(e.getMessage());
+							}
+						}
+
+						String discreteEvents = this.getCascadingNodeAttribute(distributionProperties,
+								"discreteEvents");
+						if (discreteEvents != null) {
+							ArrayList<Integer> events = new ArrayList<>();
+							String[] eventTokens = discreteEvents.split(",");
+							for (String eventToken : eventTokens) {
+								try {
+									events.add(Integer.parseInt(eventToken.strip()));
+								} catch (NumberFormatException e) {
+									e.printStackTrace();
+									errorString.append(e.getMessage());
+								}
+							}
+							st.setEvents(events);
+						}
+
+						String discreteEventProbabilities = this.getCascadingNodeAttribute(distributionProperties,
+								"discreteEventProbabilities");
+						if (discreteEventProbabilities != null) {
+							ArrayList<Double> probs = new ArrayList<>();
+							String[] probTokens = discreteEventProbabilities.split(",");
+							for (String probToken : probTokens) {
+								try {
+									probs.add(Double.parseDouble(probToken.strip()));
+								} catch (NumberFormatException e) {
+									e.printStackTrace();
+									errorString.append(e.getMessage());
+								}
+							}
+							st.setProbabilities(probs);
+						}
+					}
+				}
+
+				// get additional information
+				for (Node node : this.getChildAllNodes(specAnnotation, name)) {
+					// go through all Nodes and look up what is set
+					handleNodeInformation(bna, node.getNodeName(), node);
+				}
+				// get the coordinates of the bna
+				Node coordinates = this.getChildNode(specAnnotation, "Coordinates");
+				if (coordinates != null) {
+					double xCoord = 0.0;
+					double yCoord = 0.0;
+					String xCoordString = this.getCascadingNodeAttribute(coordinates, "x_Coordinate");
+					if (xCoordString != null) {
+						try {
+							xCoord = Double.parseDouble(xCoordString);
+						} catch (NumberFormatException e) {
+							e.printStackTrace();
+							errorString.append(e.getMessage());
+						}
+					}
+					String yCoordString = this.getCascadingNodeAttribute(coordinates, "y_Coordinate");
+					if (yCoordString != null) {
+						try {
+							yCoord = Double.parseDouble(yCoordString);
+						} catch (NumberFormatException e) {
+							e.printStackTrace();
+							errorString.append(e.getMessage());
+						}
+					}
+					p = new Point2D.Double(xCoord, yCoord);
+				}
+
+				String isEnvironment = this.getCascadingNodeAttribute(specAnnotation, "environmentNode", false);
+				if (isEnvironment != null && isEnvironment.equals("true")) {
+					bna.setMarkedAsEnvironment(true);
+				}
+
+				Node parametersNode = this.getChildNode(specAnnotation, "Parameters", false);
+				this.handleReationParameters(parametersNode, bna);
 			}
+
 			// test which annotations are set only if bna was created above set id and
 			// compartment of the bna
-			String id = species.getAttributeValue("id");
-			int intid = this.getID(id);
-			try {
-				if (intid > -1) {
-					bna.setID(intid, pathway);
-				} else {
-					bna.setID(pathway);
-				}
-			} catch (IDAlreadyExistException ex) {
-				bna.setID(pathway);
+
+			String id = this.handleIdInformation(species, bna);
+
+			String compartment = this.getAttributeValue(species, "compartment");
+			if (compartment == null) {
+				compartment = "";
 			}
-			String compartment = species.getAttributeValue("compartment");
 			if (compartment.startsWith("comp_")) {
 				pathway.getCompartmentManager().setCompartment(bna,
 						pathway.getCompartmentManager().getCompartment(compartment.substring(5)));
@@ -553,6 +782,7 @@ public class JSBMLInput {
 			nodes.put(bna.getID(), bna);
 			string2id.put(id, bna.getID());
 		}
+
 	}
 
 	/**
@@ -561,15 +791,15 @@ public class JSBMLInput {
 	 * @param annotationNode Annotation Area of the imported model.
 	 * @author tloka
 	 */
-	private void buildUpHierarchy(Element annotationNode) {
+	private void buildUpHierarchy(Node annotationNode) {
 		if (annotationNode == null) {
 			return;
 		}
-		Element modelNode = annotationNode.getChild("model", null);
+		Node modelNode = this.getChildNode(annotationNode, "model");
 		if (modelNode == null) {
 			return;
 		}
-		Element hierarchyList = modelNode.getChild("listOfHierarchies", null);
+		Node hierarchyList = this.getChildNode(modelNode, "listOfHierarchies");
 		if (hierarchyList == null) {
 			return;
 		}
@@ -577,26 +807,47 @@ public class JSBMLInput {
 		Map<Integer, String> coarseNodeLabels = new HashMap<>();
 		Map<Integer, Integer> hierarchyRootNodes = new HashMap<>();
 		Set<Integer> openedCoarseNodes = new HashSet<>();
-		for (Element coarseNode : hierarchyList.getChildren("coarseNode", null)) {
-			if (coarseNode.getChildren("child", null) == null) {
+		for (Node coarseNode : this.getChildAllNodes(hierarchyList, "coarseNode")) {
+			if (this.getChildAllNodes(coarseNode, "child").size() == 0) {
 				continue;
 			}
 			Set<Integer> childrenSet = new HashSet<>();
-			for (Element childElement : coarseNode.getChildren("child", null)) {
-				Integer childNode = Integer.parseInt(childElement.getAttributeValue("id").split("_")[1]);
-				childrenSet.add(childNode);
+			for (Node childElement : this.getChildAllNodes(coarseNode, "child")) {
+				String id = this.getAttributeValue(childElement, "id");
+				if (id != null) {
+					try {
+						Integer childNode = Integer.parseInt(id.split("_")[1]);
+						childrenSet.add(childNode);
+					} catch (NumberFormatException e) {
+						e.printStackTrace();
+						errorString.append(e.getMessage());
+					}
+				}
 			}
-			Integer id = Integer.parseInt(coarseNode.getAttributeValue("id").split("_")[1]);
-			String rootNode = coarseNode.getAttribute("root", null) == null ? "null" : coarseNode.getAttributeValue(
-					"root");
-			if (!rootNode.equals("null")) {
-				hierarchyRootNodes.put(id, Integer.parseInt(coarseNode.getAttributeValue("root").split("_")[1]));
-			}
-			hierarchyMap.put(id, childrenSet);
-			coarseNodeLabels.put(id, coarseNode.getAttributeValue("label"));
-			if (coarseNode.getAttributeValue("opened") != null && coarseNode.getAttributeValue("opened").equals(
-					"true")) {
-				openedCoarseNodes.add(id);
+			String idString = this.getAttributeValue(coarseNode, "id");
+
+			if (idString != null) {
+				try {
+					Integer id = Integer.parseInt(idString.split("_")[1]);
+					String rootNode = this.getAttributeValue(coarseNode, "root") == null ? "null"
+							: this.getAttributeValue(coarseNode, "root");
+					if (!rootNode.equals("null")) {
+						String rootID = this.getAttributeValue(coarseNode, "root");
+						if (rootID != null) {
+							hierarchyRootNodes.put(id, Integer.parseInt(rootID.split("_")[1]));
+						}
+					}
+					hierarchyMap.put(id, childrenSet);
+					String label = this.getAttributeValue(coarseNode, "label");
+					coarseNodeLabels.put(id, label);
+					String opened = this.getAttributeValue(coarseNode, "opened");
+					if (opened != null && opened.equals("true")) {
+						openedCoarseNodes.add(id);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					errorString.append(e.getMessage());
+				}
 			}
 		}
 		int coarsedNodes = 0;
@@ -646,9 +897,12 @@ public class JSBMLInput {
 		}
 	}
 
-	private void handleEdgeInformation(BiologicalEdgeAbstract bea, String attrtmp, Element child) {
-		String value = child.getAttributeValue(attrtmp);
-		switch (attrtmp) {
+	private void handleEdgeInformation(BiologicalEdgeAbstract bea, String attributeName, Node node) {
+		String value = this.getAttributeValue(node, attributeName, false);
+		if (value == null) {
+			return;
+		}
+		switch (attributeName) {
 		// standard cases
 		case "IsWeighted":
 			// bea.setWeighted(Boolean.parseBoolean(value));
@@ -659,9 +913,15 @@ public class JSBMLInput {
 			bea.setFunction(value);
 			break;
 		case "Color":
-			Element elSub = child.getChild("RGB", null);
-			int rgb = Integer.parseInt(elSub.getAttributeValue("RGB"));
-			bea.setColor(new Color(rgb));
+			String colorString = this.getCascadingNodeAttribute(node, "RGB");
+			if (colorString != null) {
+				try {
+					bea.setColor(new Color(Integer.parseInt(colorString)));
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+					errorString.append(e.getMessage());
+				}
+			}
 			break;
 		case "IsDirected":
 			bea.setDirected(Boolean.parseBoolean(value));
@@ -685,8 +945,8 @@ public class JSBMLInput {
 			if (bea instanceof ReactionPair) {
 				ReactionPair reactionPair = (ReactionPair) bea;
 				reactionPair.setReactionPairEdge(new ReactionPairEdge());
-				for (Element subChild : child.getChildren()) {
-					switch (subChild.getName()) {
+				for (Node subChild : this.getChildAllNodes(node)) {
+					switch (subChild.getNodeName()) {
 					case "ReactionPairEdgeID":
 						reactionPair.getReactionPairEdge().setReactionPairID(value);
 						break;
@@ -711,18 +971,26 @@ public class JSBMLInput {
 	/**
 	 * Test which Information is set and handle it
 	 */
-	private void handleNodeInformation(BiologicalNodeAbstract bna, String attrtmp, Element child) {
-		String value = child.getAttributeValue(attrtmp);
-		if (reverseEngineering) {
-			attrtmp = attrtmp.replace("token", "concentration");
+	private void handleNodeInformation(BiologicalNodeAbstract bna, String attributeName, Node node) {
+		String value = this.getAttributeValue(node, attributeName, false);
+		if (value == null) {
+			return;
 		}
-		switch (attrtmp) {
+		if (reverseEngineering) {
+			value = value.replace("token", "concentration");
+		}
+		switch (attributeName) {
 		// standard cases
 		case "Nodesize":
 			if (reverseEngineering) {
 				break;
 			}
-			bna.setNodeSize(Double.parseDouble(value));
+			try {
+				bna.setNodeSize(Double.parseDouble(value));
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+				errorString.append(e.getMessage());
+			}
 			break;
 		case "Comments":
 			bna.setComments(value);
@@ -741,32 +1009,45 @@ public class JSBMLInput {
 			break;
 		case "KEGGNode":
 			bna.setKEGGnode(new KEGGNode());
-			addKEGGNode(bna, child);
+			addKEGGNode(bna, node);
 			break;
 		case "Color":
 			if (reverseEngineering) {
 				break;
 			}
-			Element elSub = child.getChild("RGB", null);
-			if (elSub != null) {
-				int rgb = Integer.parseInt(elSub.getAttributeValue("RGB"));
-				Color col = new Color(rgb);
-				bna.setColor(col);
+			String rgb = this.getCascadingNodeAttribute(node, "RGB", false);
+			if (rgb != null) {
+				try {
+					bna.setColor(new Color(Integer.parseInt(rgb)));
+				} catch (Exception e) {
+					e.printStackTrace();
+					errorString.append(e.getMessage());
+				}
 			}
 			break;
 		case "plotColor":
-			elSub = child.getChild("RGB", null);
-			if (elSub != null) {
-				int rgb = Integer.parseInt(elSub.getAttributeValue("RGB"));
-				Color col = new Color(rgb);
-				bna.setPlotColor(col);
+			String rgbPlotColor = this.getCascadingNodeAttribute(node, "RGB", false);
+			if (rgbPlotColor != null) {
+				try {
+					bna.setPlotColor(new Color(Integer.parseInt(rgbPlotColor)));
+				} catch (Exception e) {
+					e.printStackTrace();
+					errorString.append(e.getMessage());
+				}
 			}
 			break;
 		case "NodeReference":
-			elSub = child.getChild("hasRef", null);
-			if (elSub.getAttributeValue("hasRef").equals("true")) {
-				elSub = child.getChild("RefID", null);
-				this.bna2Ref.put(bna, Integer.parseInt(elSub.getAttributeValue("RefID")));
+			String hasRef = this.getCascadingNodeAttribute(node, "hasRef");
+			if (hasRef != null && hasRef.equals("true")) {
+				String refID = this.getCascadingNodeAttribute(node, "RefID");
+				if (refID != null) {
+					try {
+						this.bna2Ref.put(bna, Integer.parseInt(refID));
+					} catch (Exception e) {
+						e.printStackTrace();
+						errorString.append(e.getMessage());
+					}
+				}
 			}
 			break;
 		case "constCheck":
@@ -808,26 +1089,20 @@ public class JSBMLInput {
 				((Transition) bna).setKnockedOut("true".equals(value));
 			}
 			break;
-		case "NtSequence":
-			if (bna instanceof DNA) {
-				((biologicalObjects.nodes.DNA) bna).setNtSequence(value);
-			} else if (bna instanceof RNA) {
-				((biologicalObjects.nodes.RNA) bna).setNtSequence(value);
-			}
-			break;
 		case "Proteins":
-			((biologicalObjects.nodes.Gene) bna).addProtein(stringToArray(value));
+			((Gene) bna).addProtein(stringToArray(value));
 			break;
 		case "Enzymes":
-			((biologicalObjects.nodes.Gene) bna).addEnzyme(stringToArray(value));
+			((Gene) bna).addEnzyme(stringToArray(value));
 			break;
 		case "Specification":
-			((biologicalObjects.nodes.PathwayMap) bna).setSpecification(Boolean.parseBoolean(value));
+			((PathwayMap) bna).setSpecification(Boolean.parseBoolean(value));
 			break;
 		case "AaSequence":
-			((biologicalObjects.nodes.Protein) bna).setAaSequence(value);
+			((Protein) bna).setAaSequence(value);
 			break;
 		}
+
 	}
 
 	private String[] stringToArray(String value) {
@@ -843,14 +1118,16 @@ public class JSBMLInput {
 		return x;
 	}
 
-	private void addKEGGNode(BiologicalNodeAbstract bna, Element keggNode) {
-		List<Element> keggNodeChildren = keggNode.getChildren();
+	private void addKEGGNode(BiologicalNodeAbstract bna, Node keggNode) {
+		List<Node> keggNodeChildren = this.getChildAllNodes(keggNode);
 		KEGGNode kegg = bna.getKEGGnode();
-		for (Element child : keggNodeChildren) {
+		for (Node child : keggNodeChildren) {
 			// go through all Subnodes and look up what is set
-			String name = child.getName();
-			String value = child.getAttributeValue(name);
-			switch (name) {
+			String value = this.getAttributeValue(child, child.getNodeName(), false);
+			if (value == null) {
+				continue;
+			}
+			switch (child.getNodeName()) {
 			case "AllInvolvedElements":
 				for (String item : value.split(" ")) {
 					kegg.addInvolvedElement(item);
@@ -923,7 +1200,7 @@ public class JSBMLInput {
 				kegg.setGeneOrthology(value);
 				break;
 			case "GeneOrthologyName":
-				kegg.setGeneOrthologyName(name);
+				kegg.setGeneOrthologyName(value);
 				break;
 			case "GenePosition":
 				kegg.setGenePosition(value);
@@ -1041,19 +1318,34 @@ public class JSBMLInput {
 		}
 	}
 
+	private void addAnnotations(Node annotationsNode) {
+		for (Node annotationNode : this.getChildAllNodes(annotationsNode, "Range")) {
+			addAnnotation(annotationNode);
+		}
+	}
+
 	/**
 	 * adds ranges to the graph
 	 */
-	private void addAnnotation(Element annotationElement) {
+	private void addAnnotation(Node annotationNode) {
 		Map<String, String> attrs = new HashMap<>();
 		attrs.put("title", "");
 		String[] keys = { "textColor", "outlineType", "fillColor", "alpha", "maxY", "outlineColor", "maxX", "isEllipse",
 				"minX", "minY", "titlePos", "title" };
 		for (String key : keys) {
-			Element tmp = annotationElement.getChild(key, null);
-			if (tmp != null) {
-				String value = tmp.getAttributeValue(key);
-				attrs.put(key, value);
+			Node tmp = this.getChildNode(annotationNode, key);
+			if (tmp == null) {
+				if (!key.equals("title") && strictParsing) {
+					errorString.append("Error while parsing SMBL document. Tag " + key + " is missing!\n");
+				}
+			} else {
+				String value = this.getAttributeValue(tmp, key);
+				if (value == null && strictParsing) {
+					errorString.append("Error while parsing SMBL document. Attribute " + key + " of tag " + key
+							+ " is missing!\n");
+				} else {
+					attrs.put(key, value);
+				}
 			}
 		}
 		pathway.getGraph().addAnnotation(attrs);
@@ -1076,5 +1368,31 @@ public class JSBMLInput {
 			}
 		}
 		return -1;
+	}
+
+	private void handleReationParameters(Node parametersNode, GraphElementAbstract gea) {
+		if (parametersNode != null) {
+			for (Node parameter : this.getChildAllNodes(parametersNode, "Parameter")) {
+				String pName = this.getCascadingNodeAttribute(parameter, "Name");
+				if (pName == null) {
+					continue;
+				}
+				String valueString = this.getCascadingNodeAttribute(parameter, "Value");
+				if (valueString == null) {
+					continue;
+				}
+				String unit = this.getCascadingNodeAttribute(parameter, "Unit");
+				if (unit == null) {
+					unit = "";
+				}
+				try {
+					final BigDecimal value = new BigDecimal(valueString);
+					gea.getParameters().add(new Parameter(pName, value, unit));
+				} catch (Exception e) {
+					e.printStackTrace();
+					errorString.append(e.getMessage());
+				}
+			}
+		}
 	}
 }
