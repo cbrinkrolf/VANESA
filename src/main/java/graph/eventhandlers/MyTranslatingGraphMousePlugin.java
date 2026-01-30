@@ -130,10 +130,12 @@ public class MyTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
 
 	public void mouseMoved(MouseEvent e) {
 		if (inWindow) {
-			@SuppressWarnings("unchecked")
-			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-					.getSource();
-			vv.setMousePoint(vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint()));
+			if (e.getSource() instanceof MyVisualizationViewer) {
+				@SuppressWarnings("unchecked")
+				final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
+						.getSource();
+				vv.setMousePoint(vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint()));
+			}
 		}
 	}
 
