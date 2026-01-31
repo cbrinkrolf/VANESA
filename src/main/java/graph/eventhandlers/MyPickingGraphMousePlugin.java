@@ -267,7 +267,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 						e.consume();
 						vv.repaint();
 					} else {
-						if (!moved) {
+						if (!moved && down != null) {
 							float dx = Math.abs((float) (e.getX() - down.getX()));
 							float dy = Math.abs((float) (e.getY() - down.getY()));
 							if (Math.max(dx, dy) > 10) {
