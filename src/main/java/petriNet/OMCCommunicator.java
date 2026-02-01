@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import configurations.Workspace;
-import util.VanesaUtility;
 
 public class OMCCommunicator {
 	private final Path bin;
@@ -93,12 +92,12 @@ public class OMCCommunicator {
 				writeMosFile(getInstalledPNVersions());
 				String output = runMosFile(pathToMos);
 				tryDeleteMos();
-				output = output.replace("\"", "");
-				output = output.replace("{", "");
-				output = output.replace("}", "");
-				output = output.strip();
+				output = output.replaceAll("\"", "");
+				output = output.replaceAll("\\{", "");
+				output = output.replaceAll("\\}", "");
+				output = output.replaceAll("\\s", "");
 
-				if (output.isEmpty() || output.isBlank()) {
+				if (output.isEmpty()) {
 					return false;
 				}
 
