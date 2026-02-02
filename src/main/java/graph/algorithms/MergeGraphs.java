@@ -20,24 +20,19 @@ public class MergeGraphs {
 		pwNew.setLink("");
 
 		// CHRIS better deep copy of pathway
-		File file1 = new File("test");
+		File file1 = new File("merge1.sbml");
 		try {
 			FileOutputStream fos1 = new FileOutputStream(file1);
 			String output1 = new JSBMLOutput(fos1, pwOne).generateSBMLDocument();
-			// new VAMLOutput(fos1, one);
 			String input1 = new JSBMLInput(pwNew, false).loadSBMLFile(new FileInputStream(file1), file1);
-			// new VAMLInput(file1, pw_new);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		File file2 = new File("test2");
+		File file2 = new File("merge2.sbml");
 		try {
 			FileOutputStream fos2 = new FileOutputStream(file2);
 			String output2 = new JSBMLOutput(fos2, pwTwo).generateSBMLDocument();
-
-			// new VAMLOutput(new FileOutputStream(file2), two);
-			// new VAMLInput(file2, pw_new);
 			String input2 = new JSBMLInput(pwNew, false).loadSBMLFile(new FileInputStream(file2), file2);
 		} catch (Exception e) {
 			e.printStackTrace();
