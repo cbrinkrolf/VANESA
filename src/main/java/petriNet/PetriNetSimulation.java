@@ -276,9 +276,7 @@ public class PetriNetSimulation implements ActionListener {
 
 				final String stepSize = VanesaUtility.fixedPrecisionDivide(stopTime, BigDecimal.valueOf(intervals))
 						.toPlainString();
-				override += "-override=outputFormat=ia,stopTime=" + stopTime.toPlainString() + ",stepSize="
-						+ stepSize + ",tolerance=" + tolerance.toPlainString() + ",seed=" + seed
-						+ ",placeLocalSeed=" + MOoutput.generateLocalSeed(seed)
+				override += "-override=seed=" + seed + ",placeLocalSeed=" + MOoutput.generateLocalSeed(seed)
 						+ ",transitionLocalSeed=" + MOoutput.generateLocalSeed(seed);
 				System.out.println("parameter changed: " + flags.isParameterChanged());
 				if (flags.isParameterChanged()) {
@@ -305,12 +303,10 @@ public class PetriNetSimulation implements ActionListener {
 					for (final Place p : pw.getChangedBoundaries().keySet()) {
 						final Boundary b = pw.getChangedBoundaries().get(p);
 						if (b.isLowerBoundarySet()) {
-							override += ",'" + p.getName() + "'.min" + getMarksOrTokens(p) + "="
-									+ b.getLowerBoundary();
+							override += ",'" + p.getName() + "'.min" + getMarksOrTokens(p) + "=" + b.getLowerBoundary();
 						}
 						if (b.isUpperBoundarySet()) {
-							override += ",'" + p.getName() + "'.max" + getMarksOrTokens(p) + "="
-									+ b.getUpperBoundary();
+							override += ",'" + p.getName() + "'.max" + getMarksOrTokens(p) + "=" + b.getUpperBoundary();
 						}
 					}
 				}
@@ -325,6 +321,10 @@ public class PetriNetSimulation implements ActionListener {
 				final List<String> cmdArguments = new ArrayList<>();
 				cmdArguments.add(simName);
 				cmdArguments.add("-s=" + menu.getSolver());
+				cmdArguments.add("-outputFormat=ia");
+				cmdArguments.add("-stopTime=" + stopTime.toPlainString());
+				cmdArguments.add("-stepSize=" + stepSize);
+				cmdArguments.add("-tolerance=" + tolerance.toPlainString());
 				cmdArguments.add(override);
 				cmdArguments.add("-port=" + port);
 				// If we wouldn't want event emission: cmdArguments.add("-noEventEmit");
@@ -740,8 +740,8 @@ public class PetriNetSimulation implements ActionListener {
 				if (!menu.isBuiltInPNlibSelected()) {
 					packageInfo = "import PNlib = " + selectedSimLib.getName() + ";";
 				}
-				MOoutput mo = new MOoutput(pathSim.resolve("simulation.mo").toFile(), modelicaModelName,
-						packageInfo, menu.getGlobalSeed(), false);
+				MOoutput mo = new MOoutput(pathSim.resolve("simulation.mo").toFile(), modelicaModelName, packageInfo,
+						menu.getGlobalSeed(), false);
 				mo.write(pw);
 				bea2key = mo.getBea2resultkey();
 
@@ -796,8 +796,7 @@ public class PetriNetSimulation implements ActionListener {
 							message += split[i] + "\r\n";
 						}
 					}
-					PopUpDialog.getInstance().show("Warning: " + number + " expression(s) are inconsistent:",
-							message);
+					PopUpDialog.getInstance().show("Warning: " + number + " expression(s) are inconsistent:", message);
 				}
 
 				StringTokenizer tokenizer = new StringTokenizer(inputStreamString.toString(), ",");

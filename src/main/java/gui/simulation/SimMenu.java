@@ -39,26 +39,27 @@ import petriNet.PetriNetSimulation;
 public class SimMenu extends JFrame implements ItemListener {
 	private static final long serialVersionUID = 7509509909627902082L;
 	/**
-	 * Solver for 1.20.0 stable release
+	 * Solver for 1.26.0 stable release
+	 * 
+	 * To display supported solvers, either (1) run "omc --help=simulation"
+	 * 
+	 * or (2) check GitHub "OMCompiler/SimulationRuntime/c/util/simulation_options.c" variable "const char
+	 * *SOLVER_METHOD_DESC[S_MAX]"
 	 */
-	private static final Map<String, String> SOLVER_TOOLTIPS = Map.ofEntries(
-			Map.entry("euler", "euler - Euler - explicit, fixed step size, order 1"),
-			Map.entry("heun", "heun - Heun's method - explicit, fixed step, order 2"),
-			Map.entry("rungekutta", "rungekutta - classical Runge-Kutta - explicit, fixed step, order 4"),
-			Map.entry("impeuler", "impeuler - Euler - implicit, fixed step size, order 1"),
-			Map.entry("trapezoid", "trapezoid - trapezoidal rule - implicit, fixed step size, order 2"),
-			Map.entry("imprungekutta",
-					"imprungekutta - Runge-Kutta methods based on Radau and Lobatto IIA - implicit, fixed step size, order 1-6(selected manually by flag -impRKOrder)"),
-			Map.entry("gbode",
-					"gbode - generic bi-rate ODE solver - implicit, explicit, step size control, arbitrary order"),
-			Map.entry("irksco", "irksco - own developed Runge-Kutta solver - implicit, step size control, order 1-2"),
-			Map.entry("dassl", "dassl - default solver - BDF method - implicit, step size control, order 1-5"),
+	private static final Map<String, String> SOLVER_TOOLTIPS = Map.ofEntries(Map.entry("dassl",
+			"dassl (default) - BDF method - implicit (dense solver), variable step size control, adaptive order 1-5, event location"),
 			Map.entry("ida",
-					"ida - SUNDIALS IDA solver - BDF method with sparse linear solver - implicit, step size control, order 1-5"),
+					"ida - SUNDIALS IDA solver - BDF method - implicit (sparse/dense solver, default sparse) variable step size control, adaptive order 1-5, event location - additional simulation flags: -idaMaxErrorTestFails -idaMaxNonLinIters -idaMaxConvFails -idaNonLinConvCoef -idaLS -idaScaling -idaSensitivity"),
 			Map.entry("cvode",
-					"cvode - experimental implementation of SUNDIALS CVODE solver - BDF or Adams-Moulton method - step size control, order 1-12"),
-			Map.entry("rungekuttaSsc",
-					"rungekuttaSsc - Runge-Kutta based on Novikov (2016) - explicit, step size control, order 4-5 [experimental]"),
+					"cvode - SUNDIALS CVODE solver - BDF or Adams-Moulton solver - implicit (dense solver), variable step-size control, adaptive order 1-12, event location - additional simulation flags -cvodeLinearMultistepMethod -cvodeNonlinearSolverIteration"),
+			Map.entry("gbode",
+					"gbode - generic Runge-Kutta ODE solver - implicit (sparse solver)/explicit, fixed/variable step size control, order 1-14, event location, optional bi-rate integration - additional simulation flags -gbm -gbctrl -gbratio - additional advanced flags -gbctrl_filter -gbctrl_fhr -gberr -gbint -gbnls -gbfm -gbfctrl -gbferr -gbfint -gbfnls"),
+			Map.entry("euler", "euler - Euler - explicit, fixed step size, order 1"),
+			Map.entry("rungekutta", "rungekutta - classical Runge-Kutta - explicit, fixed step, order 4"),
+			Map.entry("symSolver",
+					"symSolver - symbolic inline Solver [compiler flag '--symSolver' needed] - fixed step size, order 1"),
+			Map.entry("symSolverSsc",
+					"symSolverSsc - symbolic implicit Euler with step size control [compiler flag '--symSolver' needed] - step size control, order 1"),
 			Map.entry("qss", "qss - A QSS solver [experimental]"),
 			Map.entry("optimization", "optimization - Special solver for dynamic optimization"));
 	private static final List<String> SUPPORTED_PNLIB_VERSIONS = PetriNetSimulation.SUPPORTED_PNLIB_VERSIONS;
@@ -232,8 +233,8 @@ public class SimMenu extends JFrame implements ItemListener {
 		JLabel intervalsLbl = new JLabel("Intervals:");
 		intervalsLbl.setToolTipText("number of returned time steps");
 
-		useShortModelName.setToolTipText(
-				"short model names lead to shorter generated file names for linking to executable");
+		useShortModelName
+				.setToolTipText("short model names lead to shorter generated file names for linking to executable");
 		useCustomExecutable.setToolTipText(
 				"use an existing simulation executable, all other compilation flags will be taken into account");
 		useCustomExecutable.addActionListener(e -> revalidateDevOptionsPanel());
@@ -507,21 +508,21 @@ public class SimMenu extends JFrame implements ItemListener {
 	}
 
 	public boolean isBuiltInPNlibSelected() {
-		return simLibs.getSelectedIndex() < SUPPORTED_PNLIB_VERSIONS.size() && !Workspace.getCurrentSettings()
-				.isOverridePNlibPath();
+		return simLibs.getSelectedIndex() < SUPPORTED_PNLIB_VERSIONS.size()
+				&& !Workspace.getCurrentSettings().isOverridePNlibPath();
 	}
 
 	public String getSelectedBuiltInPNLibVersion() {
-		if (simLibs.getSelectedIndex() < SUPPORTED_PNLIB_VERSIONS.size() && !Workspace.getCurrentSettings()
-				.isOverridePNlibPath()) {
+		if (simLibs.getSelectedIndex() < SUPPORTED_PNLIB_VERSIONS.size()
+				&& !Workspace.getCurrentSettings().isOverridePNlibPath()) {
 			return SUPPORTED_PNLIB_VERSIONS.get(simLibs.getSelectedIndex());
 		}
 		return null;
 	}
 
 	public File getCustomPNLib() {
-		if (simLibs.getSelectedIndex() < SUPPORTED_PNLIB_VERSIONS.size() && !Workspace.getCurrentSettings()
-				.isOverridePNlibPath()) {
+		if (simLibs.getSelectedIndex() < SUPPORTED_PNLIB_VERSIONS.size()
+				&& !Workspace.getCurrentSettings().isOverridePNlibPath()) {
 			return null;
 		}
 		lastLibsIdx = simLibs.getSelectedIndex();
