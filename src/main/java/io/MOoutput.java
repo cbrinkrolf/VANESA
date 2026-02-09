@@ -126,16 +126,16 @@ public class MOoutput extends BaseWriter<Pathway> {
 		sb.append(", showTokenFlow=true");
 		sb.append(", globalSeed=seed");
 		sb.append(')').append(ENDL);
-		sb.append("annotation(Placement(visible=true, transformation(origin={").append(minX - 30).append(", ").append(
-				maxY + 30).append("}, extent={{-20, -20}, {20, 20}}, rotation=0)));").append(ENDL);
+		sb.append("annotation(Placement(visible=true, transformation(origin={").append(minX - 30).append(", ")
+				.append(maxY + 30).append("}, extent={{-20, -20}, {20, 20}}, rotation=0)));").append(ENDL);
 		sb.append(parametersSB);
 		sb.append(componentsSB);
 		sb.append("equation").append(ENDL);
 		sb.append(edgesSB);
-		sb.append(INDENT).append("annotation(Icon(coordinateSystem(extent={{").append(minX - 50).append(",").append(
-				minY - 50).append("},{").append(maxX + 50).append(",").append(maxY + 50).append(
-				"}})), Diagram(coordinateSystem(extent={{").append(minX - 50).append(",").append(minY - 50).append(
-				"},{").append(maxX + 50).append(",").append(maxY + 50).append("}})));").append(ENDL);
+		sb.append(INDENT).append("annotation(Icon(coordinateSystem(extent={{").append(minX - 50).append(",")
+				.append(minY - 50).append("},{").append(maxX + 50).append(",").append(maxY + 50)
+				.append("}})), Diagram(coordinateSystem(extent={{").append(minX - 50).append(",").append(minY - 50)
+				.append("},{").append(maxX + 50).append(",").append(maxY + 50).append("}})));").append(ENDL);
 		sb.append("end ").append(modelName).append(";").append(ENDL);
 		String data = sb.toString();
 		if (noIdent) {
@@ -163,8 +163,8 @@ public class MOoutput extends BaseWriter<Pathway> {
 		}
 		// functions and parameters at arcs belong to the corresponding transition
 		if (bna instanceof Transition) {
-			for (final BiologicalEdgeAbstract bea : VanesaUtility.getEdgesSortedByID(
-					pw.getGraph().getJungGraph().getIncidentEdges(bna))) {
+			for (final BiologicalEdgeAbstract bea : VanesaUtility
+					.getEdgesSortedByID(pw.getGraph().getJungGraph().getIncidentEdges(bna))) {
 				for (final Parameter p : bea.getParametersSortedAlphabetically()) {
 					buildParameterForNode("__", bna.getName(), p);
 				}
@@ -173,8 +173,8 @@ public class MOoutput extends BaseWriter<Pathway> {
 	}
 
 	private void buildParameterForNode(final String prefix, final String name, final Parameter p) {
-		parametersSB.append(INDENT).append("parameter Real '").append(prefix).append(name).append("_").append(
-				p.getName()).append("'");
+		parametersSB.append(INDENT).append("parameter Real '").append(prefix).append(name).append("_")
+				.append(p.getName()).append("'");
 		if (StringUtils.isNotEmpty(p.getUnit())) {
 			parametersSB.append("(final unit=\"").append(p.getUnit()).append("\")");
 		}
@@ -467,9 +467,9 @@ public class MOoutput extends BaseWriter<Pathway> {
 		inhibitCount++;
 		String result = INDENT + PNlibIA + " inhibitorArc" + inhibitCount + "(testValue=" + getModelicaEdgeFunction(e)
 				+ ");" + ENDL;
-		edgesSB.append(INDENT + "connect('").append(fromString).append("'.outTransition[").append(
-				actualOutEdges.get(fromString).indexOf(e.getTo()) + 1).append("],").append("inhibitorArc").append(
-				inhibitCount).append(".inPlace);").append(ENDL);
+		edgesSB.append(INDENT + "connect('").append(fromString).append("'.outTransition[")
+				.append(actualOutEdges.get(fromString).indexOf(e.getTo()) + 1).append("],").append("inhibitorArc")
+				.append(inhibitCount).append(".inPlace);").append(ENDL);
 		edgesSB.append(INDENT + "connect(inhibitorArc").append(inhibitCount).append(".outTransition,'").append(toString)
 				.append("'.inPlaces[").append(actualInEdges.get(toString).indexOf(e.getFrom()) + 1).append("]) ")
 				.append(getFromToAnnotation(pw, e.getFrom(), e.getTo())).append(";").append(ENDL);
@@ -480,9 +480,9 @@ public class MOoutput extends BaseWriter<Pathway> {
 		testArcCount++;
 		String result = INDENT + PNlibTA + " testArc" + testArcCount + "(testValue=" + getModelicaEdgeFunction(e) + ");"
 				+ ENDL;
-		edgesSB.append(INDENT + "connect('").append(fromString).append("'.outTransition[").append(
-				actualOutEdges.get(fromString).indexOf(e.getTo()) + 1).append("],").append("testArc").append(
-				testArcCount).append(".inPlace);").append(ENDL);
+		edgesSB.append(INDENT + "connect('").append(fromString).append("'.outTransition[")
+				.append(actualOutEdges.get(fromString).indexOf(e.getTo()) + 1).append("],").append("testArc")
+				.append(testArcCount).append(".inPlace);").append(ENDL);
 		edgesSB.append(INDENT + "connect(testArc").append(testArcCount).append(".outTransition,'").append(toString)
 				.append("'.inPlaces[").append(actualInEdges.get(toString).indexOf(e.getFrom()) + 1).append("]) ")
 				.append(getFromToAnnotation(pw, e.getFrom(), e.getTo())).append(";").append(ENDL);
@@ -509,24 +509,31 @@ public class MOoutput extends BaseWriter<Pathway> {
 	}
 
 	private String getConnectionStringTP(Pathway pw, String from, String to, BiologicalEdgeAbstract bea) {
-		String result = INDENT + "connect('" + from + "'.outPlaces[" + (actualOutEdges.get(from).indexOf(bea.getTo())
-				+ 1) + "], '" + to + "'.inTransition[" + (actualInEdges.get(to).indexOf(bea.getFrom()) + 1) + "]) "
+		String result = INDENT + "connect('" + from + "'.outPlaces["
+				+ (actualOutEdges.get(from).indexOf(bea.getTo()) + 1) + "], '" + to + "'.inTransition["
+				+ (actualInEdges.get(to).indexOf(bea.getFrom()) + 1) + "]) "
 				+ getFromToAnnotation(pw, bea.getFrom(), bea.getTo()) + ";" + ENDL;
-		bea2resultkey.put(bea, "'" + to + "'.tokenFlow.inflow[" + (actualInEdges.get(to).indexOf(bea.getFrom()) + 1)
-				+ "]");
+		bea2resultkey.put(bea,
+				"'" + to + "'.tokenFlow.inflow[" + (actualInEdges.get(to).indexOf(bea.getFrom()) + 1) + "]");
 		return result;
 	}
 
 	private String getConnectionStringPT(Pathway pw, String from, String to, BiologicalEdgeAbstract bea) {
-		String result = INDENT + "connect('" + from + "'.outTransition[" + (actualOutEdges.get(from).indexOf(
-				bea.getTo()) + 1) + "], '" + to + "'.inPlaces[" + (actualInEdges.get(to).indexOf(bea.getFrom()) + 1)
-				+ "]) " + getFromToAnnotation(pw, bea.getFrom(), bea.getTo()) + ";" + ENDL;
-		bea2resultkey.put(bea, "'" + from + "'.tokenFlow.outflow[" + (actualOutEdges.get(from).indexOf(bea.getTo()) + 1)
-				+ "]");
+		String result = INDENT + "connect('" + from + "'.outTransition["
+				+ (actualOutEdges.get(from).indexOf(bea.getTo()) + 1) + "], '" + to + "'.inPlaces["
+				+ (actualInEdges.get(to).indexOf(bea.getFrom()) + 1) + "]) "
+				+ getFromToAnnotation(pw, bea.getFrom(), bea.getTo()) + ";" + ENDL;
+		bea2resultkey.put(bea,
+				"'" + from + "'.tokenFlow.outflow[" + (actualOutEdges.get(from).indexOf(bea.getTo()) + 1) + "]");
 		return result;
 	}
 
 	public Map<BiologicalEdgeAbstract, String> getBea2resultkey() {
+		return bea2resultkey;
+	}
+
+	public Map<BiologicalEdgeAbstract, String> getBea2resultkey(Pathway pw) {
+		buildConnections(pw);
 		return bea2resultkey;
 	}
 
@@ -593,8 +600,8 @@ public class MOoutput extends BaseWriter<Pathway> {
 			if (bea.getTo().isConstant() && bea.getTo() instanceof Place) {
 				return "0";
 			}
-			if (bea.getTo().isLogical() && bea.getTo().getLogicalReference().isConstant() && bea.getTo()
-					.getLogicalReference() instanceof Place) {
+			if (bea.getTo().isLogical() && bea.getTo().getLogicalReference().isConstant()
+					&& bea.getTo().getLogicalReference() instanceof Place) {
 				return "0";
 			}
 			if (bea.getFrom().isConstant() && bea.getFrom() instanceof Place) {
@@ -603,8 +610,8 @@ public class MOoutput extends BaseWriter<Pathway> {
 				}
 				return "0";
 			}
-			if (bea.getFrom().isLogical() && bea.getFrom().getLogicalReference().isConstant() && bea.getFrom()
-					.getLogicalReference() instanceof Place) {
+			if (bea.getFrom().isLogical() && bea.getFrom().getLogicalReference().isConstant()
+					&& bea.getFrom().getLogicalReference() instanceof Place) {
 				if (bea.getFrom().getLogicalReference() instanceof DiscretePlace) {
 					return "max(0," + replaceNames(bea.getFunction() + "-1)");
 				}
@@ -655,8 +662,8 @@ public class MOoutput extends BaseWriter<Pathway> {
 					}
 					final boolean check = idxNew == 0 || CHARS.contains(mFunction.charAt(idxNew - 1));
 					/*
-					 * if (idxNew > 0) { if (chars.contains(mFunction.charAt(idxNew - 1))) { check =
-					 * true; } } else { check = true; }
+					 * if (idxNew > 0) { if (chars.contains(mFunction.charAt(idxNew - 1))) { check = true; } } else {
+					 * check = true; }
 					 */
 					if (check && CHARS.contains(r)) {
 						// mFunction = mFunction.replaceFirst(name, mNames.get(name));
@@ -680,8 +687,8 @@ public class MOoutput extends BaseWriter<Pathway> {
 	private String replaceParameters(String function, List<Parameter> params, String nodePrefix, boolean isEdge) {
 		StringBuilder mFunction = new StringBuilder(function);
 		// replace parameters
-		List<String> paramNames = params.stream().map(Parameter::getName).sorted(new StringLengthComparator()).collect(
-				Collectors.toList());
+		List<String> paramNames = params.stream().map(Parameter::getName).sorted(new StringLengthComparator())
+				.collect(Collectors.toList());
 		// Character c;
 		// Character l;
 		for (int i = 0; i < paramNames.size(); i++) {

@@ -230,7 +230,7 @@ public class PetriNetSimulation implements ActionListener {
 		}
 
 		if (menu.isUseCustomExecutableSelected()) {
-			// TODO set bea2key, otherwise null pointer and sim results of edges are not handled by the server
+			compilationProperties.setBea2key(new MOoutput(null, false).getBea2resultkey(pw));
 			flags.reset();
 			pw.getChangedInitialValues().clear();
 			pw.getChangedParameters().clear();
