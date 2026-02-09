@@ -18,12 +18,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.JOptionPane;
 
-import configurations.Workspace;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -39,6 +45,7 @@ import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
+import configurations.Workspace;
 import graph.ChangedFlags;
 import graph.gui.Boundary;
 import graph.gui.Parameter;
@@ -60,7 +67,6 @@ public class PetriNetSimulation implements ActionListener {
 	private boolean stopped = false;
 	private SimMenu menu = null;
 	private Process simProcess = null;
-	private Thread compilingThread = null;
 	private Process compileProcess = null;
 	private boolean buildSuccess = false;
 	private Thread allThread = null;
@@ -201,8 +207,6 @@ public class PetriNetSimulation implements ActionListener {
 
 		allThread = getCombinedThread(simulationThread, redrawGraphThread, outputThread);
 
-		waitForServerConnection = this.getWaitForServerConnectionThread(port);
-
 		boolean simLibChanged = false;
 		if (menu.isBuiltInPNlibSelected()) {
 			selectedSimLib = null;
@@ -252,16 +256,22 @@ public class PetriNetSimulation implements ActionListener {
 				|| shortModelNameChanged || eqPerFileChanged) {
 			try {
 				logAndShow("(re) compilation due to changed properties");
-				this.compile();
+				this.compile(port);
 			} catch (IOException | InterruptedException e) {
 				w.unBlurUI();
 				buildSuccess = false;
 				e.printStackTrace();
 			}
 		} else {
-			waitForServerConnection.start();
+			startServerAndSimulation(port);
 		}
 		w.unBlurUI();
+	}
+
+	private void startServerAndSimulation(int port) {
+		waitForServerConnection = this.getWaitForServerConnectionThread(port);
+		waitForServerConnection.start();
+
 	}
 
 	private Thread getSimulationThread(BigDecimal stopTime, int intervals, BigDecimal tolerance, int seed,
@@ -689,11 +699,19 @@ public class PetriNetSimulation implements ActionListener {
 		}
 	}
 
-	private void compile() throws IOException, InterruptedException {
+	private void compile(int port) throws IOException, InterruptedException {
 		compiling = true;
-		compilingThread = getCompilingThread();
+		// compilingThread = getCompilingThread();
 
-		Thread compileGUI = new Thread(() -> {
+		runCompilationCompletableFuture(getCompilationRunnable(port));
+		getCompileGUIThread().start();
+		// compilingThread.start();
+		// compileProcess.waitFor();
+		// stopped = true;
+	}
+
+	private Thread getCompileGUIThread() {
+		return new Thread(() -> {
 			long start = System.currentTimeMillis();
 			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 			String time = sdf.format(new Date());
@@ -711,136 +729,196 @@ public class PetriNetSimulation implements ActionListener {
 			long zstNachher = System.currentTimeMillis();
 			logAndShow("Time for compiling: " + DurationFormatUtils.formatDuration(zstNachher - zstVorher, "HH:mm:ss")
 					+ " (HH:mm:ss)");
-
 		});
-
-		compileGUI.start();
-		compilingThread.start();
-		// compileProcess.waitFor();
-		// stopped = true;
 	}
 
-	private Thread getCompilingThread() {
-		return new Thread(() -> {
-			// menu.setTime("Compiling ...");
-			try {
-				System.out.println("edges changed: " + flags.isEdgeChanged());
-				System.out.println("nodes changed: " + flags.isNodeChanged());
-				System.out.println("edge weight changed: " + flags.isEdgeWeightChanged());
-				System.out.println("pn prop changed " + flags.isPnPropertiesChanged());
-				System.out.println("Building new executable");
-				final File dirSim = pathSim.toFile();
-				if (dirSim.isDirectory()) {
-					FileUtils.cleanDirectory(dirSim);
-				} else {
-					dirSim.mkdir();
-				}
+	void whenCompletableFutureIsScheduled_thenExceptionallyExecutedOnlyOnFailure(int a, int b, int c, long expected)
+			throws ExecutionException, InterruptedException {
+		CompletableFuture.runAsync(() -> {
+			// if (a <= 0 || b <= 0 || c <= 0) {
+			throw new IllegalArgumentException(
+					String.format("Supplied with incorrect edge length [%s]", List.of(a, b, c)));
+			// }
+			// return a * b * c;
+		});
+	}
 
-				String packageInfo = "";
-				if (!menu.isBuiltInPNlibSelected()) {
-					packageInfo = "import PNlib = " + selectedSimLib.getName() + ";";
-				}
-				MOoutput mo = new MOoutput(pathSim.resolve("simulation.mo").toFile(), modelicaModelName, packageInfo,
-						menu.getGlobalSeed(), false);
-				mo.write(pw);
-				bea2key = mo.getBea2resultkey();
+	// @ParameterizedTest
+	// @MethodSource("parametersSource_exceptionally")
+	private void runCompilationCompletableFuture(Runnable compilationRunnable) {// throws IllegalArgumentException {
+		System.out.println("run comp. future:::");
+		CompletableFuture<Void> cf = CompletableFuture.runAsync(compilationRunnable).exceptionally(ex -> {
 
-				writeMosFile();
+			ex.printStackTrace();
+			System.out.println("in exceptionally");
+			return null;
+		}).thenRun(getOnCompilationSuccessRunnable());
+		System.out.println(cf.isDone());
+		System.out.println("durch von completable future");
+		// cf.cancel(true);
+		// cf.thenRun(getOnCompilationSuccessRunnable());
+		// System.out.println("after then run");
+		// cf.cancel(true);
 
-				// TODO faster compilation
-				// maybe additional flags for faster compilation or switch to Compile.bat that
-				// is also used by OMEdit
-				// e.g. "C:/Program Files/OpenModelica1.23.1-64bit/share/omc/scripts/Compile.bat
-				// _omcQuot_0c504e5f736d616c6c5f746573742e73626d6c27 gcc ucrt64 parallel dynamic
-				// 8 0"
-				// compileProcess = new ProcessBuilder(bin, pathSim + "simulation.mos",
-				// "--target=gcc", "--linkType=dynamic").start();
-				compileProcess = new ProcessBuilder(pathCompiler.resolve(OMC_FILE_PATH).toString(),
-						pathSim.resolve("simulation.mos").toString()).start();
+		// Assertions.assertThat(actual).isEqualTo(expected);
+	}
 
-				InputStream os = compileProcess.getInputStream();
-				InputStream errs = compileProcess.getErrorStream();
+	private Runnable getCompilationRunnable(int port) {
 
-				BufferedReader inputReader = new BufferedReader(new InputStreamReader(os));
-				System.out.println(stopped + " " + compileProcess.isAlive());
-				StringBuilder inputStreamString = new StringBuilder();
-				String line;
-				while (compileProcess.isAlive()) {
+		return new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					System.out.println("edges changed: " + flags.isEdgeChanged());
+					System.out.println("nodes changed: " + flags.isNodeChanged());
+					System.out.println("edge weight changed: " + flags.isEdgeWeightChanged());
+					System.out.println("pn prop changed " + flags.isPnPropertiesChanged());
+					System.out.println("Building new executable");
+					final File dirSim = pathSim.toFile();
+					if (dirSim.isDirectory()) {
+						FileUtils.cleanDirectory(dirSim);
+					} else {
+						dirSim.mkdir();
+					}
+
+					String packageInfo = "";
+					if (!menu.isBuiltInPNlibSelected()) {
+						packageInfo = "import PNlib = " + selectedSimLib.getName() + ";";
+					}
+					MOoutput mo = new MOoutput(pathSim.resolve("simulation.mo").toFile(), modelicaModelName,
+							packageInfo, menu.getGlobalSeed(), false);
+					mo.write(pw);
+					bea2key = mo.getBea2resultkey();
+
+					writeMosFile();
+
+					// TODO faster compilation
+					// maybe additional flags for faster compilation or switch to Compile.bat that
+					// is also used by OMEdit
+					// e.g. "C:/Program Files/OpenModelica1.23.1-64bit/share/omc/scripts/Compile.bat
+					// _omcQuot_0c504e5f736d616c6c5f746573742e73626d6c27 gcc ucrt64 parallel dynamic
+					// 8 0"
+					// compileProcess = new ProcessBuilder(bin, pathSim + "simulation.mos",
+					// "--target=gcc", "--linkType=dynamic").start();
+					compileProcess = new ProcessBuilder(pathCompiler.resolve(OMC_FILE_PATH).toString(),
+							pathSim.resolve("simulation.mos").toString()).start();
+
+					InputStream os = compileProcess.getInputStream();
+					InputStream errs = compileProcess.getErrorStream();
+
+					BufferedReader inputReader = new BufferedReader(new InputStreamReader(os));
+					System.out.println(stopped + " " + compileProcess.isAlive());
+					StringBuilder inputStreamString = new StringBuilder();
+					String line;
+					while (compileProcess.isAlive()) {
+						line = inputReader.readLine();
+						while (line != null && line.length() > 0) {
+							inputStreamString.append(line);
+							line = inputReader.readLine();
+						}
+						Thread.sleep(200);
+					}
+					compileProcess.waitFor();
+
 					line = inputReader.readLine();
 					while (line != null && line.length() > 0) {
+						logAndShow(line);
 						inputStreamString.append(line);
 						line = inputReader.readLine();
 					}
-					Thread.sleep(200);
-				}
-				compileProcess.waitFor();
+					inputReader.close();
+					System.out.println("compile output: " + inputStreamString.toString().stripTrailing());
 
-				line = inputReader.readLine();
-				while (line != null && line.length() > 0) {
-					logAndShow(line);
-					inputStreamString.append(line);
-					line = inputReader.readLine();
-				}
-				inputReader.close();
-				System.out.println("compile output: " + inputStreamString.toString().stripTrailing());
+					if (inputStreamString.toString().contains(
+							"Warning: The following equation is INCONSISTENT due to specified unit information:")) {
+						String message = "";
+						int number = 0;
+						String[] split = inputStreamString.toString().split("Warning: ");
+						for (int i = 1; i < split.length; i++) {
+							if (split[i].startsWith(
+									"The following equation is INCONSISTENT due to specified unit information:")) {
+								number++;
+								message += split[i] + "\r\n";
+							}
+						}
+						PopUpDialog.getInstance().show("Warning: " + number + " expression(s) are inconsistent:",
+								message);
+					}
 
-				if (inputStreamString.toString().contains(
-						"Warning: The following equation is INCONSISTENT due to specified unit information:")) {
-					String message = "";
-					int number = 0;
-					String[] split = inputStreamString.toString().split("Warning: ");
-					for (int i = 1; i < split.length; i++) {
-						if (split[i].startsWith(
-								"The following equation is INCONSISTENT due to specified unit information:")) {
-							number++;
-							message += split[i] + "\r\n";
+					StringTokenizer tokenizer = new StringTokenizer(inputStreamString.toString(), ",");
+					if (tokenizer.hasMoreTokens()) {
+						String tmp = tokenizer.nextToken();
+						simName = tmp.substring(tmp.indexOf("{") + 2, tmp.length() - 1);
+						if (SystemUtils.IS_OS_WINDOWS) {
+							simName += ".exe";
+						}
+						System.out.println("simName: " + simName);
+						if (new File(simName).exists()) {
+							buildSuccess = true;
+						} else {
+							PopUpDialog.getInstance().show("Something went wrong!", "Simulation could not be built!");
 						}
 					}
-					PopUpDialog.getInstance().show("Warning: " + number + " expression(s) are inconsistent:", message);
+					if (buildSuccess) {
+						handleCompilationSuccess(port);
+					} else {
+						handleCompilationError();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					logAndShow(e.getMessage());
+					handleCompilationError();
+				}
+				compiling = false;
+				if (Workspace.getCurrentSettings().isCleanWorkingDirAfterCompilation() && buildSuccess) {
+					// could be threaded maybe
+					System.out.println("cleaning up working directory");
+					cleanUpWorkingDirectory();
+					System.out.println("finished cleaning up working directory");
 				}
 
-				StringTokenizer tokenizer = new StringTokenizer(inputStreamString.toString(), ",");
-				if (tokenizer.hasMoreTokens()) {
-					String tmp = tokenizer.nextToken();
-					simName = tmp.substring(tmp.indexOf("{") + 2, tmp.length() - 1);
-					if (SystemUtils.IS_OS_WINDOWS) {
-						simName += ".exe";
-					}
-					System.out.println("simName: " + simName);
-					if (new File(simName).exists()) {
-						buildSuccess = true;
-					} else {
-						PopUpDialog.getInstance().show("Something went wrong!", "Simulation could not be built!");
-					}
-				}
-				if (buildSuccess) {
-					logMessage.append("compilation was successful!");
-					System.out.println("build success");
-					flags.reset();
-					pw.getChangedInitialValues().clear();
-					pw.getChangedParameters().clear();
-					pw.getChangedBoundaries().clear();
-					compiling = false;
-					waitForServerConnection.start();
-				} else {
-					logAndShow("Compiling was not successful. No executable was generated!");
-					compiling = false;
-					stopAction();
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				logAndShow(e.getMessage());
-				compiling = false;
-				stopAction();
 			}
-			compiling = false;
-			if (Workspace.getCurrentSettings().isCleanWorkingDirAfterCompilation() && buildSuccess) {
-				// could be threaded maybe
-				System.out.println("cleaning up working directory");
-				cleanUpWorkingDirectory();
-				System.out.println("finished cleaning up working directory");
+		};
+	}
+
+	private Runnable getOnCompilationErrorRunnable() {
+		return new Runnable() {
+
+			@Override
+			public void run() {
+				handleCompilationError();
 			}
-		});
+		};
+	}
+
+	private void handleCompilationError() {
+		logAndShow("Compiling was not successful. No executable was generated!");
+		compiling = false;
+		stopAction();
+	}
+
+	private void handleCompilationSuccess(int port) {
+		logAndShow("compilation was successful!");
+		System.out.println("build success");
+		flags.reset();
+		pw.getChangedInitialValues().clear();
+		pw.getChangedParameters().clear();
+		pw.getChangedBoundaries().clear();
+		compiling = false;
+		startServerAndSimulation(port);
+	}
+
+	private Runnable getOnCompilationSuccessRunnable() {
+		System.out.println("get method");
+		return new Runnable() {
+
+			@Override
+			public void run() {
+				System.out.println("------------------------onCompilationSuccessRunnable");
+
+			}
+		};
 	}
 
 	private Thread getCombinedThread(Thread simulationThread, Thread redrawGraphThread, Thread outputThread) {
@@ -1000,7 +1078,7 @@ public class PetriNetSimulation implements ActionListener {
 			}
 		} else if (event.getActionCommand().equals("stop")) {
 			System.out.println("stopped by clicking stop");
-			logMessage.append("Compiling / Simulation stopped by user!");
+			logAndShow("Compiling / Simulation stopped by user!");
 			stopAction();
 		}
 	}
@@ -1053,7 +1131,7 @@ public class PetriNetSimulation implements ActionListener {
 		return libs;
 	}
 
-	private void logAndShow(String text) {
+	public void logAndShow(String text) {
 		logMessage.append(text).append("\r\n");
 		menu.addText(text + "\r\n");
 		System.out.println(text);
