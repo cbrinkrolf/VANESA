@@ -1,6 +1,5 @@
 package petriNet;
 
-import java.awt.Desktop;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,9 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,9 +20,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javax.swing.JOptionPane;
-
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
@@ -47,7 +41,7 @@ import petriNet.Runnable.CompilationRunnable;
 import util.VanesaUtility;
 
 public class PetriNetSimulation implements ActionListener {
-	private static final Path OMC_FILE_PATH = Paths.get("bin").resolve(SystemUtils.IS_OS_WINDOWS ? "omc.exe" : "omc");
+
 	/**
 	 * Supported PNlib versions
 	 */
@@ -92,6 +86,7 @@ public class PetriNetSimulation implements ActionListener {
 	private CompletableFuture<Void> compilationCompletableFuture;
 
 	private CompilationProperties compilationProperties = new CompilationProperties();
+	private SimulationLog simLog;
 
 	// CHRIS refactored version of threads for simulation needs to be tested and
 	// evaluated. maybe show more hints / error messages
@@ -128,10 +123,11 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private void runOMCIA(int port, String overrideParameterized) {
+		simLog = new SimulationLog(menu);
 		if (!installationChecked) {
 			installationChecked = checkInstallation();
 			if (!installationChecked) {
-				logAndShow("Installation error. PNlib is not installed. Simulation stopped");
+				simLog.addLine("Installation error. PNlib is not installed. Simulation stopped");
 				PopUpDialog.getInstance().show("Installation error!",
 						"Installation error. PNlib is not installed. Simulation stopped");
 				return;
@@ -186,7 +182,7 @@ public class PetriNetSimulation implements ActionListener {
 		if (overrideEqPerFile) {
 			message += ", equations per file=" + eqPerFile;
 		}
-		logAndShow(message);
+		simLog.addLine(message);
 
 		w.blurUI();
 
@@ -209,7 +205,7 @@ public class PetriNetSimulation implements ActionListener {
 				simLibChanged = true;
 				selectedPNlibVersion = menu.getSelectedBuiltInPNLibVersion();
 			}
-			logAndShow("simulation lib: built-in PNlib version " + selectedPNlibVersion);
+			simLog.addLine("simulation lib: built-in PNlib version " + selectedPNlibVersion);
 		} else {
 			selectedPNlibVersion = null;
 			if (selectedSimLib == null
@@ -217,16 +213,16 @@ public class PetriNetSimulation implements ActionListener {
 				simLibChanged = true;
 				selectedSimLib = menu.getCustomPNLib();
 			}
-			logAndShow("simulation lib: custom PNlib: " + menu.getCustomPNLib().getAbsolutePath());
+			simLog.addLine("simulation lib: custom PNlib: " + menu.getCustomPNLib().getAbsolutePath());
 		}
 
 		simExePresent = false;
 		String simName = compilationProperties.getSimName();
 		if (simName != null && new File(simName).exists()) {
 			simExePresent = true;
-			logAndShow("simulation executable is already present");
+			simLog.addLine("simulation executable is already present");
 		} else {
-			logAndShow("executable needs to be compiled");
+			simLog.addLine("executable needs to be compiled");
 		}
 
 		if (menu.isUseCustomExecutableSelected()) {
@@ -250,7 +246,7 @@ public class PetriNetSimulation implements ActionListener {
 				|| flags.isPnPropertiesChanged() || !simExePresent || simLibChanged || menu.isForceRebuild()
 				|| shortModelNameChanged || eqPerFileChanged) {
 			try {
-				logAndShow("(re) compilation due to changed properties");
+				simLog.addLine("(re) compilation due to changed properties");
 				this.compile(port);
 			} catch (IOException | InterruptedException e) {
 				w.unBlurUI();
@@ -321,7 +317,7 @@ public class PetriNetSimulation implements ActionListener {
 					override += "\"";
 				}
 				// String program = "_omcQuot_556E7469746C6564";
-				logAndShow("override statement: " + override);
+				simLog.addLine("override statement: " + override);
 				final List<String> cmdArguments = new ArrayList<>();
 				cmdArguments.add(compilationProperties.getSimName());
 				cmdArguments.add("-s=" + menu.getSolver());
@@ -415,7 +411,7 @@ public class PetriNetSimulation implements ActionListener {
 					try {
 						String line = outputReader.readLine();
 						if (line != null && line.length() > 0) {
-							logAndShow(line);
+							simLog.addLine(line);
 						}
 					} catch (IOException e) {
 						PopUpDialog.getInstance().show("Simulation error:", e.getMessage());
@@ -437,7 +433,7 @@ public class PetriNetSimulation implements ActionListener {
 						// menue.addText(line + "\r\n");
 						// pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage()
 						// .append(line + "\r\n");
-						logAndShow(line);
+						simLog.addLine(line);
 						System.out.println(line);
 						line = outputReader.readLine();
 					}
@@ -482,15 +478,16 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private boolean checkInstallation() {
-		if (!checkInstallationOM()) {
+		final OMCCommunicator omcCommunicator = new OMCCommunicator(simLog);
+		if (!omcCommunicator.isOpenModeilicaInstalled()) {
 			return false;
 		}
+		pathCompiler = omcCommunicator.getPathCompiler();
 		if (Workspace.getCurrentSettings().isOverridePNlibPath()) {
 			return true;
 		}
 		// CHRIS put those checks in threads for example, so the messages will be shown
 		// while checking/installing PNlib
-		final OMCCommunicator omcCommunicator = new OMCCommunicator(pathCompiler.resolve(OMC_FILE_PATH));
 
 		boolean allInstalledSuccess = true;
 		for (String pnLibVersion : SUPPORTED_PNLIB_VERSIONS) {
@@ -503,92 +500,28 @@ public class PetriNetSimulation implements ActionListener {
 			if (omcCommunicator.isPackageManagerSupported()) {
 				String message = "Correct version of PNlib (version " + pnLibVersion
 						+ ") is not installed. Trying to install ...";
-				logAndShow(message);
+				simLog.addLine(message);
 				PopUpDialog.getInstance().show("PNlib not installed!", message);
 				if (omcCommunicator.isInstallPNlibSuccessful(pnLibVersion)) {
 					message = "Installation of PNlib (version " + pnLibVersion + ") was successful!";
-					logAndShow(message);
+					simLog.addLine(message);
 					PopUpDialog.getInstance().show("PNlib installation successful!", message);
 				} else {
 					message = "Installation of PNlib (version " + pnLibVersion
 							+ ") was not successful! Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
-					logAndShow(message);
+					simLog.addLine(message);
 					PopUpDialog.getInstance().show("PNlib installation was not successful!", message);
 					allInstalledSuccess = false;
 				}
 			} else {
 				String message = "Installation error. PNlib version " + pnLibVersion
 						+ " is not installed properly. Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
-				logAndShow(message);
+				simLog.addLine(message);
 				PopUpDialog.getInstance().show("PNlib installation was not successful!", message);
 				allInstalledSuccess = false;
 			}
 		}
 		return allInstalledSuccess;
-	}
-
-	private boolean checkInstallationOM() {
-		final String envPath = System.getenv("OPENMODELICAHOME");
-		final String overridePath = Workspace.getCurrentSettings().isOverrideOMPath()
-				? Workspace.getCurrentSettings().getOMPath().trim()
-				: null;
-		if (overridePath != null || envPath == null) {
-			if (validateOMPath(overridePath)) {
-				// noinspection DataFlowIssue
-				pathCompiler = Paths.get(overridePath);
-				return true;
-			}
-			logInvalidOMPath(overridePath);
-		}
-		if (validateOMPath(envPath)) {
-			// noinspection DataFlowIssue
-			pathCompiler = Paths.get(envPath);
-			return true;
-		}
-		logInvalidOMPath(envPath);
-		if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(MainWindow.getInstance().getFrame(),
-				"Cannot find OpenModelica installation.\n\n"
-						+ "Please install OpenModelica from \"https://openmodelica.org\".\n"
-						+ "If OpenModelica is already installed, please set\n"
-						+ "environment variable OPENMODELICAHOME to the installation directory.\n\n"
-						+ "Do you want to open the OpenModelica homepage in your default web browser?",
-				"Simulation aborted...", JOptionPane.YES_NO_OPTION)) {
-			try {
-				if (Desktop.isDesktopSupported()) {
-					Desktop.getDesktop().browse(new URI("https://openmodelica.org"));
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return false;
-	}
-
-	private boolean validateOMPath(final String path) {
-		if (StringUtils.isBlank(path)) {
-			return false;
-		}
-		final File file = new File(path);
-		if (!file.exists() || !file.isDirectory()) {
-			return false;
-		}
-		final File compilerFile = file.toPath().resolve(OMC_FILE_PATH).toFile();
-		return compilerFile.exists() && compilerFile.isFile() && compilerFile.canExecute();
-	}
-
-	private void logInvalidOMPath(final String path) {
-		if (path != null) {
-			final File file = new File(path);
-			final File compilerFile = file.toPath().resolve(OMC_FILE_PATH).toFile();
-			logAndShow("Given path of OpenModelica (" + file.getAbsolutePath() + ") is not a correct path!");
-			logAndShow("Path exists: " + file.exists());
-			logAndShow("Path is directory: " + file.isDirectory());
-			logAndShow("Executable " + compilerFile.getAbsolutePath() + " exists: " + compilerFile.exists());
-			logAndShow("Executable is file: " + compilerFile.isFile());
-			logAndShow("Executable is can be executed: " + compilerFile.canExecute());
-		} else {
-			logAndShow("No OpenModelica path available!");
-		}
 	}
 
 	private void compile(int port) throws IOException, InterruptedException {
@@ -600,7 +533,6 @@ public class PetriNetSimulation implements ActionListener {
 		compilationProperties.setFlags(flags);
 		compilationProperties.setGlobalSeed(menu.getGlobalSeed());
 		compilationProperties.setModelicaModelName(modelicaModelName);
-		compilationProperties.setOmcFilePath(OMC_FILE_PATH);
 		compilationProperties.setOverrideEqPerFile(overrideEqPerFile);
 		compilationProperties.setPathCompiler(pathCompiler);
 		compilationProperties.setPathSim(pathSim);
@@ -608,7 +540,7 @@ public class PetriNetSimulation implements ActionListener {
 		compilationProperties.setSelectedSimLibVersion(selectedPNlibVersion);
 		// compilationProperties.setSimName(simName);
 
-		CompilationRunnable compilation = new CompilationRunnable(compilationProperties, menu, pw, this);
+		CompilationRunnable compilation = new CompilationRunnable(compilationProperties, menu, pw, simLog);
 		runCompilationCompletableFuture(compilation.getRunnable(getOnCompilationErrorRunnable()), port);
 		getCompileGUIThread().start();
 		// compilingThread.start();
@@ -633,8 +565,8 @@ public class PetriNetSimulation implements ActionListener {
 				}
 			}
 			long zstNachher = System.currentTimeMillis();
-			logAndShow("Time for compiling: " + DurationFormatUtils.formatDuration(zstNachher - zstVorher, "HH:mm:ss")
-					+ " (HH:mm:ss)");
+			simLog.addLine("Time for compiling: "
+					+ DurationFormatUtils.formatDuration(zstNachher - zstVorher, "HH:mm:ss") + " (HH:mm:ss)");
 		});
 	}
 
@@ -682,12 +614,12 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private void handleCompilationError() {
-		logAndShow("Compiling was not successful. No executable was generated!");
+		simLog.addLine("Compiling was not successful. No executable was generated!");
 		stopAction();
 	}
 
 	private void handleCompilationSuccess(int port) {
-		logAndShow("compilation was successful!");
+		simLog.addLine("compilation was successful!");
 		System.out.println("build success");
 		flags.reset();
 		pw.getChangedInitialValues().clear();
@@ -864,7 +796,7 @@ public class PetriNetSimulation implements ActionListener {
 			}
 		} else if (event.getActionCommand().equals("stop")) {
 			System.out.println("stopped by clicking stop");
-			logAndShow("Compiling / Simulation stopped by user!");
+			simLog.addLine("Compiling / Simulation stopped by user!");
 			stopAction();
 		}
 	}
@@ -918,12 +850,6 @@ public class PetriNetSimulation implements ActionListener {
 			}
 		}
 		return libs;
-	}
-
-	public void logAndShow(String text) {
-		logMessage.append(text).append("\r\n");
-		menu.addText(text + "\r\n");
-		System.out.println(text);
 	}
 
 	private String getMarksOrTokens(final Place p) {

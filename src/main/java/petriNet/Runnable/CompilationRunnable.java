@@ -24,21 +24,22 @@ import gui.PopUpDialog;
 import gui.simulation.SimMenu;
 import io.MOoutput;
 import petriNet.CompilationProperties;
+import petriNet.OMCCommunicator;
 import petriNet.PetriNetSimulation;
+import petriNet.SimulationLog;
 
 public class CompilationRunnable {
 
 	private CompilationProperties properties;
 	private SimMenu menu;
 	private Pathway pw;
-	private PetriNetSimulation petriNetSim;
+	private SimulationLog simLog;
 
-	public CompilationRunnable(CompilationProperties properties, SimMenu menu, Pathway pw,
-			PetriNetSimulation petriNetSim) {
+	public CompilationRunnable(CompilationProperties properties, SimMenu menu, Pathway pw, SimulationLog simLog) {
 		this.properties = properties;
 		this.menu = menu;
 		this.pw = pw;
-		this.petriNetSim = petriNetSim;
+		this.simLog = simLog;
 	}
 
 	public Runnable getRunnable(Runnable onError) {
@@ -79,7 +80,7 @@ public class CompilationRunnable {
 				// compileProcess = new ProcessBuilder(bin, pathSim + "simulation.mos",
 				// "--target=gcc", "--linkType=dynamic").start();
 				Process compileProcess = new ProcessBuilder(
-						properties.getPathCompiler().resolve(properties.getOmcFilePath()).toString(),
+						properties.getPathCompiler().resolve(OMCCommunicator.OMC_FILE_PATH).toString(),
 						properties.getPathSim().resolve("simulation.mos").toString()).start();
 				properties.setCompileProcess(compileProcess);
 				InputStream os = compileProcess.getInputStream();
@@ -101,7 +102,7 @@ public class CompilationRunnable {
 
 				line = inputReader.readLine();
 				while (line != null && line.length() > 0) {
-					petriNetSim.logAndShow(line);
+					simLog.addLine(line);
 					inputStreamString.append(line);
 					line = inputReader.readLine();
 				}
@@ -146,7 +147,7 @@ public class CompilationRunnable {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				petriNetSim.logAndShow(e.getMessage());
+				simLog.addLine(e.getMessage());
 				onError.run();
 			}
 			if (Workspace.getCurrentSettings().isCleanWorkingDirAfterCompilation() && buildSuccess) {

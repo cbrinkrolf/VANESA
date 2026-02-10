@@ -12,7 +12,6 @@ public class CompilationProperties {
 	private ChangedFlags flags;
 	private Path pathSim;
 	private Path pathCompiler;
-	private Path omcFilePath;
 	private boolean isBuiltInPNlibSelected;
 	private String selectedSimLibVersion;
 	private File selectedSimLib;
@@ -49,14 +48,6 @@ public class CompilationProperties {
 
 	public void setPathCompiler(Path pathCompiler) {
 		this.pathCompiler = pathCompiler;
-	}
-
-	public Path getOmcFilePath() {
-		return omcFilePath;
-	}
-
-	public void setOmcFilePath(Path omcFilePath) {
-		this.omcFilePath = omcFilePath;
 	}
 
 	public boolean isBuiltInPNlibSelected() {

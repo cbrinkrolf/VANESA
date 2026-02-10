@@ -1,26 +1,39 @@
 package petriNet;
 
+import java.awt.Desktop;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
+
 import configurations.Workspace;
+import gui.MainWindow;
 
 public class OMCCommunicator {
-	private final Path bin;
+	public static final Path OMC_FILE_PATH = Paths.get("bin").resolve(SystemUtils.IS_OS_WINDOWS ? "omc.exe" : "omc");
+
+	private Path bin;
 	private final Path pathToMos;
 	private Set<String> pnLibVersions;
 	private boolean supportedPackageManagerChecked = false;
 	private boolean supportPackageManager = false;
+	private SimulationLog simLog;
+	private Path pathCompiler;
 
-	public OMCCommunicator(Path bin) {
-		this.bin = bin;
+	public OMCCommunicator(SimulationLog simLog) {
+		this.simLog = simLog;
 		pathToMos = Workspace.getCurrent().getPath().resolve("scripting.mos");
 	}
 
@@ -156,5 +169,79 @@ public class OMCCommunicator {
 		sb.append("installPackage(PNlib, \"").append(version).append("\");\r\n");
 		sb.append("getErrorString();\r\n");
 		return sb.toString();
+	}
+
+	public boolean isOpenModeilicaInstalled() {
+		final String envPath = System.getenv("OPENMODELICAHOME");
+		final String overridePath = Workspace.getCurrentSettings().isOverrideOMPath()
+				? Workspace.getCurrentSettings().getOMPath().trim()
+				: null;
+		if (overridePath != null || envPath == null) {
+			if (validateOMPath(overridePath)) {
+				// noinspection DataFlowIssue
+				pathCompiler = Paths.get(overridePath);
+				bin = pathCompiler.resolve(OMC_FILE_PATH);
+				return true;
+			}
+			logInvalidOMPath(overridePath);
+		}
+		if (validateOMPath(envPath)) {
+			// noinspection DataFlowIssue
+			pathCompiler = Paths.get(envPath);
+			bin = pathCompiler.resolve(OMC_FILE_PATH);
+			return true;
+		}
+		logInvalidOMPath(envPath);
+		if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(MainWindow.getInstance().getFrame(),
+				"Cannot find OpenModelica installation.\n\n"
+						+ "Please install OpenModelica from \"https://openmodelica.org\".\n"
+						+ "If OpenModelica is already installed, please set\n"
+						+ "environment variable OPENMODELICAHOME to the installation directory.\n\n"
+						+ "Do you want to open the OpenModelica homepage in your default web browser?",
+				"Simulation aborted...", JOptionPane.YES_NO_OPTION)) {
+			try {
+				if (Desktop.isDesktopSupported()) {
+					Desktop.getDesktop().browse(new URI("https://openmodelica.org"));
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	private boolean validateOMPath(final String path) {
+		if (StringUtils.isBlank(path)) {
+			return false;
+		}
+		final File file = new File(path);
+		if (!file.exists() || !file.isDirectory()) {
+			return false;
+		}
+		final File compilerFile = file.toPath().resolve(OMC_FILE_PATH).toFile();
+		return compilerFile.exists() && compilerFile.isFile() && compilerFile.canExecute();
+	}
+
+	private void logInvalidOMPath(final String path) {
+		if (path != null) {
+			final File file = new File(path);
+			final File compilerFile = file.toPath().resolve(OMC_FILE_PATH).toFile();
+			if (simLog != null) {
+				simLog.addLine("Given path of OpenModelica (" + file.getAbsolutePath() + ") is not a correct path!");
+				simLog.addLine("Path exists: " + file.exists());
+				simLog.addLine("Path is directory: " + file.isDirectory());
+				simLog.addLine("Executable " + compilerFile.getAbsolutePath() + " exists: " + compilerFile.exists());
+				simLog.addLine("Executable is file: " + compilerFile.isFile());
+				simLog.addLine("Executable is can be executed: " + compilerFile.canExecute());
+			}
+		} else {
+			if (simLog != null) {
+				simLog.addLine("No OpenModelica path available!");
+			}
+		}
+	}
+
+	public Path getPathCompiler() {
+		return pathCompiler;
 	}
 }
