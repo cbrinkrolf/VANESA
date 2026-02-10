@@ -8,9 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.nio.file.Path;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,6 +36,7 @@ import gui.PopUpDialog;
 import gui.simulation.SimMenu;
 import io.MOoutput;
 import petriNet.Runnable.CompilationRunnable;
+import petriNet.Runnable.RedrawGraphThread;
 import util.VanesaUtility;
 
 public class PetriNetSimulation implements ActionListener {
@@ -72,7 +71,7 @@ public class PetriNetSimulation implements ActionListener {
 	private final Pathway pw;
 	private final MainWindow w;
 
-	private String simId;
+	// private String simId;
 	private boolean simExePresent;
 	private StringBuilder logMessage = null;
 	private boolean installationChecked = false;
@@ -86,6 +85,7 @@ public class PetriNetSimulation implements ActionListener {
 	private CompletableFuture<Void> compilationCompletableFuture;
 
 	private CompilationProperties compilationProperties = new CompilationProperties();
+	private SimulationProperties simulationProperties = new SimulationProperties();
 	private SimulationLog simLog;
 
 	// CHRIS refactored version of threads for simulation needs to be tested and
@@ -191,7 +191,7 @@ public class PetriNetSimulation implements ActionListener {
 		Thread simulationThread = getSimulationThread(stopTime, intervals, tolerance, seed, overrideParameterized,
 				port);
 
-		Thread redrawGraphThread = getRedrawGraphThread();
+		Thread redrawGraphThread = new RedrawGraphThread(pw, menu, simulationProperties).getThread();
 
 		Thread outputThread = getSimulationOutputThread();
 
@@ -361,52 +361,9 @@ public class PetriNetSimulation implements ActionListener {
 		});
 	}
 
-	private Thread getRedrawGraphThread() {
-		return new Thread(() -> {
-			pw.getGraph().getVisualizationViewer().requestFocus();
-			List<Double> v = null;// pw.getPetriNet().getSimResController().get().getTime().getAll();
-			DecimalFormat df = new DecimalFormat("#.#####");
-			df.setRoundingMode(RoundingMode.HALF_UP);
-			boolean simAddedToMenu = false;
-			int counter = 0;
-			while (s.isRunning()) {
-				if (v == null && pw.getPetriPropertiesNet().getSimResController().get(simId) != null) {
-					v = pw.getPetriPropertiesNet().getSimResController().get(simId).getTime().getAll();
-				}
-				if (counter % 5 == 0) {
-					w.redrawGraphs(true);
-				}
-				w.redrawGraphs(false);
-				if (v != null && v.size() > 0) {
-					if (!simAddedToMenu) {
-						menu.updateSimulationResults();
-						simAddedToMenu = true;
-					}
-					menu.setTime("Time: " + df.format((v.get(v.size() - 1))));
-				}
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					PopUpDialog.getInstance().show("Simulation error:", e.getMessage());
-					e.printStackTrace();
-				}
-				counter++;
-			}
-			menu.stopped();
-			System.out.println("end of simulation");
-			w.updateSimulationResultView();
-			w.redrawGraphs(true);
-			w.getFrame().revalidate();
-			if (v.size() > 0) {
-				menu.setTime("Time: " + (v.get(v.size() - 1)).toString());
-			}
-			System.out.println("redraw thread finished");
-		});
-	}
-
 	private Thread getSimulationOutputThread() {
 		return new Thread(() -> {
-			while (s.isRunning()) {
+			while (simulationProperties.isServerRunning()) {
 				if (outputReader != null) {
 					try {
 						String line = outputReader.readLine();
@@ -451,11 +408,11 @@ public class PetriNetSimulation implements ActionListener {
 	private Thread getWaitForServerConnectionThread(int port) {
 		return new Thread(() -> {
 			try {
-				s = new Server(pw, compilationProperties.getBea2key(), simId, port);
+				s = new Server(pw, compilationProperties.getBea2key(), simulationProperties, port);
 				s.start();
 				System.out.print("wait until servers is ready to connect ");
 				int i = 0;
-				while (s.isRunning() && !s.isReadyToConnect() && !stopped) {
+				while (simulationProperties.isServerRunning() && !s.isReadyToConnect() && !stopped) {
 					if (i % 50 == 0) {
 						System.out.println(".");
 					} else {
@@ -468,7 +425,7 @@ public class PetriNetSimulation implements ActionListener {
 					i++;
 				}
 				System.out.println();
-				if (s.isRunning() && s.isReadyToConnect() && !stopped) {
+				if (simulationProperties.isServerRunning() && s.isReadyToConnect() && !stopped) {
 					allThread.start();
 				}
 			} catch (IOException e1) {
@@ -693,8 +650,9 @@ public class PetriNetSimulation implements ActionListener {
 
 			// this.runOMC();
 			if (!menu.isParameterized()) {
-				simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
+				final String simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
 						+ System.nanoTime();
+				simulationProperties.setSimId(simId);
 				logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
 				menu.clearText();
 				menu.addText(logMessage.toString());
@@ -732,8 +690,9 @@ public class PetriNetSimulation implements ActionListener {
 					// System.out.println("--------------parameter size: "+parameters.size());
 
 					final BigDecimal value = list.get(i);
-					simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
+					final String simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
 							+ System.nanoTime() + "_" + value.toPlainString();
+					simulationProperties.setSimId(simId);
 
 					System.out.println(value);
 
@@ -813,7 +772,7 @@ public class PetriNetSimulation implements ActionListener {
 		compiling = false;
 		stopped = true;
 		menu.stopped();
-		if (s != null && s.isRunning()) {
+		if (s != null && simulationProperties.isServerRunning()) {
 			s.stop();
 		}
 		if (compileProcess != null) {

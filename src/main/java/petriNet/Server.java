@@ -30,10 +30,8 @@ public class Server {
 	private Thread serverThread;
 	private java.net.ServerSocket serverSocket;
 	private final Map<BiologicalEdgeAbstract, String> bea2key;
-	private boolean running = true;
 	private boolean readyToConnect = false;
 	private final Pathway pw;
-	private final String simId;
 	private final int port;
 	private SimulationResult simResult;
 
@@ -49,39 +47,41 @@ public class Server {
 	private Set<Transition> transitionDelay;
 	private Set<Transition> transitionPutDelay;
 	private Set<Transition> transitionFireTime;
+	private SimulationProperties properties;
 
 	private long lastSyso = 0;
 
-	public Server(final Pathway pw, final Map<BiologicalEdgeAbstract, String> bea2key, final String simId,
+	public Server(final Pathway pw, final Map<BiologicalEdgeAbstract, String> bea2key, SimulationProperties properties,
 			final int port) {
 		this.pw = pw;
 		this.bea2key = bea2key;
-		this.simId = simId;
+		this.properties = properties;
 		this.port = port;
 		this.pw.setPlotColorPlacesTransitions(false);
+		this.properties.setServerRunning(true);
 	}
 
 	public void start() throws IOException {
-		serverThread = new Thread(this::runLoop, "OMServerThread-" + simId);
+		serverThread = new Thread(this::runLoop, "OMServerThread-" + properties.getSimId());
 		serverThread.start();
 	}
 
 	private void runLoop() {
-		while (running) {
+		while (properties.isServerRunning()) {
 			try {
 				boolean boundCorrectly = false;
-				while (!boundCorrectly && running) {
+				while (!boundCorrectly && properties.isServerRunning()) {
 					try {
 						serverSocket = new ServerSocket(port);
 						boundCorrectly = true;
 					} catch (Exception e) {
 						boundCorrectly = false;
 						e.printStackTrace();
-						running = false;
+						properties.setServerRunning(false);
 						// port++;
 					}
 				}
-				simResult = pw.getPetriPropertiesNet().getSimResController().get(simId);
+				simResult = pw.getPetriPropertiesNet().getSimResController().get(properties.getSimId());
 				MainWindow.getInstance().addSimulationResults();
 				System.out.println("waiting to accept");
 				readyToConnect = true;
@@ -92,10 +92,11 @@ public class Server {
 					readData(is);
 				}
 			} catch (IOException e) {
-				running = false;
+				properties.setServerRunning(false);
 				e.printStackTrace();
 			}
 		}
+		properties.setServerRunning(false);
 		simResult.refineDiscreteTransitionIsFiring(discreteTransitions);
 		simResult.refineStochasticTransitionIsFiring(stochasticTransitions);
 		simResult.refineEdgeFlow(toRefineEdges);
@@ -107,7 +108,8 @@ public class Server {
 	}
 
 	/**
-	 * OM server side code reference: https://github.com/OpenModelica/OpenModelica/blob/master/OMCompiler/SimulationRuntime/c/simulation/results/simulation_result_ia.cpp
+	 * OM server side code reference:
+	 * https://github.com/OpenModelica/OpenModelica/blob/master/OMCompiler/SimulationRuntime/c/simulation/results/simulation_result_ia.cpp
 	 */
 	private void readData(final DataInputStream socket) throws IOException {
 		final byte[] idLengthBuffer = new byte[5];
@@ -140,7 +142,7 @@ public class Server {
 
 		try {
 			long startDigest = System.currentTimeMillis();
-			while (running) {
+			while (properties.isServerRunning()) {
 				final List<Object> values = new ArrayList<>();
 				socket.readFully(buffer, 0, 5);
 				bb = ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN);
@@ -160,15 +162,15 @@ public class Server {
 						for (int b = 0; b < bools; b++) {
 							values.add(bb.get());
 						}
-						final String[] sValues = (new String(buffer, expectedPayloadSize,
-								length - expectedPayloadSize)).split(NAME_SEPARATOR);
+						final String[] sValues = (new String(buffer, expectedPayloadSize, length - expectedPayloadSize))
+								.split(NAME_SEPARATOR);
 						Collections.addAll(values, sValues);
 						setData(name2index, values);
 					}
 					break;
 				case 6:
 					System.out.println("data handling: " + (System.currentTimeMillis() - startDigest) + "ms");
-					running = false;
+					properties.setServerRunning(false);
 					System.out.println("server shut down");
 					break;
 				}
@@ -176,10 +178,10 @@ public class Server {
 		} catch (SocketException e) {
 			System.out.println("server destroyed");
 			serverSocket.close();
-			running = false;
+			properties.setServerRunning(false);
 		}
 		serverSocket.close();
-		running = false;
+		properties.setServerRunning(false);
 	}
 
 	private void createSets(final Map<String, Integer> name2index) {
@@ -321,14 +323,10 @@ public class Server {
 		simResult.addValue(gea, type, value);
 	}
 
-	public boolean isRunning() {
-		return running;
-	}
-
 	public void stop() {
 		System.out.println("server destroyed");
 		try {
-			running = false;
+			properties.setServerRunning(false);
 			serverSocket.close();
 		} catch (IOException e) {
 			logger.warn("Failed to stop server", e);

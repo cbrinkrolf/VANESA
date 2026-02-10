@@ -25,7 +25,6 @@ import gui.simulation.SimMenu;
 import io.MOoutput;
 import petriNet.CompilationProperties;
 import petriNet.OMCCommunicator;
-import petriNet.PetriNetSimulation;
 import petriNet.SimulationLog;
 
 public class CompilationRunnable {
