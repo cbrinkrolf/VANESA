@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.petriNet.DiscretePlace;
+import biologicalObjects.nodes.petriNet.Place;
 import gui.PopUpDialog;
 
 public class VanesaUtility {
@@ -159,5 +161,12 @@ public class VanesaUtility {
 
 	public static BigDecimal fixedPrecisionDivide(final BigDecimal a, final BigDecimal b) {
 		return a.divide(b, 24, RoundingMode.HALF_UP).stripTrailingZeros();
+	}
+
+	public static String getMarksOrTokens(final Place p) {
+		if (p instanceof DiscretePlace) {
+			return "Tokens";
+		}
+		return "Marks";
 	}
 }

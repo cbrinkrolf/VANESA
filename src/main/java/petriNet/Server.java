@@ -75,6 +75,7 @@ public class Server {
 						serverSocket = new ServerSocket(port);
 						boundCorrectly = true;
 					} catch (Exception e) {
+						e.printStackTrace();
 						boundCorrectly = false;
 						e.printStackTrace();
 						properties.setServerRunning(false);

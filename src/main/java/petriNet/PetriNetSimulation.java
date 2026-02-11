@@ -6,37 +6,30 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
-import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import configurations.Workspace;
 import graph.ChangedFlags;
-import graph.gui.Boundary;
-import graph.gui.Parameter;
 import gui.MainWindow;
 import gui.PopUpDialog;
 import gui.simulation.SimMenu;
 import io.MOoutput;
 import petriNet.Runnable.CompilationRunnable;
 import petriNet.Runnable.RedrawGraphThread;
+import petriNet.Runnable.SimulationThread;
 import util.VanesaUtility;
 
 public class PetriNetSimulation implements ActionListener {
@@ -50,13 +43,12 @@ public class PetriNetSimulation implements ActionListener {
 
 	private boolean stopped = false;
 	private SimMenu menu = null;
-	private Process simProcess = null;
+	// private Process simProcess = null;
 	private Process compileProcess = null;
 	private Thread allThread = null;
 	private boolean compiling = false;
 	private Thread waitForServerConnection = null;
 
-	private BufferedReader outputReader;
 	// private Map<BiologicalEdgeAbstract, String> bea2key;
 
 	private ChangedFlags flags;
@@ -138,12 +130,6 @@ public class PetriNetSimulation implements ActionListener {
 		final int intervals = menu.getIntervals();
 		final BigDecimal tolerance = menu.getTolerance();
 
-		if (menu.isUseCustomExecutableSelected()) {
-			// "_omcQ_27D15_5FCPM_5FPN_2Esbml_27.exe";
-			final String customExecutable = menu.getCustomExecutableName();
-			compilationProperties.setSimName(pathSim.resolve(customExecutable).toFile().getAbsolutePath());
-		}
-
 		boolean shortModelNameChanged = !(shortModelName == menu.isUseShortNamesSelected());
 
 		shortModelName = menu.isUseShortNamesSelected();
@@ -188,8 +174,29 @@ public class PetriNetSimulation implements ActionListener {
 
 		System.out.println("stop: " + stopTime);
 		System.out.println("tolerance: " + tolerance);
-		Thread simulationThread = getSimulationThread(stopTime, intervals, tolerance, seed, overrideParameterized,
-				port);
+		simulationProperties.setFlags(flags);
+		simulationProperties.setIntervals(intervals);
+		simulationProperties.setOverrideParameterized(overrideParameterized);
+		simulationProperties.setPathCompiler(pathCompiler);
+		simulationProperties.setPathSim(pathSim);
+		simulationProperties.setPort(port);
+		simulationProperties.setSeed(seed);
+		simulationProperties.setSolver(menu.getSolver());
+		simulationProperties.setStopTime(stopTime);
+		simulationProperties.setTolerance(tolerance);
+		simulationProperties.setUseCustomExecutableSelected(menu.isUseCustomExecutableSelected());
+
+		if (menu.isUseCustomExecutableSelected()) {
+			final String customExecutable = menu.getCustomExecutableName();
+			simulationProperties.setSimName(pathSim.resolve(customExecutable).toFile().getAbsolutePath());
+		} else {
+			simulationProperties.setSimName(compilationProperties.getSimName());
+		}
+
+		SimulationThread simThread = new SimulationThread(simulationProperties, pw, simLog);
+
+		Thread simulationThread = simThread.getSimulationThread(onSimulationThreadSuccessRunnable(),
+				onSimulationThreadErrorRunnable());
 
 		Thread redrawGraphThread = new RedrawGraphThread(pw, menu, simulationProperties).getThread();
 
@@ -258,111 +265,22 @@ public class PetriNetSimulation implements ActionListener {
 		w.unBlurUI();
 	}
 
-	private void startServerAndSimulation(int port) {
-		waitForServerConnection = this.getWaitForServerConnectionThread(port);
-		waitForServerConnection.start();
+	private void collectDataForCompilation() {
 
 	}
 
-	private Thread getSimulationThread(BigDecimal stopTime, int intervals, BigDecimal tolerance, int seed,
-			String overrideParameterized, int port) {
-		return new Thread(() -> {
-			try {
-				ProcessBuilder pb = new ProcessBuilder();
-				String override = "";
-				if (SystemUtils.IS_OS_WINDOWS) {
-					override += "\"";
-				}
+	private void collectDataForSimulation() {
 
-				final String stepSize = VanesaUtility.fixedPrecisionDivide(stopTime, BigDecimal.valueOf(intervals))
-						.toPlainString();
-				override += "-override=seed=" + seed + ",placeLocalSeed=" + MOoutput.generateLocalSeed(seed)
-						+ ",transitionLocalSeed=" + MOoutput.generateLocalSeed(seed);
-				System.out.println("parameter changed: " + flags.isParameterChanged());
-				if (flags.isParameterChanged()) {
-					for (Parameter param : pw.getChangedParameters().keySet()) {
-						GraphElementAbstract gea = pw.getChangedParameters().get(param);
-						if (gea instanceof BiologicalNodeAbstract) {
-							BiologicalNodeAbstract bna = (BiologicalNodeAbstract) gea;
-							override += ",'_" + bna.getName() + "_" + param.getName() + "'="
-									+ param.getValue().toPlainString();
-						} else {
-							// CHRIS override parameters of edges
-						}
-					}
-				}
+	}
 
-				if (flags.isInitialValueChanged()) {
-					for (final Place p : pw.getChangedInitialValues().keySet()) {
-						final Double d = pw.getChangedInitialValues().get(p);
-						override += ",'" + p.getName() + "'.start" + getMarksOrTokens(p) + "=" + d;
-					}
-				}
-
-				if (flags.isBoundariesChanged()) {
-					for (final Place p : pw.getChangedBoundaries().keySet()) {
-						final Boundary b = pw.getChangedBoundaries().get(p);
-						if (b.isLowerBoundarySet()) {
-							override += ",'" + p.getName() + "'.min" + getMarksOrTokens(p) + "=" + b.getLowerBoundary();
-						}
-						if (b.isUpperBoundarySet()) {
-							override += ",'" + p.getName() + "'.max" + getMarksOrTokens(p) + "=" + b.getUpperBoundary();
-						}
-					}
-				}
-
-				override += overrideParameterized;
-
-				if (SystemUtils.IS_OS_WINDOWS) {
-					override += "\"";
-				}
-				// String program = "_omcQuot_556E7469746C6564";
-				simLog.addLine("override statement: " + override);
-				final List<String> cmdArguments = new ArrayList<>();
-				cmdArguments.add(compilationProperties.getSimName());
-				cmdArguments.add("-s=" + menu.getSolver());
-				cmdArguments.add("-outputFormat=ia");
-				cmdArguments.add("-stopTime=" + stopTime.toPlainString());
-				cmdArguments.add("-stepSize=" + stepSize);
-				cmdArguments.add("-tolerance=" + tolerance.toPlainString());
-				cmdArguments.add(override);
-				cmdArguments.add("-port=" + port);
-				// If we wouldn't want event emission: cmdArguments.add("-noEventEmit");
-				cmdArguments.add("-lv=LOG_STATS");
-				// for the simulation results export of protected variables, necessary to detect
-				// actual firing of stochastic transitions
-				cmdArguments.add("-emit_protected");
-				pb.command(cmdArguments.toArray(new String[0]));
-				pb.redirectOutput();
-				pb.directory(pathSim.toFile());
-				Map<String, String> env = pb.environment();
-				// String envPath = env.get("PATH");
-				String envPath = System.getenv("PATH");
-				envPath = pathCompiler.resolve("bin") + ";" + envPath;
-				env.put("PATH", envPath);
-				System.out.println("working path:" + env.get("PATH"));
-				System.out.println(pb.environment().get("PATH"));
-				simProcess = pb.start();
-
-				setReader(new InputStreamReader(simProcess.getInputStream()));
-			} catch (IOException e1) {
-
-				PopUpDialog.getInstance().show("Simulation error:", e1.getMessage());
-				e1.printStackTrace();
-				if (simProcess != null) {
-					simProcess.destroy();
-				}
-				stopAction();
-			}
-			if (menu.isUseCustomExecutableSelected()) {
-				compilationProperties.setSimName(null);
-			}
-			System.out.println("simulation thread finished");
-		});
+	private void startServerAndSimulation(int port) {
+		waitForServerConnection = this.getWaitForServerConnectionThread(port);
+		waitForServerConnection.start();
 	}
 
 	private Thread getSimulationOutputThread() {
 		return new Thread(() -> {
+			BufferedReader outputReader = simulationProperties.getOutputReader();
 			while (simulationProperties.isServerRunning()) {
 				if (outputReader != null) {
 					try {
@@ -527,23 +445,9 @@ public class PetriNetSimulation implements ActionListener {
 		});
 	}
 
-	void whenCompletableFutureIsScheduled_thenExceptionallyExecutedOnlyOnFailure(int a, int b, int c, long expected)
-			throws ExecutionException, InterruptedException {
-		CompletableFuture.runAsync(() -> {
-			// if (a <= 0 || b <= 0 || c <= 0) {
-			throw new IllegalArgumentException(
-					String.format("Supplied with incorrect edge length [%s]", List.of(a, b, c)));
-			// }
-			// return a * b * c;
-		});
-	}
-
-	// @ParameterizedTest
-	// @MethodSource("parametersSource_exceptionally")
 	private void runCompilationCompletableFuture(Runnable compilationRunnable, int port) {// throws
 																							// IllegalArgumentException
-																							// {
-		System.out.println("run comp. future:::");
+		// System.out.println("run comp. future:::");
 		compilationCompletableFuture = CompletableFuture.runAsync(compilationRunnable).exceptionally(ex -> {
 
 			ex.printStackTrace();
@@ -551,7 +455,7 @@ public class PetriNetSimulation implements ActionListener {
 			stopAction();
 			return null;
 		}).thenRun(getOnCompilationSuccessRunnable(port));
-		System.out.println("durch von completable future");
+		// System.out.println("durch von completable future");
 		// cf.cancel(true);
 		// cf.thenRun(getOnCompilationSuccessRunnable());
 		// System.out.println("after then run");
@@ -561,12 +465,8 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private Runnable getOnCompilationErrorRunnable() {
-		return new Runnable() {
-
-			@Override
-			public void run() {
-				handleCompilationError();
-			}
+		return () -> {
+			handleCompilationError();
 		};
 	}
 
@@ -583,16 +483,27 @@ public class PetriNetSimulation implements ActionListener {
 		pw.getChangedParameters().clear();
 		pw.getChangedBoundaries().clear();
 		compiling = false;
+		simulationProperties.setSimName(compilationProperties.getSimName());
 		startServerAndSimulation(port);
 	}
 
 	private Runnable getOnCompilationSuccessRunnable(int port) {
-		return new Runnable() {
+		return () -> {
+			handleCompilationSuccess(port);
+		};
+	}
 
-			@Override
-			public void run() {
-				handleCompilationSuccess(port);
+	private Runnable onSimulationThreadSuccessRunnable() {
+		return () -> {
+			if (simulationProperties.isUseCustomExecutableSelected()) {
+				simulationProperties.setSimName(null);
 			}
+		};
+	}
+
+	private Runnable onSimulationThreadErrorRunnable() {
+		return () -> {
+			stopAction();
 		};
 	}
 
@@ -624,8 +535,8 @@ public class PetriNetSimulation implements ActionListener {
 				PopUpDialog.getInstance().show("Something went wrong", "The model couldn't be simulated!");
 				w.unBlurUI();
 				menu.stopped();
-				if (simProcess != null) {
-					simProcess.destroy();
+				if (simulationProperties.getSimProcess() != null) {
+					simulationProperties.getSimProcess().destroy();
 				}
 				return;
 			}
@@ -704,7 +615,7 @@ public class PetriNetSimulation implements ActionListener {
 							// b = new Boundary();
 							// b.setLowerBoundary(value);
 							// pw.getChangedBoundaries().put((Place) bna, b);
-							override += ",'" + p.getName() + "'.min" + getMarksOrTokens(p) + "="
+							override += ",'" + p.getName() + "'.min" + VanesaUtility.getMarksOrTokens(p) + "="
 									+ value.toPlainString();
 							break;
 						case "token max":
@@ -712,13 +623,13 @@ public class PetriNetSimulation implements ActionListener {
 							// b = new Boundary();
 							// b.setUpperBoundary(value);
 							// pw.getChangedBoundaries().put((Place) bna, b);
-							override += ",'" + p.getName() + "'.max" + getMarksOrTokens(p) + "="
+							override += ",'" + p.getName() + "'.max" + VanesaUtility.getMarksOrTokens(p) + "="
 									+ value.toPlainString();
 							break;
 						case "token start":
 							// flags.setInitialValueChanged(true);
 							// pw.getChangedInitialValues().put((Place) bna, value);
-							override += ",'" + p.getName() + "'.start" + getMarksOrTokens(p) + "="
+							override += ",'" + p.getName() + "'.start" + VanesaUtility.getMarksOrTokens(p) + "="
 									+ value.toPlainString();
 							break;
 						}
@@ -754,14 +665,9 @@ public class PetriNetSimulation implements ActionListener {
 				System.out.println("eeeeeeend of param sim");
 			}
 		} else if (event.getActionCommand().equals("stop")) {
-			System.out.println("stopped by clicking stop");
 			simLog.addLine("Compiling / Simulation stopped by user!");
 			stopAction();
 		}
-	}
-
-	private void setReader(InputStreamReader reader) {
-		this.outputReader = new BufferedReader(reader);
 	}
 
 	private void stopAction() {
@@ -772,6 +678,7 @@ public class PetriNetSimulation implements ActionListener {
 		compiling = false;
 		stopped = true;
 		menu.stopped();
+		System.out.println(simulationProperties.isServerRunning());
 		if (s != null && simulationProperties.isServerRunning()) {
 			s.stop();
 		}
@@ -779,8 +686,8 @@ public class PetriNetSimulation implements ActionListener {
 			compileProcess.destroy();
 			menu.setTime("compiling / simulation aborted!");
 		}
-		if (simProcess != null) {
-			simProcess.destroy();
+		if (simulationProperties.getSimProcess() != null) {
+			simulationProperties.getSimProcess().destroy();
 		}
 
 	}
@@ -809,13 +716,6 @@ public class PetriNetSimulation implements ActionListener {
 			}
 		}
 		return libs;
-	}
-
-	private String getMarksOrTokens(final Place p) {
-		if (p instanceof DiscretePlace) {
-			return "Tokens";
-		}
-		return "Marks";
 	}
 
 	public SimMenu getMenu() {
