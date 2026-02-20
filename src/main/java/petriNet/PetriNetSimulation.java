@@ -69,7 +69,6 @@ public class PetriNetSimulation implements ActionListener {
 	private boolean installationChecked = false;
 
 	private boolean shortModelName = false;
-	private String modelicaModelName = "m";
 
 	private boolean overrideEqPerFile = false;
 	private int eqPerFile = -1;
@@ -125,23 +124,17 @@ public class PetriNetSimulation implements ActionListener {
 				return;
 			}
 		}
+
+		w.blurUI();
+
 		stopped = false;
-		final BigDecimal stopTime = menu.getStopValue();
-		final int intervals = menu.getIntervals();
-		final BigDecimal tolerance = menu.getTolerance();
 
 		boolean shortModelNameChanged = !(shortModelName == menu.isUseShortNamesSelected());
-
 		shortModelName = menu.isUseShortNamesSelected();
-		if (shortModelName) {
-			modelicaModelName = "m";
-		} else {
-			modelicaModelName = "'" + pw.getName() + "'";
-		}
 
 		boolean eqPerFileChanged = !(overrideEqPerFile == menu.isEquationsPerFileSelected());
-
 		System.out.println("selected: " + menu.isEquationsPerFileSelected());
+
 		overrideEqPerFile = menu.isEquationsPerFileSelected();
 		if (overrideEqPerFile) {
 			if (eqPerFile != menu.getCustomEquationsPerFile()) {
@@ -154,37 +147,17 @@ public class PetriNetSimulation implements ActionListener {
 		System.out.println("port: " + port);
 		flags = pw.getChangedFlags("petriNetSim");
 
-		final int seed;
-		if (menu.isRandomGlobalSeed()) {
-			seed = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
-		} else {
-			seed = menu.getGlobalSeed();
-		}
+		collectDataForSimulation(port, overrideParameterized);
 
-		String message = "Simulation properties: stop=" + stopTime + ", intervals=" + intervals + ", integrator="
-				+ menu.getSolver() + ", tolerance=" + tolerance + ", seed=" + seed + ", forced rebuild="
-				+ menu.isForceRebuild() + ", use short model name=" + shortModelName + ", override equations per file="
-				+ overrideEqPerFile;
+		String message = "Simulation properties: stop=" + simulationProperties.getStopTime() + ", intervals="
+				+ simulationProperties.getIntervals() + ", integrator=" + menu.getSolver() + ", tolerance="
+				+ simulationProperties.getTolerance() + ", seed=" + simulationProperties.getSeed() + ", forced rebuild="
+				+ menu.isForceRebuild() + ", use short model name=" + menu.isUseShortNamesSelected()
+				+ ", override equations per file=" + overrideEqPerFile;
 		if (overrideEqPerFile) {
 			message += ", equations per file=" + eqPerFile;
 		}
 		simLog.addLine(message);
-
-		w.blurUI();
-
-		System.out.println("stop: " + stopTime);
-		System.out.println("tolerance: " + tolerance);
-		simulationProperties.setFlags(flags);
-		simulationProperties.setIntervals(intervals);
-		simulationProperties.setOverrideParameterized(overrideParameterized);
-		simulationProperties.setPathCompiler(pathCompiler);
-		simulationProperties.setPathSim(pathSim);
-		simulationProperties.setPort(port);
-		simulationProperties.setSeed(seed);
-		simulationProperties.setSolver(menu.getSolver());
-		simulationProperties.setStopTime(stopTime);
-		simulationProperties.setTolerance(tolerance);
-		simulationProperties.setUseCustomExecutableSelected(menu.isUseCustomExecutableSelected());
 
 		if (menu.isUseCustomExecutableSelected()) {
 			final String customExecutable = menu.getCustomExecutableName();
@@ -193,10 +166,8 @@ public class PetriNetSimulation implements ActionListener {
 			simulationProperties.setSimName(compilationProperties.getSimName());
 		}
 
-		SimulationThread simThread = new SimulationThread(simulationProperties, pw, simLog);
-
-		Thread simulationThread = simThread.getSimulationThread(onSimulationThreadSuccessRunnable(),
-				onSimulationThreadErrorRunnable());
+		Thread simulationThread = new SimulationThread(simulationProperties, pw, simLog)
+				.getSimulationThread(onSimulationThreadSuccessRunnable(), onSimulationThreadErrorRunnable());
 
 		Thread redrawGraphThread = new RedrawGraphThread(pw, menu, simulationProperties).getThread();
 
@@ -225,6 +196,8 @@ public class PetriNetSimulation implements ActionListener {
 
 		simExePresent = false;
 		String simName = compilationProperties.getSimName();
+		System.out.println("old SimName: " + simName);
+		// System.out.println(new File(simName).exists());
 		if (simName != null && new File(simName).exists()) {
 			simExePresent = true;
 			simLog.addLine("simulation executable is already present");
@@ -241,19 +214,20 @@ public class PetriNetSimulation implements ActionListener {
 			simLibChanged = false;
 		}
 
-		// System.out.println(flags.isEdgeChanged());
-		// System.out.println(flags.isNodeChanged());
-		// System.out.println(flags.isEdgeWeightChanged());
-		// System.out.println(flags.isPnPropertiesChanged());
-		// System.out.println(!simExePresent);
-		// System.out.println(simLibChanged);
-		// System.out.println(menu.isForceRebuild());
+		System.out.println(flags.isEdgeChanged());
+		System.out.println(flags.isNodeChanged());
+		System.out.println(flags.isEdgeWeightChanged());
+		System.out.println(flags.isPnPropertiesChanged());
+		System.out.println(!simExePresent);
+		System.out.println(simLibChanged);
+		System.out.println(menu.isForceRebuild());
 
 		if (flags.isEdgeChanged() || flags.isNodeChanged() || flags.isEdgeWeightChanged()
 				|| flags.isPnPropertiesChanged() || !simExePresent || simLibChanged || menu.isForceRebuild()
 				|| shortModelNameChanged || eqPerFileChanged) {
 			try {
 				simLog.addLine("(re) compilation due to changed properties");
+				collectDataForCompilation();
 				this.compile(port);
 			} catch (IOException | InterruptedException e) {
 				w.unBlurUI();
@@ -267,10 +241,51 @@ public class PetriNetSimulation implements ActionListener {
 
 	private void collectDataForCompilation() {
 
+		final String modelicaModelName;
+		if (menu.isUseShortNamesSelected()) {
+			modelicaModelName = "m";
+		} else {
+			modelicaModelName = "'" + pw.getName() + "'";
+		}
+
+		compilationProperties = new CompilationProperties();
+		compilationProperties.setBuiltInPNlibSelected(menu.isBuiltInPNlibSelected());
+		compilationProperties.setEquationsPerFile(menu.getCustomEquationsPerFile());
+		compilationProperties.setFlags(flags);
+		compilationProperties.setGlobalSeed(menu.getGlobalSeed());
+		compilationProperties.setModelicaModelName(modelicaModelName);
+		compilationProperties.setOverrideEqPerFile(overrideEqPerFile);
+		compilationProperties.setPathCompiler(pathCompiler);
+		compilationProperties.setPathSim(pathSim);
+		compilationProperties.setSelectedSimLib(selectedSimLib);
+		compilationProperties.setSelectedSimLibVersion(selectedPNlibVersion);
 	}
 
-	private void collectDataForSimulation() {
+	private void collectDataForSimulation(int port, String overrideParameterized) {
+		final BigDecimal stopTime = menu.getStopValue();
+		final int intervals = menu.getIntervals();
+		final BigDecimal tolerance = menu.getTolerance();
+		System.out.println("stop: " + stopTime);
+		System.out.println("tolerance: " + tolerance);
 
+		final int seed;
+		if (menu.isRandomGlobalSeed()) {
+			seed = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
+		} else {
+			seed = menu.getGlobalSeed();
+		}
+
+		simulationProperties.setFlags(flags);
+		simulationProperties.setIntervals(intervals);
+		simulationProperties.setOverrideParameterized(overrideParameterized);
+		simulationProperties.setPathCompiler(pathCompiler);
+		simulationProperties.setPathSim(pathSim);
+		simulationProperties.setPort(port);
+		simulationProperties.setSeed(seed);
+		simulationProperties.setSolver(menu.getSolver());
+		simulationProperties.setStopTime(stopTime);
+		simulationProperties.setTolerance(tolerance);
+		simulationProperties.setUseCustomExecutableSelected(menu.isUseCustomExecutableSelected());
 	}
 
 	private void startServerAndSimulation(int port) {
@@ -402,18 +417,6 @@ public class PetriNetSimulation implements ActionListener {
 	private void compile(int port) throws IOException, InterruptedException {
 		compiling = true;
 		// compilingThread = getCompilingThread();
-		compilationProperties = new CompilationProperties();
-		compilationProperties.setBuiltInPNlibSelected(menu.isBuiltInPNlibSelected());
-		compilationProperties.setEquationsPerFile(menu.getCustomEquationsPerFile());
-		compilationProperties.setFlags(flags);
-		compilationProperties.setGlobalSeed(menu.getGlobalSeed());
-		compilationProperties.setModelicaModelName(modelicaModelName);
-		compilationProperties.setOverrideEqPerFile(overrideEqPerFile);
-		compilationProperties.setPathCompiler(pathCompiler);
-		compilationProperties.setPathSim(pathSim);
-		compilationProperties.setSelectedSimLib(selectedSimLib);
-		compilationProperties.setSelectedSimLibVersion(selectedPNlibVersion);
-		// compilationProperties.setSimName(simName);
 
 		CompilationRunnable compilation = new CompilationRunnable(compilationProperties, menu, pw, simLog);
 		runCompilationCompletableFuture(compilation.getRunnable(getOnCompilationErrorRunnable()), port);
@@ -425,14 +428,15 @@ public class PetriNetSimulation implements ActionListener {
 
 	private Thread getCompileGUIThread() {
 		return new Thread(() -> {
+			String dateFormat = "HH:mm:ss";
 			long start = System.currentTimeMillis();
-			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+			SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
 			String time = sdf.format(new Date());
 			long zstVorher = System.currentTimeMillis();
 
 			while (compiling) {
 				menu.setTime("Compiling since " + time + " for: "
-						+ DurationFormatUtils.formatDuration(System.currentTimeMillis() - start, "HH:mm:ss") + ".");
+						+ DurationFormatUtils.formatDuration(System.currentTimeMillis() - start, dateFormat) + ".");
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
@@ -441,7 +445,7 @@ public class PetriNetSimulation implements ActionListener {
 			}
 			long zstNachher = System.currentTimeMillis();
 			simLog.addLine("Time for compiling: "
-					+ DurationFormatUtils.formatDuration(zstNachher - zstVorher, "HH:mm:ss") + " (HH:mm:ss)");
+					+ DurationFormatUtils.formatDuration(zstNachher - zstVorher, dateFormat) + " (" + dateFormat + ")");
 		});
 	}
 
@@ -478,13 +482,17 @@ public class PetriNetSimulation implements ActionListener {
 	private void handleCompilationSuccess(int port) {
 		simLog.addLine("compilation was successful!");
 		System.out.println("build success");
+		clearFlagsAndChangedValues();
+		compiling = false;
+		simulationProperties.setSimName(compilationProperties.getSimName());
+		startServerAndSimulation(port);
+	}
+
+	private void clearFlagsAndChangedValues() {
 		flags.reset();
 		pw.getChangedInitialValues().clear();
 		pw.getChangedParameters().clear();
 		pw.getChangedBoundaries().clear();
-		compiling = false;
-		simulationProperties.setSimName(compilationProperties.getSimName());
-		startServerAndSimulation(port);
 	}
 
 	private Runnable getOnCompilationSuccessRunnable(int port) {
@@ -547,126 +555,130 @@ public class PetriNetSimulation implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if (event.getActionCommand().equals("start")) {
-			int port = 11111;
-
-			while (!VanesaUtility.isPortAvailable(port)) {
-				port++;
-			}
-			System.out.println("Port " + port + " will be used.");
-
-			if (allThread != null) {
-				// allThread.interrupt();
-				// allThread = null;
-			}
-
-			// this.runOMC();
-			if (!menu.isParameterized()) {
-				final String simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
-						+ System.nanoTime();
-				simulationProperties.setSimId(simId);
-				logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
-				menu.clearText();
-				menu.addText(logMessage.toString());
-				menu.started();
-				runOMCIA(port);
-			} else {
-				// CHRIS needs to be checked again
-				flags = pw.getChangedFlags("petriNetSim");
-				BiologicalNodeAbstract bna = menu.getSelectedNode();
-				String param = menu.getParameterName();
-				List<BigDecimal> list = menu.getParameterValues();
-				PopUpDialog.getInstance().show("Parameterized simulation", "Parameters to be simulated:" + list.size());
-				if (list.isEmpty()) {
-					return;
-				}
-				// HashMap<Place, Boundary> boundaries = (HashMap<Place, Boundary>)
-				// DeepObjectCopy.clone(pw.getChangedBoundaries()); //(HashMap<Place, Boundary>)
-				// pw.getChangedBoundaries().clone();
-				// HashMap<Place, Double> initialValues = (HashMap<Place, Double>)
-				// DeepObjectCopy.clone(pw.getChangedInitialValues());
-				// pw.getChangedFlags(param);
-				// HashMap<Parameter, GraphElementAbstract> parameters = new HashMap<Parameter,
-				// GraphElementAbstract>();
-				// for(Parameter p :pw.getChangedParameters().keySet() ){
-				// parameters.put(p, pw.getChangedParameters().get(p));
-				// }
-				// (HashMap<Parameter, GraphElementAbstract>)
-				// DeepObjectCopy.clone(pw.getChangedParameters());
-				this.menu.started();
-				for (int i = 0; i < list.size(); i++) {
-					String override = "";
-					// pw.setChangedBoundaries(boundaries);
-					// pw.setChangedInitialValues(initialValues);
-					// pw.setChangedParameters(parameters);
-					// System.out.println("--------------parameter size: "+parameters.size());
-
-					final BigDecimal value = list.get(i);
-					final String simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
-							+ System.nanoTime() + "_" + value.toPlainString();
-					simulationProperties.setSimId(simId);
-
-					System.out.println(value);
-
-					if (bna instanceof Place) {
-						final Place p = (Place) bna;
-						switch (param) {
-						case "token min":
-							// flags.setBoundariesChanged(true);
-							// b = new Boundary();
-							// b.setLowerBoundary(value);
-							// pw.getChangedBoundaries().put((Place) bna, b);
-							override += ",'" + p.getName() + "'.min" + VanesaUtility.getMarksOrTokens(p) + "="
-									+ value.toPlainString();
-							break;
-						case "token max":
-							// flags.setBoundariesChanged(true);
-							// b = new Boundary();
-							// b.setUpperBoundary(value);
-							// pw.getChangedBoundaries().put((Place) bna, b);
-							override += ",'" + p.getName() + "'.max" + VanesaUtility.getMarksOrTokens(p) + "="
-									+ value.toPlainString();
-							break;
-						case "token start":
-							// flags.setInitialValueChanged(true);
-							// pw.getChangedInitialValues().put((Place) bna, value);
-							override += ",'" + p.getName() + "'.start" + VanesaUtility.getMarksOrTokens(p) + "="
-									+ value.toPlainString();
-							break;
-						}
-					} else if (bna instanceof Transition) {
-						if (bna.getParameter(param) != null) {
-							// Parameter p = bna.getParameter(param);
-							// flags.setParameterChanged(true);
-							// pw.getChangedParameters().put(new Parameter(param, value, p.getUnit()), bna);
-							override += ",'_" + bna.getName() + "_" + param + "'=" + value.toPlainString();
-						} else {
-							PopUpDialog.getInstance().show("Error",
-									"The parameter for parameterized simulation could not be found: " + param);
-							i = list.size();
-							break;
-						}
-					}
-					// rounding name up to 4 decimals
-					pw.getPetriPropertiesNet().getSimResController().get(simId).setName(
-							bna.getName() + "_" + param + "=" + (Math.round(value.doubleValue() * 1000) / 1000.0));
-					logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
-					menu.clearText();
-					menu.addText(logMessage.toString());
-					runOMCIA(port++, override);
-
-					try {
-						do {
-							Thread.sleep(100);
-						} while (!stopped);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-				System.out.println("eeeeeeend of param sim");
-			}
+			startAction();
 		} else if (event.getActionCommand().equals("stop")) {
 			simLog.addLine("Compiling / Simulation stopped by user!");
 			stopAction();
+		}
+	}
+
+	private void startAction() {
+		int port = 11111;
+
+		while (!VanesaUtility.isPortAvailable(port)) {
+			port++;
+		}
+		System.out.println("Port " + port + " will be used.");
+
+		if (allThread != null) {
+			// allThread.interrupt();
+			// allThread = null;
+		}
+
+		// this.runOMC();
+		if (!menu.isParameterized()) {
+			final String simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
+					+ System.nanoTime();
+			simulationProperties.setSimId(simId);
+			logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
+			menu.clearText();
+			menu.addText(logMessage.toString());
+			menu.started();
+			runOMCIA(port);
+		} else {
+			// CHRIS needs to be checked again
+			flags = pw.getChangedFlags("petriNetSim");
+			BiologicalNodeAbstract bna = menu.getSelectedNode();
+			String param = menu.getParameterName();
+			List<BigDecimal> list = menu.getParameterValues();
+			PopUpDialog.getInstance().show("Parameterized simulation", "Parameters to be simulated:" + list.size());
+			if (list.isEmpty()) {
+				return;
+			}
+			// HashMap<Place, Boundary> boundaries = (HashMap<Place, Boundary>)
+			// DeepObjectCopy.clone(pw.getChangedBoundaries()); //(HashMap<Place, Boundary>)
+			// pw.getChangedBoundaries().clone();
+			// HashMap<Place, Double> initialValues = (HashMap<Place, Double>)
+			// DeepObjectCopy.clone(pw.getChangedInitialValues());
+			// pw.getChangedFlags(param);
+			// HashMap<Parameter, GraphElementAbstract> parameters = new HashMap<Parameter,
+			// GraphElementAbstract>();
+			// for(Parameter p :pw.getChangedParameters().keySet() ){
+			// parameters.put(p, pw.getChangedParameters().get(p));
+			// }
+			// (HashMap<Parameter, GraphElementAbstract>)
+			// DeepObjectCopy.clone(pw.getChangedParameters());
+			this.menu.started();
+			for (int i = 0; i < list.size(); i++) {
+				String override = "";
+				// pw.setChangedBoundaries(boundaries);
+				// pw.setChangedInitialValues(initialValues);
+				// pw.setChangedParameters(parameters);
+				// System.out.println("--------------parameter size: "+parameters.size());
+
+				final BigDecimal value = list.get(i);
+				final String simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
+						+ System.nanoTime() + "_" + value.toPlainString();
+				simulationProperties.setSimId(simId);
+
+				System.out.println(value);
+
+				if (bna instanceof Place) {
+					final Place p = (Place) bna;
+					switch (param) {
+					case "token min":
+						// flags.setBoundariesChanged(true);
+						// b = new Boundary();
+						// b.setLowerBoundary(value);
+						// pw.getChangedBoundaries().put((Place) bna, b);
+						override += ",'" + p.getName() + "'.min" + VanesaUtility.getMarksOrTokens(p) + "="
+								+ value.toPlainString();
+						break;
+					case "token max":
+						// flags.setBoundariesChanged(true);
+						// b = new Boundary();
+						// b.setUpperBoundary(value);
+						// pw.getChangedBoundaries().put((Place) bna, b);
+						override += ",'" + p.getName() + "'.max" + VanesaUtility.getMarksOrTokens(p) + "="
+								+ value.toPlainString();
+						break;
+					case "token start":
+						// flags.setInitialValueChanged(true);
+						// pw.getChangedInitialValues().put((Place) bna, value);
+						override += ",'" + p.getName() + "'.start" + VanesaUtility.getMarksOrTokens(p) + "="
+								+ value.toPlainString();
+						break;
+					}
+				} else if (bna instanceof Transition) {
+					if (bna.getParameter(param) != null) {
+						// Parameter p = bna.getParameter(param);
+						// flags.setParameterChanged(true);
+						// pw.getChangedParameters().put(new Parameter(param, value, p.getUnit()), bna);
+						override += ",'_" + bna.getName() + "_" + param + "'=" + value.toPlainString();
+					} else {
+						PopUpDialog.getInstance().show("Error",
+								"The parameter for parameterized simulation could not be found: " + param);
+						i = list.size();
+						break;
+					}
+				}
+				// rounding name up to 4 decimals
+				pw.getPetriPropertiesNet().getSimResController().get(simId)
+						.setName(bna.getName() + "_" + param + "=" + (Math.round(value.doubleValue() * 1000) / 1000.0));
+				logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
+				menu.clearText();
+				menu.addText(logMessage.toString());
+				runOMCIA(port++, override);
+
+				try {
+					do {
+						Thread.sleep(100);
+					} while (!stopped);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			System.out.println("eeeeeeend of param sim");
 		}
 	}
 
