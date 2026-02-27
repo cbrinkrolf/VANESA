@@ -1,4 +1,4 @@
-package petriNet.Runnable;
+package petriNet.runnable;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -10,12 +10,11 @@ import gui.PopUpDialog;
 import gui.simulation.SimMenu;
 import petriNet.SimulationProperties;
 
-public class RedrawGraphThread {
+public class RedrawGraphThread extends SimulationRunnableAbstract {
 
 	private final Pathway pw;
 	private final SimMenu menu;
 	private final MainWindow w;
-	private final SimulationProperties properties;
 
 	public RedrawGraphThread(Pathway pw, SimMenu menu, SimulationProperties properties) {
 		this.pw = pw;

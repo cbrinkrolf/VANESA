@@ -26,10 +26,11 @@ import gui.MainWindow;
 import gui.PopUpDialog;
 import gui.simulation.SimMenu;
 import io.MOoutput;
-import petriNet.Runnable.CompilationRunnable;
-import petriNet.Runnable.RedrawGraphThread;
-import petriNet.Runnable.SimulationOutputThread;
-import petriNet.Runnable.SimulationThread;
+import petriNet.runnable.CompilationGUIThread;
+import petriNet.runnable.CompilationRunnable;
+import petriNet.runnable.RedrawGraphThread;
+import petriNet.runnable.SimulationOutputThread;
+import petriNet.runnable.SimulationThread;
 import util.VanesaUtility;
 
 public class PetriNetSimulation implements ActionListener {
@@ -387,33 +388,10 @@ public class PetriNetSimulation implements ActionListener {
 
 		CompilationRunnable compilation = new CompilationRunnable(compilationProperties, menu, pw, simLog);
 		runCompilationCompletableFuture(compilation.getRunnable(getOnCompilationErrorRunnable()), port);
-		getCompileGUIThread().start();
+		new CompilationGUIThread(compilationProperties, menu, simLog).getThread().start();
 		// compilingThread.start();
 		// compileProcess.waitFor();
 		// stopped = true;
-	}
-
-	private Thread getCompileGUIThread() {
-		return new Thread(() -> {
-			String dateFormat = "HH:mm:ss";
-			long start = System.currentTimeMillis();
-			SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
-			String time = sdf.format(new Date());
-			long zstVorher = System.currentTimeMillis();
-
-			while (compilationProperties.isCompiling()) {
-				menu.setTime("Compiling since " + time + " for: "
-						+ DurationFormatUtils.formatDuration(System.currentTimeMillis() - start, dateFormat) + ".");
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			long zstNachher = System.currentTimeMillis();
-			simLog.addLine("Time for compiling: "
-					+ DurationFormatUtils.formatDuration(zstNachher - zstVorher, dateFormat) + " (" + dateFormat + ")");
-		});
 	}
 
 	private void runCompilationCompletableFuture(Runnable compilationRunnable, int port) {// throws

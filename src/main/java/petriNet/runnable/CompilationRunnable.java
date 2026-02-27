@@ -1,4 +1,4 @@
-package petriNet.Runnable;
+package petriNet.runnable;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -27,12 +27,9 @@ import petriNet.CompilationProperties;
 import petriNet.OMCCommunicator;
 import petriNet.SimulationLog;
 
-public class CompilationRunnable {
+public class CompilationRunnable extends CompilationRunnableAbstract {
 
-	private CompilationProperties properties;
-	private SimMenu menu;
 	private Pathway pw;
-	private SimulationLog simLog;
 
 	public CompilationRunnable(CompilationProperties properties, SimMenu menu, Pathway pw, SimulationLog simLog) {
 		this.properties = properties;

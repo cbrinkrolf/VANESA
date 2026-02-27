@@ -1,4 +1,4 @@
-package petriNet.Runnable;
+package petriNet.runnable;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -22,11 +22,9 @@ import petriNet.SimulationLog;
 import petriNet.SimulationProperties;
 import util.VanesaUtility;
 
-public class SimulationThread {
+public class SimulationThread extends SimulationRunnableAbstract {
 
-	private SimulationProperties properties;
 	private Pathway pw;
-	private SimulationLog simLog;
 
 	public SimulationThread(SimulationProperties simProperties, Pathway pw, SimulationLog simLog) {
 		this.properties = simProperties;

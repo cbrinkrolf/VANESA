@@ -1,4 +1,4 @@
-package petriNet.Runnable;
+package petriNet.runnable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,10 +7,7 @@ import gui.PopUpDialog;
 import petriNet.SimulationLog;
 import petriNet.SimulationProperties;
 
-public class SimulationOutputThread {
-
-	private SimulationProperties properties;
-	private SimulationLog simLog;
+public class SimulationOutputThread extends SimulationRunnableAbstract {
 
 	public SimulationOutputThread(SimulationProperties properties, SimulationLog simLog) {
 		this.properties = properties;
