@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SimulationResultsListPanel extends JPanel {
+
+	private static final long serialVersionUID = -1922666211075804877L;
 	private JTextArea logTextArea;
 	private boolean triggerUIUpdate = true;
 	private final HashMap<JTextField, SimulationResult> text2sim = new HashMap<>();

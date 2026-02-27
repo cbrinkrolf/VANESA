@@ -61,7 +61,7 @@ public class Server {
 		this.properties.setServerRunning(true);
 	}
 
-	public void start() throws IOException {
+	public void start() {
 		serverThread = new Thread(this::runLoop, "OMServerThread-" + properties.getSimId());
 		serverThread.start();
 	}

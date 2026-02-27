@@ -1,7 +1,5 @@
 package petriNet.runnable;
 
-import java.io.IOException;
-
 import biologicalElements.Pathway;
 import petriNet.CompilationProperties;
 import petriNet.Server;
@@ -47,7 +45,7 @@ public class StartServerAndWaitForConnection extends SimulationRunnableAbstract 
 				if (properties.isServerRunning() && s.isReadyToConnect() && !properties.isFinished()) {
 					combinedThread.start();
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		});
