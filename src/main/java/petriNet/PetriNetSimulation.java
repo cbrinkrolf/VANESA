@@ -3,7 +3,6 @@ package petriNet;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -29,6 +28,7 @@ import gui.simulation.SimMenu;
 import io.MOoutput;
 import petriNet.Runnable.CompilationRunnable;
 import petriNet.Runnable.RedrawGraphThread;
+import petriNet.Runnable.SimulationOutputThread;
 import petriNet.Runnable.SimulationThread;
 import util.VanesaUtility;
 
@@ -41,12 +41,11 @@ public class PetriNetSimulation implements ActionListener {
 	private static Path pathCompiler = null;
 	private static Path pathSim = null;
 
-	private boolean stopped = false;
 	private SimMenu menu = null;
 	// private Process simProcess = null;
 	private Process compileProcess = null;
 	private Thread allThread = null;
-	private boolean compiling = false;
+	// private boolean compiling = false;
 	private Thread waitForServerConnection = null;
 
 	// private Map<BiologicalEdgeAbstract, String> bea2key;
@@ -131,8 +130,6 @@ public class PetriNetSimulation implements ActionListener {
 
 		w.blurUI();
 
-		stopped = false;
-
 		shortModelNameChanged = shortModelName != menu.isUseShortNamesSelected();
 		shortModelName = menu.isUseShortNamesSelected();
 
@@ -175,7 +172,7 @@ public class PetriNetSimulation implements ActionListener {
 
 		Thread redrawGraphThread = new RedrawGraphThread(pw, menu, simulationProperties).getThread();
 
-		Thread outputThread = getSimulationOutputThread();
+		Thread outputThread = new SimulationOutputThread(simulationProperties, simLog).getThread();
 
 		allThread = getCombinedThread(simulationThread, redrawGraphThread, outputThread);
 
@@ -298,56 +295,12 @@ public class PetriNetSimulation implements ActionListener {
 		simulationProperties.setStopTime(stopTime);
 		simulationProperties.setTolerance(tolerance);
 		simulationProperties.setUseCustomExecutableSelected(menu.isUseCustomExecutableSelected());
+		simulationProperties.setFinished(false);
 	}
 
 	private void startServerAndSimulation(int port) {
 		waitForServerConnection = this.getWaitForServerConnectionThread(port);
 		waitForServerConnection.start();
-	}
-
-	private Thread getSimulationOutputThread() {
-		return new Thread(() -> {
-			BufferedReader outputReader = simulationProperties.getOutputReader();
-			while (simulationProperties.isServerRunning()) {
-				if (outputReader != null) {
-					try {
-						String line = outputReader.readLine();
-						if (line != null && line.length() > 0) {
-							simLog.addLine(line);
-						}
-					} catch (IOException e) {
-						PopUpDialog.getInstance().show("Simulation error:", e.getMessage());
-						e.printStackTrace();
-					}
-				}
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					PopUpDialog.getInstance().show("Simulation error:", e.getMessage());
-					e.printStackTrace();
-				}
-			}
-			try {
-				System.out.println("outputReader server stopped");
-				if (outputReader != null) {
-					String line = outputReader.readLine();
-					while (line != null && line.length() > 0) {
-						// menue.addText(line + "\r\n");
-						// pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage()
-						// .append(line + "\r\n");
-						simLog.addLine(line);
-						System.out.println(line);
-						line = outputReader.readLine();
-					}
-					outputReader.close();
-					outputReader = null;
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			System.out.println("outputreader thread finished");
-			stopped = true;
-		});
 	}
 
 	private Thread getWaitForServerConnectionThread(int port) {
@@ -357,7 +310,8 @@ public class PetriNetSimulation implements ActionListener {
 				s.start();
 				System.out.print("wait until servers is ready to connect ");
 				int i = 0;
-				while (simulationProperties.isServerRunning() && !s.isReadyToConnect() && !stopped) {
+				while (simulationProperties.isServerRunning() && !s.isReadyToConnect()
+						&& !simulationProperties.isFinished()) {
 					if (i % 50 == 0) {
 						System.out.println(".");
 					} else {
@@ -370,7 +324,8 @@ public class PetriNetSimulation implements ActionListener {
 					i++;
 				}
 				System.out.println();
-				if (simulationProperties.isServerRunning() && s.isReadyToConnect() && !stopped) {
+				if (simulationProperties.isServerRunning() && s.isReadyToConnect()
+						&& !simulationProperties.isFinished()) {
 					allThread.start();
 				}
 			} catch (IOException e1) {
@@ -427,7 +382,7 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private void compile(int port) throws IOException, InterruptedException {
-		compiling = true;
+		compilationProperties.setCompiling(true);
 		// compilingThread = getCompilingThread();
 
 		CompilationRunnable compilation = new CompilationRunnable(compilationProperties, menu, pw, simLog);
@@ -446,7 +401,7 @@ public class PetriNetSimulation implements ActionListener {
 			String time = sdf.format(new Date());
 			long zstVorher = System.currentTimeMillis();
 
-			while (compiling) {
+			while (compilationProperties.isCompiling()) {
 				menu.setTime("Compiling since " + time + " for: "
 						+ DurationFormatUtils.formatDuration(System.currentTimeMillis() - start, dateFormat) + ".");
 				try {
@@ -495,7 +450,7 @@ public class PetriNetSimulation implements ActionListener {
 		simLog.addLine("compilation was successful!");
 		System.out.println("build success");
 		clearFlagsAndChangedValues();
-		compiling = false;
+		compilationProperties.setCompiling(false);
 		simulationProperties.setSimName(compilationProperties.getSimName());
 		startServerAndSimulation(port);
 	}
@@ -685,7 +640,7 @@ public class PetriNetSimulation implements ActionListener {
 				try {
 					do {
 						Thread.sleep(100);
-					} while (!stopped);
+					} while (!simulationProperties.isFinished());
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -699,8 +654,8 @@ public class PetriNetSimulation implements ActionListener {
 		if (compilationCompletableFuture != null) {
 			compilationCompletableFuture.cancel(true);
 		}
-		compiling = false;
-		stopped = true;
+		compilationProperties.setCompiling(false);
+		simulationProperties.setFinished(true);
 		menu.stopped();
 		System.out.println(simulationProperties.isServerRunning());
 		if (s != null && simulationProperties.isServerRunning()) {

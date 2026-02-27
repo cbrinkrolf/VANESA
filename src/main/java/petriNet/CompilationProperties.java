@@ -21,7 +21,7 @@ public class CompilationProperties {
 	private Map<BiologicalEdgeAbstract, String> bea2key;
 	private Process compileProcess;
 	private boolean buildSuccess;
-	private boolean isCompiling;
+	private boolean compiling;
 	private String simName;
 	private boolean overrideEqPerFile;
 	private int equationsPerFile;
@@ -99,11 +99,11 @@ public class CompilationProperties {
 	}
 
 	public boolean isCompiling() {
-		return isCompiling;
+		return compiling;
 	}
 
 	public void setCompiling(boolean isCompiling) {
-		this.isCompiling = isCompiling;
+		this.compiling = isCompiling;
 	}
 
 	public String getSimName() {

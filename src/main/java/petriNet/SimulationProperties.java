@@ -24,6 +24,7 @@ public class SimulationProperties {
 	private Process simProcess;
 	private boolean useCustomExecutableSelected;
 	private BufferedReader outputReader;
+	private boolean finished = false;
 
 	public boolean isServerRunning() {
 		return isServerRunning;
@@ -153,4 +154,11 @@ public class SimulationProperties {
 		this.outputReader = outputReader;
 	}
 
+	public boolean isFinished() {
+		return finished;
+	}
+
+	public void setFinished(boolean finished) {
+		this.finished = finished;
+	}
 }
