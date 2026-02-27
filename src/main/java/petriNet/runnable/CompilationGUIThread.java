@@ -32,6 +32,8 @@ public class CompilationGUIThread extends CompilationRunnableAbstract {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
+					simLog.addLine(e.getMessage());
+					Thread.currentThread().interrupt();
 				}
 			}
 			long zstNachher = System.currentTimeMillis();

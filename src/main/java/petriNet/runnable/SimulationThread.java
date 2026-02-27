@@ -25,6 +25,8 @@ import util.VanesaUtility;
 public class SimulationThread extends SimulationRunnableAbstract {
 
 	private Pathway pw;
+	private StringBuilder override;
+	private String stepSize;
 
 	public SimulationThread(SimulationProperties simProperties, Pathway pw, SimulationLog simLog) {
 		this.properties = simProperties;
@@ -33,63 +35,14 @@ public class SimulationThread extends SimulationRunnableAbstract {
 	}
 
 	public Thread getSimulationThread(Runnable onSuccess, Runnable onError) {
+		override = new StringBuilder();
 		return new Thread(() -> {
 			boolean success = true;
 			try {
 				ProcessBuilder pb = new ProcessBuilder();
-				String override = "";
-				if (SystemUtils.IS_OS_WINDOWS) {
-					override += "\"";
-				}
-				final int seed = properties.getSeed();
-				final String stepSize = VanesaUtility
-						.fixedPrecisionDivide(properties.getStopTime(), BigDecimal.valueOf(properties.getIntervals()))
-						.toPlainString();
-				override += "-override=seed=" + seed + ",placeLocalSeed=" + MOoutput.generateLocalSeed(seed)
-						+ ",transitionLocalSeed=" + MOoutput.generateLocalSeed(seed);
-				ChangedFlags flags = properties.getFlags();
-				System.out.println("parameter changed: " + flags.isParameterChanged());
-				if (flags.isParameterChanged()) {
-					for (Parameter param : pw.getChangedParameters().keySet()) {
-						GraphElementAbstract gea = pw.getChangedParameters().get(param);
-						if (gea instanceof BiologicalNodeAbstract) {
-							BiologicalNodeAbstract bna = (BiologicalNodeAbstract) gea;
-							override += ",'_" + bna.getName() + "_" + param.getName() + "'="
-									+ param.getValue().toPlainString();
-						} else {
-							// CHRIS override parameters of edges
-						}
-					}
-				}
 
-				if (flags.isInitialValueChanged()) {
-					for (final Place p : pw.getChangedInitialValues().keySet()) {
-						final Double d = pw.getChangedInitialValues().get(p);
-						override += ",'" + p.getName() + "'.start" + VanesaUtility.getMarksOrTokens(p) + "=" + d;
-					}
-				}
+				generateOverride();
 
-				if (flags.isBoundariesChanged()) {
-					for (final Place p : pw.getChangedBoundaries().keySet()) {
-						final Boundary b = pw.getChangedBoundaries().get(p);
-						if (b.isLowerBoundarySet()) {
-							override += ",'" + p.getName() + "'.min" + VanesaUtility.getMarksOrTokens(p) + "="
-									+ b.getLowerBoundary();
-						}
-						if (b.isUpperBoundarySet()) {
-							override += ",'" + p.getName() + "'.max" + VanesaUtility.getMarksOrTokens(p) + "="
-									+ b.getUpperBoundary();
-						}
-					}
-				}
-
-				override += properties.getOverrideParameterized();
-
-				if (SystemUtils.IS_OS_WINDOWS) {
-					override += "\"";
-				}
-				// String program = "_omcQuot_556E7469746C6564";
-				simLog.addLine("override statement: " + override);
 				final List<String> cmdArguments = new ArrayList<>();
 				cmdArguments.add(properties.getSimName());
 				cmdArguments.add("-s=" + properties.getSolver());
@@ -97,7 +50,7 @@ public class SimulationThread extends SimulationRunnableAbstract {
 				cmdArguments.add("-stopTime=" + properties.getStopTime().toPlainString());
 				cmdArguments.add("-stepSize=" + stepSize);
 				cmdArguments.add("-tolerance=" + properties.getTolerance().toPlainString());
-				cmdArguments.add(override);
+				cmdArguments.add(override.toString());
 				cmdArguments.add("-port=" + properties.getPort());
 				// If we wouldn't want event emission: cmdArguments.add("-noEventEmit");
 				cmdArguments.add("-lv=LOG_STATS");
@@ -119,10 +72,11 @@ public class SimulationThread extends SimulationRunnableAbstract {
 
 				properties.setOutputReader(new BufferedReader(new InputStreamReader(simProcess.getInputStream())));
 
-			} catch (Exception e1) {
+			} catch (Exception e) {
 				success = false;
-				PopUpDialog.getInstance().show("Simulation error:", e1.getMessage());
-				e1.printStackTrace();
+				PopUpDialog.getInstance().show("Simulation error:", e.getMessage());
+				e.printStackTrace();
+				simLog.addLine(e.getMessage());
 				if (properties.getSimProcess() != null) {
 					properties.getSimProcess().destroy();
 				}
@@ -138,4 +92,88 @@ public class SimulationThread extends SimulationRunnableAbstract {
 		});
 	}
 
+	private void generateOverride() {
+		if (SystemUtils.IS_OS_WINDOWS) {
+			override.append("\"");
+		}
+		final int seed = properties.getSeed();
+		stepSize = VanesaUtility
+				.fixedPrecisionDivide(properties.getStopTime(), BigDecimal.valueOf(properties.getIntervals()))
+				.toPlainString();
+		override.append("-override=seed=" + seed + ",placeLocalSeed=" + MOoutput.generateLocalSeed(seed)
+				+ ",transitionLocalSeed=" + MOoutput.generateLocalSeed(seed));
+		ChangedFlags flags = properties.getFlags();
+		System.out.println("parameter changed: " + flags.isParameterChanged());
+
+		if (flags.isParameterChanged()) {
+			overrideParameters();
+		}
+
+		if (flags.isInitialValueChanged()) {
+			overrideInitialValues();
+		}
+
+		if (flags.isBoundariesChanged()) {
+			overrideBoundaries();
+		}
+
+		override.append(properties.getOverrideParameterized());
+
+		if (SystemUtils.IS_OS_WINDOWS) {
+			override.append("\"");
+		}
+		// String program = "_omcQuot_556E7469746C6564";
+		simLog.addLine("override statement: " + override);
+	}
+
+	private void overrideParameters() {
+		for (Parameter param : pw.getChangedParameters().keySet()) {
+			GraphElementAbstract gea = pw.getChangedParameters().get(param);
+			if (gea instanceof BiologicalNodeAbstract) {
+				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) gea;
+				override.append(",'_");
+				override.append(bna.getName());
+				override.append("_");
+				override.append(param.getName());
+				override.append("'=");
+				override.append(param.getValue().toPlainString());
+			} else {
+				// CHRIS override parameters of edges
+			}
+		}
+	}
+
+	private void overrideInitialValues() {
+		for (final Place p : pw.getChangedInitialValues().keySet()) {
+			final Double d = pw.getChangedInitialValues().get(p);
+			override.append(",'");
+			override.append(p.getName());
+			override.append("'.start");
+			override.append(VanesaUtility.getMarksOrTokens(p));
+			override.append("=");
+			override.append(d);
+		}
+	}
+
+	private void overrideBoundaries() {
+		for (final Place p : pw.getChangedBoundaries().keySet()) {
+			final Boundary b = pw.getChangedBoundaries().get(p);
+			if (b.isLowerBoundarySet()) {
+				override.append(",'");
+				override.append(p.getName());
+				override.append("'.min");
+				override.append(VanesaUtility.getMarksOrTokens(p));
+				override.append("=");
+				override.append(b.getLowerBoundary());
+			}
+			if (b.isUpperBoundarySet()) {
+				override.append(",'");
+				override.append(p.getName());
+				override.append("'.max");
+				override.append(VanesaUtility.getMarksOrTokens(p));
+				override.append("=");
+				override.append(b.getUpperBoundary());
+			}
+		}
+	}
 }

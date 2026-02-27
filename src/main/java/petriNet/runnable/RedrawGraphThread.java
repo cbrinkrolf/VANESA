@@ -16,6 +16,11 @@ public class RedrawGraphThread extends SimulationRunnableAbstract {
 	private final SimMenu menu;
 	private final MainWindow w;
 
+	private int counter = 0;
+	private List<Double> values = null;
+	private boolean simAddedToMenu = false;
+	private DecimalFormat df = new DecimalFormat("#.#####");
+
 	public RedrawGraphThread(Pathway pw, SimMenu menu, SimulationProperties properties) {
 		this.pw = pw;
 		this.menu = menu;
@@ -27,44 +32,49 @@ public class RedrawGraphThread extends SimulationRunnableAbstract {
 
 		return new Thread(() -> {
 			pw.getGraph().getVisualizationViewer().requestFocus();
-			List<Double> v = null;// pw.getPetriNet().getSimResController().get().getTime().getAll();
-			DecimalFormat df = new DecimalFormat("#.#####");
+			// pw.getPetriNet().getSimResController().get().getTime().getAll();
+
 			df.setRoundingMode(RoundingMode.HALF_UP);
-			boolean simAddedToMenu = false;
-			int counter = 0;
+
 			while (properties.isServerRunning()) {
-				final String simId = properties.getSimId();
-				if (v == null && pw.getPetriPropertiesNet().getSimResController().get(simId) != null) {
-					v = pw.getPetriPropertiesNet().getSimResController().get(simId).getTime().getAll();
-				}
-				if (counter % 5 == 0) {
-					w.redrawGraphs(true);
-				}
-				w.redrawGraphs(false);
-				if (v != null && v.size() > 0) {
-					if (!simAddedToMenu) {
-						menu.updateSimulationResults();
-						simAddedToMenu = true;
-					}
-					menu.setTime("Time: " + df.format((v.get(v.size() - 1))));
-				}
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					PopUpDialog.getInstance().show("Simulation error:", e.getMessage());
-					e.printStackTrace();
-				}
-				counter++;
+				processWhileRunning();
 			}
 			menu.stopped();
 			System.out.println("end of simulation");
 			w.updateSimulationResultView();
 			w.redrawGraphs(true);
 			w.getFrame().revalidate();
-			if (v.size() > 0) {
-				menu.setTime("Time: " + (v.get(v.size() - 1)).toString());
+			if (!values.isEmpty()) {
+				menu.setTime("Time: " + (values.get(values.size() - 1)).toString());
 			}
 			System.out.println("redraw thread finished");
 		});
+	}
+
+	private void processWhileRunning() {
+		final String simId = properties.getSimId();
+		if (values == null && pw.getPetriPropertiesNet().getSimResController().get(simId) != null) {
+			values = pw.getPetriPropertiesNet().getSimResController().get(simId).getTime().getAll();
+		}
+		if (counter % 5 == 0) {
+			w.redrawGraphs(true);
+		}
+		w.redrawGraphs(false);
+		if (values != null && !values.isEmpty()) {
+			if (!simAddedToMenu) {
+				menu.updateSimulationResults();
+				simAddedToMenu = true;
+			}
+			menu.setTime("Time: " + df.format((values.get(values.size() - 1))));
+		}
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			PopUpDialog.getInstance().show("Simulation error:", e.getMessage());
+			e.printStackTrace();
+			simLog.addLine(e.getMessage());
+			Thread.currentThread().interrupt();
+		}
+		counter++;
 	}
 }

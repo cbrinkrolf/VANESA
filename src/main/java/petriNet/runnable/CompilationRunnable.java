@@ -1,9 +1,7 @@
 package petriNet.runnable;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,14 +12,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 import biologicalElements.Pathway;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.petriNet.ContinuousTransition;
-import biologicalObjects.nodes.petriNet.DiscreteTransition;
-import biologicalObjects.nodes.petriNet.Place;
-import biologicalObjects.nodes.petriNet.StochasticTransition;
 import configurations.Workspace;
 import gui.PopUpDialog;
 import gui.simulation.SimMenu;
+import io.MOSWriter;
 import io.MOoutput;
 import petriNet.CompilationProperties;
 import petriNet.OMCCommunicator;
@@ -65,7 +59,7 @@ public class CompilationRunnable extends CompilationRunnableAbstract {
 				mo.write(pw);
 				properties.setBea2key(mo.getBea2resultkey());
 
-				writeMosFile();
+				new MOSWriter(properties, pw).writeMosFile(menu.isBuiltInPNlibSelected());
 
 				// TODO faster compilation
 				// maybe additional flags for faster compilation or switch to Compile.bat that
@@ -88,7 +82,7 @@ public class CompilationRunnable extends CompilationRunnableAbstract {
 				String line;
 				while (compileProcess.isAlive()) {
 					line = inputReader.readLine();
-					while (line != null && line.length() > 0) {
+					while (line != null && !line.isEmpty()) {
 						inputStreamString.append(line);
 						line = inputReader.readLine();
 					}
@@ -97,7 +91,7 @@ public class CompilationRunnable extends CompilationRunnableAbstract {
 				compileProcess.waitFor();
 
 				line = inputReader.readLine();
-				while (line != null && line.length() > 0) {
+				while (line != null && !line.isEmpty()) {
 					simLog.addLine(line);
 					inputStreamString.append(line);
 					line = inputReader.readLine();
@@ -142,6 +136,8 @@ public class CompilationRunnable extends CompilationRunnableAbstract {
 					onError.run();
 				}
 			} catch (Exception e) {
+				System.out.println("catch exception.....");
+				Thread.currentThread().interrupt();
 				e.printStackTrace();
 				simLog.addLine(e.getMessage());
 				onError.run();
@@ -153,109 +149,6 @@ public class CompilationRunnable extends CompilationRunnableAbstract {
 				System.out.println("finished cleaning up working directory");
 			}
 		};
-	}
-
-	private void writeMosFile() throws IOException {
-		String filterRegEx = "";
-
-		boolean containsPlace = false;
-		boolean containsContinuousTransition = false;
-		boolean containsDiscreteTransition = false;
-		boolean containsStochasticTransition = false;
-		int countPlaces = 0;
-		int countContinuousTransitions = 0;
-		int countDiscreteTransitions = 0;
-		int countStochasticTransitions = 0;
-
-		for (final BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
-			if (!bna.isLogical()) {
-				if (bna instanceof Place) {
-					containsPlace = true;
-					countPlaces++;
-				} else if (bna instanceof ContinuousTransition) {
-					containsContinuousTransition = true;
-					countContinuousTransitions++;
-				} else if (bna instanceof DiscreteTransition) {
-					containsDiscreteTransition = true;
-					countDiscreteTransitions++;
-				} else if (bna instanceof StochasticTransition) {
-					containsStochasticTransition = true;
-					countStochasticTransitions++;
-				}
-			}
-		}
-		if (containsPlace) {
-			filterRegEx += "'.+\\\\.t";
-		}
-		if (containsContinuousTransition) {
-			if (filterRegEx.length() > 0) {
-				filterRegEx += "|";
-			}
-			filterRegEx += ".+\\\\.fire|";
-			filterRegEx += ".+\\\\.actualSpeed";
-		}
-		if (containsDiscreteTransition || containsStochasticTransition) {
-			if (filterRegEx.length() > 0) {
-				filterRegEx += "|";
-			}
-			filterRegEx += ".+\\\\.active|";
-			filterRegEx += ".+\\\\.fireTime";
-		}
-		if (containsDiscreteTransition) {
-			if (filterRegEx.length() > 0) {
-				filterRegEx += "|";
-			}
-			filterRegEx += ".+\\\\.delay";
-		}
-		if (containsStochasticTransition) {
-			if (filterRegEx.length() > 0) {
-				filterRegEx += "|";
-			}
-			filterRegEx += ".+\\\\.putDelay";
-		}
-		if (!pw.getAllEdges().isEmpty()) {
-			filterRegEx += "|.+\\\\.tokenFlow\\\\.inflow\\\\[\\\\d\\\\]|";
-			filterRegEx += ".+der\\\\(.+\\\\.tokenflow\\\\.inflow\\\\[\\\\d\\\\]\\\\)";
-			filterRegEx += "|.+\\\\.tokenFlow\\\\.outflow\\\\[\\\\d\\\\]|";
-			filterRegEx += ".+der\\\\(.+\\\\.tokenflow\\\\.outflow\\\\[\\\\d\\\\]\\\\)";
-		}
-		filterRegEx = "variableFilter=\"" + filterRegEx + "\"";
-
-		int vars = countPlaces + 2 * countContinuousTransitions + 3 * countDiscreteTransitions
-				+ 3 * countStochasticTransitions + 2 * properties.getBea2key().values().size();
-
-		System.out.println("expected number of output vars: " + vars);
-		System.out.println("variableFilter: " + filterRegEx);
-		try (final FileWriter fstream = new FileWriter(properties.getPathSim().resolve("simulation.mos").toFile());
-				final BufferedWriter out = new BufferedWriter(fstream)) {
-			out.write("cd(\"" + properties.getPathSim().toString().replace('\\', '/') + "\"); ");
-			out.write("getErrorString();\r\n");
-			if (menu.isBuiltInPNlibSelected()) {
-				out.write("loadModel(PNlib,{\"" + properties.getSelectedSimLibVersion() + "\"}); ");
-			} else {
-				out.write("loadFile(\"" + properties.getSelectedSimLib().getPath().replace("\\", "/")
-						+ "/package.mo\"); ");
-			}
-			out.write("getErrorString();\r\n");
-			out.write("loadFile(\"simulation.mo\"); ");
-			out.write("getErrorString();\r\n");
-			// out.write("setDebugFlags(\"disableComSubExp\"); ");
-			// out.write("getErrorString();\r\n");
-			String commandLineOptions = "--unitChecking";
-			if (properties.isOverrideEqPerFile() && properties.getEquationsPerFile() > 0) {
-				commandLineOptions += " --equationsPerFile=" + properties.getEquationsPerFile();
-			}
-
-			out.write("setCommandLineOptions(\"" + commandLineOptions + "\"); ");
-			// out.write("setCommandLineOptions(\"--unitChecking --newBackend
-			// -d=mergeComponents\"); ");
-			// out.write("setCommandLineOptions(\"+d=disableComSubExp
-			// +unitChecking\");");
-			out.write("getErrorString();\r\n");
-
-			out.write("buildModel(" + properties.getModelicaModelName() + ", " + filterRegEx + "); ");
-			out.write("getErrorString();\r\n");
-		}
 	}
 
 	private void cleanUpWorkingDirectory() {
@@ -283,5 +176,4 @@ public class CompilationRunnable extends CompilationRunnableAbstract {
 					+ FileUtils.byteCountToDisplaySize(bytes));
 		}).start();
 	}
-
 }
