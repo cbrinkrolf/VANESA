@@ -27,6 +27,7 @@ import petriNet.runnable.CompilationRunnable;
 import petriNet.runnable.RedrawGraphThread;
 import petriNet.runnable.SimulationOutputThread;
 import petriNet.runnable.SimulationThread;
+import petriNet.runnable.StartServerAndWaitForConnection;
 import util.VanesaUtility;
 
 public class PetriNetSimulation implements ActionListener {
@@ -41,11 +42,8 @@ public class PetriNetSimulation implements ActionListener {
 	private SimMenu menu = null;
 	// private Process simProcess = null;
 	private Process compileProcess = null;
-	private Thread allThread = null;
+	// private Thread allThread = null;
 	// private boolean compiling = false;
-	private Thread waitForServerConnection = null;
-
-	// private Map<BiologicalEdgeAbstract, String> bea2key;
 
 	private ChangedFlags flags;
 	private Server s = null;
@@ -163,15 +161,6 @@ public class PetriNetSimulation implements ActionListener {
 		} else {
 			simulationProperties.setSimName(compilationProperties.getSimName());
 		}
-
-		Thread simulationThread = new SimulationThread(simulationProperties, pw, simLog)
-				.getSimulationThread(onSimulationThreadSuccessRunnable(), onSimulationThreadErrorRunnable());
-
-		Thread redrawGraphThread = new RedrawGraphThread(pw, menu, simulationProperties).getThread();
-
-		Thread outputThread = new SimulationOutputThread(simulationProperties, simLog).getThread();
-
-		allThread = getCombinedThread(simulationThread, redrawGraphThread, outputThread);
 
 		prepareForCompilationCheck();
 
@@ -296,39 +285,17 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private void startServerAndSimulation(int port) {
-		waitForServerConnection = this.getWaitForServerConnectionThread(port);
-		waitForServerConnection.start();
-	}
+		Thread simulationThread = new SimulationThread(simulationProperties, pw, simLog)
+				.getSimulationThread(onSimulationThreadSuccessRunnable(), onSimulationThreadErrorRunnable());
 
-	private Thread getWaitForServerConnectionThread(int port) {
-		return new Thread(() -> {
-			try {
-				s = new Server(pw, compilationProperties.getBea2key(), simulationProperties, port);
-				s.start();
-				System.out.print("wait until servers is ready to connect ");
-				int i = 0;
-				while (simulationProperties.isServerRunning() && !s.isReadyToConnect()
-						&& !simulationProperties.isFinished()) {
-					if (i % 50 == 0) {
-						System.out.println(".");
-					} else {
-						System.out.print(".");
-					}
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException ignored) {
-					}
-					i++;
-				}
-				System.out.println();
-				if (simulationProperties.isServerRunning() && s.isReadyToConnect()
-						&& !simulationProperties.isFinished()) {
-					allThread.start();
-				}
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-		});
+		Thread redrawGraphThread = new RedrawGraphThread(pw, menu, simulationProperties).getThread();
+
+		Thread outputThread = new SimulationOutputThread(simulationProperties, simLog).getThread();
+
+		Thread allThread = getCombinedThread(simulationThread, redrawGraphThread, outputThread);
+
+		new StartServerAndWaitForConnection(compilationProperties, simulationProperties, pw, allThread).getThread(port)
+				.start();
 	}
 
 	private boolean checkInstallation() {
@@ -510,11 +477,6 @@ public class PetriNetSimulation implements ActionListener {
 			port++;
 		}
 		System.out.println("Port " + port + " will be used.");
-
-		if (allThread != null) {
-			// allThread.interrupt();
-			// allThread = null;
-		}
 
 		// this.runOMC();
 		if (!menu.isParameterized()) {

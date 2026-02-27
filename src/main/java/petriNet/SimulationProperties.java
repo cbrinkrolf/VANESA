@@ -25,6 +25,7 @@ public class SimulationProperties {
 	private boolean useCustomExecutableSelected;
 	private BufferedReader outputReader;
 	private boolean finished = false;
+	private Server server;
 
 	public boolean isServerRunning() {
 		return isServerRunning;
@@ -160,5 +161,13 @@ public class SimulationProperties {
 
 	public void setFinished(boolean finished) {
 		this.finished = finished;
+	}
+
+	public Server getServer() {
+		return server;
+	}
+
+	public void setServer(Server server) {
+		this.server = server;
 	}
 }
