@@ -73,6 +73,10 @@ public class PetriNetSimulation implements ActionListener {
 	private boolean overrideEqPerFile = false;
 	private int eqPerFile = -1;
 
+	private boolean simLibChanged = false;
+	private boolean shortModelNameChanged = false;
+	private boolean eqPerFileChanged = false;
+
 	private CompletableFuture<Void> compilationCompletableFuture;
 
 	private CompilationProperties compilationProperties = new CompilationProperties();
@@ -93,12 +97,12 @@ public class PetriNetSimulation implements ActionListener {
 
 	public void showMenu() {
 		if (menu == null) {
-			if (Workspace.getCurrentSettings().getPNlibPath().length() > 0) {
+			if (!Workspace.getCurrentSettings().getPNlibPath().isEmpty()) {
 				customSimLibs = getLibs(new File(Workspace.getCurrentSettings().getPNlibPath()));
 			}
 			menu = new SimMenu(pw, this, customSimLibs);
 		} else {
-			if (Workspace.getCurrentSettings().getPNlibPath().length() > 0) {
+			if (Workspace.getCurrentSettings().getPNlibPath().isEmpty()) {
 				customSimLibs = getLibs(new File(Workspace.getCurrentSettings().getPNlibPath()));
 			}
 			menu.setCustomLibs(customSimLibs);
@@ -129,10 +133,10 @@ public class PetriNetSimulation implements ActionListener {
 
 		stopped = false;
 
-		boolean shortModelNameChanged = !(shortModelName == menu.isUseShortNamesSelected());
+		shortModelNameChanged = shortModelName != menu.isUseShortNamesSelected();
 		shortModelName = menu.isUseShortNamesSelected();
 
-		boolean eqPerFileChanged = !(overrideEqPerFile == menu.isEquationsPerFileSelected());
+		eqPerFileChanged = overrideEqPerFile != menu.isEquationsPerFileSelected();
 		System.out.println("selected: " + menu.isEquationsPerFileSelected());
 
 		overrideEqPerFile = menu.isEquationsPerFileSelected();
@@ -175,7 +179,47 @@ public class PetriNetSimulation implements ActionListener {
 
 		allThread = getCombinedThread(simulationThread, redrawGraphThread, outputThread);
 
-		boolean simLibChanged = false;
+		prepareForCompilationCheck();
+
+		if (isCompilationRequired()) {
+			try {
+				simLog.addLine("(re) compilation due to changed properties");
+				collectDataForCompilation();
+				this.compile(port);
+			} catch (IOException | InterruptedException e) {
+				w.unBlurUI();
+				e.printStackTrace();
+			}
+		} else {
+			startServerAndSimulation(port);
+		}
+		w.unBlurUI();
+	}
+
+	private void collectDataForCompilation() {
+
+		final String modelicaModelName;
+		if (menu.isUseShortNamesSelected()) {
+			modelicaModelName = "m";
+		} else {
+			modelicaModelName = "'" + pw.getName() + "'";
+		}
+
+		compilationProperties = new CompilationProperties();
+		compilationProperties.setBuiltInPNlibSelected(menu.isBuiltInPNlibSelected());
+		compilationProperties.setEquationsPerFile(menu.getCustomEquationsPerFile());
+		compilationProperties.setFlags(flags);
+		compilationProperties.setGlobalSeed(menu.getGlobalSeed());
+		compilationProperties.setModelicaModelName(modelicaModelName);
+		compilationProperties.setOverrideEqPerFile(overrideEqPerFile);
+		compilationProperties.setPathCompiler(pathCompiler);
+		compilationProperties.setPathSim(pathSim);
+		compilationProperties.setSelectedSimLib(selectedSimLib);
+		compilationProperties.setSelectedSimLibVersion(selectedPNlibVersion);
+	}
+
+	private void prepareForCompilationCheck() {
+		simLibChanged = false;
 		if (menu.isBuiltInPNlibSelected()) {
 			selectedSimLib = null;
 			if (selectedPNlibVersion == null || !SUPPORTED_PNLIB_VERSIONS.contains(selectedPNlibVersion)
@@ -221,44 +265,12 @@ public class PetriNetSimulation implements ActionListener {
 		System.out.println(!simExePresent);
 		System.out.println(simLibChanged);
 		System.out.println(menu.isForceRebuild());
-
-		if (flags.isEdgeChanged() || flags.isNodeChanged() || flags.isEdgeWeightChanged()
-				|| flags.isPnPropertiesChanged() || !simExePresent || simLibChanged || menu.isForceRebuild()
-				|| shortModelNameChanged || eqPerFileChanged) {
-			try {
-				simLog.addLine("(re) compilation due to changed properties");
-				collectDataForCompilation();
-				this.compile(port);
-			} catch (IOException | InterruptedException e) {
-				w.unBlurUI();
-				e.printStackTrace();
-			}
-		} else {
-			startServerAndSimulation(port);
-		}
-		w.unBlurUI();
 	}
 
-	private void collectDataForCompilation() {
-
-		final String modelicaModelName;
-		if (menu.isUseShortNamesSelected()) {
-			modelicaModelName = "m";
-		} else {
-			modelicaModelName = "'" + pw.getName() + "'";
-		}
-
-		compilationProperties = new CompilationProperties();
-		compilationProperties.setBuiltInPNlibSelected(menu.isBuiltInPNlibSelected());
-		compilationProperties.setEquationsPerFile(menu.getCustomEquationsPerFile());
-		compilationProperties.setFlags(flags);
-		compilationProperties.setGlobalSeed(menu.getGlobalSeed());
-		compilationProperties.setModelicaModelName(modelicaModelName);
-		compilationProperties.setOverrideEqPerFile(overrideEqPerFile);
-		compilationProperties.setPathCompiler(pathCompiler);
-		compilationProperties.setPathSim(pathSim);
-		compilationProperties.setSelectedSimLib(selectedSimLib);
-		compilationProperties.setSelectedSimLibVersion(selectedPNlibVersion);
+	private boolean isCompilationRequired() {
+		return flags.isEdgeChanged() || flags.isNodeChanged() || flags.isEdgeWeightChanged()
+				|| flags.isPnPropertiesChanged() || !simExePresent || simLibChanged || menu.isForceRebuild()
+				|| shortModelNameChanged || eqPerFileChanged;
 	}
 
 	private void collectDataForSimulation(int port, String overrideParameterized) {
