@@ -97,12 +97,17 @@ public class SimulationResultsListPanel extends JPanel {
 			});
 			final JButton detailsButton = new JButton("Details");
 			detailsButton.setToolTipText("Show detailed result");
+
 			detailsButton.addActionListener(e -> new DetailedSimRes(pathway, simulationResult.getId()));
 			final JButton exportButton = new JButton("Export");
 			exportButton.setToolTipText("Export Result");
 			exportButton.addActionListener(
 					e -> new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.VANESA_SIM_RESULT },
 							SaveDialog.DATA_TYPE_SIMULATION_RESULTS, null, this, simulationResult.getId()));
+			if (simulationResult.getTime().size() == 0) {
+				detailsButton.setEnabled(false);
+				exportButton.setEnabled(false);
+			}
 			final JTextField simName = new JTextField(10);
 			simName.setText(simulationResult.getName());
 			text2sim.put(simName, simulationResult);
