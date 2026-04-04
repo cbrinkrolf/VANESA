@@ -30,10 +30,14 @@ import java.awt.*;
  * @author johan
  */
 public class DropDownIcon extends ArrowIcon {
+
+	private static final long serialVersionUID = 3474411987868526101L;
+
 	public DropDownIcon(Color color, int size) {
 		super(color, size, Direction.DOWN);
 	}
 
+	@Override
 	protected void paintIcon(Component c, Graphics g, int x1, int y1, int x2, int y2) {
 		int offset = (getIconWidth() / 4);
 		g.fillRect(x1, y1, x2 - x1 + 1, 2);

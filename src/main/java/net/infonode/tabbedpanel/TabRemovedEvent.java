@@ -32,6 +32,8 @@ package net.infonode.tabbedpanel;
  * @see Tab
  */
 public class TabRemovedEvent extends TabEvent {
+
+	private static final long serialVersionUID = 3142965178984694284L;
 	private final TabbedPanel tabbedPanel;
 
 	/**

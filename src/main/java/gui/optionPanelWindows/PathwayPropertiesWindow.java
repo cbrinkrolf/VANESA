@@ -29,6 +29,9 @@ import util.MyColorChooser;
 import util.VanesaUtility;
 
 public class PathwayPropertiesWindow extends JPanel implements ItemListener {
+
+	private static final long serialVersionUID = 718253947920517942L;
+
 	/**
 	 * Regular expression to check for valid compartment names. Compartment name must start with a letter or dash and
 	 * may only contain letters, digites, and dash symbol (SBML L3V1, reference section 3.1.7)
@@ -103,9 +106,9 @@ public class PathwayPropertiesWindow extends JPanel implements ItemListener {
 		final List<Compartment> compartments = pw.getCompartmentManager().getAllCompartmentsAlphabetically();
 		for (final Compartment c : compartments) {
 			add(new JLabel(c.getName()), "growx");
-			final JButton color = new JButton("color");
-			color.setBackground(c.getColor());
-			color.addActionListener(e -> {
+			final JButton colorButton = new JButton("color");
+			colorButton.setBackground(c.getColor());
+			colorButton.addActionListener(e -> {
 				final JButton b = ((JButton) e.getSource());
 				final MyColorChooser mc = new MyColorChooser(MainWindow.getInstance().getFrame(), "Choose color", true,
 						b.getBackground());
@@ -114,7 +117,7 @@ public class PathwayPropertiesWindow extends JPanel implements ItemListener {
 					c.setColor(mc.getColor());
 				}
 			});
-			add(color, "width 60:60:60");
+			add(colorButton, "width 60:60:60");
 			final JButton del = new JButton("delete");
 			del.setBackground(VanesaUtility.NEGATIVE_COLOR);
 			del.setActionCommand("del_" + c.getName());

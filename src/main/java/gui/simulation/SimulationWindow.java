@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SimulationWindow extends JFrame {
+
+	private static final long serialVersionUID = 2138737499595504284L;
 	private final JTabbedPane tabbedPanel = new JTabbedPane();
 	private final SimulationResultsListPanel simulationResultsList = new SimulationResultsListPanel();
 	private final DiscreteSimulationPanel discreteSimulationPanel;

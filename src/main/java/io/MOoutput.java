@@ -68,7 +68,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 	private final String modelName;
 	private final String packageInfo;
 	private final boolean colored;
-	private final boolean noIdent = false;
+	private static final boolean noIdent = false;
 	private final int seed;
 	private final int localSeed;
 
@@ -140,7 +140,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 		String data = sb.toString();
 		if (noIdent) {
 			// remove "'"
-			data = data.replaceAll("'", "");
+			data = data.replace("'", "");
 			// remove "+" in names
 			// data= data.replaceAll("(\\S)\\+", "$1_plus");
 			// remove "-" in names
@@ -203,7 +203,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 				final String biologicalElement = bna.getBiologicalElement();
 				int in = pw.getGraph().getJungGraph().getInEdges(bna).size();
 				int out = pw.getGraph().getJungGraph().getOutEdges(bna).size();
-				if (bna.getRefs().size() > 0) {
+				if (!bna.getRefs().isEmpty()) {
 					for (final BiologicalNodeAbstract node : bna.getRefs()) {
 						in += pw.getGraph().getJungGraph().getInEdges(node).size();
 						out += pw.getGraph().getJungGraph().getOutEdges(node).size();
@@ -329,7 +329,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 						attr.append(", firingCon=false");
 					} else {
 						final String firingCondition = t.getFiringCondition();
-						if (firingCondition.length() > 0) {
+						if (!firingCondition.strip().isEmpty()) {
 							attr.append(", firingCon=").append(firingCondition);
 						}
 					}
@@ -406,9 +406,11 @@ public class MOoutput extends BaseWriter<Pathway> {
 						if (markedOut.isEmpty()) {
 							tmp = "{0, " + getModelicaEdgeFunction(e) + "}/*" + toName + "*/";
 						} else {
-							String nodes = "";
+							StringBuilder nodes = new StringBuilder();
 							for (final BiologicalNodeAbstract node : markedOut) {
-								nodes += "'" + resolveReference(node).getName() + "'.color,";
+								nodes.append("'");
+								nodes.append(resolveReference(node).getName());
+								nodes.append("'.color,");
 							}
 							// ={g2('DHAP'.color, 'GAP'.color)}
 							tmp = "g" + markedOut.size() + "(" + nodes.substring(0, nodes.length() - 1) + ")";

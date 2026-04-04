@@ -37,30 +37,40 @@ import net.infonode.tabbedpanel.border.TabAreaLineBorder;
 import net.infonode.tabbedpanel.border.TabHighlightBorder;
 
 /**
- * <p>A TitledTab is a tab that has support for text, icon and a custom Swing component
- * (called title component). Titled tab supports several properties that makes it possible to change the look (borders,
- * colors, insets), layout (up, down, left, right).</p>
+ * <p>
+ * A TitledTab is a tab that has support for text, icon and a custom Swing component (called title component). Titled
+ * tab supports several properties that makes it possible to change the look (borders, colors, insets), layout (up,
+ * down, left, right).
+ * </p>
  *
- * <p>Titled tab has a line based layout, i.e. the text, icon and title component are
- * laid out in a line. The layout of the tab can be rotated, i.e. the text and the icon will be rotated 90, 180 or 270
- * degrees. The title component will not be rotated but moved so that the line layout will persist.</p>
+ * <p>
+ * Titled tab has a line based layout, i.e. the text, icon and title component are laid out in a line. The layout of the
+ * tab can be rotated, i.e. the text and the icon will be rotated 90, 180 or 270 degrees. The title component will not
+ * be rotated but moved so that the line layout will persist.
+ * </p>
  *
- * <p>A titled tab has 3 rendering states:
+ * <p>
+ * A titled tab has 3 rendering states:
  * <ul>
  * <li>Normal - The tab is selectable but not yet selected
  * <li>Highlighted - The tab is either highlighted or selected
  * <li>Disabled - The tab is disabled and cannot be selected or highlighted
- * </ul>Most of the properties for the tab can be configured for each of the tab rendering
- * states.</p>
+ * </ul>
+ * Most of the properties for the tab can be configured for each of the tab rendering states.
+ * </p>
  *
  * @author $Author: jesper $
  * @version $Revision: 1.89 $
  */
 public class TitledTab extends Tab {
+
+	private static final long serialVersionUID = -2352406547895125704L;
 	private static final PanelUI UI = new PanelUI() {
 	};
 
 	private static class StatePanel extends JPanel {
+
+		private static final long serialVersionUID = -153103972904388062L;
 		private final JPanel panel = new JPanel(new BorderLayout());
 		private final JPanel titleComponentPanel = new JPanel(new BorderLayout());
 		private final JLabel label = new JLabel();
@@ -70,9 +80,9 @@ public class TitledTab extends Tab {
 			super(new BorderLayout());
 			panel.setOpaque(false);
 			label.setIconTextGap(UIManager.getInt("TabbedPane.textIconGap"));
-			label.setHorizontalTextPosition(JLabel.RIGHT);
-			label.setHorizontalAlignment(JLabel.LEFT);
-			label.setVerticalAlignment(JLabel.CENTER);
+			label.setHorizontalTextPosition(SwingConstants.RIGHT);
+			label.setHorizontalAlignment(SwingConstants.LEFT);
+			label.setVerticalAlignment(SwingConstants.CENTER);
 			panel.add(label, BorderLayout.CENTER);
 			add(panel, BorderLayout.CENTER);
 		}
@@ -291,10 +301,13 @@ public class TitledTab extends Tab {
 	}
 
 	/**
-	 * <p>Sets the title component.</p>
+	 * <p>
+	 * Sets the title component.
+	 * </p>
 	 *
-	 * <p>This method is a convenience method for setting the same title component for
-	 * all states.</p>
+	 * <p>
+	 * This method is a convenience method for setting the same title component for all states.
+	 * </p>
 	 *
 	 * @param titleComponent the title component or null for no title component
 	 */
@@ -303,10 +316,13 @@ public class TitledTab extends Tab {
 	}
 
 	/**
-	 * <p>Sets if this TitledTab should be highlighted or not.</p>
+	 * <p>
+	 * Sets if this TitledTab should be highlighted or not.
+	 * </p>
 	 *
-	 * <p><strong>Note:</strong> This will only have effect if this TitledTab
-	 * is enabled and a member of a tabbed panel.</p>
+	 * <p>
+	 * <strong>Note:</strong> This will only have effect if this TitledTab is enabled and a member of a tabbed panel.
+	 * </p>
 	 *
 	 * @param highlighted true for highlight, otherwise false
 	 */

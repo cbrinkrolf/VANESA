@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PNVerificationWindow extends JPanel {
+
+	private static final long serialVersionUID = -6859449616226893998L;
 	private final JPanel issuesListPanel = new JPanel(new MigLayout("fillx, wrap 2", "[grow, 0][]"));
 	private final JButton verifyButton = new JButton("Verify");
 	private final JButton solveAllButton = new JButton("Solve All");

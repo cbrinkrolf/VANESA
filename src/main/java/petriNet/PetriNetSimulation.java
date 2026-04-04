@@ -4,7 +4,6 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -36,8 +35,8 @@ public class PetriNetSimulation implements ActionListener {
 	 * Supported PNlib versions
 	 */
 	public static final List<String> SUPPORTED_PNLIB_VERSIONS = List.of("3.0.0", "2.2.0");
-	private static Path pathCompiler = null;
-	private static Path pathSim = null;
+	private Path pathCompiler = null;
+	private Path pathSim = null;
 
 	private SimMenu menu = null;
 	// private Process simProcess = null;
@@ -131,11 +130,9 @@ public class PetriNetSimulation implements ActionListener {
 		System.out.println("selected: " + menu.isEquationsPerFileSelected());
 
 		overrideEqPerFile = menu.isEquationsPerFileSelected();
-		if (overrideEqPerFile) {
-			if (eqPerFile != menu.getCustomEquationsPerFile()) {
-				eqPerFile = menu.getCustomEquationsPerFile();
-				eqPerFileChanged = true;
-			}
+		if (overrideEqPerFile && eqPerFile != menu.getCustomEquationsPerFile()) {
+			eqPerFile = menu.getCustomEquationsPerFile();
+			eqPerFileChanged = true;
 		}
 
 		System.out.println("simNameOld: " + compilationProperties.getSimName());
@@ -172,9 +169,6 @@ public class PetriNetSimulation implements ActionListener {
 				w.unBlurUI();
 				e.printStackTrace();
 				Thread.currentThread().interrupt();
-			} catch (IOException e) {
-				w.unBlurUI();
-				e.printStackTrace();
 			}
 		} else {
 			startServerAndSimulation(port);
@@ -244,13 +238,13 @@ public class PetriNetSimulation implements ActionListener {
 			simLibChanged = false;
 		}
 
-		System.out.println(flags.isEdgeChanged());
-		System.out.println(flags.isNodeChanged());
-		System.out.println(flags.isEdgeWeightChanged());
-		System.out.println(flags.isPnPropertiesChanged());
-		System.out.println(!simExePresent);
-		System.out.println(simLibChanged);
-		System.out.println(menu.isForceRebuild());
+		System.out.println("edge flags changed: " + flags.isEdgeChanged());
+		System.out.println("node flags changed: " + flags.isNodeChanged());
+		System.out.println("edge weights flags changed: " + flags.isEdgeWeightChanged());
+		System.out.println("PN properties flags changed: " + flags.isPnPropertiesChanged());
+		System.out.println("simulation exe is present: " + simExePresent);
+		System.out.println("PNlib changed: " + simLibChanged);
+		System.out.println("Force rebuild via menu: " + menu.isForceRebuild());
 	}
 
 	private boolean isCompilationRequired() {
@@ -348,7 +342,7 @@ public class PetriNetSimulation implements ActionListener {
 		return allInstalledSuccess;
 	}
 
-	private void compile(int port) throws IOException, InterruptedException {
+	private void compile(int port) throws InterruptedException {
 		compilationProperties.setCompiling(true);
 		// compilingThread = getCompilingThread();
 
@@ -380,9 +374,8 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private Runnable getOnCompilationErrorRunnable() {
-		return () -> {
-			handleCompilationError();
-		};
+		return () -> handleCompilationError();
+
 	}
 
 	private void handleCompilationError() {
@@ -407,9 +400,7 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private Runnable getOnCompilationSuccessRunnable(int port) {
-		return () -> {
-			handleCompilationSuccess(port);
-		};
+		return () -> handleCompilationSuccess(port);
 	}
 
 	private Runnable onSimulationThreadSuccessRunnable() {
@@ -421,9 +412,7 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private Runnable onSimulationThreadErrorRunnable() {
-		return () -> {
-			stopAction();
-		};
+		return () -> stopAction();
 	}
 
 	private Thread getCombinedThread(Thread simulationThread, Thread redrawGraphThread, Thread outputThread) {

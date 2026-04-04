@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public abstract class BaseSettingsPanel extends JPanel {
+
+	private static final long serialVersionUID = -1903955185214374322L;
 	protected final ImageIcon infoImage = ImagePath.getInstance().getImageIcon("infoButton.png");
 	protected final ImageIcon resetImage = ImagePath.getInstance().getImageIcon("reset.svg", 20, 20);
 	protected final JPanel contentPanel = new JPanel(new MigLayout("ins 0, fillx, wrap"));
@@ -44,7 +46,7 @@ public abstract class BaseSettingsPanel extends JPanel {
 		resetButton.setBackground(new Color(200, 200, 200));
 		resetButton.setFocusPainted(false);
 		resetButton.setBorder(BorderFactory.createEmptyBorder());
-		resetButton.addActionListener((e) -> resetCallback.run());
+		resetButton.addActionListener(e -> resetCallback.run());
 		resetButton.setToolTipText("Reset to default");
 		row.add(resetButton);
 		contentPanel.add(row, "growx");

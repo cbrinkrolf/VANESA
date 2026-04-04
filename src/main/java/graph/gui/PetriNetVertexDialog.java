@@ -2,7 +2,6 @@ package graph.gui;
 
 import java.awt.Component;
 import java.awt.geom.Point2D;
-import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.swing.JComboBox;
@@ -17,7 +16,12 @@ import javax.swing.JTextField;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.petriNet.*;
+import biologicalObjects.nodes.petriNet.ContinuousPlace;
+import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscretePlace;
+import biologicalObjects.nodes.petriNet.DiscreteTransition;
+import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.StochasticTransition;
 import graph.GraphContainer;
 import gui.MainWindow;
 import gui.PopUpDialog;
@@ -28,7 +32,7 @@ import util.MyNumberFormat;
 import util.StochasticDistribution;
 
 public class PetriNetVertexDialog {
-    private final JOptionPane pane;
+	private final JOptionPane pane;
 
 	private final JTextField name = new JTextField(20);
 
@@ -48,7 +52,7 @@ public class PetriNetVertexDialog {
 	// JCheckBox transitionfire = new JCheckBox("Should transition fire:", true);
 	private final JTextField firingCondition = new JTextField("true");
 
-    private final JTextField maxSpeed = new JTextField("1");
+	private final JTextField maxSpeed = new JTextField("1");
 
 	private final String petriElement;
 
@@ -57,7 +61,7 @@ public class PetriNetVertexDialog {
 		this.petriElement = petriElement;
 		distributionList = new JComboBox<>(StochasticDistribution.DISTRIBUTIONS);
 
-        final JPanel panel = new JPanel(new MigLayout("", "[left]"));
+		final JPanel panel = new JPanel(new MigLayout("", "[left]"));
 		panel.add(new JLabel("Name"), "span 2, gaptop 2 ");
 		panel.add(name, "span,wrap,growx ,gap 10, gaptop 2");
 
@@ -84,8 +88,8 @@ public class PetriNetVertexDialog {
 
 		if (!pw.isHeadless()) {
 			panel.add(new JSeparator(), "span, growx, wrap 10, gaptop 7 ");
-            final JLabel lblFiringCondition = new JLabel("Firing Condition");
-            if (this.petriElement.equals(Elementdeclerations.discretePlace)) {
+			final JLabel lblFiringCondition = new JLabel("Firing Condition");
+			if (this.petriElement.equals(Elementdeclerations.discretePlace)) {
 				name.setText(placeName);
 				// panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
 				// token = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
@@ -153,7 +157,7 @@ public class PetriNetVertexDialog {
 
 	public BiologicalNodeAbstract getAnswer(Point2D point, Component relativeTo) {
 		final JDialog dialog = pane.createDialog(null, getDialogTitle());
-        dialog.setLocationRelativeTo(relativeTo == null ? MainWindow.getInstance().getFrame() : relativeTo);
+		dialog.setLocationRelativeTo(relativeTo == null ? MainWindow.getInstance().getFrame() : relativeTo);
 		dialog.setVisible(true);
 		Integer value = (Integer) pane.getValue();
 		if (value == null || value != JOptionPane.OK_OPTION) {
@@ -232,14 +236,14 @@ public class PetriNetVertexDialog {
 				if (bna.getName().equals(name.getText().trim())) {
 					if (pw.isHeadless()) {
 						PopUpDialog.getInstance().show("Adding Element",
-													   "Name already exists. Cannot create Petri net node!");
+								"Name already exists. Cannot create Petri net node!");
 						return null;
 					}
 					if (!bna.getBiologicalElement().equals(petriElement)) {
 						PopUpDialog.getInstance().show("Adding Element",
-													   "Name already exists. Cannot create reference node, because types do not match!\r\n" +
-													   "Given type: " + petriElement + "\r\nExisting element: " +
-													   bna.getBiologicalElement());
+								"Name already exists. Cannot create reference node, because types do not match!\r\n"
+										+ "Given type: " + petriElement + "\r\nExisting element: "
+										+ bna.getBiologicalElement());
 						return null;
 					}
 					createdNode.setLogicalReference(bna);
@@ -263,22 +267,22 @@ public class PetriNetVertexDialog {
 
 	private String getDialogTitle() {
 		switch (petriElement) {
-			case Elementdeclerations.discretePlace:
-				return "Create a discrete Place";
-			case Elementdeclerations.continuousPlace:
-				return "Create a continuous Place";
-			case Elementdeclerations.discreteTransition:
-				return "Create a discrete Transition";
-			case Elementdeclerations.continuousTransition:
-				return "Create a continuous Transition";
-			case Elementdeclerations.stochasticTransition:
-				return "Create a stochastic Transition";
-			case Elementdeclerations.place:
-				return "Create a generic Place";
-			case Elementdeclerations.transition:
-				return "Create a generic Transition";
-			default:
-				return "";
+		case Elementdeclerations.discretePlace:
+			return "Create a discrete Place";
+		case Elementdeclerations.continuousPlace:
+			return "Create a continuous Place";
+		case Elementdeclerations.discreteTransition:
+			return "Create a discrete Transition";
+		case Elementdeclerations.continuousTransition:
+			return "Create a continuous Transition";
+		case Elementdeclerations.stochasticTransition:
+			return "Create a stochastic Transition";
+		case Elementdeclerations.place:
+			return "Create a generic Place";
+		case Elementdeclerations.transition:
+			return "Create a generic Transition";
+		default:
+			return "";
 		}
 	}
 }

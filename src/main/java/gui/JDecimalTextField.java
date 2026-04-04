@@ -11,8 +11,10 @@ import java.math.BigDecimal;
 import java.util.regex.Pattern;
 
 public class JDecimalTextField extends JTextField {
-	private static final Pattern UDECIMAL_PATTERN = Pattern.compile("\\+?([0-9]+\\.)?[0-9]*");
-	private static final Pattern DECIMAL_PATTERN = Pattern.compile("[+\\-]?([0-9]+\\.)?[0-9]*");
+
+	private static final long serialVersionUID = 8695871266749667265L;
+	private static final Pattern UDECIMAL_PATTERN = Pattern.compile("\\+?(\\d+\\.)?\\d*");
+	private static final Pattern DECIMAL_PATTERN = Pattern.compile("[+\\-]?(\\d+\\.)?\\d*");
 
 	private final Pattern pattern;
 	private final boolean allowNegative;
@@ -37,8 +39,8 @@ public class JDecimalTextField extends JTextField {
 			@Override
 			public void replace(final FilterBypass fb, final int offset, final int length, final String text,
 					final AttributeSet attrs) throws BadLocationException {
-				final var targetText = getText(0, offset) + text + getText(offset + length,
-						getText().length() - offset - length);
+				final var targetText = getText(0, offset) + text
+						+ getText(offset + length, getText().length() - offset - length);
 				if (pattern.matcher(targetText).matches()) {
 					super.replace(fb, offset, length, text, attrs);
 				}

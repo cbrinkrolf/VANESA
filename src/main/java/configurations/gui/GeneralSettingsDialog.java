@@ -17,6 +17,9 @@ import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang3.StringUtils;
 
 public class GeneralSettingsDialog extends BaseSettingsPanel {
+
+	private static final long serialVersionUID = 5024775752305962509L;
+
 	private static final int ABBREVIATE_WIDTH = 50;
 
 	private final JCheckBox removeSVGClipPathsCheckBox = new JCheckBox();
@@ -146,7 +149,7 @@ public class GeneralSettingsDialog extends BaseSettingsPanel {
 
 	@Override
 	public boolean applySettings() {
-		Workspace.getCurrentSettings().batchEdit((settings) -> {
+		Workspace.getCurrentSettings().batchEdit(settings -> {
 			// Export settings
 			settings.setSVGClipPaths(removeSVGClipPathsCheckBox.isSelected());
 			settings.setPDFClipPaths(removePDFClipPathsCheckBox.isSelected());

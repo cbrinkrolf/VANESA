@@ -8,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
+import javax.swing.SwingConstants;
 
 import biologicalElements.Pathway;
 import configurations.Settings;
@@ -20,19 +21,22 @@ import gui.JIntTextField;
 import net.miginfocom.swing.MigLayout;
 
 public class GraphSettingsDialog extends BaseSettingsPanel {
+
+	private static final long serialVersionUID = -8611326577796735342L;
+
 	private final GraphSettings graphSettings = GraphSettings.getInstance();
 
 	private final ButtonGroup nodeLabelGroup = new ButtonGroup();
-	private final JRadioButton only_name = new JRadioButton("Name", true);
-	private final JRadioButton only_label = new JRadioButton("Label", true);
+	private final JRadioButton onlyName = new JRadioButton("Name", true);
+	private final JRadioButton onlyLabel = new JRadioButton("Label", true);
 	private final JRadioButton nothing = new JRadioButton("Nothing", true);
-	private final JRadioButton name_label = new JRadioButton("Both", true);
+	private final JRadioButton nameAndLabel = new JRadioButton("Both", true);
 
 	private final ButtonGroup edgeLabelGroup = new ButtonGroup();
-	private final JRadioButton only_name_e = new JRadioButton("Name", true);
-	private final JRadioButton only_label_e = new JRadioButton("Label", true);
-	private final JRadioButton nothing_e = new JRadioButton("Nothing", true);
-	private final JRadioButton name_label_e = new JRadioButton("Both", true);
+	private final JRadioButton onlyNameRadioButton = new JRadioButton("Name", true);
+	private final JRadioButton onlyLabelRadioButton = new JRadioButton("Label", true);
+	private final JRadioButton nothingRadioButton = new JRadioButton("Nothing", true);
+	private final JRadioButton nameAndLabelRadioButton = new JRadioButton("Both", true);
 
 	private final ButtonGroup graphBackgroundGroup = new ButtonGroup();
 	private final JRadioButton black = new JRadioButton("Black", true);
@@ -40,7 +44,7 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 
 	private final JCheckBox showEdgesCheckBox = new JCheckBox();
 
-	private final JSlider opacitySlider = new JSlider(JSlider.HORIZONTAL, 0, 255, 255);
+	private final JSlider opacitySlider = new JSlider(SwingConstants.HORIZONTAL, 0, 255, 255);
 
 	private final JIntTextField pixelOffset = new JIntTextField();
 
@@ -71,37 +75,37 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 		addHeader("Visual Style");
 		final JPanel nodeLabelPanel = new JPanel(new MigLayout("ins 0, left, fill"));
 		nodeLabelPanel.setBackground(null);
-		nodeLabelGroup.add(only_label);
-		nodeLabelGroup.add(only_name);
-		nodeLabelGroup.add(name_label);
+		nodeLabelGroup.add(onlyLabel);
+		nodeLabelGroup.add(onlyName);
+		nodeLabelGroup.add(nameAndLabel);
 		nodeLabelGroup.add(nothing);
-		nodeLabelPanel.add(only_label);
-		only_label.setBackground(null);
-		nodeLabelPanel.add(only_name);
-		only_name.setBackground(null);
-		nodeLabelPanel.add(name_label);
-		name_label.setBackground(null);
+		nodeLabelPanel.add(onlyLabel);
+		onlyLabel.setBackground(null);
+		nodeLabelPanel.add(onlyName);
+		onlyName.setBackground(null);
+		nodeLabelPanel.add(nameAndLabel);
+		nameAndLabel.setBackground(null);
 		nodeLabelPanel.add(nothing);
 		nothing.setBackground(null);
 		addSetting("Displayed node label", "Which node label should be displayed?", nodeLabelPanel,
-				() -> only_label.setSelected(true));
+				() -> onlyLabel.setSelected(true));
 
 		final JPanel edgeLabelPanel = new JPanel(new MigLayout("ins 0, left, fill"));
 		edgeLabelPanel.setBackground(null);
-		edgeLabelGroup.add(only_label_e);
-		edgeLabelGroup.add(only_name_e);
-		edgeLabelGroup.add(name_label_e);
-		edgeLabelGroup.add(nothing_e);
-		edgeLabelPanel.add(only_label_e);
-		only_label_e.setBackground(null);
-		edgeLabelPanel.add(only_name_e);
-		only_name_e.setBackground(null);
-		edgeLabelPanel.add(name_label_e);
-		name_label_e.setBackground(null);
-		edgeLabelPanel.add(nothing_e);
-		nothing_e.setBackground(null);
+		edgeLabelGroup.add(onlyLabelRadioButton);
+		edgeLabelGroup.add(onlyNameRadioButton);
+		edgeLabelGroup.add(nameAndLabelRadioButton);
+		edgeLabelGroup.add(nothingRadioButton);
+		edgeLabelPanel.add(onlyLabelRadioButton);
+		onlyLabelRadioButton.setBackground(null);
+		edgeLabelPanel.add(onlyNameRadioButton);
+		onlyNameRadioButton.setBackground(null);
+		edgeLabelPanel.add(nameAndLabelRadioButton);
+		nameAndLabelRadioButton.setBackground(null);
+		edgeLabelPanel.add(nothingRadioButton);
+		nothingRadioButton.setBackground(null);
 		addSetting("Displayed edge label", "Which edge label should be displayed?", edgeLabelPanel,
-				() -> only_label_e.setSelected(true));
+				() -> onlyLabelRadioButton.setSelected(true));
 
 		final JPanel graphBackgroundPanel = new JPanel(new MigLayout("ins 0, left, fill"));
 		graphBackgroundPanel.setBackground(null);
@@ -133,8 +137,8 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 		vertexFontPanel.setBackground(null);
 		overrideVertexFontCheckBox = new JCheckBox();
 		overrideVertexFontCheckBox.setBackground(null);
-		overrideVertexFontCheckBox.addChangeListener(
-				e -> vertexFontChooser.setEnabled(overrideVertexFontCheckBox.isSelected()));
+		overrideVertexFontCheckBox
+				.addChangeListener(e -> vertexFontChooser.setEnabled(overrideVertexFontCheckBox.isSelected()));
 		vertexFontPanel.add(overrideVertexFontCheckBox);
 		vertexFontChooser = new JFontChooserButton("Choose", "Select font for vertex labels");
 		vertexFontChooser.setEnabled(overrideVertexFontCheckBox.isSelected());
@@ -149,8 +153,8 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 		edgeFontPanel.setBackground(null);
 		overrideEdgeFontCheckBox = new JCheckBox();
 		overrideEdgeFontCheckBox.setBackground(null);
-		overrideEdgeFontCheckBox.addChangeListener(
-				e -> edgeFontChooser.setEnabled(overrideEdgeFontCheckBox.isSelected()));
+		overrideEdgeFontCheckBox
+				.addChangeListener(e -> edgeFontChooser.setEnabled(overrideEdgeFontCheckBox.isSelected()));
 		edgeFontPanel.add(overrideEdgeFontCheckBox);
 		edgeFontChooser = new JFontChooserButton("Choose", "Select font for edge labels");
 		edgeFontChooser.setEnabled(overrideEdgeFontCheckBox.isSelected());
@@ -202,22 +206,22 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 	public void updateSettings(final Settings settings) {
 		// Visual settings
 		if (graphSettings.getNodeLabel() == GraphSettings.SHOW_LABEL) {
-			only_label.setSelected(true);
+			onlyLabel.setSelected(true);
 		} else if (graphSettings.getNodeLabel() == GraphSettings.SHOW_NAME) {
-			only_name.setSelected(true);
+			onlyName.setSelected(true);
 		} else if (graphSettings.getNodeLabel() == GraphSettings.SHOW_LABEL_AND_NAME) {
-			name_label.setSelected(true);
+			nameAndLabel.setSelected(true);
 		} else if (graphSettings.getNodeLabel() == GraphSettings.SHOW_NONE) {
 			nothing.setSelected(true);
 		}
 		if (graphSettings.getEdgeLabel() == GraphSettings.SHOW_LABEL) {
-			only_label_e.setSelected(true);
+			onlyLabelRadioButton.setSelected(true);
 		} else if (graphSettings.getEdgeLabel() == GraphSettings.SHOW_NAME) {
-			only_name_e.setSelected(true);
+			onlyNameRadioButton.setSelected(true);
 		} else if (graphSettings.getEdgeLabel() == GraphSettings.SHOW_LABEL_AND_NAME) {
-			name_label_e.setSelected(true);
+			nameAndLabelRadioButton.setSelected(true);
 		} else if (graphSettings.getEdgeLabel() == GraphSettings.SHOW_NONE) {
-			nothing_e.setSelected(true);
+			nothingRadioButton.setSelected(true);
 		}
 		if (graphSettings.isBackgroundColor()) {
 			black.setSelected(true);
@@ -260,22 +264,22 @@ public class GraphSettingsDialog extends BaseSettingsPanel {
 	@Override
 	public boolean applySettings() {
 		Workspace.getCurrentSettings().batchEdit((settings -> {
-			if (only_label.isSelected()) {
+			if (onlyLabel.isSelected()) {
 				graphSettings.setNodeLabel(GraphSettings.SHOW_LABEL);
-			} else if (only_name.isSelected()) {
+			} else if (onlyName.isSelected()) {
 				graphSettings.setNodeLabel(GraphSettings.SHOW_NAME);
-			} else if (name_label.isSelected()) {
+			} else if (nameAndLabel.isSelected()) {
 				graphSettings.setNodeLabel(GraphSettings.SHOW_LABEL_AND_NAME);
 			} else if (nothing.isSelected()) {
 				graphSettings.setNodeLabel(GraphSettings.SHOW_NONE);
 			}
-			if (only_label_e.isSelected()) {
+			if (onlyLabelRadioButton.isSelected()) {
 				graphSettings.setEdgeLabel(GraphSettings.SHOW_LABEL);
-			} else if (only_name_e.isSelected()) {
+			} else if (onlyNameRadioButton.isSelected()) {
 				graphSettings.setEdgeLabel(GraphSettings.SHOW_NAME);
-			} else if (name_label_e.isSelected()) {
+			} else if (nameAndLabelRadioButton.isSelected()) {
 				graphSettings.setEdgeLabel(GraphSettings.SHOW_LABEL_AND_NAME);
-			} else if (nothing_e.isSelected()) {
+			} else if (nothingRadioButton.isSelected()) {
 				graphSettings.setEdgeLabel(GraphSettings.SHOW_NONE);
 			}
 			if (black.isSelected()) {

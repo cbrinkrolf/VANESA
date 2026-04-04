@@ -153,7 +153,7 @@ public class ParameterWindow implements DocumentListener {
 		for (int i = 0; i < gea.getParameters().size(); i++) {
 			Parameter p = gea.getParameters().get(i);
 			if (p.getName().equals(name.getText())) {
-				if (editMode && name.getText().trim().length() > 0) {
+				if (editMode && !name.getText().strip().isEmpty()) {
 					try {
 						// unit did not change
 						if (p.getUnit().equals(unit.getText().trim())) {
@@ -185,7 +185,7 @@ public class ParameterWindow implements DocumentListener {
 			}
 		}
 		// add new parameter
-		if (name.getText().trim().length() > 0) {
+		if (!name.getText().strip().isEmpty()) {
 			try {
 				Parameter p = new Parameter(name.getText().trim(), value.getBigDecimalValue(BigDecimal.ZERO),
 						unit.getText().trim());

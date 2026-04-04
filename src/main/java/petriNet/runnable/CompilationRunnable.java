@@ -74,7 +74,6 @@ public class CompilationRunnable extends CompilationRunnableAbstract {
 						properties.getPathSim().resolve("simulation.mos").toString()).start();
 				properties.setCompileProcess(compileProcess);
 				InputStream os = compileProcess.getInputStream();
-				InputStream errs = compileProcess.getErrorStream();
 
 				BufferedReader inputReader = new BufferedReader(new InputStreamReader(os));
 				System.out.println("Compile process is alive: " + compileProcess.isAlive());
@@ -101,17 +100,19 @@ public class CompilationRunnable extends CompilationRunnableAbstract {
 
 				if (inputStreamString.toString().contains(
 						"Warning: The following equation is INCONSISTENT due to specified unit information:")) {
-					String message = "";
+					StringBuilder message = new StringBuilder();
 					int number = 0;
 					String[] split = inputStreamString.toString().split("Warning: ");
 					for (int i = 1; i < split.length; i++) {
 						if (split[i].startsWith(
 								"The following equation is INCONSISTENT due to specified unit information:")) {
 							number++;
-							message += split[i] + "\r\n";
+							message.append(split[i]);
+							message.append("\r\n");
 						}
 					}
-					PopUpDialog.getInstance().show("Warning: " + number + " expression(s) are inconsistent:", message);
+					PopUpDialog.getInstance().show("Warning: " + number + " expression(s) are inconsistent:",
+							message.toString());
 				}
 
 				StringTokenizer tokenizer = new StringTokenizer(inputStreamString.toString(), ",");

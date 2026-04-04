@@ -35,6 +35,8 @@ import java.util.EventObject;
  * @see Tab
  */
 public class TabEvent extends EventObject {
+
+	private static final long serialVersionUID = 7491002394234193434L;
 	private final Tab tab;
 
 	/**

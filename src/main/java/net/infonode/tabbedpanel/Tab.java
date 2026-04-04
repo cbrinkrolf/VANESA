@@ -32,36 +32,42 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 /**
- * <p>A Tab is a component that represents a tab in a {@link TabbedPanel}.</p>
+ * <p>
+ * A Tab is a component that represents a tab in a {@link TabbedPanel}.
+ * </p>
  *
- * <p>A tab can hold a content component. The content component will then be shown in
- * the content area of the TabbedPanel that the tab is a member of when the tab is selected. If the tab doesn't have a
- * content component, then the TabbedPanel will not show any content in the content area, i.e. it will be empty.</p>
+ * <p>
+ * A tab can hold a content component. The content component will then be shown in the content area of the TabbedPanel
+ * that the tab is a member of when the tab is selected. If the tab doesn't have a content component, then the
+ * TabbedPanel will not show any content in the content area, i.e. it will be empty.
+ * </p>
  *
- * <p>The tab is basically a JPanel with a BorderLayout. The layout manager can be
- * changed using setLayout. Components and borders can be added and removed from the tab. The tab can also be subclassed
- * to create other types of tabs, see {@link TitledTab}. <strong>In most cases {@link TitledTab} is the preferred tab
- * type to use because TitledTab adds support for a text, icon, looks etc.</strong></p>
+ * <p>
+ * The tab is basically a JPanel with a BorderLayout. The layout manager can be changed using setLayout. Components and
+ * borders can be added and removed from the tab. The tab can also be subclassed to create other types of tabs, see
+ * {@link TitledTab}. <strong>In most cases {@link TitledTab} is the preferred tab type to use because TitledTab adds
+ * support for a text, icon, looks etc.</strong>
+ * </p>
  *
- * <p>The tab component will be shown in the tab area of a TabbedPanel
- * after the tab has become a member of that TabbedPanel by either adding or inserting it. A tab can only be a member of
- * one TabbedPanel at the same time.</p>
+ * <p>
+ * The tab component will be shown in the tab area of a TabbedPanel after the tab has become a member of that
+ * TabbedPanel by either adding or inserting it. A tab can only be a member of one TabbedPanel at the same time.
+ * </p>
  *
- * <p>A tab can have different states when it is a member of a TabbedPanel:
+ * <p>
+ * A tab can have different states when it is a member of a TabbedPanel:
  * <ul>
- * <li>Normal: This means that the tab is shown (and not selected) in the TabbedPanel. The
- * content component is not shown until the user selects the tab.
- * <li>Highlighted: This means that for some reason the tab should be highlighted in
- * the TabbedPanel. Highlighted could mean that the user pressed the tab with the mouse
- * and has not yet released the mouse, i.e. it has not been selected yet.
- * <li>Selected: This means that the tab is selected in the TabbedPanel. The TabbedPanel
- * will then show the Tab's content component (if any). A selected tab will also be
- * be highlighted before it is selected.
- * <li>Enabled: This means that the tab is enabled and can be selected, highlighted
- * dragged, moved etc.
- * <li>Disabled: This means that the tab cannot be selected, highlighted
- * dragged, moved etc.
- * </ul></p>
+ * <li>Normal: This means that the tab is shown (and not selected) in the TabbedPanel. The content component is not
+ * shown until the user selects the tab.
+ * <li>Highlighted: This means that for some reason the tab should be highlighted in the TabbedPanel. Highlighted could
+ * mean that the user pressed the tab with the mouse and has not yet released the mouse, i.e. it has not been selected
+ * yet.
+ * <li>Selected: This means that the tab is selected in the TabbedPanel. The TabbedPanel will then show the Tab's
+ * content component (if any). A selected tab will also be be highlighted before it is selected.
+ * <li>Enabled: This means that the tab is enabled and can be selected, highlighted dragged, moved etc.
+ * <li>Disabled: This means that the tab cannot be selected, highlighted dragged, moved etc.
+ * </ul>
+ * </p>
  *
  * @author $Author: jesper $
  * @version $Revision: 1.33 $
@@ -70,6 +76,8 @@ import java.util.ArrayList;
  * @see TitledTab
  */
 public class Tab extends JPanel {
+
+	private static final long serialVersionUID = -3902016483186949173L;
 	private TabbedPanel tabbedPanel;
 	private final JComponent contentComponent;
 	private JComponent focusableComponent;
@@ -77,13 +85,14 @@ public class Tab extends JPanel {
 	private final DraggableComponent draggableComponent;
 
 	private final KeyListener focusableKeyListener = new KeyAdapter() {
+		@Override
 		public void keyPressed(KeyEvent e) {
 			if (tabbedPanel != null) {
 				int index = tabbedPanel.getTabIndex(Tab.this);
 				while (true) {
-					index = (index + tabbedPanel.getTabCount() + (e.getKeyCode() == KeyEvent.VK_RIGHT
-							? 1
-							: e.getKeyCode() == KeyEvent.VK_LEFT ? -1 : 0)) % tabbedPanel.getTabCount();
+					index = (index + tabbedPanel.getTabCount()
+							+ (e.getKeyCode() == KeyEvent.VK_RIGHT ? 1 : e.getKeyCode() == KeyEvent.VK_LEFT ? -1 : 0))
+							% tabbedPanel.getTabCount();
 					Tab tab = tabbedPanel.getTabAt(index);
 					if (tab == Tab.this)
 						return;
@@ -133,8 +142,8 @@ public class Tab extends JPanel {
 		public void tabSelected(TabStateChangedEvent event) {
 			if (event.getTab() == Tab.this) {
 				Tab tab = event.getPreviousTab();
-				boolean hasFocus =
-						tab != null && tab.getFocusableComponent() != null && tab.getFocusableComponent().hasFocus();
+				boolean hasFocus = tab != null && tab.getFocusableComponent() != null
+						&& tab.getFocusableComponent().hasFocus();
 
 				if (tab != null && tab.getFocusableComponent() != null)
 					tab.getFocusableComponent().setFocusable(false);
@@ -234,25 +243,32 @@ public class Tab extends JPanel {
 	}
 
 	/**
-	 * <p>Enable or disable this tab.</p>
+	 * <p>
+	 * Enable or disable this tab.
+	 * </p>
 	 *
-	 * <p>If the tab is disabled, then the tab will not signal any events
-	 * until it is enabled again.</p>
+	 * <p>
+	 * If the tab is disabled, then the tab will not signal any events until it is enabled again.
+	 * </p>
 	 *
 	 * @param enabled true for enabled, otherwise false
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		getDraggableComponent().setEnabled(enabled);
 		super.setEnabled(enabled);
 	}
 
 	/**
-	 * <p>Selects this tab. A tab can only have the selected state if it is a
-	 * member of a TabbedPanel.</p>
+	 * <p>
+	 * Selects this tab. A tab can only have the selected state if it is a member of a TabbedPanel.
+	 * </p>
 	 *
-	 * <p>Setting selected to true means that this tab will be the selected
-	 * tab in the TabbedPanel it is a member of. If this tab is the selected tab in the TabbedPanel then setting
-	 * selected to false means there will be no selected tab in the TabbedPanel until another tab is selected.</p>
+	 * <p>
+	 * Setting selected to true means that this tab will be the selected tab in the TabbedPanel it is a member of. If
+	 * this tab is the selected tab in the TabbedPanel then setting selected to false means there will be no selected
+	 * tab in the TabbedPanel until another tab is selected.
+	 * </p>
 	 *
 	 * @param selected True for selected, otherwise false
 	 */
@@ -296,10 +312,14 @@ public class Tab extends JPanel {
 	}
 
 	/**
-	 * <p>Sets the event component. An event component is a component in the tab that
-	 * is used for internal listening to mouse events on the tab.</p>
+	 * <p>
+	 * Sets the event component. An event component is a component in the tab that is used for internal listening to
+	 * mouse events on the tab.
+	 * </p>
 	 *
-	 * <p><strong>Note:</strong> The event component must be part of this Tab</p>
+	 * <p>
+	 * <strong>Note:</strong> The event component must be part of this Tab
+	 * </p>
 	 *
 	 * @param eventComponent a component in this tab that should be used for mouse event listening
 	 */
@@ -308,11 +328,15 @@ public class Tab extends JPanel {
 	}
 
 	/**
-	 * <p>Sets a list of event components. An event component is a component in the
-	 * tab that is used for internal listening to mouse events on the tab. This method makes it possible to use several
-	 * components in the tab as event components.</p>
+	 * <p>
+	 * Sets a list of event components. An event component is a component in the tab that is used for internal listening
+	 * to mouse events on the tab. This method makes it possible to use several components in the tab as event
+	 * components.
+	 * </p>
 	 *
-	 * <p><strong>Note:</strong> The event components must be part of this Tab</p>
+	 * <p>
+	 * <strong>Note:</strong> The event components must be part of this Tab
+	 * </p>
 	 *
 	 * @param eventComponents a list of components in this tab that should be used for mouse event listening
 	 */
@@ -339,10 +363,13 @@ public class Tab extends JPanel {
 	}
 
 	/**
-	 * <p>Sets the component in this tab that represents the focusable part of the
-	 * tab.</p>
+	 * <p>
+	 * Sets the component in this tab that represents the focusable part of the tab.
+	 * </p>
 	 *
-	 * <p><strong>Note:</strong> The focusable component must be part of this Tab</p>
+	 * <p>
+	 * <strong>Note:</strong> The focusable component must be part of this Tab
+	 * </p>
 	 *
 	 * @param focusableComponent a component in this tab or null if no component should be focusable
 	 */
@@ -366,7 +393,9 @@ public class Tab extends JPanel {
 	}
 
 	/**
-	 * <p>Gets the tab {@link Shape}.</p>
+	 * <p>
+	 * Gets the tab {@link Shape}.
+	 * </p>
 	 *
 	 * <p>
 	 * This returns the shape of the tab. This can be be used by for example content borders in the tabbed panel so they
@@ -490,11 +519,13 @@ public class Tab extends JPanel {
 		}
 	}
 
+	@Override
 	public void addNotify() {
 		if (!draggableComponent.isIgnoreAddNotify())
 			super.addNotify();
 	}
 
+	@Override
 	public void removeNotify() {
 		if (!draggableComponent.isIgnoreAddNotify())
 			super.removeNotify();

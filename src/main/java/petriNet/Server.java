@@ -27,7 +27,6 @@ public class Server {
 	private static final String NAME_SEPARATOR = "\u0000";
 
 	private final Logger logger = Logger.getRootLogger();
-	private Thread serverThread;
 	private java.net.ServerSocket serverSocket;
 	private final Map<BiologicalEdgeAbstract, String> bea2key;
 	private boolean readyToConnect = false;
@@ -62,7 +61,7 @@ public class Server {
 	}
 
 	public void start() {
-		serverThread = new Thread(this::runLoop, "OMServerThread-" + properties.getSimId());
+		Thread serverThread = new Thread(this::runLoop, "OMServerThread-" + properties.getSimId());
 		serverThread.start();
 	}
 

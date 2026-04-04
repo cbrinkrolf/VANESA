@@ -5,7 +5,6 @@ import java.util.List;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import graph.GraphInstance;
 import gui.PopUpDialog;
 import util.FormulaSafety;
 
@@ -29,8 +28,8 @@ public abstract class PNNode extends BiologicalNodeAbstract {
 					System.out.println(pw.getName());
 					PopUpDialog.getInstance().show("Type mismatch",
 							"Node with same name already exists. Cannot create logical place because of type mismatch: "
-									+ pw.getNodeByName(name).getClass().getSimpleName() + " versus " + this.getClass()
-									.getSimpleName());
+									+ pw.getNodeByName(name).getClass().getSimpleName() + " versus "
+									+ this.getClass().getSimpleName());
 				}
 				return;
 			}

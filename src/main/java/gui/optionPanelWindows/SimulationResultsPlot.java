@@ -58,6 +58,8 @@ import static petriNet.SimulationResultSeriesKey.ARC_SUM_OF_TOKEN;
 import static petriNet.SimulationResultSeriesKey.ARC_ACTUAL_TOKEN_FLOW;
 
 public class SimulationResultsPlot extends JPanel implements ChangeListener {
+
+	private static final long serialVersionUID = 5636731783944909972L;
 	private static final BasicStroke SERIES_STROKE = new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER,
 			1, new float[] { 2, 6 }, 0);
 	private final JLabel stepLabel = new JLabel("Step 0");
@@ -77,12 +79,12 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 	// size of Vector in each Place
 	private int rowsDim;
 
-	private final ArrayList<String> labelsR1 = new ArrayList<>();
+	private final List<String> labelsR1 = new ArrayList<>();
 
-	private ArrayList<BiologicalNodeAbstract> places;
+	private List<BiologicalNodeAbstract> places;
 
-	private final ArrayList<XYSeries> seriesListR1 = new ArrayList<>();
-	private final ArrayList<XYSeries> seriesListR2 = new ArrayList<>();
+	private final List<XYSeries> seriesListR1 = new ArrayList<>();
+	private final List<XYSeries> seriesListR2 = new ArrayList<>();
 	private int r1Count = 0;
 	private int r2Count = 0;
 
@@ -90,8 +92,8 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 	private final XYSeriesCollection dataset2 = new XYSeriesCollection();
 
 	private final TripleHashMap<GraphElementAbstract, SimulationResultSeriesKey, String, Integer> series2idx = new TripleHashMap<>();
-	private final HashMap<Integer, SimulationResult> idx2simR1 = new HashMap<>();
-	private final HashMap<Integer, SimulationResult> idx2simR2 = new HashMap<>();
+	private final Map<Integer, SimulationResult> idx2simR1 = new HashMap<>();
+	private final Map<Integer, SimulationResult> idx2simR2 = new HashMap<>();
 
 	private XYLineAndShapeRenderer renderer;
 	private XYLineAndShapeRenderer renderer2;
@@ -108,8 +110,8 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 
 	public SimulationResultsPlot() {
 		setLayout(new MigLayout("ins 0, wrap, fill"));
-		zoomGraphButton.addActionListener((e) -> onOpenGraphInWindowClicked());
-		showDetailedResultsButton.addActionListener((e) -> onShowDetailedSimResultsClicked());
+		zoomGraphButton.addActionListener(e -> onOpenGraphInWindowClicked());
+		showDetailedResultsButton.addActionListener(e -> onShowDetailedSimResultsClicked());
 		setVisible(false);
 	}
 
@@ -292,7 +294,7 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 		} else {
 			boolean onlyT = true;
 			boolean onlyDiscreteT = true;
-			if (vState.getPicked().size() > 0) {
+			if (!vState.getPicked().isEmpty()) {
 				Iterator<BiologicalNodeAbstract> it = vState.getPicked().iterator();
 				while (onlyT && it.hasNext()) {
 					BiologicalNodeAbstract bna = it.next();
@@ -324,10 +326,12 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 				bna = resolveHidden(bna);
 				if (bna instanceof Place) {
 					final Place place = (Place) bna;
-					if (series2idx.containsKey(place, PLACE_TOKEN) && series2idx.get(place, PLACE_TOKEN, simRes.getId())
-							!= null) {
-						renderer.setSeriesStroke(series2idx.get(place, PLACE_TOKEN, simRes.getId()), new BasicStroke(1));
-						renderer.setSeriesPaint(series2idx.get(place, PLACE_TOKEN, simRes.getId()), place.getPlotColor());
+					if (series2idx.containsKey(place, PLACE_TOKEN)
+							&& series2idx.get(place, PLACE_TOKEN, simRes.getId()) != null) {
+						renderer.setSeriesStroke(series2idx.get(place, PLACE_TOKEN, simRes.getId()),
+								new BasicStroke(1));
+						renderer.setSeriesPaint(series2idx.get(place, PLACE_TOKEN, simRes.getId()),
+								place.getPlotColor());
 						renderer.setSeriesVisible(series2idx.get(place, PLACE_TOKEN, simRes.getId()), true);
 					}
 				} else if (bna instanceof Transition && onlyT && onlyDiscreteT) {
@@ -412,8 +416,8 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 		SimulationResult simRes = simResController.get(simId);
 		boolean isValidPN = pw.isPetriNet() && pw.getPetriPropertiesNet().isPetriNetSimulation() && simRes != null;
 		boolean isValidHiddenPN = !pw.isPetriNet() && pw.getTransformationInformation() != null
-				&& pw.getTransformationInformation().getPetriNet() != null && pw.getPetriPropertiesNet()
-				.isPetriNetSimulation() && simRes != null;
+				&& pw.getTransformationInformation().getPetriNet() != null
+				&& pw.getPetriPropertiesNet().isPetriNetSimulation() && simRes != null;
 		if (isValidPN || isValidHiddenPN) {
 			rowsDim = simRes.getTime().size();
 
@@ -454,8 +458,7 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 						}
 					}
 				} else if (bna instanceof ContinuousTransition && !bna.isLogical()) {
-					if (simRes.contains(bna, ACTUAL_FIRING_SPEED) && simRes.get(bna, ACTUAL_FIRING_SPEED).size()
-							> 0) {
+					if (simRes.contains(bna, ACTUAL_FIRING_SPEED) && simRes.get(bna, ACTUAL_FIRING_SPEED).size() > 0) {
 						seriesId = series2idx.get(bna, ACTUAL_FIRING_SPEED, simRes.getId());
 						XYSeries series = this.seriesListR1.get(seriesId);
 						int stop = Math.min(simRes.get(bna, ACTUAL_FIRING_SPEED).size(), time.size());
@@ -503,10 +506,10 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 					if (simRes.contains(edge)) {
 						seriesId = series2idx.get(edge, ARC_ACTUAL_TOKEN_FLOW, simRes.getId());
 						XYSeries series = this.seriesListR1.get(seriesId);
-						XYSeries series2 = this.seriesListR2.get(
-								series2idx.get(edge, ARC_SUM_OF_TOKEN, simRes.getId()));
-						if (simRes.contains(edge, ARC_ACTUAL_TOKEN_FLOW) && simRes.get(edge, ARC_ACTUAL_TOKEN_FLOW)
-								.size() > 0) {
+						XYSeries series2 = this.seriesListR2
+								.get(series2idx.get(edge, ARC_SUM_OF_TOKEN, simRes.getId()));
+						if (simRes.contains(edge, ARC_ACTUAL_TOKEN_FLOW)
+								&& simRes.get(edge, ARC_ACTUAL_TOKEN_FLOW).size() > 0) {
 							int stop = Math.min(simRes.get(edge, ARC_ACTUAL_TOKEN_FLOW).size(), time.size());
 							int steps = stop - series.getItemCount();
 							if (steps > 0) {
@@ -593,8 +596,8 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 	public void stateChanged(ChangeEvent e) {
 		boolean isValidPN = pw.isPetriNet() && pw.getPetriPropertiesNet().isPetriNetSimulation();
 		boolean isValidHiddenPN = !pw.isPetriNet() && pw.getTransformationInformation() != null
-				&& pw.getTransformationInformation().getPetriNet() != null && pw.getPetriPropertiesNet()
-				.isPetriNetSimulation();
+				&& pw.getTransformationInformation().getPetriNet() != null
+				&& pw.getPetriPropertiesNet().isPetriNetSimulation();
 		if (isValidPN || isValidHiddenPN) {
 			sliderPosition = slider.getValue();
 			SimulationResult simRes = simResController.getLastActive();
@@ -705,8 +708,8 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 				if (bna instanceof Place && simResController.getAllActiveWithData(bna, PLACE_TOKEN).size() <= 1) {
 					return labelsR1.get(seriesIdx);
 				}
-				if (bna instanceof Transition && simResController.getAllActiveWithData(bna, ACTUAL_FIRING_SPEED)
-						.size() <= 1) {
+				if (bna instanceof Transition
+						&& simResController.getAllActiveWithData(bna, ACTUAL_FIRING_SPEED).size() <= 1) {
 					return labelsR1.get(seriesIdx);
 				}
 
@@ -725,8 +728,8 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 				if (bna instanceof Place && simResController.getAllActiveWithData(bna, PLACE_TOKEN).size() <= 1) {
 					return graphElement.getName();
 				}
-				if (bna instanceof ContinuousTransition && simResController.getAllActiveWithData(bna,
-						ACTUAL_FIRING_SPEED).size() <= 1) {
+				if (bna instanceof ContinuousTransition
+						&& simResController.getAllActiveWithData(bna, ACTUAL_FIRING_SPEED).size() <= 1) {
 					return graphElement.getName();
 				}
 				if ((bna instanceof DiscreteTransition || bna instanceof StochasticTransition)
@@ -820,9 +823,10 @@ public class SimulationResultsPlot extends JPanel implements ChangeListener {
 			if (hiddenPN) {
 				final Map<BiologicalNodeAbstract, PNNode> bnToPNMap = pw.getTransformationInformation()
 						.getBnToPnMapping();
-				for (final BiologicalNodeAbstract key : bnToPNMap.keySet()) {
-					if (bnToPNMap.get(key) == p) {
-						vState.pick(key, true);
+
+				for (Map.Entry<BiologicalNodeAbstract, PNNode> entry : bnToPNMap.entrySet()) {
+					if (entry.getValue() == p) {
+						vState.pick(entry.getKey(), true);
 						break;
 					}
 				}

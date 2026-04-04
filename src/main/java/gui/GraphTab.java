@@ -6,8 +6,10 @@ import net.infonode.tabbedpanel.TitledTab;
 import javax.swing.*;
 
 public class GraphTab extends TitledTab {
-	private static final ImageIcon biologicalNetworkIcon = ImagePath.getInstance().getImageIcon(
-			"biologicalNetworkTiny.png");
+
+	private static final long serialVersionUID = 3281757895526230368L;
+	private static final ImageIcon biologicalNetworkIcon = ImagePath.getInstance()
+			.getImageIcon("biologicalNetworkTiny.png");
 	private static final ImageIcon petriNetworkIcon = ImagePath.getInstance().getImageIcon("petriNetworkTiny.png");
 
 	public GraphTab(final String name, final GraphZoomScrollPane viewer) {

@@ -33,6 +33,8 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class ScrollButtonBox extends JPanel {
+
+	private static final long serialVersionUID = 8260285311315804254L;
 	private boolean button1Enabled;
 	private boolean button2Enabled;
 

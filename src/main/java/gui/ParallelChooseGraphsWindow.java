@@ -5,12 +5,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
-import configurations.Workspace;
 import org.mediavirus.parvis.gui.MainFrame;
 
 import biologicalElements.Pathway;
+import configurations.Workspace;
 import graph.algorithms.NetworkProperties;
-import util.VanesaUtility;
 
 public class ParallelChooseGraphsWindow extends ChooseGraphsWindow {
 
@@ -24,9 +23,21 @@ public class ParallelChooseGraphsWindow extends ChooseGraphsWindow {
 		// Iterate over Paths
 		// Create PARVIS from File
 
-		String data = "13\n" + "Nodes Integer\n" + "Edges Integer\n" + "NodeDegs Integer\n" + "MinD Integer\n"
-				+ "MaxD Integer\n" + "AvgDeg real\n" + "AvgNeDeg real\n" + "AvgSP real\n" + "MaxPath Integer\n"
-				+ "Dens real\n" + "Centr real\n" + "MI real\n" + "Name string\n";
+		StringBuilder data = new StringBuilder();
+		data.append("13\n");
+		data.append("Nodes Integer\n");
+		data.append("Edges Integer\n");
+		data.append("NodeDegs Integer\n");
+		data.append("MinD Integer\n");
+		data.append("MaxD Integer\n");
+		data.append("AvgDeg real\n");
+		data.append("AvgNeDeg real\n");
+		data.append("AvgSP real\n");
+		data.append("MaxPath Integer\n");
+		data.append("Dens real\n");
+		data.append("Centr real\n");
+		data.append("MI real\n");
+		data.append("Name string\n");
 
 		Pathway p;
 		NetworkProperties c;
@@ -41,24 +52,40 @@ public class ParallelChooseGraphsWindow extends ChooseGraphsWindow {
 			name = name.replace(" ", "");
 			// System.out.println(name);
 
-			data += p.countNodes() + "\t" + p.countEdges() + "\t" + c.countNodeDegrees() + "\t" + c.getMinDegree()
-					+ "\t" + c.getMaxDegree() + "\t" + c.getAvgNodeDegree() + "\t" + c.averageNeighbourDegree() + "\t"
-					+ c.averageShortestPathLength() + "\t" + c.maxPathLength() + "\t" + c.getDensity() + "\t"
-					+ c.getCentralization() + "\t" + c.getGlobalMatchingIndex() + "\t" + name + "\n";
+			data.append(p.countNodes());
+			data.append("\t");
+			data.append(p.countEdges());
+			data.append("\t");
+			data.append(c.countNodeDegrees());
+			data.append("\t");
+			data.append(c.getMinDegree());
+			data.append("\t");
+			data.append(c.getMaxDegree());
+			data.append("\t");
+			data.append(c.getAvgNodeDegree());
+			data.append("\t");
+			data.append(c.averageNeighbourDegree());
+			data.append("\t");
+			data.append(c.averageShortestPathLength());
+			data.append("\t");
+			data.append(c.maxPathLength());
+			data.append("\t");
+			data.append(c.getDensity());
+			data.append("\t");
+			data.append(c.getCentralization());
+			data.append("\t");
+			data.append(c.getGlobalMatchingIndex());
+			data.append("\t");
+			data.append(name);
+			data.append("\t");
 
 		}
 
 		// WRITE TO LOCAL FILE
 		String filename = "paralleldata.stf";
 		File file = Workspace.getCurrent().resolve(filename).toFile();
-		try {
-			// Create file
-			FileWriter fstream = new FileWriter(file);
-			BufferedWriter out = new BufferedWriter(fstream);
-			out.write(data);
-			// Close the output stream
-			out.close();
-			fstream.close();
+		try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
+			out.write(data.toString());
 		} catch (Exception e) {// Catch exception if any
 			System.err.println("Error on writing STFFile: " + e.getMessage());
 		}
@@ -67,6 +94,6 @@ public class ParallelChooseGraphsWindow extends ChooseGraphsWindow {
 		MainFrame m = new MainFrame();
 		m.setVisible(true);
 
-		m.loadNewFile("file:"+file.getAbsolutePath());
+		m.loadNewFile("file:" + file.getAbsolutePath());
 	}
 }

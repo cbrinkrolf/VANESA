@@ -53,6 +53,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	private final GraphSettings settings = GraphSettings.getInstance();
 	private boolean modifyShape = false;
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
 		pw.getGraph().getVisualizationViewer().requestFocus();
 		moved = false;
@@ -303,6 +304,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 		}
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent e) {
 		this.setPathway(e);
 		if (e.getComponent() instanceof MyVisualizationViewer) {
@@ -315,6 +317,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 		}
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e) {
 		if (e.getComponent() instanceof MyVisualizationViewer) {
 			inWindow = false;
@@ -423,11 +426,9 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	private void setPathway(MouseEvent e) {
 		// do not use GraphInstance.getPathway because graphs for transformation rules
 		// also need mouse control
-		if (this.pw == null) {
-			if (e.getSource() instanceof MyVisualizationViewer) {
-				vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e.getSource();
-				pw = vv.getPathway();
-			}
+		if (this.pw == null && e.getSource() instanceof MyVisualizationViewer) {
+			vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e.getSource();
+			pw = vv.getPathway();
 		}
 	}
 

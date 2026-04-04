@@ -1,6 +1,9 @@
 package simulation;
 
 public class SimulationException extends RuntimeException {
+
+	private static final long serialVersionUID = -1523305591122557348L;
+
 	public SimulationException(final String message) {
 		super(message);
 	}

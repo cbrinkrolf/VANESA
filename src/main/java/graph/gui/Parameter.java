@@ -38,7 +38,6 @@ public class Parameter {
 	}
 
 	@Override
-	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	public Parameter clone() {
 		return new Parameter(name, value, unit);
 	}

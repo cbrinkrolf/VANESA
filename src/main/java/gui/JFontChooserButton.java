@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JFontChooserButton extends JButton {
+
+	private static final long serialVersionUID = -2187186441817583349L;
 	private final List<FontSelectedListener> listeners = new ArrayList<>();
 	private final String dialogTitle;
 	private Font selectedFont;

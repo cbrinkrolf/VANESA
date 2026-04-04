@@ -34,13 +34,20 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 public class PopupList extends JPanel {
+
+	private static final long serialVersionUID = 1319641907139122231L;
+
 	private static class PopupButtonModel extends DefaultButtonModel {
+
+		private static final long serialVersionUID = 8969296464303456463L;
 		private boolean pressed;
 
+		@Override
 		public boolean isPressed() {
 			return super.isPressed() || pressed;
 		}
 
+		@Override
 		public boolean isArmed() {
 			return super.isArmed() || pressed;
 		}
@@ -52,9 +59,11 @@ public class PopupList extends JPanel {
 	}
 
 	private class Popup extends JPopupMenu {
+
+		private static final long serialVersionUID = 8947491755944240540L;
 		private final JList<Tab> list = new JList<>();
-		private final JScrollPane scrollPane = new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		private final JScrollPane scrollPane = new JScrollPane(list, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		private int oldIndex;
 
 		Popup() {
@@ -75,13 +84,15 @@ public class PopupList extends JPanel {
 
 		public MouseMotionListener getMouseMotionListener() {
 			return new MouseMotionAdapter() {
+				@Override
 				public void mouseDragged(MouseEvent e) {
 					if (SwingUtilities.isLeftMouseButton(e)) {
 						Component c = (Component) e.getSource();
 						Point p = SwingUtilities.convertPoint(c, e.getPoint(), scrollPane);
 						int index = list.locationToIndex(SwingUtilities.convertPoint(scrollPane, p, list));
-						if (!c.contains(e.getPoint()) && (scrollPane.contains(p) || (p.getY()
-								> scrollPane.getY() + scrollPane.getHeight()) || p.getY() < scrollPane.getY())) {
+						if (!c.contains(e.getPoint())
+								&& (scrollPane.contains(p) || (p.getY() > scrollPane.getY() + scrollPane.getHeight())
+										|| p.getY() < scrollPane.getY())) {
 							list.setSelectedIndex(index);
 							list.ensureIndexIsVisible(index);
 						}
@@ -92,6 +103,7 @@ public class PopupList extends JPanel {
 
 		public MouseListener getMouseListener() {
 			return new MouseAdapter() {
+				@Override
 				public void mousePressed(MouseEvent e) {
 					if (SwingUtilities.isLeftMouseButton(e)) {
 						if (isVisible()) {
@@ -111,6 +123,7 @@ public class PopupList extends JPanel {
 					}
 				}
 
+				@Override
 				public void mouseReleased(MouseEvent e) {
 					if (SwingUtilities.isLeftMouseButton(e)) {
 						if (!isVisible())
@@ -132,11 +145,12 @@ public class PopupList extends JPanel {
 			return list;
 		}
 
+		@Override
 		public void updateUI() {
 			super.updateUI();
 			setBorder(new LineBorder(UIManagerUtil.getColor("controlDkShadow", Color.BLACK), 1));
 			if (list != null)
-				update();
+			update();
 		}
 
 		private void update() {
@@ -191,10 +205,11 @@ public class PopupList extends JPanel {
 		return getComponentCount() == 0 ? null : (AbstractButton) getComponent(0);
 	}
 
+	@Override
 	public void updateUI() {
 		super.updateUI();
 		if (popup != null)
-			SwingUtilities.updateComponentTreeUI(popup);
+		SwingUtilities.updateComponentTreeUI(popup);
 	}
 
 	public void addPopupListListener(PopupListListener l) {

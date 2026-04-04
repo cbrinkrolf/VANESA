@@ -2,6 +2,7 @@ package dataMapping.dataImport;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -22,10 +23,9 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetDimension;
 
 /**
- * This class is able to import .xls and .xlsx files (but not from '95 or
- * earlier it depends on four .jars (poi, poi-ooxml, poi-ooxml-schemas, and
- * dom4j) it imports the data in a simple way, so that is possible to visualize
- * the cells in an JTable until now it only imports the first sheet of a file
+ * This class is able to import .xls and .xlsx files (but not from '95 or earlier it depends on four .jars (poi,
+ * poi-ooxml, poi-ooxml-schemas, and dom4j) it imports the data in a simple way, so that is possible to visualize the
+ * cells in an JTable until now it only imports the first sheet of a file
  * 
  * @author dborck
  * 
@@ -36,27 +36,24 @@ public class ImportExcelxData implements ImportData {
 	private DataFormatter fmt;
 	private int headerRowNumber;
 	private int maxColumns;
-	private Vector<String> myheaders = new Vector<String>();
-	private Vector<String> rowData = new Vector<String>();
-	private Vector<Vector<String>> allData = new Vector<Vector<String>>();
+	private Vector<String> myheaders = new Vector<>();
+	private Vector<String> rowData = new Vector<>();
+	private Vector<Vector<String>> allData = new Vector<>();
 
 	/**
-	 * constructs the workbook of the file and extracts the data in a simple
-	 * format
+	 * constructs the workbook of the file and extracts the data in a simple format
 	 * 
-	 * @param file
-	 *            - the file with the data to be mapped to the network
-	 * @throws Exception
+	 * @param file - the file with the data to be mapped to the network
+	 * @throws IOException and ExcelException
 	 */
-	public ImportExcelxData(File file) throws Exception {
+	public ImportExcelxData(File file) throws IOException, ExcelException {
 
 		if (file.toString().endsWith(".xls")) {
 			POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(file));
 
 			List<Record> records = null;
 			try {
-				records = RecordFactory.createRecords(fs
-						.createDocumentInputStream("Workbook"));
+				records = RecordFactory.createRecords(fs.createDocumentInputStream("Workbook"));
 			} catch (Exception e) {
 				// it needs the String "Workbook", files created with Excel 95
 				// or older versions do have
@@ -70,6 +67,8 @@ public class ImportExcelxData implements ImportData {
 						throw new ExcelException("old Excel file");
 					}
 				}
+			} finally {
+				fs.close();
 			}
 
 			DimensionsRecord dr = null;
@@ -82,8 +81,7 @@ public class ImportExcelxData implements ImportData {
 				}
 			}
 			if (dr == null) {
-				throw new RuntimeException(
-						"Cannot find dimension of excel sheet");
+				throw new RuntimeException("Cannot find dimension of excel sheet");
 			}
 			maxColumns = dr.getLastCol();
 		}
@@ -110,8 +108,7 @@ public class ImportExcelxData implements ImportData {
 			String dimTo = sheetDimensions.split(":")[1].split("\\d")[0];
 			maxColumns = 0;
 			for (int i = 0; i < dimTo.length(); i++) {
-				maxColumns = maxColumns
-						+ Character.getNumericValue(dimTo.charAt(i)) - 9;
+				maxColumns = maxColumns + Character.getNumericValue(dimTo.charAt(i)) - 9;
 			}
 		}
 
@@ -124,7 +121,7 @@ public class ImportExcelxData implements ImportData {
 		// manage filling the data vector
 		rowData.clear();
 		for (int rn = 0; rn <= sheet.getLastRowNum(); rn++) {
-			Vector<String> d = new Vector<String>();
+			Vector<String> d = new Vector<>();
 			Row row = sheet.getRow(rn);
 			if (row == null) {
 				d.add("\n");

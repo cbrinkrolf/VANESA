@@ -9,11 +9,11 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 
 public final class LockableBlurLayer extends JComponent {
+	private static final long serialVersionUID = 5783899129842497757L;
 	private static final float[] blurMatrix = { 1 / 14f, 2 / 14f, 1 / 14f, 2 / 14f, 2 / 14f, 2 / 14f, 1 / 14f, 2 / 14f,
 			1 / 14f };
-	private static final long eventMask =
-			AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK | AWTEvent.MOUSE_WHEEL_EVENT_MASK
-					| AWTEvent.KEY_EVENT_MASK | AWTEvent.FOCUS_EVENT_MASK;
+	private static final long eventMask = AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK
+			| AWTEvent.MOUSE_WHEEL_EVENT_MASK | AWTEvent.KEY_EVENT_MASK | AWTEvent.FOCUS_EVENT_MASK;
 
 	private final JComponent view;
 	private Component recentFocusOwner;
@@ -91,8 +91,8 @@ public final class LockableBlurLayer extends JComponent {
 		if (isLocked && g instanceof Graphics2D) {
 			final Graphics2D g2 = (Graphics2D) g.create();
 			BufferedImage buffer = cachedBuffer == null ? null : cachedBuffer.get();
-			final boolean isBufferFormatValid =
-					buffer != null && buffer.getWidth() == getWidth() && buffer.getHeight() == getHeight();
+			final boolean isBufferFormatValid = buffer != null && buffer.getWidth() == getWidth()
+					&& buffer.getHeight() == getHeight();
 			if (!isBufferFormatValid || isDirty) {
 				if (!isBufferFormatValid) {
 					buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);

@@ -46,6 +46,8 @@ import net.infonode.tabbedpanel.border.OpenContentBorder;
  * @see Tab
  */
 public class TabbedPanelContentPanel extends JPanel {
+
+	private static final long serialVersionUID = 4499433478848952602L;
 	private final TabbedPanel tabbedPanel;
 	private final JPanel shapedPanel;
 	private boolean okToRepaintBorder = false;
@@ -62,11 +64,13 @@ public class TabbedPanelContentPanel extends JPanel {
 		this.tabbedPanel = tabbedPanel;
 
 		shapedPanel = new JPanel(new BorderLayout()) {
+			@Override
 			protected void processMouseEvent(MouseEvent event) {
 				super.processMouseEvent(event);
 				tabbedPanel.doProcessMouseEvent(event);
 			}
 
+			@Override
 			protected void processMouseMotionEvent(MouseEvent event) {
 				super.processMouseMotionEvent(event);
 				tabbedPanel.doProcessMouseMotionEvent(event);
@@ -93,6 +97,7 @@ public class TabbedPanelContentPanel extends JPanel {
 		shapedPanel.setBackground(TabbedUIDefaults.getContentAreaBackground());
 
 		tabbedPanel.getDraggableComponentBox().addListener(new DraggableComponentBoxAdapter() {
+			@Override
 			public void changed(DraggableComponentBoxEvent event) {
 				if (event.getDraggableComponent() == null
 						|| event.getDraggableComponentEvent().getType() == DraggableComponentEvent.TYPE_UNDEFINED) {
@@ -102,30 +107,37 @@ public class TabbedPanelContentPanel extends JPanel {
 		});
 
 		tabbedPanel.addTabListener(new TabAdapter() {
+			@Override
 			public void tabAdded(TabEvent event) {
 				repaintBorder();
 			}
 
+			@Override
 			public void tabRemoved(TabRemovedEvent event) {
 				repaintBorder();
 			}
 
+			@Override
 			public void tabSelected(TabStateChangedEvent event) {
 				repaintBorder();
 			}
 
+			@Override
 			public void tabDeselected(TabStateChangedEvent event) {
 				repaintBorder();
 			}
 
+			@Override
 			public void tabDehighlighted(TabStateChangedEvent event) {
 				repaintBorder();
 			}
 
+			@Override
 			public void tabHighlighted(TabStateChangedEvent event) {
 				repaintBorder();
 			}
 
+			@Override
 			public void tabMoved(TabEvent event) {
 				repaintBorder();
 			}

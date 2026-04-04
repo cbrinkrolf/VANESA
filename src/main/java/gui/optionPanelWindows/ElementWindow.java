@@ -192,7 +192,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 					chooseRef.setActionCommand("chooseRef");
 					chooseRef.addActionListener(this);
 					p.add(chooseRef);
-					if (bna.getRefs().size() > 0) {
+					if (!bna.getRefs().isEmpty()) {
 						JButton pickRefs = new JButton("Highlight references");
 						pickRefs.setToolTipText("Highlights all logical nodes which refer to this node");
 						pickRefs.setActionCommand("pickRefs");
@@ -465,10 +465,9 @@ public class ElementWindow implements ActionListener, ItemListener {
 					}
 
 				} else if (ab instanceof Transition) {
-					JComboBox<String> transList = new JComboBox<>(
-							new String[] { DiscreteTransition.class.getSimpleName(),
-									ContinuousTransition.class.getSimpleName(),
-									StochasticTransition.class.getSimpleName() });
+					JComboBox<String> transList = new JComboBox<>(new String[] {
+							DiscreteTransition.class.getSimpleName(), ContinuousTransition.class.getSimpleName(),
+							StochasticTransition.class.getSimpleName() });
 					transList.setSelectedItem(ab.getClass().getSimpleName());
 					transList.setName("transList");
 					transList.addFocusListener(pwl);
@@ -921,8 +920,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 		} else if ("pathwayLink".equals(event)) {
 			if (JOptionPane.showConfirmDialog(w.getFrame(),
 					"If you delete the PathwayLink the Sub-Pathway (with all eventually made changes within it) will be lost. Do you want to do this?",
-					"Delete the Sub-Pathway...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)
-					== JOptionPane.YES_OPTION && ab instanceof PathwayMap) {
+					"Delete the Sub-Pathway...", JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION && ab instanceof PathwayMap) {
 				((PathwayMap) ab).setPathwayLink(null);
 				w.updateElementTree();
 				w.updatePathwayTree();
@@ -1049,19 +1048,20 @@ public class ElementWindow implements ActionListener, ItemListener {
 				place.solveConflictProperties();
 			}
 		} else if ("check".equals(event)) {
-			String result = "";
+			StringBuilder result = new StringBuilder();
 			for (BiologicalNodeAbstract bna : GraphInstance.getMyGraph().getAllVertices()) {
 				if (bna instanceof Place) {
 					Place place = (Place) bna;
 					if (place.hasConflictProperties()) {
-						result += place.getName() + "\n";
+						result.append(place.getName());
+						result.append("\n");
 					}
 					// place.solveConflictProperties();
 				}
 			}
 			String message = "No conflicts found!";
-			if (result.length() > 0) {
-				message = "Following conflicting places found: " + result;
+			if (!result.toString().isEmpty()) {
+				message = "Following conflicting places found: " + result.toString();
 			}
 			PopUpDialog.getInstance().show("Checking conflicts", message);
 		} else if ("inhibition_absolute".equals(event)) {

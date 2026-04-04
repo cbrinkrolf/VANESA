@@ -21,6 +21,8 @@ import gui.eventhandlers.MenuListener;
 import util.VanesaUtility;
 
 public class MainMenuBar extends JMenuBar {
+
+	private static final long serialVersionUID = -6645010711029126389L;
 	private final JMenuItem saveNetworkAs;
 	private final JMenuItem saveNetwork;
 	private final JMenuItem closeAllNetworks;
@@ -105,8 +107,7 @@ public class MainMenuBar extends JMenuBar {
 		final JMenuItem reportIssue = createMenuItem("Report Issue", this::onReportIssueClicked);
 		reportIssue.setIcon(ImagePath.getExternalLinkIcon());
 
-		final String label = Workspace.getCurrentSettings().isDeveloperMode()
-				? "Next launch: normal mode"
+		final String label = Workspace.getCurrentSettings().isDeveloperMode() ? "Next launch: normal mode"
 				: "Next launch: developer mode";
 		devMode = createMenuItem(label, MenuActionCommands.devMode);
 		helpMenu.add(allPopUps);
@@ -239,13 +240,13 @@ public class MainMenuBar extends JMenuBar {
 
 	private JMenuItem createMenuItem(final String text, final Runnable action) {
 		final JMenuItem item = new JMenuItem(text);
-		item.addActionListener((e) -> action.run());
+		item.addActionListener(e -> action.run());
 		return item;
 	}
 
 	private JMenuItem createMenuItem(final String text, final int keyEvent, final Runnable action) {
 		final JMenuItem item = new JMenuItem(text, keyEvent);
-		item.addActionListener((e) -> action.run());
+		item.addActionListener(e -> action.run());
 		return item;
 	}
 

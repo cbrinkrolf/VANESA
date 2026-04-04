@@ -22,6 +22,9 @@ import java.math.RoundingMode;
 import java.util.*;
 
 public class DiscreteSimulationPanel extends JPanel {
+
+	private static final long serialVersionUID = 5093026405711347201L;
+
 	private static final int PROGRESS_SCALE = 10000;
 
 	private final SimulationWindow.UpdateSimulationResultsListener updateSimulationResultsListener;
@@ -196,10 +199,10 @@ public class DiscreteSimulationPanel extends JPanel {
 		if (markingTimelines.size() > 1) {
 			addLogText("- " + uniqueMarkingTimelines.size() + " marking timelines are unique.\n");
 		}
-		for (final DiscreteSimulator.Marking[] markingTimeline : uniqueMarkingTimelines.keySet()) {
-			collectSimulationResult(simResultController, markingTimeline, uniqueMarkingTimelines.get(markingTimeline),
-					endTime);
+		for (Map.Entry<DiscreteSimulator.Marking[], Integer> entry : uniqueMarkingTimelines.entrySet()) {
+			collectSimulationResult(simResultController, entry.getKey(), entry.getValue(), endTime);
 		}
+
 		// Update UI
 		pathway.setPlotColorPlacesTransitions(false);
 		pathway.getPetriPropertiesNet().setPetriNetSimulation(true);
@@ -289,8 +292,8 @@ public class DiscreteSimulationPanel extends JPanel {
 						simulator.getTokens(marking, place).doubleValue());
 			}
 			for (final var transition : simulator.getTransitions()) {
-				final boolean isTransitionActive = Arrays.stream(marking.concessionsOrderedByDelay).anyMatch(
-						c -> c.transition.transition == transition);
+				final boolean isTransitionActive = Arrays.stream(marking.concessionsOrderedByDelay)
+						.anyMatch(c -> c.transition.transition == transition);
 				simResult.addValue(transition, SimulationResultSeriesKey.ACTIVE, isTransitionActive ? 1.0 : 0.0);
 			}
 			// Look forward what transitions will fire and update the transition's FIRE data
@@ -318,8 +321,8 @@ public class DiscreteSimulationPanel extends JPanel {
 				}
 				for (final var arc : simulator.getArcs()) {
 					final var series = simResult.get(arc, SimulationResultSeriesKey.ARC_SUM_OF_TOKEN);
-					BigInteger tokens = series == null || series.size() == 0 ? BigInteger.ZERO : BigInteger.valueOf(
-							series.get(series.size() - 1).longValue());
+					BigInteger tokens = series == null || series.size() == 0 ? BigInteger.ZERO
+							: BigInteger.valueOf(series.get(series.size() - 1).longValue());
 					for (final var concession : firedConcessions) {
 						final BigInteger arcTokens = concession.fixedArcWeights.get(arc);
 						if (arcTokens != null) {
@@ -332,9 +335,8 @@ public class DiscreteSimulationPanel extends JPanel {
 			} else {
 				for (final var arc : simulator.getArcs()) {
 					final var series = simResult.get(arc, SimulationResultSeriesKey.ARC_SUM_OF_TOKEN);
-					final BigInteger tokens =
-							series == null || series.size() == 0 ? BigInteger.ZERO : BigInteger.valueOf(
-									series.get(series.size() - 1).longValue());
+					final BigInteger tokens = series == null || series.size() == 0 ? BigInteger.ZERO
+							: BigInteger.valueOf(series.get(series.size() - 1).longValue());
 					simResult.addValue(arc, SimulationResultSeriesKey.ARC_SUM_OF_TOKEN, tokens.doubleValue());
 				}
 			}

@@ -29,6 +29,8 @@ import java.awt.*;
  * @version $Revision: 1.4 $
  */
 public class ColorProviderList implements ColorProvider {
+
+	private static final long serialVersionUID = -4944238554861713764L;
 	private final ColorProvider[] providers;
 
 	public ColorProviderList(ColorProvider colorProvider1, ColorProvider colorProvider2, ColorProvider colorProvider3) {

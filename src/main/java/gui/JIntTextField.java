@@ -11,8 +11,9 @@ import java.math.BigInteger;
 import java.util.regex.Pattern;
 
 public class JIntTextField extends JTextField {
-	private static final Pattern UINT_PATTERN = Pattern.compile("\\+?[0-9]*");
-	private static final Pattern INT_PATTERN = Pattern.compile("[+\\-]?[0-9]*");
+	private static final long serialVersionUID = 1355389533216433243L;
+	private static final Pattern UINT_PATTERN = Pattern.compile("\\+?\\d*");
+	private static final Pattern INT_PATTERN = Pattern.compile("[+\\-]?\\d*");
 
 	private final Pattern pattern;
 	private final boolean allowNegative;
@@ -37,8 +38,8 @@ public class JIntTextField extends JTextField {
 			@Override
 			public void replace(final FilterBypass fb, final int offset, final int length, final String text,
 					final AttributeSet attrs) throws BadLocationException {
-				final var targetText = getText(0, offset) + text + getText(offset + length,
-						getText().length() - offset - length);
+				final var targetText = getText(0, offset) + text
+						+ getText(offset + length, getText().length() - offset - length);
 				if (pattern.matcher(targetText).matches()) {
 					super.replace(fb, offset, length, text, attrs);
 				}

@@ -35,6 +35,8 @@ import java.awt.event.MouseEvent;
  * @see Tab
  */
 public class TabDragEvent extends TabEvent {
+
+	private static final long serialVersionUID = 4702790104823340302L;
 	private final MouseEvent mouseEvent;
 
 	/**

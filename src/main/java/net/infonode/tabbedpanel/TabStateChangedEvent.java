@@ -23,12 +23,15 @@
 package net.infonode.tabbedpanel;
 
 /**
- * <p>TabStateChangedEvent is a state changed event. A change could mean that the
- * selected tab has been deselcted and another tab has been selected.</p>
+ * <p>
+ * TabStateChangedEvent is a state changed event. A change could mean that the selected tab has been deselcted and
+ * another tab has been selected.
+ * </p>
  *
- * <p>Example:  Tab 1 is the selected tab. The user selects tab 2 and tab 1 will be
- * deselected. A change event will then be triggered where tab 1 will be the previous tab (getPreviousTab()) and tab 2
- * will be the curent tab (getCurrentTab()).</p>
+ * <p>
+ * Example: Tab 1 is the selected tab. The user selects tab 2 and tab 1 will be deselected. A change event will then be
+ * triggered where tab 1 will be the previous tab (getPreviousTab()) and tab 2 will be the curent tab (getCurrentTab()).
+ * </p>
  *
  * @author $Author: jesper $
  * @version $Revision: 1.5 $
@@ -37,6 +40,8 @@ package net.infonode.tabbedpanel;
  * @see Tab
  */
 public class TabStateChangedEvent extends TabEvent {
+
+	private static final long serialVersionUID = 1905116369240355103L;
 	private final TabbedPanel tabbedPanel;
 	private final Tab previousTab;
 	private final Tab currentTab;

@@ -49,7 +49,7 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends AnnotatingGraphMousePlug
 		RectangularShape arect = null;
 		if (currentType == AnnotationPainter.TEXT) {
 			String annotationString = JOptionPane.showInputDialog(vv, "Annotation:");
-			if (annotationString != null && annotationString.length() > 0) {
+			if (annotationString != null && !annotationString.isEmpty()) {
 				arect = (RectangularShape) rectangularShape.clone();
 				Point2D.Double p1 = new Point2D.Double(arect.getMinX(), arect.getMinY());
 				Point2D.Double p2 = new Point2D.Double(arect.getMaxX(), arect.getMaxY());
@@ -89,15 +89,19 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends AnnotatingGraphMousePlug
 		}
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseMoved(MouseEvent e) {
 	}
 }

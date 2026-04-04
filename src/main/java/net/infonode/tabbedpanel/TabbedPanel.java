@@ -45,8 +45,7 @@ import java.util.ArrayList;
  * </p>
  *
  * <p>
- * The demo program for InfoNode Tabbed Panel on
- * <a href="http://www.infonode.net/index.html?itpdemo" target="_blank">
+ * The demo program for InfoNode Tabbed Panel on <a href="http://www.infonode.net/index.html?itpdemo" target="_blank">
  * www.infonode.net</a> demonstrates and explains most of the tabbed panel's features.
  * </p>
  *
@@ -86,13 +85,10 @@ import java.util.ArrayList;
  * A tabbed panel calls the hover listeners in the following order:
  * <ol>
  * <li>The hover listener for the tabbed panel itself.
- * <li>The hover listener for the tab area or the content area depending on where the
- * mouse pointer is located.
- * <li>The hover listener for the tab area components area if the mouse pointer is over
- * that area.
+ * <li>The hover listener for the tab area or the content area depending on where the mouse pointer is located.
+ * <li>The hover listener for the tab area components area if the mouse pointer is over that area.
  * </ol>
- * When the tabbed panel is no longer hovered, the hover listenrs are called in the
- * reverse order.
+ * When the tabbed panel is no longer hovered, the hover listenrs are called in the reverse order.
  * </p>
  *
  * @author $Author: jesper $
@@ -103,6 +99,7 @@ import java.util.ArrayList;
  */
 public class TabbedPanel extends JPanel {
 
+	private static final long serialVersionUID = -1846595573410423844L;
 	private final DraggableComponentBox draggableComponentBox = new DraggableComponentBox();
 	private ArrayList<TabListener> listeners;
 	private Tab highlightedTab;
@@ -115,6 +112,7 @@ public class TabbedPanel extends JPanel {
 
 	private final GridBagConstraints constraints = new GridBagConstraints();
 	private final GridBagLayout tabAreaLayoutManager = new GridBagLayout() {
+		@Override
 		public void layoutContainer(Container parent) {
 			setTabAreaComponentsButtonsVisible();
 			super.layoutContainer(parent);
@@ -130,6 +128,7 @@ public class TabbedPanel extends JPanel {
 	};
 
 	private final JPanel tabAreaContainer = new JPanel(tabAreaLayoutManager) {
+		@Override
 		public Dimension getPreferredSize() {
 			Dimension d = super.getPreferredSize();
 
@@ -144,14 +143,17 @@ public class TabbedPanel extends JPanel {
 	};
 
 	private final JPanel tabAreaComponentsPanel = new JPanel(new DirectionLayout()) {
+		@Override
 		public Dimension getMaximumSize() {
 			return getPreferredSize();
 		}
 
+		@Override
 		public Dimension getMinimumSize() {
 			return getPreferredSize();
 		}
 
+		@Override
 		public Dimension getPreferredSize() {
 			Dimension d = super.getPreferredSize();
 			Insets insets = getInsets();
@@ -377,8 +379,8 @@ public class TabbedPanel extends JPanel {
 			Tab oldTab = this.highlightedTab;
 			Tab newTab = null;
 			if (oldTab != highlightedTab)
-				draggableComponentBox.setTopComponent(
-						highlightedTab != null ? highlightedTab.getDraggableComponent() : null);
+				draggableComponentBox
+						.setTopComponent(highlightedTab != null ? highlightedTab.getDraggableComponent() : null);
 			if (highlightedTab != null) {
 				if (getTabIndex(highlightedTab) > -1) {
 					this.highlightedTab = highlightedTab;
@@ -386,19 +388,21 @@ public class TabbedPanel extends JPanel {
 						oldTab.setHighlighted(false);
 					}
 
-					if (oldTab != highlightedTab)
+					if (oldTab != highlightedTab) {
 						if (highlightedTab.isEnabled()) {
 							highlightedTab.setHighlighted(true);
 						} else {
 							highlightedTab.setHighlighted(false);
 							this.highlightedTab = null;
 						}
-
-					if (highlightedTab.isEnabled() && highlightedTab != oldTab)
+					}
+					if (highlightedTab.isEnabled() && highlightedTab != oldTab) {
 						newTab = highlightedTab;
+					}
 
-					if (oldTab != highlightedTab)
+					if (oldTab != highlightedTab) {
 						fireHighlightedEvent(newTab, oldTab);
+					}
 				}
 			} else if (oldTab != null) {
 				this.highlightedTab = null;
@@ -522,12 +526,13 @@ public class TabbedPanel extends JPanel {
 	private int calcScrollWidth() {
 		Insets componentsPanelInsets = tabAreaComponentsPanel.getInsets();
 		boolean componentsVisible = ComponentUtil.isOnlyVisibleComponent(scrollButtonBox);
-		int insetsWidth = tabAreaComponentsPanel.isVisible() && componentsVisible ? componentsPanelInsets.left
-				+ componentsPanelInsets.right : 0;
-		int componentsPanelWidth = tabAreaComponentsPanel.isVisible() ? (
-				(int) tabAreaComponentsPanel.getPreferredSize().getWidth() - insetsWidth - (scrollButtonBox.isVisible()
-						? scrollButtonBox.getWidth()
-						: 0)) : 0;
+		int insetsWidth = tabAreaComponentsPanel.isVisible() && componentsVisible
+				? componentsPanelInsets.left + componentsPanelInsets.right
+				: 0;
+		int componentsPanelWidth = tabAreaComponentsPanel.isVisible()
+				? ((int) tabAreaComponentsPanel.getPreferredSize().getWidth() - insetsWidth
+						- (scrollButtonBox.isVisible() ? scrollButtonBox.getWidth() : 0))
+				: 0;
 		Insets areaInsets = tabAreaContainer.getInsets();
 		return tabAreaContainer.getWidth() - componentsPanelWidth - areaInsets.left - areaInsets.right;
 	}
@@ -637,6 +642,7 @@ public class TabbedPanel extends JPanel {
 		}
 	}
 
+	@Override
 	protected void processMouseEvent(MouseEvent event) {
 		if (event.getID() == MouseEvent.MOUSE_ENTERED) {
 			if (!mouseEntered) {
@@ -661,6 +667,9 @@ public class TabbedPanel extends JPanel {
 	}
 
 	private static class ShadowPanel extends JPanel {
+
+		private static final long serialVersionUID = 7715720101161951831L;
+
 		ShadowPanel() {
 			super(new BorderLayout());
 			setCursor(null);

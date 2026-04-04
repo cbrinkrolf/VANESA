@@ -15,6 +15,8 @@ import java.awt.event.FocusEvent;
  * method needs to be implemented by a subclass.
  */
 public class JValidatedTextField extends JPanel {
+
+	private static final long serialVersionUID = -286366075339352263L;
 	private static final Dimension HIDE_DIMENSION = new Dimension(0, 0);
 	private final JLabel errorLabel = new JLabel();
 	private final JTextField input = new JTextField();

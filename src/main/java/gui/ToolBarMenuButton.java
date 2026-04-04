@@ -6,6 +6,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class ToolBarMenuButton extends ToolBarButton {
+
+	private static final long serialVersionUID = -7891271362160709192L;
 	/**
 	 * Must be non-zero to trigger the mouse exited event of the context menu
 	 */
@@ -61,6 +63,7 @@ public class ToolBarMenuButton extends ToolBarButton {
 				}
 			}
 
+			@Override
 			public void mousePressed(final MouseEvent e) {
 				if (!contextMenu.isVisible() && isEnabled()) {
 					contextMenu.show(e.getComponent(), -(CONTEXT_BORDER / 2), getHeight());

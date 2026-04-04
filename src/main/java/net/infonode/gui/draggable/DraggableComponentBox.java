@@ -35,6 +35,9 @@ import net.infonode.gui.layout.DirectionLayout;
 import net.infonode.util.Direction;
 
 public class DraggableComponentBox extends JPanel {
+
+	private static final long serialVersionUID = 7221464293583301464L;
+
 	private final boolean componentBoxEnabled = true;
 
 	private final JComponent componentBox;
@@ -86,12 +89,14 @@ public class DraggableComponentBox extends JPanel {
 		super(new BorderLayout());
 		// Fix minimum size when flipping direction
 		final DirectionLayout layout = new DirectionLayout(Direction.RIGHT) {
+			@Override
 			public Dimension minimumLayoutSize(Container parent) {
 				Dimension min = super.minimumLayoutSize(parent);
 				Dimension pref = super.preferredLayoutSize(parent);
 				return new Dimension(min.width, pref.height);
 			}
 
+			@Override
 			public void layoutContainer(Container parent) {
 				if (componentBoxEnabled) {
 					doSort();
@@ -99,6 +104,7 @@ public class DraggableComponentBox extends JPanel {
 				}
 			}
 
+			@Override
 			public Dimension preferredLayoutSize(Container parent) {
 				doSort();
 				return super.preferredLayoutSize(parent);
@@ -108,12 +114,14 @@ public class DraggableComponentBox extends JPanel {
 		layout.setLayoutOrderList(layoutOrderList);
 
 		componentBox = new JPanel(layout) {
+			@Override
 			public boolean isOptimizedDrawingEnabled() {
 				return getComponentSpacing() >= 0;
 			}
 		};
 
 		componentBox.addComponentListener(new ComponentAdapter() {
+			@Override
 			public void componentMoved(ComponentEvent e) {
 				fireChangedEvent();
 			}
@@ -198,7 +206,7 @@ public class DraggableComponentBox extends JPanel {
 			layoutOrderList.remove(component.getComponent());
 			componentBox.remove(component.getComponent());
 			componentBox.revalidate();
-			//componentBox.validate();
+			// componentBox.validate();
 			component.setLayoutOrderList(null);
 
 			sortComponentList(!descendingSortOrder);
@@ -222,7 +230,7 @@ public class DraggableComponentBox extends JPanel {
 	}
 
 	public DraggableComponent getDraggableComponentAt(int index) {
-		return index < layoutOrderList.size() ? findDraggableComponent((Component) layoutOrderList.get(index)) : null;
+		return index < layoutOrderList.size() ? findDraggableComponent(layoutOrderList.get(index)) : null;
 	}
 
 	public int getDraggableComponentIndex(DraggableComponent component) {
@@ -285,6 +293,7 @@ public class DraggableComponentBox extends JPanel {
 		this.outerParentArea = outerParentArea;
 	}
 
+	@Override
 	public Dimension getMaximumSize() {
 		if (scrollEnabled)
 			return getPreferredSize();
@@ -408,6 +417,7 @@ public class DraggableComponentBox extends JPanel {
 			});
 
 			scrollableBox.addComponentListener(new ComponentAdapter() {
+				@Override
 				public void componentResized(ComponentEvent e) {
 					scrollButtonBox.setButton1Enabled(!scrollableBox.isLeftEnd());
 					scrollButtonBox.setButton2Enabled(!scrollableBox.isRightEnd());
@@ -447,8 +457,8 @@ public class DraggableComponentBox extends JPanel {
 	private void ensureSelectedVisible() {
 		SwingUtilities.invokeLater(() -> {
 			if (scrollEnabled && selectedComponent != null) {
-				((ScrollableBox) componentContainer).ensureVisible(
-						layoutOrderList.indexOf(selectedComponent.getComponent()));
+				((ScrollableBox) componentContainer)
+						.ensureVisible(layoutOrderList.indexOf(selectedComponent.getComponent()));
 			}
 		});
 	}

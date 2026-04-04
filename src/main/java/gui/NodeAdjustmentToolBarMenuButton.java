@@ -8,6 +8,8 @@ import java.awt.*;
 import java.util.Set;
 
 public class NodeAdjustmentToolBarMenuButton extends ToolBarMenuButton {
+
+	private static final long serialVersionUID = -4887447069010996002L;
 	private final ToolBarButton adjustVerticalUp;
 	private final ToolBarButton adjustVerticalCenter;
 	private final ToolBarButton adjustVerticalDown;

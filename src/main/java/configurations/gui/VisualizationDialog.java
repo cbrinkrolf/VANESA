@@ -40,9 +40,11 @@ import io.SaveDialog;
 import net.miginfocom.swing.MigLayout;
 
 public class VisualizationDialog extends JPanel {
+
+	private static final long serialVersionUID = -8813590039612843817L;
 	public static final String DEFAULTYAML = "defaultYaml";
 	private static final String[] shapes = { "ellipse", "triangle", "rectangle", "rounded rectangle", "pentagon",
-											 "hexagon", "octagon", "5 star", "6 star", "7 star", "8 star", };
+			"hexagon", "octagon", "5 star", "6 star", "7 star", "8 star", };
 	private static final String[] size = { "0.5", "1.0", "2.0" };
 
 	private JLabel loadedYamlLabel;
@@ -118,8 +120,8 @@ public class VisualizationDialog extends JPanel {
 					Workspace.getCurrentSettings().setYamlVisualizationFile(loadedYaml);
 					PrintWriter pWriter = null;
 					try {
-						pWriter = new PrintWriter(new BufferedWriter(
-								new FileWriter(new File("YamlSourceFile.txt").getAbsolutePath())));
+						pWriter = new PrintWriter(
+								new BufferedWriter(new FileWriter(new File("YamlSourceFile.txt").getAbsolutePath())));
 						pWriter.println(loadedYaml);
 						pWriter.println(
 								"If you want to use your own YAML configuration file, THIS file has to be at the same location as the VANESA jar!");
@@ -147,7 +149,7 @@ public class VisualizationDialog extends JPanel {
 		final JButton exportButton = new JButton("Export");
 		exportButton.addActionListener(e -> {
 			if (e.getSource() == exportButton) {
-				new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.YAML},
+				new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.YAML },
 						SaveDialog.DATA_TYPE_VISUALIZATION_SETTINGS);
 				loadedYaml = MainWindow.getInstance().getLoadedYaml();
 				loadedYamlLabel.setText(MainWindow.getInstance().getLoadedYaml());
@@ -232,7 +234,7 @@ public class VisualizationDialog extends JPanel {
 				if (selectedItem.equals(keyValue)) {
 					object.get(selectedItem).put("shape", shapeBox.getSelectedItem());
 					object.get(selectedItem).put("sizefactor",
-												 Double.parseDouble((String) sizeMultiplierBox.getSelectedItem()));
+							Double.parseDouble((String) sizeMultiplierBox.getSelectedItem()));
 					object.get(selectedItem).put("red", colorChooser.getColor().getRed());
 					object.get(selectedItem).put("green", colorChooser.getColor().getGreen());
 					object.get(selectedItem).put("blue", colorChooser.getColor().getBlue());

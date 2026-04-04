@@ -9,6 +9,8 @@ import graph.GraphInstance;
 import net.miginfocom.swing.MigLayout;
 
 public class SatelliteWindow extends JPanel {
+
+	private static final long serialVersionUID = 2258738192555137139L;
 	boolean emptyPane = true;
 
 	public SatelliteWindow() {

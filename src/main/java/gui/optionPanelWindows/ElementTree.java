@@ -23,6 +23,8 @@ import graph.jung.classes.MyVisualizationViewer;
 import net.miginfocom.swing.MigLayout;
 
 public class ElementTree extends JPanel implements TreeSelectionListener {
+
+	private static final long serialVersionUID = -4521282565629514042L;
 	private JXTree tree = null;
 	private final Map<Integer, BiologicalNodeAbstract> table = new HashMap<>();
 	private DefaultMutableTreeNode node;

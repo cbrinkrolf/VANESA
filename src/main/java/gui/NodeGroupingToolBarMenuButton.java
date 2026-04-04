@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class NodeGroupingToolBarMenuButton extends ToolBarMenuButton {
+
+	private static final long serialVersionUID = 2623851688739834474L;
 	private final ToolBarButton mergeSelectedNodes;
 	private final ToolBarButton splitNode;
 	private final ToolBarButton coarseSelectedNodes;

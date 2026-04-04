@@ -36,6 +36,9 @@ import javax.swing.*;
  * @see Tab
  */
 public class TabContentPanel extends JPanel {
+
+	private static final long serialVersionUID = 1422772348591733550L;
+
 	/**
 	 * Constructs a TabContentPanel
 	 *
@@ -46,16 +49,19 @@ public class TabContentPanel extends JPanel {
 		setLayout(layout);
 		setOpaque(false);
 		tabbedPanel.addTabListener(new TabAdapter() {
+			@Override
 			public void tabSelected(TabStateChangedEvent event) {
 				layout.showComponent(event.getTab() == null ? null : event.getTab().getContentComponent());
 			}
 
+			@Override
 			public void tabRemoved(TabRemovedEvent event) {
 				if (event.getTab().getContentComponent() != null) {
 					remove(event.getTab().getContentComponent());
 				}
 			}
 
+			@Override
 			public void tabAdded(TabEvent event) {
 				if (event.getTab().getContentComponent() != null) {
 					add(event.getTab().getContentComponent());

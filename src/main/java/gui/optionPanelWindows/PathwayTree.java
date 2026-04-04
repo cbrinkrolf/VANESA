@@ -23,6 +23,8 @@ import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
 public class PathwayTree extends JPanel implements TreeSelectionListener {
+
+	private static final long serialVersionUID = -4053175753502782080L;
 	private final JXTree tree = new JXTree(new DefaultMutableTreeNode());
 	private final HashMap<DefaultMutableTreeNode, Pathway> map = new HashMap<>();
 	private DefaultMutableTreeNode actualNode;

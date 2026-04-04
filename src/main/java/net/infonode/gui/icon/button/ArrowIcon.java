@@ -27,6 +27,8 @@ import net.infonode.util.Direction;
 import java.awt.*;
 
 public class ArrowIcon extends AbstractButtonIcon {
+
+	private static final long serialVersionUID = -8127467400484191698L;
 	private final Direction direction;
 
 	public ArrowIcon(Color color, int size, Direction direction) {
@@ -47,11 +49,12 @@ public class ArrowIcon extends AbstractButtonIcon {
 		return direction;
 	}
 
+	@Override
 	protected void paintIcon(Component c, Graphics g, int x1, int y1, int x2, int y2) {
 		int size = (x2 - x1 + 1) + ((x2 - x1 + 1) % 2) - 1;
-		int offset =
-				(direction.isHorizontal() ? x1 : y1) + (direction == Direction.RIGHT || direction == Direction.DOWN ?
-						(size + 1) / 4 : (size - (size + 1) / 2) / 2);
+		int offset = (direction.isHorizontal() ? x1 : y1)
+				+ (direction == Direction.RIGHT || direction == Direction.DOWN ? (size + 1) / 4
+						: (size - (size + 1) / 2) / 2);
 		int o2 = direction.isHorizontal() ? y1 : x1;
 		int[] c1 = direction == Direction.DOWN || direction == Direction.RIGHT
 				? new int[] { offset, offset, offset + size / 2 + 1 }

@@ -11,12 +11,13 @@ import java.awt.geom.RoundRectangle2D;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.VisualizationServer;
 import edu.uci.ics.jung.visualization.transform.AffineTransformer;
 import edu.uci.ics.jung.visualization.transform.LensTransformer;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
@@ -24,12 +25,12 @@ import graph.compartment.Compartment;
 import graph.jung.classes.MyVisualizationViewer;
 import graph.layouts.GraphCenter;
 
-public class CompartmentRenderer implements VisualizationViewer.Paintable {
+public class CompartmentRenderer implements VisualizationServer.Paintable {
 
 	private Pathway pw;
 	private MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
 
-	private HashMap<String, Area> areas = new HashMap<String, Area>();
+	private Map<String, Area> areas = new HashMap<>();
 
 	private boolean experimental = false;
 
@@ -51,9 +52,9 @@ public class CompartmentRenderer implements VisualizationViewer.Paintable {
 	}
 
 	private void prepareCompartments() {
-		areas = new HashMap<String, Area>();
-		HashMap<String, HashSet<BiologicalNodeAbstract>> compToNodes = new HashMap<String, HashSet<BiologicalNodeAbstract>>();
-		HashMap<String, HashSet<BiologicalEdgeAbstract>> compToEdges = new HashMap<String, HashSet<BiologicalEdgeAbstract>>();
+		areas = new HashMap<>();
+		HashMap<String, HashSet<BiologicalNodeAbstract>> compToNodes = new HashMap<>();
+		HashMap<String, HashSet<BiologicalEdgeAbstract>> compToEdges = new HashMap<>();
 
 		Iterator<Compartment> comp = pw.getCompartmentManager().getAllCompartmentsAlphabetically().iterator();
 		Compartment c;
@@ -61,8 +62,8 @@ public class CompartmentRenderer implements VisualizationViewer.Paintable {
 			c = comp.next();
 			// System.out.println(c.getName());
 			this.areas.put(c.getName(), new Area());
-			compToNodes.put(c.getName(), new HashSet<BiologicalNodeAbstract>());
-			compToEdges.put(c.getName(), new HashSet<BiologicalEdgeAbstract>());
+			compToNodes.put(c.getName(), new HashSet<>());
+			compToEdges.put(c.getName(), new HashSet<>());
 		}
 
 		long l1 = System.nanoTime();
@@ -73,7 +74,7 @@ public class CompartmentRenderer implements VisualizationViewer.Paintable {
 		while (itNodes.hasNext()) {
 			bna = itNodes.next();
 
-			if (pw.getCompartmentManager().getCompartment(bna).length() == 0) {
+			if (pw.getCompartmentManager().getCompartment(bna).isEmpty()) {
 				continue;
 			}
 			a = areas.get(pw.getCompartmentManager().getCompartment(bna));
@@ -184,8 +185,8 @@ public class CompartmentRenderer implements VisualizationViewer.Paintable {
 		h1 = (int) s1.getBounds2D().getHeight();
 		h1 = h1 / 2;
 
-		r1 = new RoundRectangle2D.Double((int) (p1inv.getX() - h1 * 1.5), (int) (p1inv.getY() - h1 * 1.5), 3 * h1,
-				3 * h1, 15, 15);
+		r1 = new RoundRectangle2D.Double((int) (p1inv.getX() - h1 * 1.5), (int) (p1inv.getY() - h1 * 1.5), 3.0 * h1,
+				3.0 * h1, 15, 15);
 		a.add(new Area(r1));
 	}
 
@@ -211,7 +212,7 @@ public class CompartmentRenderer implements VisualizationViewer.Paintable {
 	}
 
 	// CHRIS WIP for an more efficient painting of compartments
-	private void drawCompartemntsExperimental(Graphics2D g2d) {
+	private void drawCompartementsExperimental(Graphics2D g2d) {
 
 		long l1 = System.nanoTime();
 		Iterator<String> it = this.areas.keySet().iterator();

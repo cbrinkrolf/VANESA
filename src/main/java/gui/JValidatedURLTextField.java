@@ -1,10 +1,13 @@
 package gui;
 
+import java.net.URI;
+
 import org.apache.commons.lang3.StringUtils;
 
-import java.net.URL;
-
 public class JValidatedURLTextField extends JValidatedTextField {
+
+	private static final long serialVersionUID = 6456678031956212811L;
+
 	public JValidatedURLTextField() {
 	}
 
@@ -19,7 +22,7 @@ public class JValidatedURLTextField extends JValidatedTextField {
 		}
 		try {
 			// Try parsing the api url to check if it's at least valid
-			new URL(text);
+			URI.create(text).toURL();
 			return null;
 		} catch (final Exception e) {
 			return "Needs to be a valid Url";

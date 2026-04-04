@@ -20,7 +20,7 @@ import gui.visualization.VisualizationConfigBeans.Bean;
 
 public class YamlToObjectParser {
 
-	private List<Bean> beansList = new ArrayList<Bean>();
+	private List<Bean> beansList = new ArrayList<>();
 	private String loadedYaml;
 	private Yaml yaml;
 	private VisualizationConfigBeans bean;
@@ -30,21 +30,18 @@ public class YamlToObjectParser {
 	}
 
 	public void defaultCase() {
-		InputStream input = getClass().getClassLoader().getResourceAsStream("NodeProperties.yaml");
-		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-		HashMap<String, Map<String, Object>> mapForBeans = new HashMap<String, Map<String, Object>>();
-		for (Object data : yaml.loadAll(reader)) {
-			HashMap<String, Map<String, Object>> object;
-			object = (HashMap<String, Map<String, Object>>) data;
-			mapForBeans.put(object.keySet().toString().substring(1, object.keySet().toString().length() - 1),
-					object.get(object.keySet().toString().substring(1, object.keySet().toString().length() - 1)));
-		}
-		bean = new VisualizationConfigBeans();
-		beansList = bean.parseAndAdjust(mapForBeans, false);
 
-		try {
-			reader.close();
-			input.close();
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(getClass().getClassLoader().getResourceAsStream("NodeProperties.yaml")))) {
+			Map<String, Map<String, Object>> mapForBeans = new HashMap<>();
+			for (Object data : yaml.loadAll(reader)) {
+				HashMap<String, Map<String, Object>> object;
+				object = (HashMap<String, Map<String, Object>>) data;
+				mapForBeans.put(object.keySet().toString().substring(1, object.keySet().toString().length() - 1),
+						object.get(object.keySet().toString().substring(1, object.keySet().toString().length() - 1)));
+			}
+			bean = new VisualizationConfigBeans();
+			beansList = bean.parseAndAdjust(mapForBeans, false);
 		} catch (IOException e1) {
 			System.out.println("Input- or readerstream error in YamlToObjectParser");
 			e1.printStackTrace();
@@ -59,12 +56,10 @@ public class YamlToObjectParser {
 			File file = new File(loadedYaml);
 			if (file.exists()) {
 				System.out.println("Found YamlSource. Default inactive.");
-				InputStream input = null;
-				try {
-					input = new FileInputStream(loadedYaml);
+				try (BufferedReader reader = new BufferedReader(
+						new InputStreamReader(new FileInputStream(loadedYaml)))) {
 
-					BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-					HashMap<String, Map<String, Object>> mapForBeans = new HashMap<String, Map<String, Object>>();
+					HashMap<String, Map<String, Object>> mapForBeans = new HashMap<>();
 					for (Object data : yaml.loadAll(reader)) {
 						HashMap<String, Map<String, Object>> object;
 						object = (HashMap<String, Map<String, Object>>) data;
@@ -76,12 +71,6 @@ public class YamlToObjectParser {
 					bean = new VisualizationConfigBeans();
 					beansList = bean.parseAndAdjust(mapForBeans, false);
 
-					try {
-						reader.close();
-						input.close();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
 				} catch (Exception e) {
 					System.out.println("Yaml reading error in YamlToObjectParser");
 					e.printStackTrace();
@@ -107,7 +96,7 @@ public class YamlToObjectParser {
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				}
-				HashMap<String, Map<String, Object>> mapForBeans = new HashMap<String, Map<String, Object>>();
+				Map<String, Map<String, Object>> mapForBeans = new HashMap<>();
 				for (Object data : yaml.loadAll(input)) {
 					HashMap<String, Map<String, Object>> object;
 					object = (HashMap<String, Map<String, Object>>) data;

@@ -241,7 +241,7 @@ public class GraphMLReader extends BaseReader<Pathway> {
 			setPropertyIfExists(properties, "tokenMax", ((Place) bna)::setTokenMax);
 			setPropertyIfExists(properties, "tokenStart", ((Place) bna)::setTokenStart);
 			this.<Integer>setPropertyIfExists(properties, "conflictStrategy",
-					(value) -> ((Place) bna).setConflictStrategy(ConflictHandling.fromId(value)));
+					value -> ((Place) bna).setConflictStrategy(ConflictHandling.fromId(value)));
 			break;
 		}
 		pw.addVertex(bna, p);

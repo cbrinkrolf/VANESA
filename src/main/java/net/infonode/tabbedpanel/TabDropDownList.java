@@ -33,14 +33,19 @@ import javax.swing.*;
  * @since ITP 1.1.0
  */
 public class TabDropDownList extends PopupList {
+
+	private static final long serialVersionUID = -5901822755291860625L;
+
 	private final TabbedPanel tabbedPanel;
 
 	private final TabListener tabListener = new TabAdapter() {
+		@Override
 		public void tabAdded(TabEvent event) {
 			if (event.getTab().getTabbedPanel().getTabCount() == 2)
 				setVisible(true);
 		}
 
+		@Override
 		public void tabRemoved(TabRemovedEvent event) {
 			if (event.getTabbedPanel().getTabCount() == 1)
 				setVisible(false);
