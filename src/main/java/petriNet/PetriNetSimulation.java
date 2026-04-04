@@ -59,7 +59,7 @@ public class PetriNetSimulation implements ActionListener {
 
 	// private String simId;
 	private boolean simExePresent;
-	private StringBuilder logMessage = null;
+	// private StringBuilder logMessage = null;
 	private boolean installationChecked = false;
 
 	private boolean shortModelName = false;
@@ -112,7 +112,6 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private void runOMCIA(int port, String overrideParameterized) {
-		simLog = new SimulationLog(menu);
 		if (!installationChecked) {
 			installationChecked = checkInstallation();
 			if (!installationChecked) {
@@ -475,6 +474,7 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private void startAction() {
+		simulationProperties.resetProperties();
 
 		int port = getAvailablePort();
 
@@ -500,9 +500,11 @@ public class PetriNetSimulation implements ActionListener {
 		final String simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
 				+ System.nanoTime();
 		simulationProperties.setSimId(simId);
-		logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
+		simLog = new SimulationLog(menu);
+		pw.getPetriPropertiesNet().getSimResController().get(simId).setLogMessage(simLog.getLogMessageBuilder());
+
 		menu.clearText();
-		menu.addText(logMessage.toString());
+		// menu.addText(logMessage.toString());
 		menu.started();
 		runOMCIA(port);
 	}
@@ -587,7 +589,7 @@ public class PetriNetSimulation implements ActionListener {
 			// rounding name up to 4 decimals
 			pw.getPetriPropertiesNet().getSimResController().get(simId)
 					.setName(bna.getName() + "_" + param + "=" + (Math.round(value.doubleValue() * 1000) / 1000.0));
-			logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
+			StringBuilder logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
 			menu.clearText();
 			menu.addText(logMessage.toString());
 			runOMCIA(port++, override);
@@ -621,6 +623,7 @@ public class PetriNetSimulation implements ActionListener {
 			menu.setTime("compiling / simulation aborted!");
 		}
 		if (simulationProperties.getSimProcess() != null) {
+			System.out.println("destroy sim process because sim ended");
 			simulationProperties.getSimProcess().destroy();
 		}
 	}

@@ -18,4 +18,12 @@ public class SimulationLog {
 		System.out.println(line);
 	}
 
+	public void setLogMessageBuilder(StringBuilder logMessage) {
+		this.logMessage = logMessage;
+	}
+
+	public StringBuilder getLogMessageBuilder() {
+		return logMessage;
+	}
+
 }

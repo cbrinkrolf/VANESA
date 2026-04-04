@@ -170,4 +170,9 @@ public class SimulationProperties {
 	public void setServer(Server server) {
 		this.server = server;
 	}
+
+	public void resetProperties() {
+		this.outputReader = null;
+		this.isServerRunning = false;
+	}
 }

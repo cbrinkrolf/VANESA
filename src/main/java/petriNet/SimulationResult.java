@@ -17,7 +17,7 @@ public class SimulationResult {
 	private boolean active = true;
 	private String name;
 	private final String id;
-	private final StringBuilder logMessage = new StringBuilder();
+	private StringBuilder logMessage = new StringBuilder();
 
 	public SimulationResult(final String id, final String name, final boolean filtered) {
 		this.id = id;
@@ -42,6 +42,10 @@ public class SimulationResult {
 
 	public StringBuilder getLogMessage() {
 		return logMessage;
+	}
+
+	public void setLogMessage(StringBuilder logMessage) {
+		this.logMessage = logMessage;
 	}
 
 	public Series getTime() {
@@ -83,7 +87,8 @@ public class SimulationResult {
 		return time.getAll();
 	}
 
-	public List<Double> getTime(final GraphElementAbstract gea, final SimulationResultSeriesKey type, final boolean filtered) {
+	public List<Double> getTime(final GraphElementAbstract gea, final SimulationResultSeriesKey type,
+			final boolean filtered) {
 		if (filtered) {
 			return resultFiltered.get(gea, type).getTime().getAll();
 		} else {
