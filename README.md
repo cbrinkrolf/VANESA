@@ -1,4 +1,5 @@
 ![Java CI](https://github.com/cbrinkrolf/VANESA/actions/workflows/maven.yml/badge.svg?branch=master)
+[![Create release on version tag and publish core package](https://github.com/cbrinkrolf/VANESA/actions/workflows/deploy.yml/badge.svg)](https://github.com/cbrinkrolf/VANESA/actions/workflows/deploy.yml)
 ![Release](https://img.shields.io/github/v/release/cbrinkrolf/VANESA)
 ![Downloads](https://img.shields.io/github/downloads/cbrinkrolf/VANESA/total)
 ![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-blue)
